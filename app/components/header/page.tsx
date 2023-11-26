@@ -4,30 +4,33 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import styles from "./page.module.css";
+import Image from "next/image";
 export default function Header() {
   return (
     <Box className={styles.container} sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1 }}
-          >
-            News
-          </Typography>
+          <Image
+            src="/water.svg"
+            alt="DelAqua logo"
+            width={50}
+            height={50}
+          />
+          <Box className={styles.name_container} sx={{ flexGrow: 1 }}>
+            <Typography
+              className={styles.name}
+              variant="h6"
+              component="div"
+              sx={{ flexGrow: 1 }}
+            >
+              Del
+              <span>Aqua</span>
+            </Typography>
+            <Typography className={styles.name_descr}>
+              We deliver spring water in Limassol
+            </Typography>
+          </Box>
           <Button color="inherit">Login</Button>
         </Toolbar>
       </AppBar>

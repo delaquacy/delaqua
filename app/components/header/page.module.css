@@ -1,3 +1,21 @@
 .container header {
-  background-color: green;
+  background-color: var(--test-color);
+  min-height: 70px;
+}
+.name_container {
+  margin-left: 20px;
+}
+.name {
+  font-weight: bold;
+  font-size: 25px;
+  color: black;
+}
+.name span {
+  color: #50c5f6;
+}
+
+.name_descr {
+  color: black;
+  font-size: 14px;
+  margin-top: -10px;
 }
