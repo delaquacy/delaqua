@@ -1,6 +1,8 @@
 .container header {
   background-color: var(--test-color);
   min-height: 70px;
+  padding: 10px 0;
+  font-family: "Play", sans-serif;
 }
 .name_container {
   margin-left: 20px;
@@ -18,4 +20,16 @@
   color: black;
   font-size: 14px;
   margin-top: -10px;
+}
+.language {
+  height: 37px;
+}
+.container button {
+  text-transform: capitalize;
+  color: black;
+  border: 1px solid grey;
+}
+.container button:hover {
+  background-color: none;
+  border: 1px solid black;
 }

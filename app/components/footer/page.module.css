@@ -1,7 +1,25 @@
 .container {
-  position: absolute;
-  bottom: 0;
-  min-height: 64px;
   width: 100%;
   background-color: var(--test-color);
+}
+.social_media {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
+.social_media svg {
+  height: 35px;
+  width: 35px;
+}
+.pages {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.pages a {
+  margin: 0 25px;
+}
+.copyright {
+  padding: 10px;
 }

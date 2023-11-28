@@ -3,6 +3,7 @@ import { inter } from "@/app/ui/fonts";
 import Footer from "./components/footer/page";
 import Header from "./components/header/page";
 import "./globals.css";
+import { ThemeProvider } from "@mui/material";
 
 export const metadata: Metadata = {
   title: "DelAqua",
@@ -16,6 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.png" />
+      </head>
       <body className={`${inter.className} antialiased`}>
         <Header />
         {children}
