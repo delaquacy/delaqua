@@ -52,4 +52,17 @@
 .waterDescription {
   margin-top: 8px;
   border-right: solid;
+  display: flex;
+  line-height: 2em;
+}
+.depositDescription {
+  margin-top: 10px;
+  line-height: 2em;
+  font-size: larger;
+}
+.depositDescription span {
+  font-weight: bold;
+  font-size: larger;
+  display: block;
+  margin-top: 1em;
 }

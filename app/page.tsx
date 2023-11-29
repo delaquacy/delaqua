@@ -51,17 +51,29 @@ export default function Home() {
               className={styles.waterDescription}
               item
               xs={12}
-              md={6}
+              md={8}
             >
               We deliver Mersini Spring Water, which is bottled at
               source within minutes of leaving the ground, always
               under constant quality control, following strict HACCP
               protocol as well as E.U. specifications.
+              <Image
+                src={"/table.webp"}
+                alt={"chemical_analysis"}
+                width={350}
+                height={180}
+              />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid
+              className={styles.depositDescription}
+              item
+              xs={12}
+              md={4}
+            >
               For the first delivery, we take a deposit for bottles,
               it will be returned if you decide to stop ordering our
-              water. The deposit for one bottle — is 7 euros.
+              water.
+              <span> The deposit for one bottle — is 7 euros.</span>
             </Grid>
           </Grid>
         </Box>
