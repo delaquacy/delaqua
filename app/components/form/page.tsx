@@ -19,6 +19,7 @@ import styles from "./page.module.css";
 import AlertDialog from "../alert/AlertDialog";
 import { IForm } from "@/app/lib/definitions";
 import { useState } from "react";
+import axios from "axios";
 
 const bottleOptions = [
   {
@@ -31,6 +32,9 @@ const bottleOptions = [
   { value: "5", label: "(5 bottles - 6€ each = 30€)" },
   { value: "more", label: "(more - add the number below)" },
 ];
+const axiosConfig = {
+  withCredentials: true,
+};
 
 const MyForm = () => {
   const [data, setData] = useState<IForm | undefined>(undefined);
@@ -45,11 +49,33 @@ const MyForm = () => {
     mode: "onBlur",
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
+    try {
+      const response = await axios.post(
+        "https://script.google.com/macros/s/AKfycbytBMo6wcOqZweWFvCJphJrwwHqWtqVjeaffIAsP6T6ToNBc3PumaIwwyWX89MPKHOd/exec",
+        data,
+        axiosConfig
+      );
+
+      if (response.status === 200) {
+        console.log("Form submitted successfully!");
+      } else {
+        console.error(
+          "Error submitting form:",
+          response.status,
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.error(
+        "An error occurred during form submission:",
+        error
+      );
+    }
+
     setData(data);
     setShowWindow(true);
-    console.log("Form submitted with data:", data);
-    reset();
+    console.log("Form submitted with data:", data.firstAndLast);
   };
 
   return (
