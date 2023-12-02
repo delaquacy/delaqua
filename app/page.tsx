@@ -3,7 +3,7 @@ import Image from "next/image";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import LocalDrinkOutlinedIcon from "@mui/icons-material/LocalDrinkOutlined";
 import styles from "./page.module.css";
-
+import MyForm from "./components/form/page";
 export default function Home() {
   return (
     <main className={styles.main}>
@@ -76,6 +76,9 @@ export default function Home() {
               <span> The deposit for one bottle — is 7 euros.</span>
             </Grid>
           </Grid>
+        </Box>
+        <Box className={styles.formWrapper}>
+          <MyForm />
         </Box>
       </Box>
     </main>

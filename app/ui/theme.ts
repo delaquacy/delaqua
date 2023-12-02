@@ -1,0 +1,26 @@
+export const theme = {
+  colors: {
+    black: "#000000",
+    mainColor: "#FFFFFF",
+    mainBlack: "#060606",
+    mainGray: "#676767",
+    additionalDark: "#242424",
+    orange: "#F26601",
+    lightOrange: "#FFECDE",
+    lightOrangeHover: "#FDDEC7",
+    secondaryBlack: "#F5F5F5",
+    strokeGray: "#D4D4D4",
+    errorColor: "#EA0000",
+    darkGrey: "#939393",
+    lightGrey: "#EEEEEE",
+  },
+  devices: {
+    mobileS: "(min-width: 320px)",
+    mobileM: "(min-width: 375px)",
+    mobileL: "(min-width: 425px)",
+    tablet: "(min-width: 768px)",
+    laptop: "(min-width: 1024px)",
+    laptopL: "(min-width: 1514px)",
+    desktop: "(min-width: 2560px)",
+  },
+};

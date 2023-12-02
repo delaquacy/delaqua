@@ -26,10 +26,4 @@
 }
 .container button {
   text-transform: capitalize;
-  color: black;
-  border: 1px solid grey;
-}
-.container button:hover {
-  background-color: none;
-  border: 1px solid black;
 }

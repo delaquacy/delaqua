@@ -4,6 +4,7 @@ import Footer from "./components/footer/page";
 import Header from "./components/header/page";
 import "./globals.css";
 import { ThemeProvider } from "@mui/material";
+import { theme } from "./ui/themeMui";
 
 export const metadata: Metadata = {
   title: "DelAqua",
@@ -21,9 +22,11 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.png" />
       </head>
       <body className={`${inter.className} antialiased`}>
-        <Header />
-        {children}
-        <Footer />
+        <ThemeProvider theme={theme}>
+          <Header />
+          {children}
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );

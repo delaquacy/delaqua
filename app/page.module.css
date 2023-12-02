@@ -66,3 +66,7 @@
   display: block;
   margin-top: 1em;
 }
+.formWrapper {
+  margin-top: 40px;
+  background-color: #e0fbfc;
+}
