@@ -49,7 +49,7 @@ const MyForm = () => {
   const onSubmit = async (data: any) => {
     try {
       const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbwjE-XeJRwvMz8GQo-YKZTFR7-ptl779gLiVigNNJcOS4enb2bJ0wQvnTO_mxB0mzH3BQ/exec",
+        "https://script.google.com/macros/s/AKfycbyUgRSvvWEeiC_xsHGAII0kN8FdTuuZ3Uq6I3E38X3RePxomrc2T9SXxOcTMnGe1f6xmw/exec",
         {
           method: "POST",
           headers: {
