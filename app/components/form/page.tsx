@@ -46,33 +46,21 @@ const MyForm = () => {
     mode: "onBlur",
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: IForm) => {
     try {
-      const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbyUgRSvvWEeiC_xsHGAII0kN8FdTuuZ3Uq6I3E38X3RePxomrc2T9SXxOcTMnGe1f6xmw/exec",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            postData: { contents: JSON.stringify(data) },
-          }),
-        }
+      const response = await axios.post(
+        "https://sheet.best/api/sheets/e8712774-a547-4ade-ac6c-1ee093cdfad1",
+        data
       );
 
-      if (response.ok) {
-        console.log("Form submitted successfully");
-      } else {
-        console.error("Form submission failed");
-      }
+      console.log(response);
+      setData(data);
+      setShowWindow(true);
+      console.log("Form submitted with data:", JSON.stringify(data));
+      reset();
     } catch (error) {
       console.error("Error submitting form:", error);
     }
-
-    setData(data);
-    setShowWindow(true);
-    console.log("Form submitted with data:", JSON.stringify(data));
   };
 
   return (

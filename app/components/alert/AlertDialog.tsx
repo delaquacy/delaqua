@@ -6,6 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { IForm } from "@/app/lib/definitions";
+import Link from "next/link";
 
 interface AlertDialogProps {
   data: IForm | undefined;
@@ -35,6 +36,16 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             {`${data?.firstAndLast},${data?.phoneNumber}, ${data?.postalIndex}, ${data?.deliveryAddress}, ${data?.addressDetails}, ${data?.geolocation}, ${data?.pump}, ${data?.bottlesNumber}, ${data?.deliveryTime}, ${data?.deliveryDate}, ${data?.comments}, ${data?.paymentMethod}`}
+          </DialogContentText>
+          <DialogContentText>
+            You can see result at{" "}
+            <Link
+              style={{ fontWeight: "bold" }}
+              href="https://docs.google.com/spreadsheets/d/1UOLFfG0d_sQ9DwmQKV9V0n6f-bLr3yPzPAa_mXpbClA/edit#gid=0"
+              target="_blank"
+            >
+              Google Sheets
+            </Link>
           </DialogContentText>
         </DialogContent>
         <DialogActions>

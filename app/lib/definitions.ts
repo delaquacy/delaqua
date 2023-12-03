@@ -6,9 +6,9 @@ export interface IForm {
   addressDetails: string;
   geolocation: string;
   pump: string;
-  bottlesNumber: number;
+  bottlesNumber: string;
   deliveryDate: Date;
   deliveryTime: string;
   paymentMethod: string;
-  comments: string;
+  comments?: string;
 }
