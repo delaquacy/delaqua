@@ -32,9 +32,6 @@ const bottleOptions = [
   { value: "5", label: "(5 bottles - 6€ each = 30€)" },
   { value: "more", label: "(more - add the number below)" },
 ];
-const axiosConfig = {
-  withCredentials: true,
-};
 
 const MyForm = () => {
   const [data, setData] = useState<IForm | undefined>(undefined);
@@ -51,31 +48,31 @@ const MyForm = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      const response = await axios.post(
-        "https://script.google.com/macros/s/AKfycbytBMo6wcOqZweWFvCJphJrwwHqWtqVjeaffIAsP6T6ToNBc3PumaIwwyWX89MPKHOd/exec",
-        data,
-        axiosConfig
+      const response = await fetch(
+        "https://script.google.com/macros/s/AKfycbwjE-XeJRwvMz8GQo-YKZTFR7-ptl779gLiVigNNJcOS4enb2bJ0wQvnTO_mxB0mzH3BQ/exec",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            postData: { contents: JSON.stringify(data) },
+          }),
+        }
       );
 
-      if (response.status === 200) {
-        console.log("Form submitted successfully!");
+      if (response.ok) {
+        console.log("Form submitted successfully");
       } else {
-        console.error(
-          "Error submitting form:",
-          response.status,
-          response.statusText
-        );
+        console.error("Form submission failed");
       }
     } catch (error) {
-      console.error(
-        "An error occurred during form submission:",
-        error
-      );
+      console.error("Error submitting form:", error);
     }
 
     setData(data);
     setShowWindow(true);
-    console.log("Form submitted with data:", data.firstAndLast);
+    console.log("Form submitted with data:", JSON.stringify(data));
   };
 
   return (
