@@ -1,8 +1,5 @@
-.main {
-  padding: 20px;
-}
-
 .container {
+  padding: 20px;
   margin: 40px;
 }
 .container h1 {
@@ -67,6 +64,7 @@
   margin-top: 1em;
 }
 .formWrapper {
-  margin-top: 40px;
+  padding: 20px 60px;
+  margin: 40px 0;
   background-color: #e0fbfc;
 }

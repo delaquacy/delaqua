@@ -67,7 +67,9 @@ const MyForm = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
-          <span>First and last name</span>
+          <span className={styles.inputName}>
+            First and last name
+          </span>
           <Controller
             name="firstAndLast"
             control={control}
@@ -82,7 +84,9 @@ const MyForm = () => {
               />
             )}
           />
-          <span>Phone number(Cuprys)</span>
+          <span className={styles.inputName}>
+            Phone number(Cuprys)
+          </span>
           <Controller
             name="phoneNumber"
             control={control}
@@ -98,7 +102,7 @@ const MyForm = () => {
               />
             )}
           />
-          <span>Post index</span>
+          <span className={styles.inputName}>Post index</span>
           <Controller
             name="postalIndex"
             control={control}
@@ -113,7 +117,7 @@ const MyForm = () => {
               />
             )}
           />
-          <span>Delivery address</span>
+          <span className={styles.inputName}>Delivery address</span>
           <Controller
             name="deliveryAddress"
             control={control}
@@ -128,7 +132,7 @@ const MyForm = () => {
               />
             )}
           />
-          <span>Address details</span>
+          <span className={styles.inputName}>Address details</span>
           <Controller
             name="addressDetails"
             control={control}
@@ -144,7 +148,9 @@ const MyForm = () => {
               />
             )}
           />
-          <span>Link to geolocation</span>
+          <span className={styles.inputName}>
+            Link to geolocation
+          </span>
           <Controller
             name="geolocation"
             control={control}
@@ -175,7 +181,9 @@ const MyForm = () => {
             the field above
           </div>
           <br></br>
-          <span>Do you need a pump? *</span>
+          <span className={styles.inputName}>
+            Do you need a pump? *
+          </span>
           <Controller
             name="pump"
             control={control}
@@ -202,7 +210,9 @@ const MyForm = () => {
           </div>
         </Grid>
         <Grid item xs={12} md={6}>
-          <span>Number of bottles you want to buy*</span>
+          <span className={styles.inputName}>
+            Number of bottles you want to buy*
+          </span>
           <Controller
             name="bottlesNumber"
             control={control}
@@ -225,7 +235,7 @@ const MyForm = () => {
               {errors.bottlesNumber?.message}
             </p>
           </div>
-          <span>Delivery time</span>
+          <span className={styles.inputName}>Delivery time</span>
           <Controller
             name="deliveryTime"
             control={control}
@@ -255,7 +265,7 @@ const MyForm = () => {
               {errors.deliveryTime?.message}
             </p>
           </div>
-          <span>Payment method *</span>
+          <span className={styles.inputName}>Payment method *</span>
           <Controller
             name="paymentMethod"
             control={control}
@@ -285,7 +295,7 @@ const MyForm = () => {
               {errors.paymentMethod?.message}
             </p>
           </div>
-          <div>Delivery date</div>
+          <div className={styles.inputName}>Delivery date</div>
           <div className={styles.datePicker}>
             <Controller
               name="deliveryDate"
@@ -307,7 +317,7 @@ const MyForm = () => {
             </p>
           </div>
 
-          <span>Comments</span>
+          <span className={styles.inputName}>Comments</span>
           <Controller
             name="comments"
             control={control}

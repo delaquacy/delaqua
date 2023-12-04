@@ -16,3 +16,6 @@
   display: flex;
   justify-content: center;
 }
+.inputName {
+  font-weight: bold;
+}

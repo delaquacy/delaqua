@@ -6,7 +6,7 @@ import styles from "./page.module.css";
 import MyForm from "./components/form/page";
 export default function Home() {
   return (
-    <main className={styles.main}>
+    <main>
       <Box className={styles.container}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={8}>
@@ -77,9 +77,9 @@ export default function Home() {
             </Grid>
           </Grid>
         </Box>
-        <Box className={styles.formWrapper}>
-          <MyForm />
-        </Box>
+      </Box>
+      <Box className={styles.formWrapper}>
+        <MyForm />
       </Box>
     </main>
   );
