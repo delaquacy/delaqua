@@ -34,15 +34,10 @@ export default function Header() {
           </Link>
           <Box className={styles.name_container} sx={{ flexGrow: 1 }}>
             <Link href="/">
-              <Typography
-                className={styles.name}
-                variant="h6"
-                component="div"
-                sx={{ flexGrow: 1 }}
-              >
+              <div className={styles.name}>
                 Del
                 <span>Aqua</span>
-              </Typography>
+              </div>
             </Link>
 
             <p className={styles.name_descr}>

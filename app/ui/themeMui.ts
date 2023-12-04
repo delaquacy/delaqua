@@ -22,5 +22,12 @@ export const theme = createTheme({
         },
       ],
     },
+    MuiGrid: {
+      styleOverrides: {
+        root: {
+          marginTop: "0px",
+        },
+      },
+    },
   },
 });

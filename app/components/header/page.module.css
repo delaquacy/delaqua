@@ -9,7 +9,7 @@
 }
 .name {
   font-weight: bold;
-  font-size: 25px;
+  font-size: 28px;
   color: black;
 }
 .name span {
@@ -19,7 +19,6 @@
 .name_descr {
   color: black;
   font-size: 14px;
-  margin-top: -10px;
 }
 .language {
   height: 37px;
