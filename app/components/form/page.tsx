@@ -49,7 +49,7 @@ const MyForm = () => {
   const onSubmit = async (data: IForm) => {
     try {
       const response = await axios.post(
-        "https://script.google.com/macros/s/AKfycbxrGjJiQ1Tiw_XdCbTAJAVtnBjtb2R8PzPL2JNKZ4rUl44irQ3gWS5FyiwBZUU0TB1J9w/exec",
+        "https://sheet.best/api/sheets/e8712774-a547-4ade-ac6c-1ee093cdfad1",
         data
       );
       setData(data);
