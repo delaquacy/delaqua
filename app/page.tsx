@@ -33,47 +33,42 @@ export default function Home() {
               </Box>
             </Box>
           </Grid>
-          <Grid className={styles.imageContainer} item xs={12} md={4}>
-            <div className={styles.imageWrapper}>
-              <Image
-                src="/bottles.webp"
-                alt="bottles"
-                width={400}
-                height={410}
-              />
-            </div>
-            <p>*18.9 litres</p>
+          <Grid item xs={12} md={4}>
+            <Image
+              src="/bottles.webp"
+              alt="bottles"
+              width={400}
+              height={410}
+            />
+            <div className={styles.imageDescr}>*18.9 litres</div>
           </Grid>
         </Grid>
-        <Box className={styles.infoBlock}>
+        <Box sx={{ borderTop: 2 }} className={styles.infoBlock}>
           <Grid container spacing={1}>
-            <Grid
-              className={styles.waterDescription}
-              item
-              xs={12}
-              md={8}
-            >
-              We deliver Mersini Spring Water, which is bottled at
-              source within minutes of leaving the ground, always
-              under constant quality control, following strict HACCP
-              protocol as well as E.U. specifications.
-              <Image
-                src={"/table.webp"}
-                alt={"chemical_analysis"}
-                width={350}
-                height={180}
-              />
+            <Grid sx={{ borderRight: 2 }} item xs={12} md={8}>
+              <Box className={styles.waterDescription}>
+                <p>
+                  {" "}
+                  We deliver Mersini Spring Water, which is bottled at
+                  source within minutes of leaving the ground, always
+                  under constant quality control, following strict
+                  HACCP protocol as well as E.U. specifications.
+                </p>
+                <Image
+                  src={"/table.webp"}
+                  alt={"chemical_analysis"}
+                  width={295}
+                  height={180}
+                />
+              </Box>
             </Grid>
-            <Grid
-              className={styles.depositDescription}
-              item
-              xs={12}
-              md={4}
-            >
-              For the first delivery, we take a deposit for bottles,
-              it will be returned if you decide to stop ordering our
-              water.
-              <span> The deposit for one bottle — is 7 euros.</span>
+            <Grid item xs={12} md={4}>
+              <Box className={styles.depositDescription}>
+                For the first delivery, we take a deposit for bottles,
+                it will be returned if you decide to stop ordering our
+                water.
+                <span> The deposit for one bottle — is 7 euros.</span>
+              </Box>
             </Grid>
           </Grid>
         </Box>
