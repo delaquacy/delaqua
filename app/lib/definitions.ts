@@ -12,3 +12,10 @@ export interface IForm {
   paymentMethod: string;
   comments?: string;
 }
+
+export interface IOrders {
+  id: number;
+  date: string;
+  quantity: number;
+  paymentMethod: string;
+}

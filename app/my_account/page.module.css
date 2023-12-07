@@ -1,0 +1,30 @@
+.container {
+  height: 80vh;
+  margin-top: 20px;
+}
+.gridContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.iconAndCount {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.infoTitle {
+  font-size: 1.5rem;
+}
+.iconAndCount svg {
+  margin: 8px 0;
+  color: grey;
+}
+.iconAndCount span {
+  margin: 8px 0;
+}
+.tableSection {
+  margin-top: 20px;
+}
+.table {
+  max-width: 650px;
+}
