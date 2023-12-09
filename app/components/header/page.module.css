@@ -26,3 +26,6 @@
 .container button {
   text-transform: capitalize;
 }
+.loginMyaccountButtons a {
+  margin: 0 5px;
+}

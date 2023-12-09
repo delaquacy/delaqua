@@ -4,6 +4,7 @@ import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined
 import LocalDrinkOutlinedIcon from "@mui/icons-material/LocalDrinkOutlined";
 import styles from "./page.module.css";
 import MyForm from "./components/form/page";
+
 export default function Home() {
   return (
     <main>
