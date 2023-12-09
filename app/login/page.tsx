@@ -22,7 +22,12 @@ import { enqueueSnackbar, SnackbarProvider } from "notistack";
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
 }
-const myWindow = window as CustomWindow;
+let myWindow: CustomWindow | undefined;
+
+if (typeof window !== "undefined") {
+  myWindow = window as CustomWindow;
+}
+
 const messages = {
   otpSent: "OTP code already send to your number",
   otpSentError: "Something went wrong, reload page or try later",
@@ -39,17 +44,19 @@ export default function Login() {
   const router = useRouter();
 
   useEffect(() => {
-    myWindow.recaptchaVerifier = new RecaptchaVerifier(
-      auth,
-      "recaptcha-container",
-      {
-        size: "normal",
-        callback: (response: any) => {
-          console.log(response, "response");
-        },
-        "expired-callback": () => {},
-      }
-    );
+    if (myWindow) {
+      myWindow.recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        {
+          size: "normal",
+          callback: (response: any) => {
+            console.log(response, "response");
+          },
+          "expired-callback": () => {},
+        }
+      );
+    }
   }, [auth]);
 
   const handlePhoneNumberChange = (
@@ -70,7 +77,7 @@ export default function Login() {
       const confirmation = await signInWithPhoneNumber(
         auth,
         formatterPhoneNumber,
-        myWindow.recaptchaVerifier
+        myWindow?.recaptchaVerifier
       );
       setConfirmationResult(confirmation);
       enqueueSnackbar(messages.otpSent, { variant: "success" });
