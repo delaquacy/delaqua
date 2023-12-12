@@ -19,15 +19,20 @@ import {
 } from "firebase/auth";
 import { app } from "@/app/lib/config";
 import { useRouter } from "next/navigation";
-
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 export default function Header() {
+  const { i18n } = useTranslation();
+  const { t } = useTranslation("home");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [user, setUser] = useState<User | null>(null);
 
   const handleLanguageChange = (event: {
     target: { value: React.SetStateAction<string> };
   }) => {
-    setSelectedLanguage(event.target.value);
+    const languageValue = event.target.value as string;
+    i18n.changeLanguage(languageValue);
+    setSelectedLanguage(languageValue);
   };
 
   const auth = getAuth(app);
@@ -44,9 +49,6 @@ export default function Header() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
-      if (!user) {
-        router.push("/");
-      }
     });
 
     return () => {
@@ -84,8 +86,7 @@ export default function Header() {
               onChange={handleLanguageChange}
             >
               <MenuItem value="en">🇺🇸</MenuItem>
-              <MenuItem value="es">🇪🇸</MenuItem>
-              <MenuItem value="fr">🇬🇷</MenuItem>
+              <MenuItem value="el">🇬🇷</MenuItem>
               <MenuItem value="ua">🇺🇦</MenuItem>
             </Select>
           </Box>

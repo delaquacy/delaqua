@@ -1,17 +1,20 @@
+"use client";
 import { Box, Grid } from "@mui/material";
 import Image from "next/image";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import LocalDrinkOutlinedIcon from "@mui/icons-material/LocalDrinkOutlined";
 import styles from "./page.module.css";
 import MyForm from "./components/form/page";
-
+import { useTranslation } from "react-i18next";
+import "./i18n";
 export default function Home() {
+  const { t } = useTranslation("home");
   return (
     <main>
       <Box className={styles.container}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={8}>
-            <h1>Water delivery in Limassol</h1>
+            <h1>{t("page_title")}</h1>
             <Box className={styles.blocks}>
               <CalendarMonthOutlinedIcon fontSize="large" />
               <p className={styles.subtitle}>
