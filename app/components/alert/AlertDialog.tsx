@@ -35,7 +35,14 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {`${data?.firstAndLast},${data?.phoneNumber}, ${data?.postalIndex}, ${data?.deliveryAddress}, ${data?.addressDetails}, ${data?.geolocation}, ${data?.pump}, ${data?.bottlesNumber}, ${data?.deliveryTime}, ${data?.deliveryDate}, ${data?.comments}, ${data?.paymentMethod}`}
+            {`${data?.firstAndLast},${data?.phoneNumber}, ${
+              data?.postalIndex
+            }, ${data?.deliveryAddress}, ${data?.addressDetails}, ${
+              data?.geolocation
+            }, ${data?.pump}, ${data?.bottlesNumber}, ${
+              data?.deliveryTime
+            }, ${data?.deliveryDate.toLocaleDateString()}, 
+             ${data?.paymentMethod}, ${data?.comments}`}
           </DialogContentText>
           <DialogContentText>
             You can see result at{" "}

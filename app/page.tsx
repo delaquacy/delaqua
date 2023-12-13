@@ -8,31 +8,25 @@ import MyForm from "./components/form/page";
 import { useTranslation } from "react-i18next";
 import "./i18n";
 export default function Home() {
-  const { t } = useTranslation("home");
+  const { t } = useTranslation("main");
   return (
     <main>
       <Box className={styles.container}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={8}>
-            <h1>{t("page_title")}</h1>
+            <h1>{t("title")}</h1>
             <Box className={styles.blocks}>
               <CalendarMonthOutlinedIcon fontSize="large" />
-              <p className={styles.subtitle}>
-                We deliver water bottles from 9 AM to 5 PM from
-                Tuesday to Saturday. Fill in the form below to make an
-                order!
-              </p>
+              <p className={styles.subtitle}>{t("water_delivery")}</p>
             </Box>
             <Box className={styles.blocks}>
               <LocalDrinkOutlinedIcon fontSize="large" />
               <Box className={styles.list}>
-                <h3>Our prices:</h3>
+                <h3> {t("our_prices")}</h3>
                 <ul>
-                  <li>7 euros if you order one bottle</li>
-                  <li>
-                    6 euros — per each, if you order 2 to 9 bottles
-                  </li>
-                  <li>more than 10 bottles — price is negotiable</li>
+                  <li> {t("one_bottle_price")}</li>
+                  <li>{t("order_2-9")}</li>
+                  <li> {t("order_more_than_10")}</li>
                 </ul>
               </Box>
             </Box>
@@ -51,13 +45,7 @@ export default function Home() {
           <Grid container spacing={1}>
             <Grid sx={{ borderRight: 2 }} item xs={12} md={8}>
               <Box className={styles.waterDescription}>
-                <p>
-                  {" "}
-                  We deliver Mersini Spring Water, which is bottled at
-                  source within minutes of leaving the ground, always
-                  under constant quality control, following strict
-                  HACCP protocol as well as E.U. specifications.
-                </p>
+                <p> {t("water_characteristics")}</p>
                 <Image
                   src={"/table.webp"}
                   alt={"chemical_analysis"}
@@ -68,10 +56,8 @@ export default function Home() {
             </Grid>
             <Grid item xs={12} md={4}>
               <Box className={styles.depositDescription}>
-                For the first delivery, we take a deposit for bottles,
-                it will be returned if you decide to stop ordering our
-                water.
-                <span> The deposit for one bottle — is 7 euros.</span>
+                {t("deposite")}
+                <span> {t("one_bottle_deposite")}</span>
               </Box>
             </Grid>
           </Grid>

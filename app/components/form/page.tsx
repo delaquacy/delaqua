@@ -20,20 +20,23 @@ import AlertDialog from "../alert/AlertDialog";
 import { IForm } from "@/app/lib/definitions";
 import { useState } from "react";
 import axios from "axios";
-
-const bottleOptions = [
-  {
-    value: "1",
-    label: "(1 bottle - 7€ — available for the first delivery only)",
-  },
-  { value: "2", label: "(2 bottles - 6€ each = 12€)" },
-  { value: "3", label: "(3 bottles - 6€ each = 18€)" },
-  { value: "4", label: "(4 bottles - 6€ each = 24€)" },
-  { value: "5", label: "(5 bottles - 6€ each = 30€)" },
-  { value: "more", label: "(more - add the number below)" },
-];
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 
 const MyForm = () => {
+  const { t } = useTranslation("form");
+  const bottleOptions = [
+    {
+      value: "1",
+      label: t("number_to_first_delivery"),
+    },
+    { value: "2", label: `(2 - 6€ ${t("each")} = 12€)` },
+    { value: "3", label: `(3 - 6€ ${t("each")} = 18€)` },
+    { value: "4", label: `(4 - 6€ ${t("each")} = 24€)` },
+    { value: "5", label: `(5 - 6€ ${t("each")} = 30€)` },
+    { value: "more", label: t("number_of_bottles_more") },
+  ];
+
   const [data, setData] = useState<IForm | undefined>(undefined);
   const [showWindow, setShowWindow] = useState<boolean>(false);
   const {
@@ -48,9 +51,11 @@ const MyForm = () => {
 
   const onSubmit = async (data: IForm) => {
     try {
+      const formattedData = formatDataBeforeSubmit(data);
+
       const response = await axios.post(
         "https://sheet.best/api/sheets/e8712774-a547-4ade-ac6c-1ee093cdfad1",
-        data
+        formattedData
       );
       setData(data);
       setShowWindow(true);
@@ -60,13 +65,26 @@ const MyForm = () => {
       console.error("Error submitting form:", error);
     }
   };
+  const formatDataBeforeSubmit = (data: IForm) => {
+    const date = new Date(data.deliveryDate);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    const formattedDate = `${day}-${month}-${year}`;
+
+    return {
+      ...data,
+      deliveryDate: formattedDate,
+    };
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
           <span className={styles.inputName}>
-            First and last name
+            {t("first_and_last")}
           </span>
           <Controller
             name="firstAndLast"
@@ -83,7 +101,7 @@ const MyForm = () => {
             )}
           />
           <span className={styles.inputName}>
-            Phone number(Cuprys)
+            {t("phone_number")}
           </span>
           <Controller
             name="phoneNumber"
@@ -93,14 +111,14 @@ const MyForm = () => {
               <TextField
                 {...field}
                 fullWidth
-                placeholder="Phone number in format 97123456"
+                placeholder={t("phone_number_placeholder")}
                 margin="normal"
                 error={!!errors.phoneNumber}
                 helperText={errors.phoneNumber?.message}
               />
             )}
           />
-          <span className={styles.inputName}>Post index</span>
+          <span className={styles.inputName}>{t("post_index")}</span>
           <Controller
             name="postalIndex"
             control={control}
@@ -110,12 +128,15 @@ const MyForm = () => {
                 {...field}
                 fullWidth
                 margin="normal"
+                placeholder={t("post_index_placeholder")}
                 error={!!errors.postalIndex}
                 helperText={errors.postalIndex?.message}
               />
             )}
           />
-          <span className={styles.inputName}>Delivery address</span>
+          <span className={styles.inputName}>
+            {t("delivery_address")}
+          </span>
           <Controller
             name="deliveryAddress"
             control={control}
@@ -130,7 +151,9 @@ const MyForm = () => {
               />
             )}
           />
-          <span className={styles.inputName}>Address details</span>
+          <span className={styles.inputName}>
+            {t("address_details")}
+          </span>
           <Controller
             name="addressDetails"
             control={control}
@@ -138,7 +161,7 @@ const MyForm = () => {
             render={({ field }) => (
               <TextField
                 {...field}
-                placeholder="Appart, flat, code"
+                placeholder={t("address_placeholder")}
                 fullWidth
                 margin="normal"
                 error={!!errors.addressDetails}
@@ -147,7 +170,7 @@ const MyForm = () => {
             )}
           />
           <span className={styles.inputName}>
-            Link to geolocation
+            {t("geolocation_link")}
           </span>
           <Controller
             name="geolocation"
@@ -164,7 +187,7 @@ const MyForm = () => {
             )}
           />
           <div>
-            * follow the link to{" "}
+            {t("follow_the_link")}{" "}
             <Link
               style={{
                 fontWeight: "bold",
@@ -173,14 +196,13 @@ const MyForm = () => {
               target="_blank"
               href="https://www.google.com/maps"
             >
-              Google Maps
+              {t("google_maps")}
             </Link>
-            , and choose your house on the map, and copy the link to
-            the field above
+            {t("and_choose")}
           </div>
           <br></br>
           <span className={styles.inputName}>
-            Do you need a pump? *
+            {t("do_you_need_pump")}
           </span>
           <Controller
             name="pump"
@@ -191,12 +213,12 @@ const MyForm = () => {
                 <FormControlLabel
                   value="yes"
                   control={<Radio />}
-                  label="manual pump (10€)"
+                  label={t("manual_pump")}
                 />
                 <FormControlLabel
                   value="not"
                   control={<Radio />}
-                  label="don't need"
+                  label={t("dont_need")}
                 />
               </RadioGroup>
             )}
@@ -209,7 +231,7 @@ const MyForm = () => {
         </Grid>
         <Grid item xs={12} md={6}>
           <span className={styles.inputName}>
-            Number of bottles you want to buy*
+            {t("number_of_bottles")}
           </span>
           <Controller
             name="bottlesNumber"
@@ -233,7 +255,9 @@ const MyForm = () => {
               {errors.bottlesNumber?.message}
             </p>
           </div>
-          <span className={styles.inputName}>Delivery time</span>
+          <span className={styles.inputName}>
+            {t("delivery_time")}
+          </span>
           <Controller
             name="deliveryTime"
             control={control}
@@ -248,12 +272,12 @@ const MyForm = () => {
                 <FormControlLabel
                   value="after"
                   control={<Radio />}
-                  label="9 - 17 — contactless delivery (we will leave bottles near the door)"
+                  label={t("delivery_time_9_17")}
                 />
                 <FormControlLabel
                   value="before"
                   control={<Radio />}
-                  label="9 - 12 — personal delivery"
+                  label={t("delivery_time_9_12")}
                 />
               </RadioGroup>
             )}
@@ -263,7 +287,9 @@ const MyForm = () => {
               {errors.deliveryTime?.message}
             </p>
           </div>
-          <span className={styles.inputName}>Payment method *</span>
+          <span className={styles.inputName}>
+            {t("payment_method")}
+          </span>
           <Controller
             name="paymentMethod"
             control={control}
@@ -278,12 +304,12 @@ const MyForm = () => {
                 <FormControlLabel
                   value="Cash"
                   control={<Radio />}
-                  label="Cash"
+                  label={t("cash")}
                 />
                 <FormControlLabel
                   value="PAyment ststem"
                   control={<Radio />}
-                  label="Revolut (we will send the link via messenger)"
+                  label={t("revolut")}
                 />
               </RadioGroup>
             )}
@@ -293,7 +319,7 @@ const MyForm = () => {
               {errors.paymentMethod?.message}
             </p>
           </div>
-          <div className={styles.inputName}>Delivery date</div>
+          <div className={styles.inputName}>{t("delivery_date")}</div>
           <div className={styles.datePicker}>
             <Controller
               name="deliveryDate"
@@ -315,7 +341,7 @@ const MyForm = () => {
             </p>
           </div>
 
-          <span className={styles.inputName}>Comments</span>
+          <span className={styles.inputName}>{t("comments")}</span>
           <Controller
             name="comments"
             control={control}
@@ -335,7 +361,7 @@ const MyForm = () => {
           />
           <Box className={styles.button}>
             <Button type="submit" variant="outlined">
-              Make an order
+              {t("submit_button")}
             </Button>
           </Box>
         </Grid>
