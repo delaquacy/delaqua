@@ -22,6 +22,14 @@ import { useState } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
+import {
+  addDoc,
+  arrayUnion,
+  collection,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
+import { db, getCurrentUserId } from "@/app/lib/config";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
@@ -48,20 +56,41 @@ const MyForm = () => {
     resolver: yupResolver(schema),
     mode: "onBlur",
   });
+  const createOrder = async () => {
+    try {
+      const orderRef = await addDoc(collection(db, "orders"), data);
+      const userId = getCurrentUserId();
+      if (userId) {
+        await updateDoc(doc(db, "users", userId), {
+          orders: arrayUnion(orderRef),
+        });
+      }
 
+      console.log("Order created successfully!");
+    } catch (error) {
+      console.error("Error creating order:", error);
+    }
+  };
   const onSubmit = async (data: IForm) => {
     try {
       const formattedData = formatDataBeforeSubmit(data);
 
+      const docRef = await addDoc(
+        collection(db, "new_order"),
+        formattedData
+      );
+
       const response = await axios.post(
-        "https://sheet.best/api/sheets/e8712774-a547-4ade-ac6c-1ee093cdfad1",
+        "https://script.google.com/macros/s/AKfycbyIRDUN_RbC__oKgI6cT6pvh8WKTbZmg9lRn4YBanvry1ULk2nql0znbmp0YRYpyVchPg/exec",
         formattedData
       );
       setData(data);
+
       setShowWindow(true);
       console.log("Form submitted with data:", JSON.stringify(data));
       reset();
     } catch (error) {
+      createOrder();
       console.error("Error submitting form:", error);
     }
   };

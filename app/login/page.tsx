@@ -7,17 +7,18 @@ import {
   signInWithPhoneNumber,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { app } from "../lib/config";
-import {
-  Alert,
-  Box,
-  Button,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import styles from "./page.module.css";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
+import { app, db } from "../lib/config";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
 
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
@@ -42,7 +43,6 @@ export default function Login() {
 
   const auth = getAuth(app);
   const router = useRouter();
-
   useEffect(() => {
     if (myWindow) {
       myWindow.recaptchaVerifier = new RecaptchaVerifier(
@@ -50,9 +50,7 @@ export default function Login() {
         "recaptcha-container",
         {
           size: "normal",
-          callback: (response: any) => {
-            console.log(response, "response");
-          },
+          callback: (response: string) => {},
           "expired-callback": () => {},
         }
       );
@@ -93,6 +91,17 @@ export default function Login() {
   const handleOtpSubmit = async () => {
     try {
       await confirmationResult?.confirm(otp);
+
+      const user = auth.currentUser;
+      if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+
+        if (!userDoc.exists()) {
+          await setDoc(doc(db, "users", user.uid), {
+            phoneNumber: user.phoneNumber,
+          });
+        }
+      }
       setOtp("");
       router.push("/my_account");
     } catch (error) {
