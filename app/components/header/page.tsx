@@ -96,7 +96,7 @@ export default function Header() {
               <MenuItem value="ua">🇺🇦</MenuItem>
             </Select>
           </Box>
-          {showLogin && <Login setShowLogin={setShowLogin} />}
+          {showLogin && <Login showLogin={{ setShowLogin }} />}
           {!user && (
             <Button
               variant="outlined"

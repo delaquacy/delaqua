@@ -1,5 +1,12 @@
 "use client";
-import React, { useState, useEffect, ChangeEvent, FC } from "react";
+import React, {
+  useState,
+  useEffect,
+  ChangeEvent,
+  FC,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import {
   ConfirmationResult,
   getAuth,
@@ -13,9 +20,13 @@ import styles from "./page.module.css";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { app, db } from "../../lib/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-interface LoginProps {
-  setShowLogin: React.Dispatch<React.SetStateAction<boolean>>;
-}
+type LoginProps = {
+  setShowLogin: Dispatch<SetStateAction<boolean>>;
+};
+
+type Props = {
+  showLogin?: LoginProps;
+};
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
 }
@@ -30,7 +41,10 @@ const messages = {
   otpSentError: "Something went wrong, reload page or try later",
   wrongOtp: "Write incorect OTP code",
 };
-export default function Login({ setShowLogin }: LoginProps) {
+const Login: FC<Props> = ({
+  showLogin = { setShowLogin: () => {} },
+}) => {
+  const { setShowLogin } = showLogin || {};
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
@@ -143,4 +157,5 @@ export default function Login({ setShowLogin }: LoginProps) {
       </Box>
     </SnackbarProvider>
   );
-}
+};
+export default Login;
