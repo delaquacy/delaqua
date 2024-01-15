@@ -30,7 +30,7 @@ const messages = {
   otpSentError: "Something went wrong, reload page or try later",
   wrongOtp: "Write incorect OTP code",
 };
-const Login: FC<LoginProps> = ({ setShowLogin }) => {
+export default function Login({ setShowLogin }: LoginProps) {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
@@ -145,5 +145,4 @@ const Login: FC<LoginProps> = ({ setShowLogin }) => {
       </Box>
     </SnackbarProvider>
   );
-};
-export default Login;
+}
