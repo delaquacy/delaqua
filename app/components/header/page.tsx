@@ -11,6 +11,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import { MenuItem, Select } from "@mui/material";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   getAuth,
   onAuthStateChanged,
@@ -21,6 +22,7 @@ import { app } from "@/app/lib/config";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
+
 import Login from "../login/page";
 
 export default function Header() {
@@ -101,7 +103,12 @@ export default function Header() {
               <MenuItem value="ua">🇺🇦</MenuItem>
             </Select>
           </Box>
-          {showLogin && <Login setClose={setShowLogin} />}
+          {showLogin && <Login />}
+          {showLogin && (
+            <Box className={styles.closeButton}>
+              <CloseIcon onClick={handleLoginToggle} />
+            </Box>
+          )}
           {!user && (
             <Button
               variant="outlined"
