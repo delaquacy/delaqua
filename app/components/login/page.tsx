@@ -14,7 +14,7 @@ import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { app, db } from "../../lib/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 interface LoginProps {
-  setShowLogin: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowLogin: (value: boolean) => void;
 }
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
