@@ -1,12 +1,5 @@
 "use client";
-import React, {
-  useState,
-  useEffect,
-  ChangeEvent,
-  FC,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import {
   ConfirmationResult,
   getAuth,
@@ -20,13 +13,7 @@ import styles from "./page.module.css";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { app, db } from "../../lib/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-type LoginProps = {
-  setShowLogin: Dispatch<SetStateAction<boolean>>;
-};
 
-type Props = {
-  showLogin?: LoginProps;
-};
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
 }
@@ -41,10 +28,7 @@ const messages = {
   otpSentError: "Something went wrong, reload page or try later",
   wrongOtp: "Write incorect OTP code",
 };
-const Login: FC<Props> = ({
-  showLogin = { setShowLogin: () => {} },
-}) => {
-  const { setShowLogin } = showLogin || {};
+export default function Login() {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
@@ -115,7 +99,6 @@ const Login: FC<Props> = ({
 
       setOtp("");
       router.push("/my_account");
-      setShowLogin(false);
     } catch (error) {
       enqueueSnackbar(messages.wrongOtp, { variant: "error" });
       console.error(error);
@@ -157,5 +140,4 @@ const Login: FC<Props> = ({
       </Box>
     </SnackbarProvider>
   );
-};
-export default Login;
+}

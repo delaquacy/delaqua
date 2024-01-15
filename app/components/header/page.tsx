@@ -18,7 +18,7 @@ import {
   User,
 } from "firebase/auth";
 import { app } from "@/app/lib/config";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 import Login from "../login/page";
@@ -43,6 +43,7 @@ export default function Header() {
 
   const auth = getAuth(app);
   const router = useRouter();
+  const pathname = usePathname();
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -51,7 +52,11 @@ export default function Header() {
       console.log(error);
     }
   };
-
+  useEffect(() => {
+    if (pathname == "/my_account") {
+      setShowLogin(false);
+    }
+  }, [pathname, router]);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
@@ -96,7 +101,7 @@ export default function Header() {
               <MenuItem value="ua">🇺🇦</MenuItem>
             </Select>
           </Box>
-          {showLogin && <Login showLogin={{ setShowLogin }} />}
+          {showLogin && <Login />}
           {!user && (
             <Button
               variant="outlined"
