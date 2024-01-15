@@ -21,7 +21,7 @@ import { app } from "@/app/lib/config";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
-import { Login } from "../login/page";
+import Login from "../login/page";
 
 export default function Header() {
   const { i18n } = useTranslation();

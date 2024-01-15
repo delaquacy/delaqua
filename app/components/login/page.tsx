@@ -30,7 +30,7 @@ const messages = {
   otpSentError: "Something went wrong, reload page or try later",
   wrongOtp: "Write incorect OTP code",
 };
-export const Login: FC<LoginProps> = ({ setShowLogin }) => {
+const Login: FC<LoginProps> = ({ setShowLogin }) => {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
@@ -100,7 +100,9 @@ export const Login: FC<LoginProps> = ({ setShowLogin }) => {
       }
 
       setOtp("");
+
       router.push("/my_account");
+
       setShowLogin(false);
     } catch (error) {
       enqueueSnackbar(messages.wrongOtp, { variant: "error" });
@@ -144,3 +146,4 @@ export const Login: FC<LoginProps> = ({ setShowLogin }) => {
     </SnackbarProvider>
   );
 };
+export default Login;
