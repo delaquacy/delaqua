@@ -12,10 +12,14 @@ export const schema = yup.object().shape({
   deliveryAddress: yup.string().required("Enter delivery address"),
   addressDetails: yup.string().required("Enter address details"),
   geolocation: yup.string().required("Enter you geolocation"),
-  pump: yup.string().required("Choose pump"),
-  bottlesNumber: yup.string().required("Choose bootle number"),
+  pump: yup.boolean(),
+  bottlesNumberToBuy: yup.string().required("Choose bootle number"),
+  bottlesNumberToReturn: yup
+    .string()
+    .required("Choose bootle number"),
   deliveryDate: yup.date().required("Choose delivery date"),
   deliveryTime: yup.string().required("Choose time"),
   paymentMethod: yup.string().required("Choose payment method"),
   comments: yup.string(),
+  id: yup.string(),
 });

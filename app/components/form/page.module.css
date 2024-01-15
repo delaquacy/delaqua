@@ -19,3 +19,30 @@
 .inputName {
   font-weight: bold;
 }
+.blueContainer {
+  background-color: #63c1f3b5;
+  padding: 15px;
+  height: 100%;
+}
+.ordersHistory {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+.ordersHistory svg {
+  margin-right: 10px;
+}
+.titles {
+  margin: 15px 0;
+  font-size: 1.5rem;
+}
+.marginTopBot {
+  font-weight: bold;
+  margin: 16px 0 8px 0;
+}
+.marginTopBot:first-of-type {
+  margin-top: 0px;
+}
+.margins {
+  margin: 8px 0;
+}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent, FC } from "react";
 import {
   ConfirmationResult,
   getAuth,
@@ -11,15 +11,11 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import styles from "./page.module.css";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
-import { app, db } from "../lib/config";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  setDoc,
-} from "firebase/firestore";
-
+import { app, db } from "../../lib/config";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+interface LoginProps {
+  setShowLogin: React.Dispatch<React.SetStateAction<boolean>>;
+}
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
 }
@@ -34,7 +30,7 @@ const messages = {
   otpSentError: "Something went wrong, reload page or try later",
   wrongOtp: "Write incorect OTP code",
 };
-export default function Login() {
+export const Login: FC<LoginProps> = ({ setShowLogin }) => {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
@@ -102,8 +98,10 @@ export default function Login() {
           });
         }
       }
+
       setOtp("");
       router.push("/my_account");
+      setShowLogin(false);
     } catch (error) {
       enqueueSnackbar(messages.wrongOtp, { variant: "error" });
       console.error(error);
@@ -112,33 +110,37 @@ export default function Login() {
   return (
     <SnackbarProvider>
       <Box className={styles.container}>
-        <Box className={styles.logoAndTitle}>
-          <LockOutlinedIcon fontSize="large" />
-          <Typography variant="h4">Log in</Typography>
+        <Box className={styles.wrapper}>
+          <Box className={styles.logoAndTitle}>
+            <LockOutlinedIcon fontSize="large" />
+            <Typography variant="h4">
+              Log in to make an order
+            </Typography>
+          </Box>
+          <TextField
+            type="tel"
+            value={phoneNumber}
+            onChange={handlePhoneNumberChange}
+            className={styles.input}
+            placeholder="Please enter phone number"
+          />
+          <TextField
+            type="text"
+            value={otp}
+            onChange={handleOtpChange}
+            className={styles.input}
+            disabled={!otpSent}
+            placeholder="Please enter OTP code from sms"
+          />
+          <Button
+            variant="outlined"
+            onClick={otpSent ? handleOtpSubmit : handleSentOtp}
+          >
+            {otpSent ? "Submit Otp" : "Sent OTP"}
+          </Button>
+          {!otpSent ? <div id="recaptcha-container"></div> : null}
         </Box>
-        <TextField
-          type="tel"
-          value={phoneNumber}
-          onChange={handlePhoneNumberChange}
-          className={styles.input}
-          placeholder="Please enter phone number"
-        />
-        <TextField
-          type="text"
-          value={otp}
-          onChange={handleOtpChange}
-          className={styles.input}
-          disabled={!otpSent}
-          placeholder="Please enter OTP code from sms"
-        />
-        <Button
-          variant="outlined"
-          onClick={otpSent ? handleOtpSubmit : handleSentOtp}
-        >
-          {otpSent ? "Submit Otp" : "Sent OTP"}
-        </Button>
-        {!otpSent ? <div id="recaptcha-container"></div> : null}
       </Box>
     </SnackbarProvider>
   );
-}
+};

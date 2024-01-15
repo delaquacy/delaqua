@@ -5,12 +5,14 @@ export interface IForm {
   deliveryAddress: string;
   addressDetails: string;
   geolocation: string;
-  pump: string;
-  bottlesNumber: string;
+  pump?: boolean;
+  bottlesNumberToBuy: string;
+  bottlesNumberToReturn: string;
   deliveryDate: Date;
   deliveryTime: string;
   paymentMethod: string;
   comments?: string;
+  id?: string;
 }
 
 export interface IOrders {

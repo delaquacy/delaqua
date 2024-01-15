@@ -4,7 +4,6 @@ import Image from "next/image";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import LocalDrinkOutlinedIcon from "@mui/icons-material/LocalDrinkOutlined";
 import styles from "./page.module.css";
-import MyForm from "./components/form/page";
 import { useTranslation } from "react-i18next";
 import "./i18n";
 export default function Home() {
@@ -62,9 +61,6 @@ export default function Home() {
             </Grid>
           </Grid>
         </Box>
-      </Box>
-      <Box className={styles.formWrapper}>
-        <MyForm />
       </Box>
     </main>
   );

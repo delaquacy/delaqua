@@ -21,11 +21,17 @@ import { app } from "@/app/lib/config";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
+import { Login } from "../login/page";
+
 export default function Header() {
   const { i18n } = useTranslation();
   const { t } = useTranslation("home");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const [showLogin, setShowLogin] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  const handleLoginToggle = () => {
+    setShowLogin((prevShowLogin) => !prevShowLogin);
+  };
 
   const handleLanguageChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -90,27 +96,18 @@ export default function Header() {
               <MenuItem value="ua">🇺🇦</MenuItem>
             </Select>
           </Box>
+          {showLogin && <Login setShowLogin={setShowLogin} />}
           {!user && (
-            <Link href="/login" passHref>
-              <Button
-                variant="outlined"
-                endIcon={<LoginIcon fontSize="small" />}
-              >
-                Log in
-              </Button>
-            </Link>
+            <Button
+              variant="outlined"
+              endIcon={<LoginIcon fontSize="small" />}
+              onClick={handleLoginToggle}
+            >
+              Log in
+            </Button>
           )}
           {user && (
             <Box className={styles.loginMyaccountButtons}>
-              <Link href="/">
-                <Button
-                  variant="outlined"
-                  endIcon={<ExitToAppIcon fontSize="small" />}
-                  onClick={handleLogout}
-                >
-                  Log out
-                </Button>
-              </Link>
               <Link href="/my_account">
                 <Button
                   variant="outlined"
@@ -119,6 +116,15 @@ export default function Header() {
                   }
                 >
                   My account
+                </Button>
+              </Link>
+              <Link href="/">
+                <Button
+                  variant="outlined"
+                  endIcon={<ExitToAppIcon fontSize="small" />}
+                  onClick={handleLogout}
+                >
+                  Log out
                 </Button>
               </Link>
             </Box>
