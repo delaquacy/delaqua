@@ -13,12 +13,7 @@ import styles from "./page.module.css";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { app, db } from "../../lib/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-interface LoginProps {
-  setShowLogin: (value: boolean) => void;
-}
-type LoginPropsExtended = LoginProps & {
-  someOtherProp?: string;
-};
+
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
 }
@@ -33,9 +28,7 @@ const messages = {
   otpSentError: "Something went wrong, reload page or try later",
   wrongOtp: "Write incorect OTP code",
 };
-export default function Login({
-  setShowLogin,
-}: LoginProps | LoginPropsExtended) {
+export default function Login(setShowLogin: any) {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
