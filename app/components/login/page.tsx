@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent, FC } from "react";
 import {
   ConfirmationResult,
   getAuth,
@@ -9,11 +9,15 @@ import {
 import { useRouter } from "next/navigation";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import styles from "./page.module.css";
+import CloseIcon from "@mui/icons-material/Close";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { app, db } from "../../lib/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import styles from "./page.module.css";
 
+interface LoginProps {
+  setClose: (value: boolean) => void;
+}
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
 }
@@ -28,13 +32,16 @@ const messages = {
   otpSentError: "Something went wrong, reload page or try later",
   wrongOtp: "Write incorect OTP code",
 };
-export default function Login() {
+const Login: FC<LoginProps> = ({ setClose }) => {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
     useState<ConfirmationResult | null>(null);
   const [otpSent, setOtpSent] = useState<boolean>(false);
 
+  const handleClose = () => {
+    setClose(false);
+  };
   const auth = getAuth(app);
   const router = useRouter();
   useEffect(() => {
@@ -108,6 +115,9 @@ export default function Login() {
     <SnackbarProvider>
       <Box className={styles.container}>
         <Box className={styles.wrapper}>
+          <Box className={styles.closeButton}>
+            <CloseIcon onClick={handleClose} />
+          </Box>
           <Box className={styles.logoAndTitle}>
             <LockOutlinedIcon fontSize="large" />
             <Typography variant="h4">
@@ -140,4 +150,5 @@ export default function Login() {
       </Box>
     </SnackbarProvider>
   );
-}
+};
+export default Login;
