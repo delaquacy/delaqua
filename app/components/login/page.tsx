@@ -16,6 +16,9 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 interface LoginProps {
   setShowLogin: (value: boolean) => void;
 }
+type LoginPropsExtended = LoginProps & {
+  someOtherProp?: string;
+};
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
 }
@@ -30,7 +33,9 @@ const messages = {
   otpSentError: "Something went wrong, reload page or try later",
   wrongOtp: "Write incorect OTP code",
 };
-export default function Login({ setShowLogin }: LoginProps) {
+export default function Login({
+  setShowLogin,
+}: LoginProps | LoginPropsExtended) {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
