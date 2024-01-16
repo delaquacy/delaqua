@@ -46,3 +46,40 @@
 .margins {
   margin: 8px 0;
 }
+.marginsTotal {
+  margin: 8px 0;
+  font-size: 1.2rem;
+}
+.bottlesButtons {
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+.bottlesButtons fieldset {
+  border: none;
+}
+.bottlesButtons input {
+  margin: 0 25px;
+  max-width: 50px;
+  font-size: 25px;
+}
+.bottlesButtons button {
+  width: 35px;
+  cursor: pointer;
+  margin-right: 20px;
+  height: 35px;
+  border: none;
+  border-radius: 50px;
+  background-color: #63c1f3b5;
+}
+.inputErrors {
+  color: #d32f2f;
+  font-size: 0.75rem;
+  line-height: 1.66;
+  letter-spacing: 0.03333em;
+  text-align: left;
+  margin-top: 3px;
+  margin-right: 14px;
+  margin-bottom: 0;
+  margin-left: 14px;
+}

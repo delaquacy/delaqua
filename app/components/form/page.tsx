@@ -37,7 +37,10 @@ import {
 } from "firebase/firestore";
 import { db, getCurrentUserId } from "@/app/lib/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { formatPhoneNumber } from "@/app/utils/formUtils";
+import {
+  calculatePrice,
+  formatPhoneNumber,
+} from "@/app/utils/formUtils";
 import useUserOrders from "@/app/utils/getOrdersfromDb";
 import { v4 as uuidv4 } from "uuid";
 
@@ -68,12 +71,32 @@ const MyForm = () => {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
     mode: "onBlur",
   });
 
+  const bottlesToBuy = parseInt(watch("bottlesNumberToBuy"), 10) || 0;
+  const bottlesToReturn =
+    parseInt(watch("bottlesNumberToReturn"), 10) || 0;
+
+  const { paymentForWater, depositForBottles, totalPayments } =
+    calculatePrice(bottlesToBuy, bottlesToReturn);
+  let paymentText = "";
+  let paymentPrice = 0;
+
+  if (bottlesToBuy === 1) {
+    paymentText = "Price for 1 bottle";
+    paymentPrice = 7;
+  } else if (bottlesToBuy >= 2 && bottlesToBuy <= 9) {
+    paymentText = `Price for ${bottlesToBuy} bottles`;
+    paymentPrice = 6;
+  } else if (bottlesToBuy >= 10) {
+    paymentText = `Price for ${bottlesToBuy} bottles`;
+    paymentPrice = 5.5;
+  }
   const onSubmit = async (data: IForm) => {
     try {
       const formatDataBeforeSubmit = (data: IForm) => {
@@ -144,17 +167,44 @@ const MyForm = () => {
           <Controller
             name="bottlesNumberToBuy"
             control={control}
-            defaultValue="0"
+            defaultValue="2"
             render={({ field }) => (
-              <TextField
-                {...field}
-                type="number"
-                inputProps={{ min: 0 }}
-                error={!!errors.bottlesNumberToBuy}
-                helperText={errors.bottlesNumberToBuy?.message}
-              />
+              <div className={styles.bottlesButtons}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newValue = parseInt(field.value) + 1;
+                    field.onChange(newValue);
+                  }}
+                >
+                  +
+                </button>
+
+                <TextField
+                  {...field}
+                  type="number"
+                  inputProps={{ min: 0 }}
+                  error={!!errors.bottlesNumberToBuy}
+                />
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newValue = Math.max(
+                      parseInt(field.value) - 1,
+                      0
+                    );
+                    field.onChange(newValue);
+                  }}
+                >
+                  -
+                </button>
+              </div>
             )}
           />
+          <span className={styles.inputErrors}>
+            {errors.bottlesNumberToBuy?.message}
+          </span>
           <div className={styles.marginTopBot}>
             {t("number_of_bottles_to_return")}
           </div>
@@ -163,24 +213,56 @@ const MyForm = () => {
             control={control}
             defaultValue="0"
             render={({ field }) => (
-              <TextField
-                {...field}
-                type="number"
-                inputProps={{ min: 0 }}
-                error={!!errors.bottlesNumberToReturn}
-                helperText={errors.bottlesNumberToReturn?.message}
-              />
+              <div className={styles.bottlesButtons}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newValue = parseInt(field.value) + 1;
+                    field.onChange(newValue);
+                  }}
+                >
+                  +
+                </button>
+
+                <TextField
+                  {...field}
+                  type="number"
+                  inputProps={{ min: 0 }}
+                  error={!!errors.bottlesNumberToReturn}
+                />
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newValue = Math.max(
+                      parseInt(field.value) - 1,
+                      0
+                    );
+                    field.onChange(newValue);
+                  }}
+                >
+                  -
+                </button>
+              </div>
             )}
           />
+          <span className={styles.inputErrors}>
+            {errors.bottlesNumberToReturn?.message}
+          </span>
         </Grid>
         <Grid item xs={12} md={4}>
           <div className={styles.blueContainer}>
-            <p className={styles.margins}>Payment for water</p>
-            <div className={styles.margins}>12$</div>
-            <p className={styles.margins}>Deposit for bottles</p>
-            <div className={styles.margins}> 10$</div>
-            <p className={styles.margins}>Total payments</p>
-            <div className={styles.margins}>26$</div>
+            <p className={styles.marginsTotal}>Total payments</p>
+            <div className={styles.marginsTotal}>
+              {totalPayments}$
+            </div>
+            <p className={styles.margins}>
+              {" "}
+              {paymentText} {paymentPrice}$
+            </p>
+            <div className={styles.margins}>{paymentForWater}$</div>
+            <p className={styles.margins}>Deposite for bottles</p>
+            <div className={styles.margins}>{depositForBottles}$</div>
           </div>
         </Grid>
         <Grid item xs={12} md={4}>

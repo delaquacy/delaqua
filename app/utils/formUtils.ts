@@ -15,3 +15,31 @@ export function formatPhoneNumber(phoneNumber: string) {
 
   return formattedPhoneNumber;
 }
+
+export function calculatePrice(
+  numOrderedBottles: number,
+  numReturnedBottles: number
+) {
+  const basePricePerBottle = 5.5;
+
+  const pricePerBottle =
+    numOrderedBottles <= 1
+      ? 7
+      : numOrderedBottles <= 9
+      ? 6
+      : basePricePerBottle;
+
+  const depositPerBottle = 10;
+
+  const paymentForWater = numOrderedBottles * pricePerBottle;
+  const depositForBottles =
+    Math.max(numOrderedBottles - numReturnedBottles, 0) *
+    depositPerBottle;
+  const totalPayments = paymentForWater + depositForBottles;
+
+  return {
+    paymentForWater,
+    depositForBottles,
+    totalPayments,
+  };
+}
