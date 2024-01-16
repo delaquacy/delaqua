@@ -110,6 +110,7 @@ const MyForm = () => {
         return {
           ...data,
           deliveryDate: formattedDate,
+          pump: data.pump ? "yes" : "no",
           id: uuidv4(),
         };
       };
@@ -138,10 +139,15 @@ const MyForm = () => {
         formattedData
       );
 
-      // const response = await axios.post(
-      //   "https://script.google.com/macros/s/AKfycbyIRDUN_RbC__oKgI6cT6pvh8WKTbZmg9lRn4YBanvry1ULk2nql0znbmp0YRYpyVchPg/exec",
-      //   formattedData
-      // );
+      const response = await axios.post(
+        "https://script.google.com/macros/s/AKfycbyIRDUN_RbC__oKgI6cT6pvh8WKTbZmg9lRn4YBanvry1ULk2nql0znbmp0YRYpyVchPg/exec",
+        formattedData,
+        {
+          headers: {
+            "Content-Type": "text/plain",
+          },
+        }
+      );
       createOrder();
       console.log("Form submitted with data:", JSON.stringify(data));
       reset();
