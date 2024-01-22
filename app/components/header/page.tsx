@@ -11,7 +11,6 @@ import LoginIcon from "@mui/icons-material/Login";
 import { CircularProgress, MenuItem, Select } from "@mui/material";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import CloseIcon from "@mui/icons-material/Close";
 import {
   getAuth,
   onAuthStateChanged,
@@ -22,7 +21,6 @@ import { app } from "@/app/lib/config";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
-
 import Login, { LogInProps } from "../login/page";
 
 export default function Header() {
@@ -31,7 +29,7 @@ export default function Header() {
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const handleLoginToggle = () => {
     setShowLogin((prevShowLogin) => !prevShowLogin);
   };
@@ -113,11 +111,6 @@ export default function Header() {
             </Select>
           </Box>
           {showLogin && <Login {...loginProps} />}
-          {showLogin && (
-            <Box className={styles.closeButton}>
-              <CloseIcon onClick={handleLoginToggle} />
-            </Box>
-          )}
           <div
             style={{
               width: "20%",
