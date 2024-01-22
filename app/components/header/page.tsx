@@ -23,7 +23,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 
-import Login from "../login/page";
+import Login, { LogInProps } from "../login/page";
 
 export default function Header() {
   const { i18n } = useTranslation();
@@ -73,6 +73,10 @@ export default function Header() {
       unsubscribe();
     };
   }, [auth, router]);
+  const loginProps: LogInProps = {
+    params: { onLogin: handleLogin },
+  };
+
   return (
     <Box className={styles.container} sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -108,7 +112,7 @@ export default function Header() {
               <MenuItem value="ua">🇺🇦</MenuItem>
             </Select>
           </Box>
-          {showLogin && <Login onLogin={handleLogin} />}
+          {showLogin && <Login {...loginProps} />}
           {showLogin && (
             <Box className={styles.closeButton}>
               <CloseIcon onClick={handleLoginToggle} />

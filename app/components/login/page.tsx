@@ -22,8 +22,10 @@ let myWindow: CustomWindow | undefined;
 if (typeof window !== "undefined") {
   myWindow = window as CustomWindow;
 }
-interface LogInProps {
-  onLogin: () => void;
+export interface LogInProps {
+  params: {
+    onLogin: () => void;
+  };
 }
 
 const messages = {
@@ -31,7 +33,8 @@ const messages = {
   otpSentError: "Something went wrong, reload page or try later",
   wrongOtp: "Write incorect OTP code",
 };
-export default function Login({ onLogin }: LogInProps) {
+export default function Login({ params }: LogInProps) {
+  const { onLogin } = params;
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
