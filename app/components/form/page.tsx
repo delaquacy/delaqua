@@ -48,7 +48,8 @@ const MyForm = () => {
   const { userOrders } = useUserOrders();
   const [showWindow, setShowWindow] = useState<boolean>(false);
   const [userPhone, setUserPhone] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingNumber, setLoadingNumber] = useState<boolean>(true);
+  const [loadingForm, setLoadingForm] = useState<boolean>(false);
   const lastObject = userOrders[userOrders.length - 1];
 
   useEffect(() => {
@@ -57,7 +58,7 @@ const MyForm = () => {
       if (user) {
         const phoneNumber = user.phoneNumber;
         setUserPhone(formatPhoneNumber(phoneNumber!));
-        setLoading(false);
+        setLoadingNumber(false);
       }
     });
 
@@ -76,33 +77,6 @@ const MyForm = () => {
     resolver: yupResolver(schema),
     mode: "onBlur",
   });
-
-  const revolutApiKey =
-    "sk_c2VJ3tewi84eyawtUYZDSdot-QyoqcAZAANrVFUM2b3eElaazOxR3orFBG0DPCpU";
-  const revolutApiEndpoint = "https://sandbox-merchant.revolut.com/";
-
-  const makePayment = async (amount: number, recipient: string) => {
-    try {
-      const response = await axios.post(
-        `${revolutApiEndpoint}/v1/payments`,
-        {
-          amount,
-          currency: "USD",
-          receiver: recipient,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${revolutApiKey}`,
-          },
-        }
-      );
-
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const bottlesToBuy = parseInt(watch("bottlesNumberToBuy"), 10) || 0;
   const bottlesToReturn =
@@ -124,6 +98,7 @@ const MyForm = () => {
     paymentPrice = 5.5;
   }
   const onSubmit = async (data: IForm) => {
+    setLoadingForm(true);
     try {
       const formatDataBeforeSubmit = (data: IForm) => {
         const date = new Date(data.deliveryDate);
@@ -136,31 +111,15 @@ const MyForm = () => {
         return {
           ...data,
           deliveryDate: formattedDate,
+          phoneNumber: userPhone,
           pump: data.pump ? "yes" : "no",
           id: uuidv4(),
         };
       };
       const formattedData = formatDataBeforeSubmit(data);
-      const createOrder = async () => {
-        try {
-          const orderRef = await addDoc(
-            collection(db, "orders"),
-            formattedData
-          );
-          const userId = getCurrentUserId();
+      const userId = getCurrentUserId();
 
-          if (userId) {
-            await updateDoc(doc(db, "users", userId), {
-              orders: arrayUnion(orderRef),
-            });
-          }
-
-          console.log("Order created successfully!");
-        } catch (error) {
-          console.error("Error creating order:", error);
-        }
-      };
-      const docRef = await addDoc(
+      const orderRef = await addDoc(
         collection(db, "orders"),
         formattedData
       );
@@ -174,7 +133,14 @@ const MyForm = () => {
           },
         }
       );
-      createOrder();
+
+      if (userId) {
+        await updateDoc(doc(db, "users", userId), {
+          orders: arrayUnion(orderRef),
+        });
+      }
+      setLoadingForm(false);
+      alert("Order created successfully!");
       console.log("Form submitted with data:", JSON.stringify(data));
       reset();
     } catch (error) {
@@ -186,14 +152,11 @@ const MyForm = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Typography variant="h4">
         Order for{" "}
-        {loading ? <CircularProgress size={20} /> : userPhone}
+        {loadingNumber ? <CircularProgress size={20} /> : userPhone}
       </Typography>
       <Typography variant="h6" className={styles.titles}>
         Order
       </Typography>
-      <button onClick={() => makePayment(100, "2368 2371")}>
-        sent
-      </button>
       <Grid container spacing={2}>
         <Grid item xs={12} md={4}>
           <div className={styles.marginTopBot}>
@@ -403,26 +366,6 @@ const MyForm = () => {
       <Grid container spacing={2}>
         <Grid xs={12} md={4} item>
           <span className={styles.inputName}>
-            {t("phone_number")}
-          </span>
-          <Controller
-            name="phoneNumber"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                placeholder={t("phone_number_placeholder")}
-                margin="normal"
-                error={!!errors.phoneNumber}
-                helperText={errors.phoneNumber?.message}
-              />
-            )}
-          />
-        </Grid>
-        <Grid xs={12} md={4} item>
-          <span className={styles.inputName}>
             {t("first_and_last")}
           </span>
           <Controller
@@ -584,13 +527,18 @@ const MyForm = () => {
           {errors.paymentMethod?.message}
         </p>
       </div>
-
-      <Box className={styles.button}>
-        <Button type="submit" variant="outlined">
-          Submit
-        </Button>
-      </Box>
-
+      {loadingForm && (
+        <div className={styles.button}>
+          <CircularProgress />
+        </div>
+      )}
+      {!loadingForm && (
+        <Box className={styles.button}>
+          <Button type="submit" variant="outlined">
+            Submit
+          </Button>
+        </Box>
+      )}
       {showWindow && (
         <AlertDialog
           showWindow={showWindow}

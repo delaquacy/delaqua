@@ -1,6 +1,6 @@
 export interface IForm {
   firstAndLast: string;
-  phoneNumber: string;
+  phoneNumber?: string | undefined;
   postalIndex: string;
   deliveryAddress: string;
   addressDetails: string;

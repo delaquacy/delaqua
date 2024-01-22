@@ -40,3 +40,14 @@
 .container .input {
   margin-bottom: 15px;
 }
+.closeButton {
+  color: black;
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  cursor: pointer;
+}
+.closeButton svg {
+  width: 30px;
+  height: 30px;
+}

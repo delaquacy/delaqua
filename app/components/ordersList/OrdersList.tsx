@@ -35,36 +35,42 @@ export default function OrdersList() {
         <TableBody>
           {userOrders?.map((order: IForm) => (
             <TableRow
-              key={order.id}
+              key={order?.id}
               sx={{
                 "&:last-child td, &:last-child th": { border: 0 },
               }}
             >
               <TableCell component="th" scope="row">
-                {order.firstAndLast}
+                {order?.firstAndLast}
               </TableCell>
 
-              <TableCell align="right">{order.phoneNumber}</TableCell>
-              <TableCell align="right">{order.postalIndex}</TableCell>
               <TableCell align="right">
-                {order.deliveryAddress}
-              </TableCell>
-              <TableCell align="right">{order.geolocation}</TableCell>
-              <TableCell align="right">
-                {order.pump ? "да" : "нет"}
+                {order?.phoneNumber}
               </TableCell>
               <TableCell align="right">
-                {order.bottlesNumberToBuy}
+                {order?.postalIndex}
               </TableCell>
               <TableCell align="right">
-                {order.bottlesNumberToReturn}
+                {order?.deliveryAddress}
+              </TableCell>
+              <TableCell align="right">
+                {order?.geolocation}
+              </TableCell>
+              <TableCell align="right">
+                {order?.pump ? "да" : null}
+              </TableCell>
+              <TableCell align="right">
+                {order?.bottlesNumberToBuy}
+              </TableCell>
+              <TableCell align="right">
+                {order?.bottlesNumberToReturn}
               </TableCell>
               <TableCell align="right">
                 {" "}
-                {order.deliveryTime}
+                {order?.deliveryTime}
               </TableCell>
               <TableCell align="right">
-                {order.paymentMethod}
+                {order?.paymentMethod}
               </TableCell>
             </TableRow>
           ))}

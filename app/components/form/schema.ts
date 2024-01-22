@@ -1,10 +1,7 @@
 import * as yup from "yup";
 export const schema = yup.object().shape({
   firstAndLast: yup.string().required("Enter first and last name"),
-  phoneNumber: yup
-    .string()
-    .matches(/^\d{8}$/, "Phone number must be 8 digits")
-    .required("Enter a valid phone number"),
+  phoneNumber: yup.string(),
   postalIndex: yup
     .string()
     .matches(/^\d{4}$/, "Postal Index must contain 4 digits")

@@ -13,6 +13,7 @@ import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { app, db } from "../../lib/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import styles from "./page.module.css";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
@@ -114,8 +115,10 @@ export default function Login({ params }: LogInProps) {
     <SnackbarProvider>
       <Box className={styles.container}>
         <Box className={styles.wrapper}>
+          <Box className={styles.closeButton}>
+            <CloseIcon onClick={onLogin} />
+          </Box>
           <Box className={styles.logoAndTitle}>
-            <button onClick={onLogin}>close</button>
             <LockOutlinedIcon fontSize="large" />
             <Typography variant="h4">
               Log in to make an order

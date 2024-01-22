@@ -29,15 +29,3 @@
 .loginMyaccountButtons a {
   margin: 0 5px;
 }
-.closeButton {
-  color: black;
-  z-index: 300;
-  top: 190px;
-  right: 484px;
-  position: fixed;
-  cursor: pointer;
-}
-.closeButton svg {
-  width: 30px;
-  height: 30px;
-}
