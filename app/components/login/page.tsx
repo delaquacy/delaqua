@@ -22,13 +22,16 @@ let myWindow: CustomWindow | undefined;
 if (typeof window !== "undefined") {
   myWindow = window as CustomWindow;
 }
+interface LogInProps {
+  onLogin: () => void;
+}
 
 const messages = {
   otpSent: "OTP code already send to your number",
   otpSentError: "Something went wrong, reload page or try later",
   wrongOtp: "Write incorect OTP code",
 };
-export default function Login() {
+const LogIn: React.FC<LogInProps> = ({ onLogin }) => {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
@@ -109,6 +112,7 @@ export default function Login() {
       <Box className={styles.container}>
         <Box className={styles.wrapper}>
           <Box className={styles.logoAndTitle}>
+            <button onClick={onLogin}>close</button>
             <LockOutlinedIcon fontSize="large" />
             <Typography variant="h4">
               Log in to make an order
@@ -140,4 +144,5 @@ export default function Login() {
       </Box>
     </SnackbarProvider>
   );
-}
+};
+export default LogIn;

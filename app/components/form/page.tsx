@@ -13,7 +13,6 @@ import {
   Switch,
   Typography,
   CircularProgress,
-  ButtonGroup,
   ButtonBase,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -78,13 +77,40 @@ const MyForm = () => {
     mode: "onBlur",
   });
 
+  const revolutApiKey =
+    "sk_c2VJ3tewi84eyawtUYZDSdot-QyoqcAZAANrVFUM2b3eElaazOxR3orFBG0DPCpU";
+  const revolutApiEndpoint = "https://sandbox-merchant.revolut.com/";
+
+  const makePayment = async (amount: number, recipient: string) => {
+    try {
+      const response = await axios.post(
+        `${revolutApiEndpoint}/v1/payments`,
+        {
+          amount,
+          currency: "USD",
+          receiver: recipient,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${revolutApiKey}`,
+          },
+        }
+      );
+
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const bottlesToBuy = parseInt(watch("bottlesNumberToBuy"), 10) || 0;
   const bottlesToReturn =
     parseInt(watch("bottlesNumberToReturn"), 10) || 0;
 
   const { paymentForWater, depositForBottles, totalPayments } =
     calculatePrice(bottlesToBuy, bottlesToReturn);
-  let paymentText = "";
+  let paymentText = "Price for 1 bottle";
   let paymentPrice = 0;
 
   if (bottlesToBuy === 1) {
@@ -165,6 +191,9 @@ const MyForm = () => {
       <Typography variant="h6" className={styles.titles}>
         Order
       </Typography>
+      <button onClick={() => makePayment(100, "2368 2371")}>
+        sent
+      </button>
       <Grid container spacing={2}>
         <Grid item xs={12} md={4}>
           <div className={styles.marginTopBot}>
@@ -522,6 +551,9 @@ const MyForm = () => {
           />
         </Grid>
       </Grid>
+      <Typography variant="h6" className={styles.titles}>
+        Payment details
+      </Typography>
       <span className={styles.inputName}>{t("payment_method")}</span>
       <Controller
         name="paymentMethod"

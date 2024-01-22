@@ -24,8 +24,8 @@
   "delivery_time_9_17": "9 - 17 — contactless delivery (we will leave bottles near the door)",
   "delivery_time_9_12": "9 - 12 — personal delivery",
   "payment_method": "Payment method",
-  "cash": "Cash",
-  "revolut": "Revolut (we will send the link via messenger)",
+  "cash": "Cash to courier",
+  "revolut": "Revolut",
   "comments": "Additional comments",
   "submit_button": "Make an order"
 }
