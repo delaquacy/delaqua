@@ -30,6 +30,7 @@ export default function OrdersList() {
             <TableCell align="right">Bottles to return</TableCell>
             <TableCell align="right">Delivery time</TableCell>
             <TableCell align="right">Payment method</TableCell>
+            <TableCell align="right">Comments</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -72,6 +73,7 @@ export default function OrdersList() {
               <TableCell align="right">
                 {order?.paymentMethod}
               </TableCell>
+              <TableCell align="right">{order?.comments}</TableCell>
             </TableRow>
           ))}
         </TableBody>

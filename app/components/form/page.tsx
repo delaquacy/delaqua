@@ -42,22 +42,26 @@ import {
 } from "@/app/utils/formUtils";
 import useUserOrders from "@/app/utils/getOrdersfromDb";
 import { v4 as uuidv4 } from "uuid";
+import SavedData from "../savedData/SavedData";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
   const { userOrders } = useUserOrders();
   const [showWindow, setShowWindow] = useState<boolean>(false);
+  const [formattedUserPhone, setFormattedUserPhone] = useState<
+    string | null
+  >(null);
   const [userPhone, setUserPhone] = useState<string | null>(null);
   const [loadingNumber, setLoadingNumber] = useState<boolean>(true);
   const [loadingForm, setLoadingForm] = useState<boolean>(false);
-  const lastObject = userOrders[userOrders.length - 1];
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const phoneNumber = user.phoneNumber;
-        setUserPhone(formatPhoneNumber(phoneNumber!));
+        setUserPhone(phoneNumber);
+        setFormattedUserPhone(formatPhoneNumber(phoneNumber!));
         setLoadingNumber(false);
       }
     });
@@ -152,7 +156,11 @@ const MyForm = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Typography variant="h4">
         Order for{" "}
-        {loadingNumber ? <CircularProgress size={20} /> : userPhone}
+        {loadingNumber ? (
+          <CircularProgress size={20} />
+        ) : (
+          formattedUserPhone
+        )}
       </Typography>
       <Typography variant="h6" className={styles.titles}>
         Order
@@ -363,6 +371,8 @@ const MyForm = () => {
       <Typography variant="h6" className={styles.titles}>
         Delivery details
       </Typography>
+      <SavedData />
+
       <Grid container spacing={2}>
         <Grid xs={12} md={4} item>
           <span className={styles.inputName}>
