@@ -3,10 +3,17 @@
   min-width: 200px;
   border-radius: 40px;
   background-color: #d8d8d8;
+  margin: 10px 0;
 }
 .subtitles {
   display: inline-block;
   padding-right: 20px;
   margin-right: 20px;
   min-width: 190px;
+}
+.btns {
+  cursor: pointer;
+}
+.btns:hover {
+  color: white;
 }

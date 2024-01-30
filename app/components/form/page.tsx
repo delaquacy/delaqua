@@ -22,7 +22,7 @@ import { schema } from "./schema";
 import Link from "next/link";
 import styles from "./page.module.css";
 import AlertDialog from "../alert/AlertDialog";
-import { IForm } from "@/app/lib/definitions";
+import { AddressKey, IForm } from "@/app/lib/definitions";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -31,7 +31,10 @@ import {
   addDoc,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
+  getDocs,
+  query,
   updateDoc,
 } from "firebase/firestore";
 import { db, getCurrentUserId } from "@/app/lib/config";
@@ -40,13 +43,12 @@ import {
   calculatePrice,
   formatPhoneNumber,
 } from "@/app/utils/formUtils";
-import useUserOrders from "@/app/utils/getOrdersfromDb";
 import { v4 as uuidv4 } from "uuid";
 import SavedData from "../savedData/SavedData";
+import { useRouter } from "next/navigation";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
-  const { userOrders } = useUserOrders();
   const [showWindow, setShowWindow] = useState<boolean>(false);
   const [formattedUserPhone, setFormattedUserPhone] = useState<
     string | null
@@ -54,6 +56,9 @@ const MyForm = () => {
   const [userPhone, setUserPhone] = useState<string | null>(null);
   const [loadingNumber, setLoadingNumber] = useState<boolean>(true);
   const [loadingForm, setLoadingForm] = useState<boolean>(false);
+  const [addresses, setAddresses] = useState([]);
+  const [showAddresses, setShowAddresses] = useState<boolean>(false);
+  const [removeTrigger, setRemoveTrigger] = useState<boolean>(false);
 
   useEffect(() => {
     const auth = getAuth();
@@ -83,6 +88,30 @@ const MyForm = () => {
   });
 
   const bottlesToBuy = parseInt(watch("bottlesNumberToBuy"), 10) || 0;
+  const addressFields = watch([
+    "firstAndLast",
+    "postalIndex",
+    "deliveryAddress",
+    "geolocation",
+    "addressDetails",
+  ]);
+  const allFieldsFilled = addressFields.every(
+    (field) => field !== ""
+  );
+  const addressObject: Record<AddressKey, string> =
+    addressFields.reduce((acc, field, index) => {
+      const keys: AddressKey[] = [
+        "firstAndLast",
+        "postalIndex",
+        "deliveryAddress",
+        "geolocation",
+        "addressDetails",
+      ];
+      const fieldKey = keys[index];
+      acc[fieldKey] = field;
+      return acc;
+    }, {} as Record<AddressKey, string>);
+
   const bottlesToReturn =
     parseInt(watch("bottlesNumberToReturn"), 10) || 0;
 
@@ -151,6 +180,74 @@ const MyForm = () => {
       console.error("Error submitting form:", error);
     }
   };
+  const createAddress = async (addressObject: any) => {
+    try {
+      const userId = getCurrentUserId();
+
+      if (userId) {
+        await addDoc(
+          collection(db, `users/${userId}/addresses`),
+          addressObject
+        );
+
+        alert("Address created successfully!");
+      } else {
+        console.error("User not authenticated!");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  const deleteAddress = async (addressId: string) => {
+    try {
+      const userId = getCurrentUserId();
+
+      if (userId) {
+        const addressRef = doc(
+          db,
+          `users/${userId}/addresses/${addressId}`
+        );
+        await deleteDoc(addressRef);
+        setRemoveTrigger(true);
+        alert("Address deleted successfully!");
+      } else {
+        console.error("User not authenticated!");
+      }
+    } catch (error) {
+      console.error("Error deleting address:", error);
+    }
+  };
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const userId = await getCurrentUserId();
+
+        if (userId) {
+          const q = query(
+            collection(db, `users/${userId}/addresses`)
+          );
+          const querySnapshot = await getDocs(q);
+
+          const addressesData: any = [];
+          querySnapshot.forEach((doc) => {
+            const addressId = doc.id;
+            const addressData = doc.data();
+            addressesData.push({ id: addressId, ...addressData });
+          });
+
+          setAddresses(addressesData);
+          setShowAddresses(addressesData.length >= 1);
+        } else {
+          console.error("User not authenticated!");
+        }
+      } catch (error) {
+        console.error("Error fetching addresses:", error);
+      }
+    };
+
+    fetchAddresses();
+  }, [loadingNumber, removeTrigger]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -371,139 +468,182 @@ const MyForm = () => {
       <Typography variant="h6" className={styles.titles}>
         Delivery details
       </Typography>
-      <SavedData />
-
-      <Grid container spacing={2}>
-        <Grid xs={12} md={4} item>
-          <span className={styles.inputName}>
-            {t("first_and_last")}
-          </span>
-          <Controller
-            name="firstAndLast"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                margin="normal"
-                error={!!errors.firstAndLast}
-                helperText={errors.firstAndLast?.message}
-              />
-            )}
+      {showAddresses ? (
+        <>
+          <SavedData
+            addresses={addresses}
+            deleteAddress={deleteAddress}
+            setShow={setShowAddresses}
           />
-        </Grid>
-        <Grid xs={12} md={4} item>
-          <span className={styles.inputName}>{t("post_index")}</span>
-          <Controller
-            name="postalIndex"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                margin="normal"
-                placeholder={t("post_index_placeholder")}
-                error={!!errors.postalIndex}
-                helperText={errors.postalIndex?.message}
+          <Grid container>
+            <Grid xs={4} md={4} item>
+              <span className={styles.inputName}>
+                {t("comments")}
+              </span>
+              <Controller
+                name="comments"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    multiline
+                    rows={4}
+                    fullWidth
+                    variant="outlined"
+                    margin="normal"
+                    error={!!errors.comments}
+                    helperText={errors.comments?.message}
+                  />
+                )}
               />
-            )}
-          />
-        </Grid>
-        <Grid xs={12} md={4} item>
-          <span className={styles.inputName}>
-            {t("delivery_address")}
-          </span>
-          <Controller
-            name="deliveryAddress"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                margin="normal"
-                error={!!errors.deliveryAddress}
-                helperText={errors.deliveryAddress?.message}
-              />
-            )}
-          />
-        </Grid>
-        <Grid xs={12} md={4} item>
-          <span className={styles.inputName}>
-            {t("geolocation_link")}
-          </span>
-          <Controller
-            name="geolocation"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                margin="normal"
-                error={!!errors.geolocation}
-                helperText={errors.geolocation?.message}
-              />
-            )}
-          />
-          <div>
-            {t("follow_the_link")}{" "}
-            <Link
-              style={{
-                fontWeight: "bold",
-                textDecoration: "underline",
-              }}
-              target="_blank"
-              href="https://www.google.com/maps"
-            >
-              {t("google_maps")}
-            </Link>
-            {t("and_choose")}
-          </div>
-        </Grid>
-        <Grid xs={12} md={4} item>
-          <span className={styles.inputName}>
-            {t("address_details")}
-          </span>
-          <Controller
-            name="addressDetails"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                placeholder={t("address_placeholder")}
-                fullWidth
-                margin="normal"
-                error={!!errors.addressDetails}
-                helperText={errors.addressDetails?.message}
-              />
-            )}
-          />
-        </Grid>
-        <Grid xs={12} md={4} item>
-          <span className={styles.inputName}>{t("comments")}</span>
-          <Controller
-            name="comments"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                multiline
-                rows={4}
-                fullWidth
+            </Grid>
+          </Grid>
+        </>
+      ) : (
+        <Grid container spacing={2}>
+          <Grid xs={12} md={4} item>
+            <span className={styles.inputName}>
+              {t("first_and_last")}
+            </span>
+            <Controller
+              name="firstAndLast"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  margin="normal"
+                  error={!!errors.firstAndLast}
+                  helperText={errors.firstAndLast?.message}
+                />
+              )}
+            />
+          </Grid>
+          <Grid xs={12} md={4} item>
+            <span className={styles.inputName}>
+              {t("post_index")}
+            </span>
+            <Controller
+              name="postalIndex"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  margin="normal"
+                  placeholder={t("post_index_placeholder")}
+                  error={!!errors.postalIndex}
+                  helperText={errors.postalIndex?.message}
+                />
+              )}
+            />
+          </Grid>
+          <Grid xs={12} md={4} item>
+            <span className={styles.inputName}>
+              {t("delivery_address")}
+            </span>
+            <Controller
+              name="deliveryAddress"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  margin="normal"
+                  error={!!errors.deliveryAddress}
+                  helperText={errors.deliveryAddress?.message}
+                />
+              )}
+            />
+          </Grid>
+          <Grid xs={12} md={4} item>
+            <span className={styles.inputName}>
+              {t("geolocation_link")}
+            </span>
+            <Controller
+              name="geolocation"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  margin="normal"
+                  error={!!errors.geolocation}
+                  helperText={errors.geolocation?.message}
+                />
+              )}
+            />
+            <div>
+              {t("follow_the_link")}{" "}
+              <Link
+                style={{
+                  fontWeight: "bold",
+                  textDecoration: "underline",
+                }}
+                target="_blank"
+                href="https://www.google.com/maps"
+              >
+                {t("google_maps")}
+              </Link>
+              {t("and_choose")}
+            </div>
+          </Grid>
+          <Grid xs={12} md={4} item>
+            <span className={styles.inputName}>
+              {t("address_details")}
+            </span>
+            <Controller
+              name="addressDetails"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  placeholder={t("address_placeholder")}
+                  fullWidth
+                  margin="normal"
+                  error={!!errors.addressDetails}
+                  helperText={errors.addressDetails?.message}
+                />
+              )}
+            />
+          </Grid>
+          <Grid xs={12} md={4} item>
+            <span className={styles.inputName}>{t("comments")}</span>
+            <Controller
+              name="comments"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  multiline
+                  rows={4}
+                  fullWidth
+                  variant="outlined"
+                  margin="normal"
+                  error={!!errors.comments}
+                  helperText={errors.comments?.message}
+                />
+              )}
+            />
+            {allFieldsFilled && (
+              <Button
                 variant="outlined"
-                margin="normal"
-                error={!!errors.comments}
-                helperText={errors.comments?.message}
-              />
+                onClick={() => createAddress(addressObject)}
+              >
+                Сохранить данные
+              </Button>
             )}
-          />
+          </Grid>
         </Grid>
-      </Grid>
+      )}
+
       <Typography variant="h6" className={styles.titles}>
         Payment details
       </Typography>

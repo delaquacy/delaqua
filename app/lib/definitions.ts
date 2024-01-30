@@ -21,3 +21,18 @@ export interface IOrders {
   quantity: number;
   paymentMethod: string;
 }
+export type AddressKey =
+  | "firstAndLast"
+  | "postalIndex"
+  | "deliveryAddress"
+  | "geolocation"
+  | "addressDetails"
+  | "id";
+export interface IAddress {
+  firstAndLast: string | undefined;
+  postalIndex: string | undefined;
+  deliveryAddress: string | undefined;
+  addressDetails: string | undefined;
+  geolocation: string | undefined;
+  id: string | undefined;
+}
