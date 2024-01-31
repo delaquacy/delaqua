@@ -6,11 +6,13 @@ interface Props {
   addresses: IAddress[];
   deleteAddress: any;
   setShow: (arg0: boolean) => void;
+  onAddressClick: any;
 }
 const SavedData: React.FC<Props> = ({
   addresses,
   deleteAddress,
   setShow,
+  onAddressClick,
 }) => {
   return (
     <>
@@ -31,9 +33,9 @@ const SavedData: React.FC<Props> = ({
             <Grid item xs={2} md={2}>
               <span
                 className={styles.btns}
-                onClick={() => deleteAddress(address?.id)}
+                onClick={() => onAddressClick(address)}
               >
-                remove
+                change this address
               </span>
             </Grid>
 
@@ -46,10 +48,9 @@ const SavedData: React.FC<Props> = ({
             <Grid item xs={2} md={2}>
               <span
                 className={styles.btns}
-                onClick={() => setShow(false)}
+                onClick={() => deleteAddress(address?.id)}
               >
-                {" "}
-                add new address
+                remove
               </span>
             </Grid>
 
@@ -58,6 +59,15 @@ const SavedData: React.FC<Props> = ({
                 Link to your geolocation
               </span>{" "}
               {address?.geolocation}
+            </Grid>
+            <Grid item xs={2} md={2}>
+              <span
+                className={styles.btns}
+                onClick={() => setShow(false)}
+              >
+                {" "}
+                add new address
+              </span>
             </Grid>
 
             <Grid item xs={10} md={10}>

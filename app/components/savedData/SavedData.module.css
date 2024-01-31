@@ -4,7 +4,9 @@
   border-radius: 40px;
   background-color: #d8d8d8;
   margin: 10px 0;
+  cursor: pointer;
 }
+
 .subtitles {
   display: inline-block;
   padding-right: 20px;
