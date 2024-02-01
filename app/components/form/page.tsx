@@ -62,19 +62,44 @@ const MyForm = () => {
 
   useEffect(() => {
     const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const phoneNumber = user.phoneNumber;
         setUserPhone(phoneNumber);
         setFormattedUserPhone(formatPhoneNumber(phoneNumber!));
         setLoadingNumber(false);
+
+        try {
+          const userId = await getCurrentUserId();
+
+          if (userId) {
+            const q = query(
+              collection(db, `users/${userId}/addresses`)
+            );
+            const querySnapshot = await getDocs(q);
+
+            const addressesData: any = [];
+            querySnapshot.forEach((doc) => {
+              const addressId = doc.id;
+              const addressData = doc.data();
+              addressesData.push({ id: addressId, ...addressData });
+            });
+
+            setAddresses(addressesData);
+            setShowAddresses(addressesData.length >= 1);
+          } else {
+            console.error("User not authenticated!");
+          }
+        } catch (error) {
+          console.error("Error fetching addresses:", error);
+        }
       }
     });
 
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [removeTrigger]);
 
   const {
     control,
@@ -154,7 +179,7 @@ const MyForm = () => {
       const userId = getCurrentUserId();
 
       const orderRef = await addDoc(
-        collection(db, "orders"),
+        collection(db, `users/${userId}/orders`),
         formattedData
       );
 
@@ -168,11 +193,6 @@ const MyForm = () => {
         }
       );
 
-      if (userId) {
-        await updateDoc(doc(db, "users", userId), {
-          orders: arrayUnion(orderRef),
-        });
-      }
       setLoadingForm(false);
       alert("Order created successfully!");
       window.location.reload();
@@ -224,36 +244,6 @@ const MyForm = () => {
       console.error("Error deleting address:", error);
     }
   };
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      try {
-        const userId = await getCurrentUserId();
-
-        if (userId) {
-          const q = query(
-            collection(db, `users/${userId}/addresses`)
-          );
-          const querySnapshot = await getDocs(q);
-
-          const addressesData: any = [];
-          querySnapshot.forEach((doc) => {
-            const addressId = doc.id;
-            const addressData = doc.data();
-            addressesData.push({ id: addressId, ...addressData });
-          });
-
-          setAddresses(addressesData);
-          setShowAddresses(addressesData.length >= 1);
-        } else {
-          console.error("User not authenticated!");
-        }
-      } catch (error) {
-        console.error("Error fetching addresses:", error);
-      }
-    };
-
-    fetchAddresses();
-  }, [loadingNumber, removeTrigger]);
 
   const handleAddressClick = (address: any) => {
     console.log("change", address);
@@ -498,40 +488,7 @@ const MyForm = () => {
         <Typography variant="h6" className={styles.titles}>
           Delivery details
         </Typography>
-        {showAddresses ? (
-          <>
-            <SavedData
-              addresses={addresses}
-              deleteAddress={deleteAddress}
-              setShow={setShowAddresses}
-              onAddressClick={handleAddressClick}
-            />
-            <Grid container>
-              <Grid xs={4} md={4} item>
-                <span className={styles.inputName}>
-                  {t("comments")}
-                </span>
-                <Controller
-                  name="comments"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      multiline
-                      rows={4}
-                      fullWidth
-                      variant="outlined"
-                      margin="normal"
-                      error={!!errors.comments}
-                      helperText={errors.comments?.message}
-                    />
-                  )}
-                />
-              </Grid>
-            </Grid>
-          </>
-        ) : (
+        {!showAddresses ? (
           <Grid container spacing={2}>
             <Grid xs={12} md={4} item>
               <span className={styles.inputName}>
@@ -675,6 +632,39 @@ const MyForm = () => {
               )}
             </Grid>
           </Grid>
+        ) : (
+          <>
+            <SavedData
+              addresses={addresses}
+              deleteAddress={deleteAddress}
+              setShow={setShowAddresses}
+              onAddressClick={handleAddressClick}
+            />
+            <Grid container>
+              <Grid xs={4} md={4} item>
+                <span className={styles.inputName}>
+                  {t("comments")}
+                </span>
+                <Controller
+                  name="comments"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      multiline
+                      rows={4}
+                      fullWidth
+                      variant="outlined"
+                      margin="normal"
+                      error={!!errors.comments}
+                      helperText={errors.comments?.message}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
+          </>
         )}
 
         <Typography variant="h6" className={styles.titles}>

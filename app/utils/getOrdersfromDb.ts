@@ -1,67 +1,42 @@
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { db } from "../lib/config";
-import { IForm } from "../lib/definitions";
+import { db, getCurrentUserId } from "../lib/config";
 
-const useUserOrders = () => {
-  const [userOrders, setUserOrders] = useState<IForm[] | []>([]);
+const getOrdersFromDb = () => {
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUserOrders = async () => {
-      const auth = getAuth();
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const userId = user.uid;
-          const userDoc = await getDoc(doc(db, "users", userId));
+    const fetchOrders = async () => {
+      try {
+        const userId = await getCurrentUserId();
 
-          if (userDoc.exists()) {
-            const orderRefs = userDoc.data().orders || [];
-            const orderIds = orderRefs.map(
-              (orderRef: any) => orderRef.id
-            );
+        if (userId) {
+          const q = collection(db, `users/${userId}/orders`);
+          const querySnapshot = await getDocs(q);
 
-            const ordersPromises = orderIds.map(
-              async (orderId: string) => {
-                try {
-                  const orderDoc = await getDoc(
-                    doc(db, "orders", orderId)
-                  );
-                  return orderDoc.data();
-                } catch (error) {
-                  console.error(
-                    `Error fetching order with ID ${orderId}:`,
-                    error
-                  );
-                  return null;
-                }
-              }
-            );
+          const ordersData: any = [];
+          querySnapshot.forEach((doc) => {
+            const orderId = doc.id;
+            const orderData = doc.data();
+            ordersData.push({ id: orderId, ...orderData });
+          });
 
-            const userOrdersData = await Promise.all(ordersPromises);
-
-            setUserOrders(
-              userOrdersData.filter(
-                (order: IForm | null) => order !== null
-              )
-            );
-          } else {
-            console.log("User not found in Firestore");
-          }
-          setLoading(false);
+          setOrders(ordersData);
+        } else {
+          console.error("User not authenticated!");
         }
-      });
-
-      return () => {
-        unsubscribe();
-      };
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchUserOrders();
+    fetchOrders();
   }, []);
 
-  return { userOrders, loading };
+  return { orders, loading };
 };
 
-export default useUserOrders;
+export default getOrdersFromDb;

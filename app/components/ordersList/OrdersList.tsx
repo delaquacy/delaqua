@@ -7,10 +7,10 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { IForm } from "@/app/lib/definitions";
 import { CircularProgress } from "@mui/material";
-import useUserOrders from "@/app/utils/getOrdersfromDb";
+import getOrdersFromDb from "@/app/utils/getOrdersfromDb";
 
 export default function OrdersList() {
-  const { userOrders, loading } = useUserOrders();
+  const { orders, loading } = getOrdersFromDb();
   if (loading) {
     return <CircularProgress />;
   }
@@ -34,48 +34,56 @@ export default function OrdersList() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {userOrders?.map((order: IForm) => (
-            <TableRow
-              key={order?.id}
-              sx={{
-                "&:last-child td, &:last-child th": { border: 0 },
-              }}
-            >
-              <TableCell component="th" scope="row">
-                {order?.firstAndLast}
+          {orders.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={12} align="center">
+                Еще нет заказов
               </TableCell>
-
-              <TableCell align="right">
-                {order?.phoneNumber}
-              </TableCell>
-              <TableCell align="right">
-                {order?.postalIndex}
-              </TableCell>
-              <TableCell align="right">
-                {order?.deliveryAddress}
-              </TableCell>
-              <TableCell align="right">
-                {order?.geolocation}
-              </TableCell>
-              <TableCell align="right">
-                {order?.pump ? "да" : null}
-              </TableCell>
-              <TableCell align="right">
-                {order?.bottlesNumberToBuy}
-              </TableCell>
-              <TableCell align="right">
-                {order?.bottlesNumberToReturn}
-              </TableCell>
-              <TableCell align="right">
-                {" "}
-                {order?.deliveryTime}
-              </TableCell>
-              <TableCell align="right">
-                {order?.paymentMethod}
-              </TableCell>
-              <TableCell align="right">{order?.comments}</TableCell>
             </TableRow>
-          ))}
+          ) : (
+            orders?.map((order: IForm) => (
+              <TableRow
+                key={order?.id}
+                sx={{
+                  "&:last-child td, &:last-child th": { border: 0 },
+                }}
+              >
+                <TableCell component="th" scope="row">
+                  {order?.firstAndLast}
+                </TableCell>
+
+                <TableCell align="right">
+                  {order?.phoneNumber}
+                </TableCell>
+                <TableCell align="right">
+                  {order?.postalIndex}
+                </TableCell>
+                <TableCell align="right">
+                  {order?.deliveryAddress}
+                </TableCell>
+                <TableCell align="right">
+                  {order?.geolocation}
+                </TableCell>
+                <TableCell align="right">
+                  {order?.pump ? "да" : null}
+                </TableCell>
+                <TableCell align="right">
+                  {order?.bottlesNumberToBuy}
+                </TableCell>
+                <TableCell align="right">
+                  {order?.bottlesNumberToReturn}
+                </TableCell>
+                <TableCell align="right">
+                  {" "}
+                  {order?.deliveryTime}
+                </TableCell>
+                <TableCell align="right">
+                  {order?.paymentMethod}
+                </TableCell>
+                <TableCell align="right">{order?.comments}</TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </TableContainer>
