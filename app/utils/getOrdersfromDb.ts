@@ -1,10 +1,11 @@
 import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db, getCurrentUserId } from "../lib/config";
+import { IForm } from "../lib/definitions";
 
-const getOrdersFromDb = () => {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+const useGetOrdersFromDb = () => {
+  const [orders, setOrders] = useState<[] | IForm[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -39,4 +40,4 @@ const getOrdersFromDb = () => {
   return { orders, loading };
 };
 
-export default getOrdersFromDb;
+export default useGetOrdersFromDb;

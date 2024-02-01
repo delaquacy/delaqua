@@ -15,12 +15,6 @@ export interface IForm {
   id?: string;
 }
 
-export interface IOrders {
-  id: number;
-  date: string;
-  quantity: number;
-  paymentMethod: string;
-}
 export type AddressKey =
   | "firstAndLast"
   | "postalIndex"

@@ -7,10 +7,11 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { IForm } from "@/app/lib/definitions";
 import { CircularProgress } from "@mui/material";
-import getOrdersFromDb from "@/app/utils/getOrdersfromDb";
+import useGetOrdersFromDb from "@/app/utils/getOrdersfromDb";
 
 export default function OrdersList() {
-  const { orders, loading } = getOrdersFromDb();
+  const { orders, loading } = useGetOrdersFromDb();
+  console.log(orders);
   if (loading) {
     return <CircularProgress />;
   }
@@ -41,44 +42,44 @@ export default function OrdersList() {
               </TableCell>
             </TableRow>
           ) : (
-            orders?.map((order: IForm) => (
+            orders.map((order: IForm) => (
               <TableRow
-                key={order?.id}
+                key={order.id}
                 sx={{
                   "&:last-child td, &:last-child th": { border: 0 },
                 }}
               >
                 <TableCell component="th" scope="row">
-                  {order?.firstAndLast}
+                  {order.firstAndLast}
                 </TableCell>
 
                 <TableCell align="right">
-                  {order?.phoneNumber}
+                  {order.phoneNumber}
                 </TableCell>
                 <TableCell align="right">
-                  {order?.postalIndex}
+                  {order.postalIndex}
                 </TableCell>
                 <TableCell align="right">
-                  {order?.deliveryAddress}
+                  {order.deliveryAddress}
                 </TableCell>
                 <TableCell align="right">
-                  {order?.geolocation}
+                  {order.geolocation}
                 </TableCell>
                 <TableCell align="right">
-                  {order?.pump ? "да" : null}
+                  {order.pump ? "да" : null}
                 </TableCell>
                 <TableCell align="right">
-                  {order?.bottlesNumberToBuy}
+                  {order.bottlesNumberToBuy}
                 </TableCell>
                 <TableCell align="right">
-                  {order?.bottlesNumberToReturn}
+                  {order.bottlesNumberToReturn}
                 </TableCell>
                 <TableCell align="right">
                   {" "}
-                  {order?.deliveryTime}
+                  {order.deliveryTime}
                 </TableCell>
                 <TableCell align="right">
-                  {order?.paymentMethod}
+                  {order.paymentMethod}
                 </TableCell>
                 <TableCell align="right">{order?.comments}</TableCell>
               </TableRow>
