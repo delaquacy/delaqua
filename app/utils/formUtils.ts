@@ -18,8 +18,15 @@ export function formatPhoneNumber(phoneNumber: string) {
 
 export function calculatePrice(
   numOrderedBottles: number,
-  numReturnedBottles: number
+  numReturnedBottles: number,
+  pomp: any
 ) {
+  let pompNumber;
+  if (pomp) {
+    pompNumber = 10;
+  } else {
+    pompNumber = 0;
+  }
   const basePricePerBottle = 5.5;
 
   const pricePerBottle =
@@ -29,17 +36,19 @@ export function calculatePrice(
       ? 6
       : basePricePerBottle;
 
-  const depositPerBottle = 10;
+  const depositPerBottle = 7;
 
   const paymentForWater = numOrderedBottles * pricePerBottle;
   const depositForBottles =
     Math.max(numOrderedBottles - numReturnedBottles, 0) *
     depositPerBottle;
-  const totalPayments = paymentForWater + depositForBottles;
+  const totalPayments =
+    paymentForWater + depositForBottles + pompNumber;
 
   return {
     paymentForWater,
     depositForBottles,
     totalPayments,
+    pompNumber,
   };
 }

@@ -5,13 +5,11 @@ import styles from "./SavedData.module.css";
 interface Props {
   addresses: IAddress[];
   deleteAddress: any;
-  setShow: (arg0: boolean) => void;
   onAddressClick: any;
 }
 const SavedData: React.FC<Props> = ({
   addresses,
   deleteAddress,
-  setShow,
   onAddressClick,
 }) => {
   return (
@@ -35,7 +33,7 @@ const SavedData: React.FC<Props> = ({
                 className={styles.btns}
                 onClick={() => onAddressClick(address)}
               >
-                change this address
+                Order to this address
               </span>
             </Grid>
 
@@ -50,7 +48,7 @@ const SavedData: React.FC<Props> = ({
                 className={styles.btns}
                 onClick={() => deleteAddress(address?.id)}
               >
-                remove
+                Remove
               </span>
             </Grid>
 
@@ -59,15 +57,6 @@ const SavedData: React.FC<Props> = ({
                 Link to your geolocation
               </span>{" "}
               {address?.geolocation}
-            </Grid>
-            <Grid item xs={2} md={2}>
-              <span
-                className={styles.btns}
-                onClick={() => setShow(false)}
-              >
-                {" "}
-                add new address
-              </span>
             </Grid>
 
             <Grid item xs={10} md={10}>

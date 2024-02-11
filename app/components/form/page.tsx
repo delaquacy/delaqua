@@ -29,13 +29,11 @@ import { useTranslation } from "react-i18next";
 import "../../i18n";
 import {
   addDoc,
-  arrayUnion,
   collection,
   deleteDoc,
   doc,
   getDocs,
   query,
-  updateDoc,
 } from "firebase/firestore";
 import { db, getCurrentUserId } from "@/app/lib/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -120,10 +118,12 @@ const MyForm = () => {
     "deliveryAddress",
     "geolocation",
     "addressDetails",
+    "pump",
   ]);
   const allFieldsFilled = addressFields.every(
     (field) => field !== ""
   );
+
   const addressObject: Record<AddressKey, string> =
     addressFields.reduce((acc, field, index) => {
       const keys: AddressKey[] = [
@@ -140,9 +140,14 @@ const MyForm = () => {
 
   const bottlesToReturn =
     parseInt(watch("bottlesNumberToReturn"), 10) || 0;
+  const pomp = addressFields[5];
+  const {
+    paymentForWater,
+    depositForBottles,
+    totalPayments,
+    pompNumber,
+  } = calculatePrice(bottlesToBuy, bottlesToReturn, pomp);
 
-  const { paymentForWater, depositForBottles, totalPayments } =
-    calculatePrice(bottlesToBuy, bottlesToReturn);
   let paymentText = "Price for 1 bottle";
   let paymentPrice = 0;
 
@@ -160,13 +165,11 @@ const MyForm = () => {
     setLoadingForm(true);
     try {
       const formatDataBeforeSubmit = (data: IForm) => {
-        const date = new Date(data.deliveryDate);
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-
-        const formattedDate = `${day}-${month}-${year}`;
-
+        const date = data.deliveryDate;
+        const deliveryDate = new Date(date);
+        const formattedDate = `${deliveryDate.getDate()}.${
+          deliveryDate.getMonth() + 1
+        }.${deliveryDate.getFullYear()}`;
         return {
           ...data,
           deliveryDate: formattedDate,
@@ -195,7 +198,7 @@ const MyForm = () => {
 
       setLoadingForm(false);
       alert("Order created successfully!");
-      window.location.reload();
+
       console.log("Form submitted with data:", JSON.stringify(data));
       reset();
     } catch (error) {
@@ -246,8 +249,8 @@ const MyForm = () => {
   };
 
   const handleAddressClick = (address: any) => {
-    console.log("change", address);
-    enqueueSnackbar("Changed", { variant: "info" });
+    console.log("selected", address);
+    enqueueSnackbar("Selected", { variant: "info" });
     setValue("deliveryAddress", address.deliveryAddress);
     setValue("postalIndex", address.postalIndex);
     setValue("addressDetails", address.addressDetails);
@@ -288,11 +291,14 @@ const MyForm = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      const newValue = parseInt(field.value) + 1;
+                      const newValue = Math.max(
+                        parseInt(field.value) - 1,
+                        0
+                      );
                       field.onChange(newValue);
                     }}
                   >
-                    +
+                    -
                   </button>
 
                   <TextField
@@ -305,14 +311,11 @@ const MyForm = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      const newValue = Math.max(
-                        parseInt(field.value) - 1,
-                        0
-                      );
+                      const newValue = parseInt(field.value) + 1;
                       field.onChange(newValue);
                     }}
                   >
-                    -
+                    +
                   </button>
                 </div>
               )}
@@ -332,11 +335,14 @@ const MyForm = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      const newValue = parseInt(field.value) + 1;
+                      const newValue = Math.max(
+                        parseInt(field.value) - 1,
+                        0
+                      );
                       field.onChange(newValue);
                     }}
                   >
-                    +
+                    -
                   </button>
 
                   <TextField
@@ -349,14 +355,11 @@ const MyForm = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      const newValue = Math.max(
-                        parseInt(field.value) - 1,
-                        0
-                      );
+                      const newValue = parseInt(field.value) + 1;
                       field.onChange(newValue);
                     }}
                   >
-                    -
+                    +
                   </button>
                 </div>
               )}
@@ -369,17 +372,21 @@ const MyForm = () => {
             <div className={styles.blueContainer}>
               <p className={styles.marginsTotal}>Total payments</p>
               <div className={styles.marginsTotal}>
-                {totalPayments}$
+                {totalPayments} €
               </div>
               <p className={styles.margins}>
                 {" "}
-                {paymentText} {paymentPrice}$
+                {paymentText} {paymentPrice} €
               </p>
-              <div className={styles.margins}>{paymentForWater}$</div>
+              <div className={styles.margins}>
+                {paymentForWater} €{" "}
+              </div>
               <p className={styles.margins}>Deposite for bottles</p>
               <div className={styles.margins}>
-                {depositForBottles}$
+                {depositForBottles} €
               </div>
+              <p className={styles.margins}>Pump</p>
+              <div className={styles.margins}>{pompNumber} €</div>
             </div>
           </Grid>
           <Grid item xs={12} md={4}>
@@ -438,7 +445,12 @@ const MyForm = () => {
                       <DatePicker
                         {...field}
                         disablePast
-                        slotProps={{ textField: { fullWidth: true } }}
+                        format="DD-MM-YYYY"
+                        slotProps={{
+                          textField: {
+                            fullWidth: true,
+                          },
+                        }}
                       />
                     </LocalizationProvider>
                   )}
@@ -637,9 +649,16 @@ const MyForm = () => {
             <SavedData
               addresses={addresses}
               deleteAddress={deleteAddress}
-              setShow={setShowAddresses}
               onAddressClick={handleAddressClick}
             />
+            <Box className={styles.addNewAddress}>
+              <Button
+                variant="outlined"
+                onClick={() => setShowAddresses(true)}
+              >
+                Add new address
+              </Button>
+            </Box>
             <Grid container>
               <Grid xs={4} md={4} item>
                 <span className={styles.inputName}>
