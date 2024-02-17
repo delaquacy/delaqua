@@ -29,6 +29,6 @@ export interface IAddress {
   deliveryAddress: string | undefined;
   addressDetails: string | undefined;
   geolocation: string | undefined;
-  pump?: string | undefined;
+  pump: boolean;
   id: string | undefined;
 }

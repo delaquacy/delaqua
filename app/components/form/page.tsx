@@ -47,6 +47,7 @@ import { enqueueSnackbar, SnackbarProvider } from "notistack";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
+
   const [showWindow, setShowWindow] = useState<boolean>(false);
   const [formattedUserPhone, setFormattedUserPhone] = useState<
     string | null
@@ -107,7 +108,6 @@ const MyForm = () => {
   const {
     control,
     handleSubmit,
-    reset,
     watch,
     setValue,
     formState: { errors },
@@ -138,20 +138,23 @@ const MyForm = () => {
     (field) => field !== ""
   );
 
-  const addressObject: Record<AddressKey, string> =
-    addressFields.reduce((acc, field, index) => {
-      const keys: AddressKey[] = [
-        "firstAndLast",
-        "postalIndex",
-        "deliveryAddress",
-        "geolocation",
-        "addressDetails",
-        "pump",
-      ];
-      const fieldKey = keys[index];
-      acc[fieldKey] = field;
-      return acc;
-    }, {} as Record<AddressKey, string>);
+  const addressObject: Record<
+    AddressKey,
+    string | boolean | undefined
+  > = addressFields.reduce((acc, field, index) => {
+    const keys: AddressKey[] = [
+      "firstAndLast",
+      "postalIndex",
+      "deliveryAddress",
+      "geolocation",
+      "addressDetails",
+      "pump",
+    ];
+    const fieldKey = keys[index];
+    acc[fieldKey] = field;
+    return acc;
+  }, {} as Record<AddressKey, string | boolean | undefined>);
+
   const pompValue = addressFields[5];
   const [bottlesToReturn, setBottlesToReturn] = useState(0);
   const [pomp, setPomp] = useState<any>("");
@@ -240,7 +243,8 @@ const MyForm = () => {
       setLoadingForm(false);
       alert("Order created successfully!");
       console.log("Form submitted with data:", JSON.stringify(data));
-      reset();
+      window.location.reload();
+      window.scrollTo(0, 0);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
