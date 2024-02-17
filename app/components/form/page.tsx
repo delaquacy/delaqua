@@ -52,12 +52,15 @@ const MyForm = () => {
     string | null
   >(null);
   const [userPhone, setUserPhone] = useState<string | null>(null);
-  const [loadingNumber, setLoadingNumber] = useState<boolean>(true);
   const [loadingForm, setLoadingForm] = useState<boolean>(false);
+  const [loadingAddresses, setLoadingAddresses] =
+    useState<boolean>(true);
+  const [loadingNumber, setLoadingNumber] = useState<boolean>(true);
   const [addresses, setAddresses] = useState([]);
   const [showAddresses, setShowAddresses] = useState<boolean>(false);
   const [removeTrigger, setRemoveTrigger] = useState<boolean>(false);
-
+  const [addressesLoaded, setAddressesLoaded] =
+    useState<boolean>(true);
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -66,7 +69,6 @@ const MyForm = () => {
         setUserPhone(phoneNumber);
         setFormattedUserPhone(formatPhoneNumber(phoneNumber!));
         setLoadingNumber(false);
-
         try {
           const userId = await getCurrentUserId();
 
@@ -84,12 +86,15 @@ const MyForm = () => {
             });
 
             setAddresses(addressesData);
+            setAddressesLoaded(false);
             setShowAddresses(addressesData.length >= 1);
           } else {
             console.error("User not authenticated!");
           }
         } catch (error) {
           console.error("Error fetching addresses:", error);
+        } finally {
+          setLoadingAddresses(false);
         }
       }
     });
@@ -110,6 +115,15 @@ const MyForm = () => {
     resolver: yupResolver(schema),
     mode: "onBlur",
   });
+  useEffect(() => {
+    if (addresses) {
+      setValue(
+        "bottlesNumberToBuy",
+        addresses.length > 0 ? "2" : "1"
+      );
+      setValue("pump", addresses.length > 0 ? false : true);
+    }
+  }, [addresses, addressesLoaded]);
 
   const bottlesToBuy = parseInt(watch("bottlesNumberToBuy"), 10) || 0;
   const addressFields = watch([
@@ -132,35 +146,63 @@ const MyForm = () => {
         "deliveryAddress",
         "geolocation",
         "addressDetails",
+        "pump",
       ];
       const fieldKey = keys[index];
       acc[fieldKey] = field;
       return acc;
     }, {} as Record<AddressKey, string>);
+  const pompValue = addressFields[5];
+  const [bottlesToReturn, setBottlesToReturn] = useState(0);
+  const [pomp, setPomp] = useState<any>("");
+  const [paymentForWater, setPaymentForWater] = useState(0);
+  const [depositForBottles, setDepositForBottles] = useState(0);
+  const [totalPayments, setTotalPayments] = useState<any>(0);
+  const [pompNumber, setPompNumber] = useState(0);
+  const [priceForDifferentBottles, setPriceForDifferentBottles] =
+    useState(0);
+  const [paymentText, setPaymentText] = useState(
+    "Price for 1 bottle"
+  );
+  useEffect(() => {
+    const bottlesNumberToReturn =
+      parseInt(watch("bottlesNumberToReturn"), 10) || 0;
+    setBottlesToReturn(bottlesNumberToReturn);
 
-  const bottlesToReturn =
-    parseInt(watch("bottlesNumberToReturn"), 10) || 0;
-  const pomp = addressFields[5];
-  const {
-    paymentForWater,
-    depositForBottles,
-    totalPayments,
-    pompNumber,
-  } = calculatePrice(bottlesToBuy, bottlesToReturn, pomp);
+    setPomp(pompValue);
 
-  let paymentText = "Price for 1 bottle";
-  let paymentPrice = 0;
+    const {
+      paymentForWater,
+      depositForBottles,
+      totalPayments,
+      pompNumber,
+    } = calculatePrice(
+      bottlesToBuy,
+      bottlesNumberToReturn,
+      pompValue
+    );
 
-  if (bottlesToBuy === 1) {
-    paymentText = "Price for 1 bottle";
-    paymentPrice = 7;
-  } else if (bottlesToBuy >= 2 && bottlesToBuy <= 9) {
-    paymentText = `Price for ${bottlesToBuy} bottles`;
-    paymentPrice = 6;
-  } else if (bottlesToBuy >= 10) {
-    paymentText = `Price for ${bottlesToBuy} bottles`;
-    paymentPrice = 5.5;
-  }
+    setPaymentForWater(paymentForWater);
+    setDepositForBottles(depositForBottles);
+    setTotalPayments(totalPayments);
+    setPompNumber(pompNumber);
+
+    let newPaymentText = "Price for 1 bottle";
+    let newPaymentPrice = 0;
+    if (bottlesToBuy === 1) {
+      newPaymentText = "Price for 1 bottle";
+      newPaymentPrice = 7;
+    } else if (bottlesToBuy >= 2 && bottlesToBuy <= 9) {
+      newPaymentText = `Price for ${bottlesToBuy} bottles`;
+      newPaymentPrice = 6;
+    } else if (bottlesToBuy >= 10) {
+      newPaymentText = `Price for ${bottlesToBuy} bottles`;
+      newPaymentPrice = 5.5;
+    }
+    setPriceForDifferentBottles(newPaymentPrice);
+    setPaymentText(newPaymentText);
+  }, [bottlesToBuy, watch, addressFields, pomp, addresses]);
+
   const onSubmit = async (data: IForm) => {
     setLoadingForm(true);
     try {
@@ -195,10 +237,8 @@ const MyForm = () => {
           },
         }
       );
-
       setLoadingForm(false);
       alert("Order created successfully!");
-
       console.log("Form submitted with data:", JSON.stringify(data));
       reset();
     } catch (error) {
@@ -257,6 +297,7 @@ const MyForm = () => {
     setValue("geolocation", address.geolocation);
     setValue("firstAndLast", address.firstAndLast);
   };
+
   return (
     <SnackbarProvider
       anchorOrigin={{
@@ -266,26 +307,24 @@ const MyForm = () => {
       autoHideDuration={1500}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Typography variant="h4">
+        <h1>
           Order for{" "}
           {loadingNumber ? (
             <CircularProgress size={20} />
           ) : (
             formattedUserPhone
           )}
-        </Typography>
-        <Typography variant="h6" className={styles.titles}>
-          Order
-        </Typography>
+        </h1>
+        <h6 className={styles.titles}>Order</h6>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <div className={styles.marginTopBot}>
               {t("number_of_bottles_to_buy")}
             </div>
+
             <Controller
               name="bottlesNumberToBuy"
               control={control}
-              defaultValue="2"
               render={({ field }) => (
                 <div className={styles.bottlesButtons}>
                   <button
@@ -293,25 +332,35 @@ const MyForm = () => {
                     onClick={() => {
                       const newValue = Math.max(
                         parseInt(field.value) - 1,
-                        0
+                        addresses.length > 0 ? 2 : 1
                       );
                       field.onChange(newValue);
                     }}
                   >
                     -
                   </button>
-
-                  <TextField
-                    {...field}
-                    type="number"
-                    inputProps={{ min: 0 }}
-                    error={!!errors.bottlesNumberToBuy}
-                  />
+                  {addressesLoaded ? (
+                    <div className={styles.loadingContainer}>
+                      <CircularProgress size={20} />
+                    </div>
+                  ) : (
+                    <TextField
+                      {...field}
+                      type="number"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                      error={!!errors.bottlesNumberToBuy}
+                    />
+                  )}
 
                   <button
                     type="button"
                     onClick={() => {
-                      const newValue = parseInt(field.value) + 1;
+                      const newValue = Math.max(
+                        parseInt(field.value) + 1,
+                        addresses.length > 0 ? 2 : 1
+                      );
                       field.onChange(newValue);
                     }}
                   >
@@ -320,6 +369,7 @@ const MyForm = () => {
                 </div>
               )}
             />
+
             <span className={styles.inputErrors}>
               {errors.bottlesNumberToBuy?.message}
             </span>
@@ -348,7 +398,9 @@ const MyForm = () => {
                   <TextField
                     {...field}
                     type="number"
-                    inputProps={{ min: 0 }}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                     error={!!errors.bottlesNumberToReturn}
                   />
 
@@ -376,7 +428,7 @@ const MyForm = () => {
               </div>
               <p className={styles.margins}>
                 {" "}
-                {paymentText} {paymentPrice} €
+                {paymentText} {priceForDifferentBottles} €
               </p>
               <div className={styles.margins}>
                 {paymentForWater} €{" "}
@@ -389,6 +441,7 @@ const MyForm = () => {
               <div className={styles.margins}>{pompNumber} €</div>
             </div>
           </Grid>
+
           <Grid item xs={12} md={4}>
             <div className={styles.ordersHistory}>
               <RestoreTwoToneIcon />
@@ -403,9 +456,12 @@ const MyForm = () => {
           <Controller
             name="pump"
             control={control}
-            defaultValue={false}
             render={({ field }) => (
-              <Switch {...field} color="primary" />
+              <Switch
+                {...field}
+                color="primary"
+                checked={field.value || false}
+              />
             )}
           />
           <span className={styles.inputName}>
@@ -654,7 +710,7 @@ const MyForm = () => {
             <Box className={styles.addNewAddress}>
               <Button
                 variant="outlined"
-                onClick={() => setShowAddresses(true)}
+                onClick={() => setShowAddresses(false)}
               >
                 Add new address
               </Button>

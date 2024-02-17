@@ -90,3 +90,8 @@
   justify-content: center;
   margin: 20px 0;
 }
+.loadingContainer {
+  width: 128px;
+  display: flex;
+  justify-content: center;
+}

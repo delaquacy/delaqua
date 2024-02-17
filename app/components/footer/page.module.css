@@ -1,6 +1,7 @@
 .container {
   width: 100%;
   background-color: var(--test-color);
+  flex-shrink: 0;
 }
 .social_media {
   padding: 10px;

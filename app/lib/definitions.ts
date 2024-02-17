@@ -21,6 +21,7 @@ export type AddressKey =
   | "deliveryAddress"
   | "geolocation"
   | "addressDetails"
+  | "pump"
   | "id";
 export interface IAddress {
   firstAndLast: string | undefined;
@@ -28,5 +29,6 @@ export interface IAddress {
   deliveryAddress: string | undefined;
   addressDetails: string | undefined;
   geolocation: string | undefined;
+  pump?: string | undefined;
   id: string | undefined;
 }
