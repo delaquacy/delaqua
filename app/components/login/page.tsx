@@ -100,6 +100,7 @@ export default function Login({ params }: LogInProps) {
         if (!userDoc.exists()) {
           await setDoc(doc(db, "users", user.uid), {
             phoneNumber: user.phoneNumber,
+            numberOfBottles: 0,
           });
         }
       }

@@ -11,7 +11,7 @@ import useGetOrdersFromDb from "@/app/utils/getOrdersfromDb";
 
 export default function OrdersList() {
   const { orders, loading } = useGetOrdersFromDb();
-  console.log(orders);
+
   if (loading) {
     return <CircularProgress />;
   }

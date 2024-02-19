@@ -52,3 +52,11 @@ export function calculatePrice(
     pompNumber,
   };
 }
+
+export const bottlesCalculate = (
+  bottlesToBuy: number,
+  bottlesToReturn: number,
+  currentBottlesNumber: number
+) => {
+  return currentBottlesNumber + bottlesToBuy - bottlesToReturn;
+};

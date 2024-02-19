@@ -10,9 +10,9 @@ export const schema = yup.object().shape({
   addressDetails: yup.string().required("Enter address details"),
   geolocation: yup.string().required("Enter you geolocation"),
   pump: yup.boolean(),
-  bottlesNumberToBuy: yup.string().required("Choose bootle number"),
+  bottlesNumberToBuy: yup.number().required("Choose bootle number"),
   bottlesNumberToReturn: yup
-    .string()
+    .number()
     .required("Choose bootle number"),
   deliveryDate: yup.date().required("Choose delivery date"),
   deliveryTime: yup.string().required("Choose time"),

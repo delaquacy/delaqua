@@ -6,8 +6,8 @@ export interface IForm {
   addressDetails: string;
   geolocation: string;
   pump?: boolean;
-  bottlesNumberToBuy: string;
-  bottlesNumberToReturn: string;
+  bottlesNumberToBuy: number;
+  bottlesNumberToReturn: number;
   deliveryDate: Date;
   deliveryTime: string;
   paymentMethod: string;

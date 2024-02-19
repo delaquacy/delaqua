@@ -32,18 +32,24 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   query,
 } from "firebase/firestore";
 import { db, getCurrentUserId } from "@/app/lib/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
+  bottlesCalculate,
   calculatePrice,
   formatPhoneNumber,
 } from "@/app/utils/formUtils";
 import { v4 as uuidv4 } from "uuid";
 import SavedData from "../savedData/SavedData";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
+import {
+  getNumberOfBottlesFromDB,
+  updateNumberOfBottlesInDB,
+} from "@/app/utils/getBottlesNumber";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
@@ -54,14 +60,15 @@ const MyForm = () => {
   >(null);
   const [userPhone, setUserPhone] = useState<string | null>(null);
   const [loadingForm, setLoadingForm] = useState<boolean>(false);
-  const [loadingAddresses, setLoadingAddresses] =
-    useState<boolean>(true);
   const [loadingNumber, setLoadingNumber] = useState<boolean>(true);
   const [addresses, setAddresses] = useState([]);
   const [showAddresses, setShowAddresses] = useState<boolean>(false);
   const [removeTrigger, setRemoveTrigger] = useState<boolean>(false);
   const [addressesLoaded, setAddressesLoaded] =
     useState<boolean>(true);
+  const [orders, setOrders] = useState([]);
+  const [numberOfBottlesState, setNumberOfBottlesState] = useState(0);
+
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -85,7 +92,18 @@ const MyForm = () => {
               const addressData = doc.data();
               addressesData.push({ id: addressId, ...addressData });
             });
+            const ordersQuery = query(
+              collection(db, `users/${userId}/orders`)
+            );
+            const ordersQuerySnapshot = await getDocs(ordersQuery);
+            const ordersData: any = ordersQuerySnapshot.docs.map(
+              (doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              })
+            );
 
+            setOrders(ordersData);
             setAddresses(addressesData);
             setAddressesLoaded(false);
             setShowAddresses(addressesData.length >= 1);
@@ -94,8 +112,6 @@ const MyForm = () => {
           }
         } catch (error) {
           console.error("Error fetching addresses:", error);
-        } finally {
-          setLoadingAddresses(false);
         }
       }
     });
@@ -104,6 +120,25 @@ const MyForm = () => {
       unsubscribe();
     };
   }, [removeTrigger]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userId = await getCurrentUserId();
+        if (userId) {
+          const numberOfBottlesFromDB =
+            await getNumberOfBottlesFromDB(userId);
+          setNumberOfBottlesState(numberOfBottlesFromDB);
+        } else {
+          console.error("User not authenticated!");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [userPhone]);
 
   const {
     control,
@@ -115,17 +150,15 @@ const MyForm = () => {
     resolver: yupResolver(schema),
     mode: "onBlur",
   });
-  useEffect(() => {
-    if (addresses) {
-      setValue(
-        "bottlesNumberToBuy",
-        addresses.length > 0 ? "2" : "1"
-      );
-      setValue("pump", addresses.length > 0 ? false : true);
-    }
-  }, [addresses, addressesLoaded]);
 
-  const bottlesToBuy = parseInt(watch("bottlesNumberToBuy"), 10) || 0;
+  useEffect(() => {
+    if (orders) {
+      setValue("bottlesNumberToBuy", orders.length > 0 ? 2 : 2);
+      setValue("pump", orders.length > 0 ? false : true);
+    }
+  }, [orders, addressesLoaded]);
+
+  const bottlesToBuy = watch("bottlesNumberToBuy") || 0;
   const addressFields = watch([
     "firstAndLast",
     "postalIndex",
@@ -168,8 +201,7 @@ const MyForm = () => {
     "Price for 1 bottle"
   );
   useEffect(() => {
-    const bottlesNumberToReturn =
-      parseInt(watch("bottlesNumberToReturn"), 10) || 0;
+    const bottlesNumberToReturn = watch("bottlesNumberToReturn") || 0;
     setBottlesToReturn(bottlesNumberToReturn);
 
     setPomp(pompValue);
@@ -210,6 +242,7 @@ const MyForm = () => {
     setLoadingForm(true);
     try {
       const formatDataBeforeSubmit = (data: IForm) => {
+        console.log(data);
         const date = data.deliveryDate;
         const deliveryDate = new Date(date);
         const formattedDate = `${deliveryDate.getDate()}.${
@@ -229,6 +262,18 @@ const MyForm = () => {
       const orderRef = await addDoc(
         collection(db, `users/${userId}/orders`),
         formattedData
+      );
+      bottlesCalculate(
+        data.bottlesNumberToBuy,
+        data.bottlesNumberToReturn,
+        numberOfBottlesState
+      );
+      updateNumberOfBottlesInDB(
+        bottlesCalculate(
+          data.bottlesNumberToBuy,
+          data.bottlesNumberToReturn,
+          numberOfBottlesState
+        )
       );
 
       const response = await axios.post(
@@ -319,6 +364,9 @@ const MyForm = () => {
             formattedUserPhone
           )}
         </h1>
+        <h2>
+          Number of bottles you have: {`${numberOfBottlesState}`}
+        </h2>
         <h6 className={styles.titles}>Order</h6>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
@@ -335,8 +383,8 @@ const MyForm = () => {
                     type="button"
                     onClick={() => {
                       const newValue = Math.max(
-                        parseInt(field.value) - 1,
-                        addresses.length > 0 ? 2 : 1
+                        field.value - 1,
+                        orders.length > 0 ? 2 : 1
                       );
                       field.onChange(newValue);
                     }}
@@ -362,8 +410,8 @@ const MyForm = () => {
                     type="button"
                     onClick={() => {
                       const newValue = Math.max(
-                        parseInt(field.value) + 1,
-                        addresses.length > 0 ? 2 : 1
+                        field.value + 1,
+                        orders.length > 0 ? 2 : 1
                       );
                       field.onChange(newValue);
                     }}
@@ -383,35 +431,47 @@ const MyForm = () => {
             <Controller
               name="bottlesNumberToReturn"
               control={control}
-              defaultValue="0"
+              defaultValue={0}
               render={({ field }) => (
                 <div className={styles.bottlesButtons}>
                   <button
                     type="button"
                     onClick={() => {
-                      const newValue = Math.max(
-                        parseInt(field.value) - 1,
-                        0
-                      );
+                      const newValue = Math.max(field.value - 1, 0);
                       field.onChange(newValue);
                     }}
                   >
                     -
                   </button>
-
-                  <TextField
-                    {...field}
-                    type="number"
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    error={!!errors.bottlesNumberToReturn}
-                  />
+                  {addressesLoaded ? (
+                    <div className={styles.loadingContainer}>
+                      <CircularProgress size={20} />
+                    </div>
+                  ) : (
+                    <TextField
+                      {...field}
+                      type="number"
+                      InputProps={{
+                        readOnly: true,
+                        inputProps: {
+                          min: 0,
+                          max:
+                            orders.length > 0
+                              ? numberOfBottlesState
+                              : 10,
+                        },
+                      }}
+                      error={!!errors.bottlesNumberToReturn}
+                    />
+                  )}
 
                   <button
                     type="button"
                     onClick={() => {
-                      const newValue = parseInt(field.value) + 1;
+                      const newValue = Math.min(
+                        field.value + 1,
+                        orders.length > 0 ? numberOfBottlesState : 10
+                      );
                       field.onChange(newValue);
                     }}
                   >
