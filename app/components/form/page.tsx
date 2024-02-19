@@ -470,7 +470,7 @@ const MyForm = () => {
                     onClick={() => {
                       const newValue = Math.min(
                         field.value + 1,
-                        orders.length > 0 ? numberOfBottlesState : 10
+                        orders.length > 0 ? numberOfBottlesState : 0
                       );
                       field.onChange(newValue);
                     }}
