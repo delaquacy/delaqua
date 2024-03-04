@@ -28,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/lib/recaptcha.js",
-    "app/lib/sentNumber.js"
+    "app/lib/sentNumber.js",
+    "api/payment.js"
   ],
   "exclude": ["node_modules"]
 }

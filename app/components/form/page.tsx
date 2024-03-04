@@ -53,21 +53,29 @@ import {
 
 const MyForm = () => {
   const { t } = useTranslation("form");
-
+  // show orders history
   const [showWindow, setShowWindow] = useState<boolean>(false);
+  // phone with spacing
   const [formattedUserPhone, setFormattedUserPhone] = useState<
     string | null
   >(null);
+  // phone without spacing
   const [userPhone, setUserPhone] = useState<string | null>(null);
+  // submit form
   const [loadingForm, setLoadingForm] = useState<boolean>(false);
+  // loading number from db to render him
   const [loadingNumber, setLoadingNumber] = useState<boolean>(true);
+  // address array
   const [addresses, setAddresses] = useState([]);
+  // show saved addresses or show form inputs
   const [showAddresses, setShowAddresses] = useState<boolean>(false);
+  // remove address from addresses array
   const [removeTrigger, setRemoveTrigger] = useState<boolean>(false);
-  const [addressesLoaded, setAddressesLoaded] =
-    useState<boolean>(true);
+  // wait orders loading
+  const [ordersLoaded, setOrdersLoaded] = useState<boolean>(true);
   const [orders, setOrders] = useState([]);
-  const [numberOfBottlesState, setNumberOfBottlesState] = useState(0);
+  const [numberOfBottlesInStock, setNumberOfBottlesInStock] =
+    useState(0);
 
   useEffect(() => {
     const auth = getAuth();
@@ -105,7 +113,7 @@ const MyForm = () => {
 
             setOrders(ordersData);
             setAddresses(addressesData);
-            setAddressesLoaded(false);
+            setOrdersLoaded(false);
             setShowAddresses(addressesData.length >= 1);
           } else {
             console.error("User not authenticated!");
@@ -128,7 +136,7 @@ const MyForm = () => {
         if (userId) {
           const numberOfBottlesFromDB =
             await getNumberOfBottlesFromDB(userId);
-          setNumberOfBottlesState(numberOfBottlesFromDB);
+          setNumberOfBottlesInStock(numberOfBottlesFromDB);
         } else {
           console.error("User not authenticated!");
         }
@@ -156,7 +164,7 @@ const MyForm = () => {
       setValue("bottlesNumberToBuy", orders.length > 0 ? 2 : 2);
       setValue("pump", orders.length > 0 ? false : true);
     }
-  }, [orders, addressesLoaded]);
+  }, [orders, ordersLoaded]);
 
   const bottlesToBuy = watch("bottlesNumberToBuy") || 0;
   const addressFields = watch([
@@ -189,7 +197,6 @@ const MyForm = () => {
   }, {} as Record<AddressKey, string | boolean | undefined>);
 
   const pompValue = addressFields[5];
-  const [bottlesToReturn, setBottlesToReturn] = useState(0);
   const [pomp, setPomp] = useState<any>("");
   const [paymentForWater, setPaymentForWater] = useState(0);
   const [depositForBottles, setDepositForBottles] = useState(0);
@@ -202,8 +209,6 @@ const MyForm = () => {
   );
   useEffect(() => {
     const bottlesNumberToReturn = watch("bottlesNumberToReturn") || 0;
-    setBottlesToReturn(bottlesNumberToReturn);
-
     setPomp(pompValue);
 
     const {
@@ -266,13 +271,13 @@ const MyForm = () => {
       bottlesCalculate(
         data.bottlesNumberToBuy,
         data.bottlesNumberToReturn,
-        numberOfBottlesState
+        numberOfBottlesInStock
       );
       updateNumberOfBottlesInDB(
         bottlesCalculate(
           data.bottlesNumberToBuy,
           data.bottlesNumberToReturn,
-          numberOfBottlesState
+          numberOfBottlesInStock
         )
       );
 
@@ -294,6 +299,7 @@ const MyForm = () => {
       console.error("Error submitting form:", error);
     }
   };
+
   const createAddress = async (addressObject: any) => {
     try {
       const userId = getCurrentUserId();
@@ -347,6 +353,52 @@ const MyForm = () => {
     setValue("firstAndLast", address.firstAndLast);
   };
 
+  const handleSubmited = async () => {
+    try {
+      const response = await fetch("/api/payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: 500,
+          currency: "GBP",
+        }),
+      });
+
+      const data = await response.json();
+      console.log("Ответ от сервера:", data);
+    } catch (error) {
+      console.error("Ошибка при создании заказа:", error);
+    }
+  };
+  useEffect(() => {
+    const sendRequest = async () => {
+      const webhookUrl = "https://delaqua.vercel.app/";
+      const events = ["ORDER_COMPLETED", "ORDER_PAYMENT_FAILED"];
+      try {
+        const response = await axios.post(
+          "/api/webhook",
+          {
+            webhookUrl,
+            events,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        console.log("Webhook создан успешно:", response.config.data);
+      } catch (error) {
+        console.error("Ошибка при создании webhook:", error);
+      }
+    };
+
+    sendRequest();
+  }, []);
+
   return (
     <SnackbarProvider
       anchorOrigin={{
@@ -356,6 +408,8 @@ const MyForm = () => {
       autoHideDuration={1500}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
+        <button onClick={handleSubmited}>CLICK</button>
+
         <h1>
           Order for{" "}
           {loadingNumber ? (
@@ -365,7 +419,7 @@ const MyForm = () => {
           )}
         </h1>
         <h2>
-          Number of bottles you have: {`${numberOfBottlesState}`}
+          Number of bottles you have: {`${numberOfBottlesInStock}`}
         </h2>
         <h6 className={styles.titles}>Order</h6>
         <Grid container spacing={2}>
@@ -391,7 +445,7 @@ const MyForm = () => {
                   >
                     -
                   </button>
-                  {addressesLoaded ? (
+                  {ordersLoaded ? (
                     <div className={styles.loadingContainer}>
                       <CircularProgress size={20} />
                     </div>
@@ -443,7 +497,7 @@ const MyForm = () => {
                   >
                     -
                   </button>
-                  {addressesLoaded ? (
+                  {ordersLoaded ? (
                     <div className={styles.loadingContainer}>
                       <CircularProgress size={20} />
                     </div>
@@ -457,7 +511,7 @@ const MyForm = () => {
                           min: 0,
                           max:
                             orders.length > 0
-                              ? numberOfBottlesState
+                              ? numberOfBottlesInStock
                               : 10,
                         },
                       }}
@@ -470,7 +524,7 @@ const MyForm = () => {
                     onClick={() => {
                       const newValue = Math.min(
                         field.value + 1,
-                        orders.length > 0 ? numberOfBottlesState : 0
+                        orders.length > 0 ? numberOfBottlesInStock : 0
                       );
                       field.onChange(newValue);
                     }}
@@ -542,15 +596,15 @@ const MyForm = () => {
           Delivery date and time
         </Typography>
 
-        <Grid container spacing={2}>
-          <Grid
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-            item
-            xs={12}
-          >
+        <Grid
+          container
+          spacing={2}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Grid xs={12} md={4} item>
             <Box>
               <div className={styles.inputName}>
                 {t("delivery_date")}
@@ -582,6 +636,8 @@ const MyForm = () => {
                 </p>
               </div>
             </Box>
+          </Grid>
+          <Grid xs={12} md={6} item>
             <Box>
               <span className={styles.inputName}>
                 {t("delivery_time")}
