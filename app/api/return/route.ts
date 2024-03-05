@@ -1,7 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiResponse } from "next";
+import { NextRequest } from "next/server";
 
 export async function POST(
-  req: NextApiRequest,
+  req: NextRequest,
   res: NextApiResponse<string>
 ) {
   try {
