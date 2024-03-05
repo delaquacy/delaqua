@@ -6,7 +6,7 @@ export async function POST(
   res: NextApiResponse<string>
 ) {
   try {
-    const eventData = req.body;
+    const eventData = await req.json();
 
     console.log("Received webhook event:", eventData);
     res.status(200).send("Данные получены");
