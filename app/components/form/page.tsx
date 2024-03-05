@@ -372,32 +372,29 @@ const MyForm = () => {
       console.error("Ошибка при создании заказа:", error);
     }
   };
-  useEffect(() => {
-    const sendRequest = async () => {
-      const webhookUrl = "https://delaqua.vercel.app/";
-      const events = ["ORDER_COMPLETED", "ORDER_PAYMENT_FAILED"];
-      try {
-        const response = await axios.post(
-          "/api/webhook",
-          {
-            webhookUrl,
-            events,
+
+  const sendRequest = async () => {
+    const webhookUrl = "https://delaqua.vercel.app/api/return";
+    const events = ["ORDER_COMPLETED", "ORDER_PAYMENT_FAILED"];
+    try {
+      const response = await axios.post(
+        "/api/webhook",
+        {
+          webhookUrl,
+          events,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
           },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        }
+      );
 
-        console.log("Webhook создан успешно:", response.config.data);
-      } catch (error) {
-        console.error("Ошибка при создании webhook:", error);
-      }
-    };
-
-    sendRequest();
-  }, []);
+      console.log("Webhook создан успешно:", response.config.data);
+    } catch (error) {
+      console.error("Ошибка при создании webhook:", error);
+    }
+  };
 
   return (
     <SnackbarProvider
@@ -409,7 +406,7 @@ const MyForm = () => {
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <button onClick={handleSubmited}>CLICK</button>
-
+        <button onClick={sendRequest}>Hook</button>
         <h1>
           Order for{" "}
           {loadingNumber ? (
