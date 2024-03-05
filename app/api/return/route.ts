@@ -12,6 +12,5 @@ export async function POST(
     res.status(200).send("Данные получены");
   } catch (error) {
     console.log("Ошибка при обработке запроса:", error);
-    res.status(500).send("Ошибка сервера");
   }
 }
