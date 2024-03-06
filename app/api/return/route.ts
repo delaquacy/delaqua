@@ -18,7 +18,7 @@ export async function POST(
     };
     await axios.post(link, postData, {
       headers: {
-        "Content-Type": "text/plain",
+        "Content-Type": "application/json",
       },
     });
     console.log(eventData);
