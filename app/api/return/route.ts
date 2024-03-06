@@ -14,8 +14,8 @@ export async function POST(
 
     console.log("Received webhook event:", eventData);
     const postData = {
-      orderId: eventData.order_id,
-      orderData: eventData.events,
+      order_id: eventData.order_id,
+      event: eventData.events,
     };
     await axios.post(link, postData, {
       headers: {
