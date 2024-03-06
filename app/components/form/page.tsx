@@ -76,7 +76,10 @@ const MyForm = () => {
   const [orders, setOrders] = useState([]);
   const [numberOfBottlesInStock, setNumberOfBottlesInStock] =
     useState(0);
-
+  // order payment id
+  const [orderId, setOrderId] = useState<string | undefined>(
+    undefined
+  );
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -367,6 +370,7 @@ const MyForm = () => {
       });
 
       const data = await response.json();
+      setOrderId(data.id);
       console.log("Ответ от сервера:", data);
     } catch (error) {
       console.error("Ошибка при создании заказа:", error);
@@ -402,6 +406,22 @@ const MyForm = () => {
     }
   };
 
+  const result = async () => {
+    try {
+      const response = await fetch(`/api/back/${orderId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const nest = await response.json();
+      console.log("Back", nest);
+    } catch (error) {
+      console.error("Ошибка при получении данных о заказе:", error);
+    }
+  };
+
   return (
     <SnackbarProvider
       anchorOrigin={{
@@ -413,6 +433,8 @@ const MyForm = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <button onClick={handleSubmited}>CLICK</button>
         <button onClick={sendRequest}>Hook</button>
+        <button onClick={result}>Back</button>
+
         <h1>
           Order for{" "}
           {loadingNumber ? (
