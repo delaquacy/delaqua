@@ -3,7 +3,7 @@ import type { NextApiResponse } from "next";
 import { NextRequest } from "next/server";
 
 const link =
-  "https://script.google.com/macros/s/AKfycbwRabcxWmrjWwPDbByx7otDl_DyXq2CcyZeX77MWyBzljDtUm9WLRtuNkCYshPP42gD/exec";
+  "https://script.google.com/macros/s/AKfycbyel0dQkmNWQpP-qq7ajQ_Mwib8m3K9gJnHEJy5Bk1zfq4r2GY10SxceJBvj8I7Qz1E/exec";
 
 export async function POST(
   req: NextRequest,
@@ -19,7 +19,7 @@ export async function POST(
     };
     await axios.post(link, postData, {
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "text/plain",
       },
     });
     res.status(200).send("Данные получены");
