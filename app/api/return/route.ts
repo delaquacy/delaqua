@@ -13,8 +13,8 @@ export async function POST(
     const eventData = await req.json();
 
     const postData = {
-      order_id: eventData.order_id,
-      event: eventData.events,
+      event: "ORDER_COMPLETED",
+      order_id: "65e86cb7-5167-dskfjjsdhfsdjh-324723676y23ghfhjw",
     };
     await axios.post(link, postData, {
       headers: {
