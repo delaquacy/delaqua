@@ -11,10 +11,16 @@ export async function POST(
 ) {
   try {
     const eventData = await req.json();
+    const now = new Date();
 
+    const formattedDateTime = now
+      .toISOString()
+      .replace("T", " ")
+      .substring(0, 19);
     const postData = {
-      event: "ORDER_COMPLETED",
-      order_id: "65e86cb7-5167-dskfjjsdhfsdjh-324723676y23ghfhjw",
+      event: eventData.event,
+      order_id: eventData.order_id,
+      date_time: formattedDateTime,
     };
     await axios.post(link, postData, {
       headers: {
