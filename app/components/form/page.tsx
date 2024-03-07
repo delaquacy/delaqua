@@ -378,11 +378,11 @@ const MyForm = () => {
   };
 
   const sendRequest = async () => {
-    const webhookUrl = "https://delaqua.vercel.app/api/returnsuccess";
+    const webhookUrl = "https://delaqua.vercel.app/api/success";
     const events = ["ORDER_COMPLETED"];
     try {
       const response = await axios.post(
-        "/api/webhooksuccess",
+        "/api/webhookOk",
         {
           webhookUrl,
           events,
@@ -401,11 +401,11 @@ const MyForm = () => {
   };
 
   const sendRequestNot = async () => {
-    const webhookUrl = "https://delaqua.vercel.app/api/returnfail";
+    const webhookUrl = "https://delaqua.vercel.app/api/fail";
     const events = ["ORDER_PAYMENT_FAILED"];
     try {
       const response = await axios.post(
-        "/api/webhookfail",
+        "/api/webhookFail",
         {
           webhookUrl,
           events,
