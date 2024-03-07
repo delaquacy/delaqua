@@ -11,7 +11,7 @@ export async function POST(req: any, res: any) {
       "https://sandbox-merchant.revolut.com/api/1.0/webhooks",
       {
         url: webhookUrl,
-        events: events,
+        events: [events],
       },
       {
         headers: {
