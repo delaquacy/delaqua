@@ -3,7 +3,7 @@ import type { NextApiResponse } from "next";
 import { NextRequest } from "next/server";
 
 const link =
-  "https://script.google.com/macros/s/AKfycbyel0dQkmNWQpP-qq7ajQ_Mwib8m3K9gJnHEJy5Bk1zfq4r2GY10SxceJBvj8I7Qz1E/exec";
+  "https://script.google.com/macros/s/AKfycbz2IdNKqrkMPE9c7SFnBRp4A-rqP2MLIlaHqjabq_yf_1muCtol5nzWLtKSj6MmdNddjQ/exec";
 
 export async function POST(
   req: NextRequest,
