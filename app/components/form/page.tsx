@@ -378,7 +378,7 @@ const MyForm = () => {
   };
 
   const sendRequest = async () => {
-    const webhookUrl = "https://delaqua.vercel.app/api/return";
+    const webhookUrl = "https://developer.revolut.com";
     const events = [
       "ORDER_COMPLETED",
       "ORDER_AUTHORISED",
@@ -407,7 +407,7 @@ const MyForm = () => {
   };
 
   const sendRequestNot = async () => {
-    const webhookUrl = "https://delaqua.vercel.app/api/return";
+    const webhookUrl = "https://developer.revolut.com";
     const events = [
       "ORDER_PAYMENT_DECLINED",
       "ORDER_PAYMENT_AUTHENTICATED",
