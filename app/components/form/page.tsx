@@ -55,7 +55,6 @@ import {
   requestToReturnFailStatus,
   requestToReturnSuccessStatus,
 } from "@/app/utils/webhoooks";
-import { redirect } from "next/navigation";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
@@ -81,7 +80,7 @@ const MyForm = () => {
   const [ordersLoaded, setOrdersLoaded] = useState<boolean>(true);
   const [orders, setOrders] = useState([]);
   const [numberOfBottlesInStock, setNumberOfBottlesInStock] =
-    useState(0);
+    useState<number>(0);
   // order payment id
   const [orderId, setOrderId] = useState<string | undefined>(
     undefined
@@ -451,12 +450,7 @@ const MyForm = () => {
           )}
         </h1>
         <h2>
-          Number of bottles you have:{" "}
-          {`${
-            numberOfBottlesInStock !== undefined
-              ? numberOfBottlesInStock
-              : 0
-          }`}
+          Number of bottles you have: {`${numberOfBottlesInStock}`}
         </h2>
         <h6 className={styles.titles}>Order</h6>
         <Grid container spacing={2}>
