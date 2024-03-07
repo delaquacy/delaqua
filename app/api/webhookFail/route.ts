@@ -24,8 +24,6 @@ export async function POST(req: any, res: any) {
       }
     );
 
-    console.log(response.data);
-
     return NextResponse.json(response.data);
   } catch (error: any) {
     console.error("Ошибка при создании webhook:", error.response);
