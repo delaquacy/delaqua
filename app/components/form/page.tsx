@@ -381,7 +381,7 @@ const MyForm = () => {
     const webhookUrl = "https://delaqua.vercel.app/api/return";
     const events = [
       "ORDER_PAYMENT_DECLINED",
-      "ORDER_COMPLETED",
+
       "ORDER_AUTHORISED",
       "ORDER_PAYMENT_AUTHENTICATED",
       "ORDER_PAYMENT_FAILED",
