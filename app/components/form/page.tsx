@@ -395,7 +395,7 @@ const MyForm = () => {
     const events = ["ORDER_COMPLETED"];
     try {
       const response = await axios.post(
-        "/api/webhookOk",
+        "/api/webhookSuccess",
         {
           webhookUrl,
           events,
@@ -418,7 +418,7 @@ const MyForm = () => {
     const events = ["ORDER_PAYMENT_FAILED"];
     try {
       const response = await axios.post(
-        "/api/webhookNot",
+        "/api/webhookFail",
         {
           webhookUrl,
           events,
