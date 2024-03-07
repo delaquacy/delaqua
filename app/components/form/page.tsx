@@ -380,15 +380,42 @@ const MyForm = () => {
   const sendRequest = async () => {
     const webhookUrl = "https://delaqua.vercel.app/api/return";
     const events = [
-      "ORDER_PAYMENT_DECLINED",
-
+      "ORDER_COMPLETED",
       "ORDER_AUTHORISED",
+      "ORDER_PAYMENT_DECLINED",
       "ORDER_PAYMENT_AUTHENTICATED",
       "ORDER_PAYMENT_FAILED",
     ];
     try {
       const response = await axios.post(
-        "/api/webhook",
+        "/api/webhookOk",
+        {
+          webhookUrl,
+          events,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Webhook создан успешно:", response.config.data);
+    } catch (error) {
+      console.error("Ошибка при создании webhook:", error);
+    }
+  };
+
+  const sendRequestNot = async () => {
+    const webhookUrl = "https://delaqua.vercel.app/api/return";
+    const events = [
+      "ORDER_PAYMENT_DECLINED",
+      "ORDER_PAYMENT_AUTHENTICATED",
+      "ORDER_PAYMENT_FAILED",
+    ];
+    try {
+      const response = await axios.post(
+        "/api/webhookNot",
         {
           webhookUrl,
           events,
@@ -433,6 +460,7 @@ const MyForm = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <button onClick={handleSubmited}>CLICK</button>
         <button onClick={sendRequest}>Hook</button>
+        <button onClick={sendRequestNot}>Not</button>
         <button onClick={result}>Back</button>
 
         <h1>
