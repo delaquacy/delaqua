@@ -402,7 +402,7 @@ const MyForm = () => {
 
   const sendRequestNot = async () => {
     const webhookUrl = "https://delaqua.vercel.app/api/returnNot";
-    const events = ["ORDER_PAYMENT_DECLINED"];
+    const events = ["ORDER_PAYMENT_FAILED"];
     try {
       const response = await axios.post(
         "/api/webhookNot",
