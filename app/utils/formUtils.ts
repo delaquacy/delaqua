@@ -60,3 +60,9 @@ export const bottlesCalculate = (
 ) => {
   return currentBottlesNumber + bottlesToBuy - bottlesToReturn;
 };
+
+const now = new Date();
+export const formattedDateTime = now
+  .toISOString()
+  .replace("T", " ")
+  .substring(0, 19);

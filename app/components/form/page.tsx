@@ -42,6 +42,7 @@ import {
   bottlesCalculate,
   calculatePrice,
   formatPhoneNumber,
+  formattedDateTime,
 } from "@/app/utils/formUtils";
 import { v4 as uuidv4 } from "uuid";
 import SavedData from "../savedData/SavedData";
@@ -50,6 +51,11 @@ import {
   getNumberOfBottlesFromDB,
   updateNumberOfBottlesInDB,
 } from "@/app/utils/getBottlesNumber";
+import {
+  requestToReturnFailStatus,
+  requestToReturnSuccessStatus,
+} from "@/app/utils/webhoooks";
+import { redirect } from "next/navigation";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
@@ -80,6 +86,7 @@ const MyForm = () => {
   const [orderId, setOrderId] = useState<string | undefined>(
     undefined
   );
+
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -248,9 +255,9 @@ const MyForm = () => {
 
   const onSubmit = async (data: IForm) => {
     setLoadingForm(true);
+
     try {
       const formatDataBeforeSubmit = (data: IForm) => {
-        console.log(data);
         const date = data.deliveryDate;
         const deliveryDate = new Date(date);
         const formattedDate = `${deliveryDate.getDate()}.${
@@ -293,8 +300,15 @@ const MyForm = () => {
           },
         }
       );
+      const formatPhoneNumber = userPhone?.replace(/\+/g, "");
+      if (data.paymentMethod === "Online") {
+        await handleSubmited(
+          totalPayments,
+          formatPhoneNumber,
+          formattedDateTime
+        );
+      }
       setLoadingForm(false);
-      alert("Order created successfully!");
       console.log("Form submitted with data:", JSON.stringify(data));
       window.location.reload();
       window.scrollTo(0, 0);
@@ -356,7 +370,11 @@ const MyForm = () => {
     setValue("firstAndLast", address.firstAndLast);
   };
 
-  const handleSubmited = async () => {
+  const handleSubmited = async (
+    amount: number,
+    phoneNumber: string | undefined,
+    dataAndTime: string
+  ) => {
     try {
       const response = await fetch("/api/payment", {
         method: "POST",
@@ -364,17 +382,20 @@ const MyForm = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: 500,
-          currency: "GBP",
+          amount: amount,
+          currency: "EUR",
+          description: `тут можем стилизовать под наши нужды.  ${phoneNumber} ${dataAndTime}`,
         }),
       });
       const data = await response.json();
+      const formatPhoneNumber = userPhone?.replace(/\+/g, "");
       await axios.post(
         "https://script.google.com/macros/s/AKfycbz2IdNKqrkMPE9c7SFnBRp4A-rqP2MLIlaHqjabq_yf_1muCtol5nzWLtKSj6MmdNddjQ/exec",
         {
-          userPhone: userPhone,
-          amount: 500,
+          userPhone: formatPhoneNumber,
+          amount: amount,
           orderId: data.id,
+          description: phoneNumber + dataAndTime,
         },
         {
           headers: {
@@ -384,73 +405,33 @@ const MyForm = () => {
       );
 
       setOrderId(data.id);
+      window.open(data.checkout_url, "_blank");
       console.log("Ответ от сервера:", data);
     } catch (error) {
       console.error("Ошибка при создании заказа:", error);
     }
   };
 
-  const sendRequest = async () => {
-    const webhookUrl = "https://delaqua.vercel.app/api/return";
-    const events = ["ORDER_COMPLETED"];
-    try {
-      const response = await axios.post(
-        "/api/webhookSuccess",
-        {
-          webhookUrl,
-          events,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  useEffect(() => {
+    requestToReturnSuccessStatus();
+    requestToReturnFailStatus();
+  }, []);
 
-      console.log("Webhook создан успешно:", response.config.data);
-    } catch (error) {
-      console.error("Ошибка при создании webhook:", error);
-    }
-  };
+  // const result = async () => {
+  //   try {
+  //     const response = await fetch(`/api/back/${orderId}`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
-  const sendRequestNot = async () => {
-    const webhookUrl = "https://delaqua.vercel.app/api/returnNot";
-    const events = ["ORDER_PAYMENT_FAILED"];
-    try {
-      const response = await axios.post(
-        "/api/webhookFail",
-        {
-          webhookUrl,
-          events,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      console.log("Webhook создан успешно:", response.config.data);
-    } catch (error) {
-      console.error("Ошибка при создании webhook:", error);
-    }
-  };
-
-  const result = async () => {
-    try {
-      const response = await fetch(`/api/back/${orderId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const nest = await response.json();
-      console.log("Back", nest);
-    } catch (error) {
-      console.error("Ошибка при получении данных о заказе:", error);
-    }
-  };
+  //     const nest = await response.json();
+  //     console.log("Back", nest);
+  //   } catch (error) {
+  //     console.error("Ошибка при получении данных о заказе:", error);
+  //   }
+  // };
 
   return (
     <SnackbarProvider
@@ -461,11 +442,6 @@ const MyForm = () => {
       autoHideDuration={1500}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <button onClick={handleSubmited}>CLICK</button>
-        <button onClick={sendRequest}>Hook</button>
-        <button onClick={sendRequestNot}>Not</button>
-        <button onClick={result}>Back</button>
-
         <h1>
           Order for{" "}
           {loadingNumber ? (
@@ -941,7 +917,7 @@ const MyForm = () => {
                 label={t("cash")}
               />
               <FormControlLabel
-                value="PAyment ststem"
+                value="Online"
                 control={<Radio />}
                 label={t("revolut")}
               />

@@ -1,3 +1,4 @@
+import { formattedDateTime } from "@/app/utils/formUtils";
 import axios from "axios";
 import type { NextApiResponse } from "next";
 import { NextRequest } from "next/server";
@@ -11,12 +12,7 @@ export async function POST(
 ) {
   try {
     const eventData = await req.json();
-    const now = new Date();
 
-    const formattedDateTime = now
-      .toISOString()
-      .replace("T", " ")
-      .substring(0, 19);
     const postData = {
       event: eventData.event,
       order_id: eventData.order_id,

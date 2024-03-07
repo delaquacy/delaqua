@@ -4,15 +4,16 @@ const key =
   "sk_CAWFozjx49HzfPb05oju56ciYeaVc28IG8-fAgNO3oE_KyvdPGaSW3ysNZIDiCVB";
 export async function POST(req: any, res: any) {
   const body = await req.json();
-  const { currency, amount } = body;
+  const { currency, amount, description } = body;
 
-  console.log(amount, currency);
+  console.log(amount, currency, description);
   try {
     const response = await axios.post(
       "https://sandbox-merchant.revolut.com/api/orders",
       {
-        amount,
+        amount: amount * 100,
         currency,
+        description,
       },
       {
         headers: {
