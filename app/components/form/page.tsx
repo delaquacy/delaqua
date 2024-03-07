@@ -368,8 +368,21 @@ const MyForm = () => {
           currency: "GBP",
         }),
       });
-
       const data = await response.json();
+      await axios.post(
+        "https://script.google.com/macros/s/AKfycbz2IdNKqrkMPE9c7SFnBRp4A-rqP2MLIlaHqjabq_yf_1muCtol5nzWLtKSj6MmdNddjQ/exec",
+        {
+          userPhone: userPhone,
+          amount: 500,
+          orderId: data.id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       setOrderId(data.id);
       console.log("Ответ от сервера:", data);
     } catch (error) {
