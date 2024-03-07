@@ -452,7 +452,11 @@ const MyForm = () => {
         </h1>
         <h2>
           Number of bottles you have:{" "}
-          {`${numberOfBottlesInStock && 0}`}
+          {`${
+            numberOfBottlesInStock !== undefined
+              ? numberOfBottlesInStock
+              : 0
+          }`}
         </h2>
         <h6 className={styles.titles}>Order</h6>
         <Grid container spacing={2}>
