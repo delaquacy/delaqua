@@ -1,3 +1,4 @@
+import { getCurrentUserId } from "@/app/lib/config";
 import { formattedDateTime } from "@/app/utils/formUtils";
 import axios from "axios";
 import type { NextApiResponse } from "next";
@@ -12,7 +13,8 @@ export async function POST(
 ) {
   try {
     const eventData = await req.json();
-
+    const userId = getCurrentUserId();
+    console.log(userId);
     const postData = {
       event: eventData.event,
       order_id: eventData.order_id,
