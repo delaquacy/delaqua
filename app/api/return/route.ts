@@ -40,7 +40,7 @@ export async function POST(
         "Content-Type": "application/json",
       },
     });
-    result(eventData.order_id);
+    await result(eventData.order_id);
     console.log(eventData);
     res.status(200).send("Данные получены");
   } catch (error) {
