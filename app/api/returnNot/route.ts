@@ -23,6 +23,7 @@ export async function POST(
         "Content-Type": "application/json",
       },
     });
+
     console.log(eventData);
     res.status(200).send("Данные получены");
   } catch (error) {

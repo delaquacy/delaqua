@@ -35,6 +35,7 @@ import {
   getDoc,
   getDocs,
   query,
+  updateDoc,
 } from "firebase/firestore";
 import { db, getCurrentUserId } from "@/app/lib/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -277,6 +278,9 @@ const MyForm = () => {
         collection(db, `users/${userId}/orders`),
         formattedData
       );
+
+      let currentOrderId = orderRef.id;
+
       bottlesCalculate(
         data.bottlesNumberToBuy,
         data.bottlesNumberToReturn,
@@ -304,7 +308,8 @@ const MyForm = () => {
         await handleSubmited(
           totalPayments,
           formatPhoneNumber,
-          formattedDateTime
+          formattedDateTime,
+          currentOrderId
         );
       }
       setLoadingForm(false);
@@ -372,7 +377,8 @@ const MyForm = () => {
   const handleSubmited = async (
     amount: number,
     phoneNumber: string | undefined,
-    dataAndTime: string
+    dataAndTime: string,
+    orderIdFromDB: string
   ) => {
     try {
       const response = await fetch("/api/payment", {
@@ -402,6 +408,12 @@ const MyForm = () => {
           },
         }
       );
+      const userId = getCurrentUserId();
+      const orderRef = doc(
+        db,
+        `users/${userId}/orders/${orderIdFromDB}`
+      );
+      await updateDoc(orderRef, { paymentId: data.id });
 
       setOrderId(data.id);
       window.open(data.checkout_url, "_blank");
