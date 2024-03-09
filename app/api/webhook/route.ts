@@ -6,6 +6,7 @@ const key =
 export async function POST(req: any, res: any) {
   const body = await req.json();
   const { webhookUrl, events } = body;
+
   try {
     const response = await axios.post(
       "https://sandbox-merchant.revolut.com/api/1.0/webhooks",
