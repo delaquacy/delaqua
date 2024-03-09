@@ -427,7 +427,21 @@ const MyForm = () => {
     requestToReturnSuccessStatus();
     requestToReturnFailStatus();
   }, []);
+  // const result = async (orderId: string) => {
+  //   try {
+  //     const response = await fetch(`/api/back/${orderId}`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
+  //     const nest = await response.json();
+  //     console.log("Back", nest);
+  //   } catch (error) {
+  //     console.error("Ошибка при получении данных о заказе:", error);
+  //   }
+  // };
   return (
     <SnackbarProvider
       anchorOrigin={{
