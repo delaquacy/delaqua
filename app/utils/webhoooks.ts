@@ -47,7 +47,7 @@ import axios from "axios";
 // };
 
 export const requestHook = async () => {
-  const webhookUrl = "https://delaqua.vercel.app/api/testreturn";
+  const webhookUrl = "https://delaqua.vercel.app/api/return";
   const events = [
     "ORDER_COMPLETED",
     "ORDER_AUTHORISED",
