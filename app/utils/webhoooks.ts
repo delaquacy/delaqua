@@ -22,10 +22,11 @@ export const requestToReturnSuccessStatus = async () => {
     console.error("Ошибка при создании webhook:", error);
   }
 };
-
+const key =
+  "sk_CAWFozjx49HzfPb05oju56ciYeaVc28IG8-fAgNO3oE_KyvdPGaSW3ysNZIDiCVB";
 export const requestToReturnFailStatus = async () => {
   const webhookUrl = "https://delaqua.vercel.app/api/returnNot";
-  const events = ["ORDER_PAYMENT_FAILED"];
+  const events = ["ORDER_PAYMENT_DECLINED"];
   try {
     const response = await axios.post(
       "/api/webhookFail",
@@ -36,6 +37,7 @@ export const requestToReturnFailStatus = async () => {
       {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${key}`,
         },
       }
     );
