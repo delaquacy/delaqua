@@ -52,7 +52,10 @@ import {
   getNumberOfBottlesFromDB,
   updateNumberOfBottlesInDB,
 } from "@/app/utils/getBottlesNumber";
-import { requestHook } from "@/app/utils/webhoooks";
+import {
+  requestToReturnFailStatus,
+  requestToReturnSuccessStatus,
+} from "@/app/utils/webhoooks";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
@@ -421,9 +424,8 @@ const MyForm = () => {
   };
 
   useEffect(() => {
-    //   // requestToReturnSuccessStatus();
-    //   // requestToReturnFailStatus();
-    requestHook();
+    requestToReturnSuccessStatus();
+    requestToReturnFailStatus();
   }, []);
   // const result = async (orderId: string) => {
   //   try {
