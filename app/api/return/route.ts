@@ -13,8 +13,6 @@ export async function POST(
 ) {
   try {
     const eventData = await req.json();
-    const userId = getCurrentUserId();
-    console.log(userId);
     const postData = {
       event: eventData.event,
       order_id: eventData.order_id,
@@ -25,7 +23,7 @@ export async function POST(
         "Content-Type": "application/json",
       },
     });
-    console.log(eventData);
+    console.log(postData);
     res.status(200).send("Данные получены");
   } catch (error) {
     console.log("Ошибка при обработке запроса:", error);
