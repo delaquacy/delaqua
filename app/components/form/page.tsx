@@ -54,8 +54,8 @@ import {
 } from "@/app/utils/getBottlesNumber";
 import {
   requestHook,
-  requestToReturnFailStatus,
-  requestToReturnSuccessStatus,
+  // requestToReturnFailStatus,
+  // requestToReturnSuccessStatus,
 } from "@/app/utils/webhoooks";
 
 const MyForm = () => {
@@ -425,8 +425,8 @@ const MyForm = () => {
   };
 
   useEffect(() => {
-    requestToReturnSuccessStatus();
-    requestToReturnFailStatus();
+    // requestToReturnSuccessStatus();
+    // requestToReturnFailStatus();
     requestHook();
   }, []);
   // const result = async (orderId: string) => {
