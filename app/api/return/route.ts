@@ -8,12 +8,13 @@ const link =
 export async function POST(
   req: NextRequest,
   res: NextApiResponse<string>
-) {
+): Promise<void> {
   const now = new Date();
   const formattedDateTime = now
     .toISOString()
     .replace("T", " ")
     .substring(0, 19);
+
   try {
     const eventData = await req.json();
 
@@ -29,7 +30,7 @@ export async function POST(
     });
 
     console.log(postData);
-    res.status(200).send("Данные получены");
+    // res.statusCode(200).send("Данные получены");
   } catch (error) {
     console.log("Ошибка при обработке запроса:", error);
   }

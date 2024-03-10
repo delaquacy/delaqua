@@ -15,13 +15,14 @@
 .button {
   display: flex;
   justify-content: center;
-  margin: 10px 0;
+  margin: 20px 0;
 }
 .inputName {
   font-weight: bold;
 }
 .blueContainer {
-  background-color: #63c1f3b5;
+  background-color: var(--grey-color);
+  border-radius: 4px;
   padding: 15px;
   height: 100%;
 }
@@ -61,7 +62,7 @@
 }
 .bottlesButtons input {
   margin: 0 25px;
-  max-width: 50px;
+  width: 50px;
   font-size: 25px;
 }
 .bottlesButtons button {
@@ -71,7 +72,7 @@
   height: 35px;
   border: none;
   border-radius: 50px;
-  background-color: #63c1f3b5;
+  background-color: var(--grey-color);
 }
 .inputErrors {
   color: #d32f2f;
@@ -94,4 +95,20 @@
   width: 128px;
   display: flex;
   justify-content: center;
+}
+@media (max-width: 748px) {
+  .phoneNumber {
+    font-size: 30px;
+  }
+  .marginTopBot {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .bottlesButtons {
+    justify-content: space-around;
+  }
+  .bottlesButtons input {
+    max-width: 30px;
+  }
 }

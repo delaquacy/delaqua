@@ -13,7 +13,7 @@
   color: black;
 }
 .name span {
-  color: #50c5f6;
+  color: var(--main-color);
 }
 
 .name_descr {
@@ -28,4 +28,23 @@
 }
 .loginMyaccountButtons a {
   margin: 0 5px;
+}
+.mobileScreen {
+  display: none;
+}
+@media (max-width: 748px) {
+  .mobileScreen {
+    display: block;
+  }
+  .loginMyaccountButtons {
+    display: none;
+  }
+  .name_container {
+    width: 30%;
+  }
+  .mobileScreen svg {
+    width: 35px;
+    height: 35px;
+    margin: 0 7px;
+  }
 }

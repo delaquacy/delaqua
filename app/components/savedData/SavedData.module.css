@@ -1,8 +1,8 @@
 .container {
   padding: 4px 20px 20px 20px;
   min-width: 200px;
-  border-radius: 40px;
-  background-color: #d8d8d8;
+  border-radius: 4px;
+  background-color: var(--grey-color);
   margin: 10px 0;
   cursor: pointer;
 }

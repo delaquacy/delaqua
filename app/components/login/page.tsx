@@ -141,7 +141,7 @@ export default function Login({ params }: LogInProps) {
             placeholder="Please enter OTP code from sms"
           />
           <Button
-            variant="outlined"
+            variant="contained"
             onClick={otpSent ? handleOtpSubmit : handleSentOtp}
           >
             {otpSent ? "Submit Otp" : "Sent OTP"}

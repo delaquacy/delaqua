@@ -36,7 +36,8 @@
   );
   --test-color: #dee5e8;
   --error-color: #d32f2f;
-
+  --main-color: #1976d2;
+  --grey-color: #d8d8d8;
   --callout-rgb: 238, 240, 241;
   --callout-border-rgb: 172, 175, 176;
   --card-rgb: 180, 185, 188;

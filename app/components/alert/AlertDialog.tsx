@@ -34,7 +34,7 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
           <OrdersList />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} variant="outlined">
+          <Button onClick={handleClose} variant="contained">
             Close
           </Button>
         </DialogActions>

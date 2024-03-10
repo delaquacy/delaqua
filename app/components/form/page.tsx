@@ -35,6 +35,7 @@ import {
   getDoc,
   getDocs,
   query,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { db, getCurrentUserId } from "@/app/lib/config";
@@ -415,6 +416,12 @@ const MyForm = () => {
       );
       await updateDoc(orderRef, { paymentId: data.id });
 
+      const paymentRef = doc(db, `payments/${data.id}`);
+      await setDoc(paymentRef, {
+        userId: userId,
+        number: phoneNumber,
+      });
+
       setOrderId(data.id);
       window.open(data.checkout_url, "_blank");
       console.log("Ответ от сервера:", data);
@@ -451,7 +458,7 @@ const MyForm = () => {
       autoHideDuration={1500}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <h1>
+        <h1 className={styles.phoneNumber}>
           Order for{" "}
           {loadingNumber ? (
             <CircularProgress size={20} />
@@ -459,9 +466,6 @@ const MyForm = () => {
             formattedUserPhone
           )}
         </h1>
-        <h2>
-          Number of bottles you have: {`${numberOfBottlesInStock}`}
-        </h2>
         <h6 className={styles.titles}>Order</h6>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
@@ -578,6 +582,27 @@ const MyForm = () => {
             <span className={styles.inputErrors}>
               {errors.bottlesNumberToReturn?.message}
             </span>
+            <div className={styles.marginTopBot}>
+              <Controller
+                name="pump"
+                control={control}
+                render={({ field }) => (
+                  <Switch
+                    {...field}
+                    color="primary"
+                    checked={field.value || false}
+                  />
+                )}
+              />
+              <span className={styles.inputName}>
+                {t("do_you_need_pump")}
+              </span>
+              <div>
+                <p className={styles.helperText}>
+                  {errors.pump?.message}
+                </p>
+              </div>
+            </div>
           </Grid>
           <Grid item xs={12} md={4}>
             <div className={styles.blueContainer}>
@@ -611,27 +636,7 @@ const MyForm = () => {
             </div>
           </Grid>
         </Grid>
-        <div className={styles.marginTopBot}>
-          <Controller
-            name="pump"
-            control={control}
-            render={({ field }) => (
-              <Switch
-                {...field}
-                color="primary"
-                checked={field.value || false}
-              />
-            )}
-          />
-          <span className={styles.inputName}>
-            {t("do_you_need_pump")}
-          </span>
-          <div>
-            <p className={styles.helperText}>
-              {errors.pump?.message}
-            </p>
-          </div>
-        </div>
+
         <Typography variant="h6" className={styles.titles}>
           {" "}
           Delivery date and time
@@ -853,7 +858,7 @@ const MyForm = () => {
               />
               {allFieldsFilled && (
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   onClick={() => createAddress(addressObject)}
                 >
                   Сохранить данные
@@ -870,14 +875,14 @@ const MyForm = () => {
             />
             <Box className={styles.addNewAddress}>
               <Button
-                variant="outlined"
+                variant="contained"
                 onClick={() => setShowAddresses(false)}
               >
                 Add new address
               </Button>
             </Box>
             <Grid container>
-              <Grid xs={4} md={4} item>
+              <Grid xs={12} md={4} item>
                 <span className={styles.inputName}>
                   {t("comments")}
                 </span>
@@ -945,7 +950,7 @@ const MyForm = () => {
         )}
         {!loadingForm && (
           <Box className={styles.button}>
-            <Button type="submit" variant="outlined">
+            <Button type="submit" variant="contained">
               Submit
             </Button>
           </Box>

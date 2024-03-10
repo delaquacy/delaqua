@@ -22,6 +22,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 import Login, { LogInProps } from "../login/page";
+import { AccountCircle } from "@mui/icons-material";
 
 export default function Header() {
   const { i18n } = useTranslation();
@@ -111,20 +112,14 @@ export default function Header() {
             </Select>
           </Box>
           {showLogin && <Login {...loginProps} />}
-          <div
-            style={{
-              width: "20%",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
+          <div>
             {loading ? (
               <CircularProgress size={20} />
             ) : (
               <>
                 {!user && (
                   <Button
-                    variant="outlined"
+                    variant="contained"
                     endIcon={<LoginIcon fontSize="small" />}
                     onClick={handleLoginToggle}
                   >
@@ -132,20 +127,75 @@ export default function Header() {
                   </Button>
                 )}
                 {user && (
+                  <>
+                    <Box className={styles.loginMyaccountButtons}>
+                      <Link href="/my_account">
+                        <Button
+                          variant="contained"
+                          endIcon={<AccountCircle fontSize="small" />}
+                        >
+                          My account
+                        </Button>
+                      </Link>
+                      <Link href="/">
+                        <Button
+                          variant="contained"
+                          endIcon={<ExitToAppIcon fontSize="small" />}
+                          onClick={handleLogout}
+                        >
+                          Log out
+                        </Button>
+                      </Link>
+                    </Box>
+                    <Box className={styles.mobileScreen}>
+                      <Link href="/my_account">
+                        <AccountCircle
+                          color="primary"
+                          fontSize="small"
+                        />
+                      </Link>
+                      <Link href="/">
+                        <ExitToAppIcon
+                          color="primary"
+                          onClick={handleLogout}
+                          fontSize="small"
+                        />
+                      </Link>
+                    </Box>
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        </Toolbar>
+        {/* <div style={{ margin: "10px" }}>
+          {loading ? (
+            <CircularProgress size={20} />
+          ) : (
+            <>
+              {!user && (
+                <Button
+                  variant="contained"
+                  endIcon={<LoginIcon fontSize="small" />}
+                  onClick={handleLoginToggle}
+                >
+                  Log in
+                </Button>
+              )}
+              {user && (
+                <>
                   <Box className={styles.loginMyaccountButtons}>
                     <Link href="/my_account">
                       <Button
-                        variant="outlined"
-                        endIcon={
-                          <AccountCircleOutlinedIcon fontSize="small" />
-                        }
+                        variant="contained"
+                        endIcon={<AccountCircle fontSize="small" />}
                       >
                         My account
                       </Button>
                     </Link>
                     <Link href="/">
                       <Button
-                        variant="outlined"
+                        variant="contained"
                         endIcon={<ExitToAppIcon fontSize="small" />}
                         onClick={handleLogout}
                       >
@@ -153,11 +203,29 @@ export default function Header() {
                       </Button>
                     </Link>
                   </Box>
-                )}
-              </>
-            )}
-          </div>
-        </Toolbar>
+                  <Box className={styles.mobileScreen}>
+                    <Link href="/my_account">
+                      <Button
+                        variant="contained"
+                        endIcon={<AccountCircle fontSize="small" />}
+                      >
+                        My account
+                      </Button>
+                    </Link>
+                    <Link href="/">
+                      <Button
+                        variant="contained"
+                        endIcon={<ExitToAppIcon fontSize="small" />}
+                      >
+                        Log out
+                      </Button>
+                    </Link>
+                  </Box>
+                </>
+              )}
+            </>
+          )}
+        </div> */}
       </AppBar>
     </Box>
   );

@@ -32,6 +32,7 @@ export default function Home() {
           </Grid>
           <Grid item xs={12} md={4}>
             <Image
+              layout="responsive"
               src="/bottles.webp"
               alt="bottles"
               width={400}
@@ -42,7 +43,12 @@ export default function Home() {
         </Grid>
         <Box sx={{ borderTop: 2 }} className={styles.infoBlock}>
           <Grid container spacing={1}>
-            <Grid sx={{ borderRight: 2 }} item xs={12} md={8}>
+            <Grid
+              className={styles.borderContainer}
+              item
+              xs={12}
+              md={8}
+            >
               <Box className={styles.waterDescription}>
                 <p> {t("water_characteristics")}</p>
                 <Image
