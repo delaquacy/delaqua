@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { NextApiResponse } from "next";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const link =
   "https://script.google.com/macros/s/AKfycbz2IdNKqrkMPE9c7SFnBRp4A-rqP2MLIlaHqjabq_yf_1muCtol5nzWLtKSj6MmdNddjQ/exec";
@@ -30,8 +30,14 @@ export async function POST(
     });
 
     console.log(postData);
-    res.statusCode = 200;
-    res.send("Данные получены");
+    NextResponse.json(
+      {
+        message: "Success",
+      },
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
     console.log("Ошибка при обработке запроса:", error);
   }
