@@ -30,7 +30,8 @@ export async function POST(
     });
 
     console.log(postData);
-    // res.statusCode(200).send("Данные получены");
+    //@ts-ignore
+    res.statusCode(200).send("Данные получены");
   } catch (error) {
     console.log("Ошибка при обработке запроса:", error);
   }
