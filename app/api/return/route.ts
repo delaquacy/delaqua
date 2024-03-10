@@ -8,7 +8,7 @@ const link =
 export async function POST(
   req: NextRequest,
   res: NextApiResponse<string>
-): Promise<void> {
+) {
   const now = new Date();
   const formattedDateTime = now
     .toISOString()
@@ -30,7 +30,7 @@ export async function POST(
     });
 
     console.log(postData);
-    NextResponse.json(
+    const response = NextResponse.json(
       {
         message: "Success",
       },
@@ -38,6 +38,7 @@ export async function POST(
         status: 200,
       }
     );
+    return response;
   } catch (error) {
     console.log("Ошибка при обработке запроса:", error);
   }
