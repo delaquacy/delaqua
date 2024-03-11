@@ -33,7 +33,6 @@ export async function POST(
     const paymentRef = doc(db, `payments/${eventData.order_id}`);
     await updateDoc(paymentRef, { paymentStatus: eventData.event });
 
-    console.log(postData);
     const response = NextResponse.json(
       {
         message: "Success",
