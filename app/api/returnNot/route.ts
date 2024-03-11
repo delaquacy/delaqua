@@ -1,6 +1,6 @@
 import { db } from "@/app/lib/config";
 import axios from "axios";
-import { doc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import type { NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -31,7 +31,9 @@ export async function POST(
       },
     });
     const paymentRef = doc(db, `payments/${eventData.order_id}`);
-    await updateDoc(paymentRef, { paymentStatus: eventData.event });
+    await updateDoc(paymentRef, {
+      paymentStatus: arrayUnion(eventData.event),
+    });
 
     const response = NextResponse.json(
       {
