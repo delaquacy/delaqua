@@ -420,6 +420,7 @@ const MyForm = () => {
       await setDoc(paymentRef, {
         userId: userId,
         number: phoneNumber,
+        amount: amount,
       });
 
       setOrderId(data.id);

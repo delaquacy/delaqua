@@ -1,6 +1,6 @@
 import { db } from "@/app/lib/config";
 import axios from "axios";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import type { NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -30,10 +30,10 @@ export async function POST(
         "Content-Type": "application/json",
       },
     });
+
     const paymentRef = doc(db, `payments/${eventData.order_id}`);
     await updateDoc(paymentRef, { paymentStatus: eventData.event });
 
-    console.log(paymentRef);
     const response = NextResponse.json(
       {
         message: "Success",
