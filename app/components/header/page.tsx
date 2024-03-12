@@ -79,7 +79,7 @@ export default function Header() {
   return (
     <Box className={styles.container} sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar>
+        <Toolbar className={styles.toolbar}>
           <Link href="/">
             <Image
               src="/water.svg"

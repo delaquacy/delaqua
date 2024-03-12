@@ -47,4 +47,10 @@
     height: 35px;
     margin: 0 7px;
   }
+  .name_container {
+    margin-left: 10px;
+  }
+  .toolbar {
+    padding: 0 7px;
+  }
 }

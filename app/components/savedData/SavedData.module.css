@@ -46,4 +46,10 @@
     display: flex;
     color: var(--main-color);
   }
+  .subtitles {
+    margin-right: 0;
+  }
+  .btns {
+    font-size: 17px;
+  }
 }

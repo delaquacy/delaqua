@@ -21,7 +21,7 @@ const SavedData: React.FC<Props> = ({
       setEmptyOrder(true);
     }
   }, [addresses]);
-  console.log(addresses);
+
   return (
     <>
       {addresses.map((address) => (
