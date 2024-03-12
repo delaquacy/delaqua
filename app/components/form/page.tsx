@@ -35,6 +35,7 @@ import {
   getDoc,
   getDocs,
   query,
+  serverTimestamp,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
@@ -111,6 +112,7 @@ const MyForm = () => {
               const addressData = doc.data();
               addressesData.push({ id: addressId, ...addressData });
             });
+
             const ordersQuery = query(
               collection(db, `users/${userId}/orders`)
             );
@@ -178,13 +180,13 @@ const MyForm = () => {
   }, [orders, ordersLoaded]);
 
   const bottlesToBuy = watch("bottlesNumberToBuy") || 0;
+  const pompStatus = watch(["pump"]);
   const addressFields = watch([
     "firstAndLast",
     "postalIndex",
     "deliveryAddress",
     "geolocation",
     "addressDetails",
-    "pump",
   ]);
   const allFieldsFilled = addressFields.every(
     (field) => field !== ""
@@ -200,14 +202,14 @@ const MyForm = () => {
       "deliveryAddress",
       "geolocation",
       "addressDetails",
-      "pump",
     ];
     const fieldKey = keys[index];
     acc[fieldKey] = field;
     return acc;
   }, {} as Record<AddressKey, string | boolean | undefined>);
 
-  const pompValue = addressFields[5];
+  const pompValue = pompStatus[0];
+
   const [pomp, setPomp] = useState<any>("");
   const [paymentForWater, setPaymentForWater] = useState(0);
   const [depositForBottles, setDepositForBottles] = useState(0);
@@ -270,6 +272,7 @@ const MyForm = () => {
           phoneNumber: userPhone,
           pump: data.pump ? "yes" : "no",
           id: uuidv4(),
+          createdAt: serverTimestamp(),
         };
       };
       const formattedData = formatDataBeforeSubmit(data);
@@ -588,11 +591,19 @@ const MyForm = () => {
                 name="pump"
                 control={control}
                 render={({ field }) => (
-                  <Switch
-                    {...field}
-                    color="primary"
-                    checked={field.value || false}
-                  />
+                  <>
+                    {ordersLoaded ? (
+                      <div className={styles.loadingContainer}>
+                        <CircularProgress size={20} />
+                      </div>
+                    ) : (
+                      <Switch
+                        {...field}
+                        color="primary"
+                        checked={field.value || false}
+                      />
+                    )}
+                  </>
                 )}
               />
               <span className={styles.inputName}>

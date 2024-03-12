@@ -14,8 +14,36 @@
   min-width: 190px;
 }
 .btns {
+  color: var(--main-color);
   cursor: pointer;
 }
 .btns:hover {
   color: white;
+}
+.cutString {
+  display: none;
+}
+.mobileButtons {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .hideToMobile {
+    display: none;
+  }
+  .cutString {
+    display: block;
+  }
+  .fullString {
+    display: none;
+  }
+  .displayFlex {
+    display: flex;
+  }
+  .mobileButtons {
+    margin-top: 20px;
+    font-size: 19px;
+    display: flex;
+    color: var(--main-color);
+  }
 }

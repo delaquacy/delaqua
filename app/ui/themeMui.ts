@@ -3,6 +3,9 @@ import { createTheme } from "@mui/material";
 import { theme as t } from "./theme";
 
 export const theme = createTheme({
+  typography: {
+    fontFamily: "Play, latin",
+  },
   components: {
     MuiButton: {
       variants: [
@@ -18,6 +21,12 @@ export const theme = createTheme({
               border: "none",
               outline: `2px solid ${t.colors.black}`,
             },
+          },
+        },
+        {
+          props: { variant: "contained" },
+          style: {
+            fontFamily: "Play, latin",
           },
         },
       ],

@@ -15,7 +15,7 @@ export default function OrdersList() {
   if (loading) {
     return <CircularProgress />;
   }
-
+  console.log(orders);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">

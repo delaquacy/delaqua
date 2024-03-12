@@ -1,4 +1,10 @@
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db, getCurrentUserId } from "../lib/config";
 import { IForm } from "../lib/definitions";
@@ -13,7 +19,12 @@ const useGetOrdersFromDb = () => {
         const userId = await getCurrentUserId();
 
         if (userId) {
-          const q = collection(db, `users/${userId}/orders`);
+          const q = query(
+            collection(db, `users/${userId}/orders`),
+            orderBy("createdAt"),
+            limit(5)
+          );
+          console.log(q);
           const querySnapshot = await getDocs(q);
 
           const ordersData: any = [];

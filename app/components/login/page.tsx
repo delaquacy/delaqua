@@ -41,6 +41,8 @@ export default function Login({ params }: LogInProps) {
   const [confirmationResult, setConfirmationResult] =
     useState<ConfirmationResult | null>(null);
   const [otpSent, setOtpSent] = useState<boolean>(false);
+  const [phoneNumberEntered, setPhoneNumberEntered] =
+    useState<boolean>(false);
 
   const auth = getAuth(app);
   const router = useRouter();
@@ -62,6 +64,7 @@ export default function Login({ params }: LogInProps) {
     e: ChangeEvent<HTMLInputElement>
   ) => {
     setPhoneNumber(e.target.value);
+    setPhoneNumberEntered(!!e.target.value);
   };
 
   const handleOtpChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -132,17 +135,24 @@ export default function Login({ params }: LogInProps) {
             className={styles.input}
             placeholder="Please enter phone number"
           />
-          <TextField
-            type="text"
-            value={otp}
-            onChange={handleOtpChange}
-            className={styles.input}
-            disabled={!otpSent}
-            placeholder="Please enter OTP code from sms"
-          />
+          {phoneNumberEntered && otpSent && (
+            <TextField
+              type="text"
+              value={otp}
+              onChange={handleOtpChange}
+              className={styles.input}
+              placeholder="Please enter OTP code from sms"
+            />
+          )}
           <Button
             variant="contained"
-            onClick={otpSent ? handleOtpSubmit : handleSentOtp}
+            onClick={
+              phoneNumberEntered
+                ? otpSent
+                  ? handleOtpSubmit
+                  : handleSentOtp
+                : undefined
+            }
           >
             {otpSent ? "Submit Otp" : "Sent OTP"}
           </Button>

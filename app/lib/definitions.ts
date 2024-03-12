@@ -12,6 +12,7 @@ export interface IForm {
   deliveryTime: string;
   paymentMethod: string;
   comments?: string;
+  createdAt?: string;
   id?: string;
 }
 
@@ -21,7 +22,6 @@ export type AddressKey =
   | "deliveryAddress"
   | "geolocation"
   | "addressDetails"
-  | "pump"
   | "id";
 export interface IAddress {
   firstAndLast: string | undefined;
@@ -29,6 +29,5 @@ export interface IAddress {
   deliveryAddress: string | undefined;
   addressDetails: string | undefined;
   geolocation: string | undefined;
-  pump: boolean;
   id: string | undefined;
 }
