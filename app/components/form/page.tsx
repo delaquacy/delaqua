@@ -58,6 +58,8 @@ import {
   requestToReturnFailStatus,
   requestToReturnSuccessStatus,
 } from "@/app/utils/webhoooks";
+import dayjs, { Dayjs } from "dayjs";
+import updateLocale from "dayjs/plugin/updateLocale";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
@@ -448,7 +450,19 @@ const MyForm = () => {
   //     console.error("Ошибка при получении данных о заказе:", error);
   //   }
   // };
-
+  // datepicker settings (hide saturday, week starts from monday)
+  const isWeekend = (date: Dayjs) => {
+    const day = date.day();
+    return day === 0;
+  };
+  dayjs.extend(updateLocale);
+  dayjs.updateLocale("en", {
+    weekStart: 1,
+  });
+  const dayOfWeekFormatter = (dayOfWeek: string, date: Date) => {
+    const formattedDay = dayjs(date).format("dd");
+    return formattedDay.toUpperCase();
+  };
   return (
     <SnackbarProvider
       anchorOrigin={{
@@ -673,6 +687,9 @@ const MyForm = () => {
                       <DatePicker
                         {...field}
                         disablePast
+                        dayOfWeekFormatter={dayOfWeekFormatter}
+                        //@ts-ignore
+                        shouldDisableDate={isWeekend}
                         format="DD-MM-YYYY"
                         slotProps={{
                           textField: {
