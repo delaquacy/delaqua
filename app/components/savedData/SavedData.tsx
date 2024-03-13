@@ -14,6 +14,7 @@ const SavedData: React.FC<Props> = ({
   onAddressClick,
 }) => {
   const [emptyOrder, setEmptyOrder] = useState(true);
+
   useEffect(() => {
     if (addresses && addresses.length !== 1) {
       setEmptyOrder(false);
@@ -74,7 +75,10 @@ const SavedData: React.FC<Props> = ({
             >
               <span
                 className={styles.btns}
-                onClick={() => deleteAddress(address?.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteAddress(address?.id);
+                }}
               >
                 Remove
               </span>
@@ -84,17 +88,13 @@ const SavedData: React.FC<Props> = ({
               <span className={styles.subtitles}>
                 Link to your geolocation
               </span>{" "}
-              <a href={address?.geolocation} target="_blank">
+              <a
+                className={styles.geolocation}
+                href={address?.geolocation}
+                target="_blank"
+              >
                 {" "}
-                <span className={styles.cutString}>
-                  {address?.geolocation &&
-                  address.geolocation.length > 10
-                    ? `${address.geolocation.substring(0, 14)}...`
-                    : address.geolocation}
-                </span>
-                <span className={styles.fullString}>
-                  {address?.geolocation}
-                </span>
+                {address?.geolocation}
               </a>
             </Grid>
 
@@ -102,13 +102,7 @@ const SavedData: React.FC<Props> = ({
               <span className={styles.subtitles}>
                 Address details
               </span>{" "}
-              <span className={styles.cutString}>
-                {address?.addressDetails &&
-                address.addressDetails.length > 10
-                  ? `${address.addressDetails.substring(0, 14)}...`
-                  : address.addressDetails}
-              </span>
-              <span className={styles.fullString}>
+              <span className={styles.address}>
                 {address?.addressDetails}
               </span>
             </Grid>
@@ -117,7 +111,10 @@ const SavedData: React.FC<Props> = ({
             <Grid item xs={6}>
               <span
                 className={styles.btns}
-                onClick={() => deleteAddress(address?.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteAddress(address?.id);
+                }}
               >
                 Remove
               </span>
