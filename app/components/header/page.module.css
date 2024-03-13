@@ -1,16 +1,30 @@
 .container header {
-  background-color: var(--test-color);
+  background-color: white;
   min-height: 70px;
   padding: 10px 0;
-  font-family: "Play", sans-serif;
 }
 .name_container {
   margin-left: 20px;
+  width: 65%;
 }
 .name {
   font-weight: bold;
   font-size: 28px;
   color: black;
+}
+.buttonsContainer {
+  text-align: right;
+  width: 37%;
+}
+
+.languageContainer {
+  display: flex;
+  justify-content: end;
+  width: 8%;
+}
+.loadingContainer {
+  display: flex;
+  justify-content: center;
 }
 .name span {
   color: var(--main-color);
@@ -52,5 +66,13 @@
   }
   .toolbar {
     padding: 0 7px;
+  }
+  .languageContainer {
+    width: 27%;
+  }
+}
+@media (max-width: 870px) and (min-width: 748px) {
+  .name_container {
+    width: 46%;
   }
 }

@@ -20,21 +20,20 @@
 .btns:hover {
   color: white;
 }
-.cutString {
-  display: none;
-}
 .mobileButtons {
   display: none;
+}
+.geolocation {
+  overflow: hidden;
+  color: var(--main-color);
+  text-decoration: underline;
+}
+.address {
+  overflow: hidden;
 }
 
 @media (max-width: 600px) {
   .hideToMobile {
-    display: none;
-  }
-  .cutString {
-    display: block;
-  }
-  .fullString {
     display: none;
   }
   .displayFlex {

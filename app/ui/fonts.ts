@@ -1,6 +1,6 @@
-import { Play } from "next/font/google";
+import { Roboto } from "next/font/google";
 
-export const inter = Play({
+export const inter = Roboto({
   subsets: ["latin"],
   weight: "400",
 });

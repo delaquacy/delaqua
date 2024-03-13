@@ -5,7 +5,6 @@ import "./globals.css";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./ui/themeMui";
 import Header from "./components/header/page";
-import { SnackbarProvider } from "notistack";
 
 export const metadata: Metadata = {
   title: "DelAqua",

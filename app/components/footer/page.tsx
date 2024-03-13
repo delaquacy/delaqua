@@ -38,13 +38,6 @@ export default function Footer() {
         </IconButton>
       </Box>
 
-      <Box className={styles.pages}>
-        <Link href="#">Contact us</Link>
-        <Link href="#">Our Services</Link>
-        <Link href="#">Privacy Policy</Link>
-        <Link href="#">Terms & Conditions</Link>
-      </Box>
-
       <Box className={styles.copyright}>
         <Typography
           variant="body2"

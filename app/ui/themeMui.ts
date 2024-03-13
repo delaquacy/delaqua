@@ -4,7 +4,7 @@ import { theme as t } from "./theme";
 
 export const theme = createTheme({
   typography: {
-    fontFamily: "Play, latin",
+    fontFamily: "Roboto",
   },
   components: {
     MuiButton: {
@@ -21,12 +21,6 @@ export const theme = createTheme({
               border: "none",
               outline: `2px solid ${t.colors.black}`,
             },
-          },
-        },
-        {
-          props: { variant: "contained" },
-          style: {
-            fontFamily: "Play, latin",
           },
         },
       ],

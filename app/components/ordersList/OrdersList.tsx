@@ -21,17 +21,15 @@ export default function OrdersList() {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">Name</TableCell>
             <TableCell align="right">Phone</TableCell>
             <TableCell align="right">Index</TableCell>
             <TableCell align="right">Address</TableCell>
-            <TableCell align="center">Location</TableCell>
+
             <TableCell align="right">Pump</TableCell>
             <TableCell align="right">Bottles to buy</TableCell>
             <TableCell align="right">Bottles to return</TableCell>
             <TableCell align="right">Delivery time</TableCell>
             <TableCell align="right">Payment method</TableCell>
-            <TableCell align="right">Comments</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -49,10 +47,6 @@ export default function OrdersList() {
                   "&:last-child td, &:last-child th": { border: 0 },
                 }}
               >
-                <TableCell component="th" scope="row">
-                  {order.firstAndLast}
-                </TableCell>
-
                 <TableCell align="right">
                   {order.phoneNumber}
                 </TableCell>
@@ -62,9 +56,7 @@ export default function OrdersList() {
                 <TableCell align="right">
                   {order.deliveryAddress}
                 </TableCell>
-                <TableCell align="right">
-                  {order.geolocation}
-                </TableCell>
+
                 <TableCell align="right">
                   {order.pump ? "да" : null}
                 </TableCell>
@@ -81,7 +73,6 @@ export default function OrdersList() {
                 <TableCell align="right">
                   {order.paymentMethod}
                 </TableCell>
-                <TableCell align="right">{order?.comments}</TableCell>
               </TableRow>
             ))
           )}

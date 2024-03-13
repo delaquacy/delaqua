@@ -84,10 +84,6 @@ const MyForm = () => {
   const [orders, setOrders] = useState([]);
   const [numberOfBottlesInStock, setNumberOfBottlesInStock] =
     useState<number>(0);
-  // order payment id
-  const [orderId, setOrderId] = useState<string | undefined>(
-    undefined
-  );
 
   useEffect(() => {
     const auth = getAuth();
@@ -337,7 +333,7 @@ const MyForm = () => {
 
         enqueueSnackbar(
           "Successfully created address. Next time you can choose it",
-          { variant: "success" }
+          { variant: "info" }
         );
       } else {
         console.error("User not authenticated!");
@@ -426,7 +422,6 @@ const MyForm = () => {
         amount: amount,
       });
 
-      setOrderId(data.id);
       window.open(data.checkout_url, "_blank");
       console.log("Ответ от сервера:", data);
     } catch (error) {
@@ -453,6 +448,7 @@ const MyForm = () => {
   //     console.error("Ошибка при получении данных о заказе:", error);
   //   }
   // };
+
   return (
     <SnackbarProvider
       anchorOrigin={{
@@ -470,7 +466,7 @@ const MyForm = () => {
             formattedUserPhone
           )}
         </h1>
-        <h6 className={styles.titles}>Order</h6>
+        <h6 className={styles.titles}>{""}</h6>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <div className={styles.marginTopBot}>
@@ -622,19 +618,18 @@ const MyForm = () => {
               <div className={styles.marginsTotal}>
                 {totalPayments} €
               </div>
+              <br></br>
               <p className={styles.margins}>
                 {" "}
-                {paymentText} {priceForDifferentBottles} €
-              </p>
-              <div className={styles.margins}>
+                {paymentText} {priceForDifferentBottles} € :{" "}
                 {paymentForWater} €{" "}
-              </div>
-              <p className={styles.margins}>Deposite for bottles</p>
-              <div className={styles.margins}>
-                {depositForBottles} €
-              </div>
-              <p className={styles.margins}>Pump</p>
-              <div className={styles.margins}>{pompNumber} €</div>
+              </p>
+
+              <p className={styles.margins}>
+                Deposite for bottles: {depositForBottles} €
+              </p>
+
+              <p className={styles.margins}>Pump: {pompNumber} €</p>
             </div>
           </Grid>
 
@@ -665,7 +660,8 @@ const MyForm = () => {
           <Grid xs={12} md={4} item>
             <Box>
               <div className={styles.inputName}>
-                {t("delivery_date")}
+                {t("delivery_date")}{" "}
+                <span className={styles.redStar}>*</span>
               </div>
               <div className={styles.datePicker}>
                 <Controller
@@ -698,7 +694,8 @@ const MyForm = () => {
           <Grid xs={12} md={6} item>
             <Box>
               <span className={styles.inputName}>
-                {t("delivery_time")}
+                {t("delivery_time")}{" "}
+                <span className={styles.redStar}>*</span>
               </span>
               <Controller
                 name="deliveryTime"
@@ -738,7 +735,8 @@ const MyForm = () => {
           <Grid container spacing={2}>
             <Grid xs={12} md={4} item>
               <span className={styles.inputName}>
-                {t("first_and_last")}
+                {t("first_and_last")}{" "}
+                <span className={styles.redStar}>*</span>
               </span>
               <Controller
                 name="firstAndLast"
@@ -749,6 +747,7 @@ const MyForm = () => {
                     {...field}
                     fullWidth
                     margin="normal"
+                    placeholder="John Smith"
                     error={!!errors.firstAndLast}
                     helperText={errors.firstAndLast?.message}
                   />
@@ -757,7 +756,8 @@ const MyForm = () => {
             </Grid>
             <Grid xs={12} md={4} item>
               <span className={styles.inputName}>
-                {t("post_index")}
+                {t("post_index")}{" "}
+                <span className={styles.redStar}>*</span>
               </span>
               <Controller
                 name="postalIndex"
@@ -777,7 +777,8 @@ const MyForm = () => {
             </Grid>
             <Grid xs={12} md={4} item>
               <span className={styles.inputName}>
-                {t("delivery_address")}
+                {t("delivery_address")}{" "}
+                <span className={styles.redStar}>*</span>
               </span>
               <Controller
                 name="deliveryAddress"
@@ -788,6 +789,7 @@ const MyForm = () => {
                     {...field}
                     fullWidth
                     margin="normal"
+                    placeholder="street, house number, house/ court name"
                     error={!!errors.deliveryAddress}
                     helperText={errors.deliveryAddress?.message}
                   />
@@ -796,7 +798,8 @@ const MyForm = () => {
             </Grid>
             <Grid xs={12} md={4} item>
               <span className={styles.inputName}>
-                {t("geolocation_link")}
+                {t("geolocation_link")}{" "}
+                <span className={styles.redStar}>*</span>
               </span>
               <Controller
                 name="geolocation"
@@ -807,6 +810,7 @@ const MyForm = () => {
                     {...field}
                     fullWidth
                     margin="normal"
+                    placeholder="https://maps.app.goo.gl/example"
                     error={!!errors.geolocation}
                     helperText={errors.geolocation?.message}
                   />
@@ -829,7 +833,8 @@ const MyForm = () => {
             </Grid>
             <Grid xs={12} md={4} item>
               <span className={styles.inputName}>
-                {t("address_details")}
+                {t("address_details")}{" "}
+                <span className={styles.redStar}>*</span>
               </span>
               <Controller
                 name="addressDetails"
@@ -861,6 +866,7 @@ const MyForm = () => {
                     multiline
                     rows={4}
                     fullWidth
+                    placeholder="add any additional comment that you find useful for the delivery"
                     variant="outlined"
                     margin="normal"
                     error={!!errors.comments}
@@ -886,12 +892,9 @@ const MyForm = () => {
               onAddressClick={handleAddressClick}
             />
             <Box className={styles.addNewAddress}>
-              <Button
-                variant="contained"
-                onClick={() => setShowAddresses(false)}
-              >
+              <a onClick={() => setShowAddresses(false)}>
                 Add new address
-              </Button>
+              </a>
             </Box>
             <Grid container>
               <Grid xs={12} md={4} item>
@@ -908,6 +911,7 @@ const MyForm = () => {
                       multiline
                       rows={4}
                       fullWidth
+                      placeholder="add any additional comment that you find useful for the delivery"
                       variant="outlined"
                       margin="normal"
                       error={!!errors.comments}
@@ -924,7 +928,8 @@ const MyForm = () => {
           Payment details
         </Typography>
         <span className={styles.inputName}>
-          {t("payment_method")}
+          {t("payment_method")}{" "}
+          <span className={styles.redStar}>*</span>
         </span>
         <Controller
           name="paymentMethod"
@@ -963,7 +968,7 @@ const MyForm = () => {
         {!loadingForm && (
           <Box className={styles.button}>
             <Button type="submit" variant="contained">
-              Submit
+              Submit order
             </Button>
           </Box>
         )}
