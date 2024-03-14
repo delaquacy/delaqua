@@ -24,7 +24,7 @@ const useGetOrdersFromDb = () => {
             orderBy("createdAt"),
             limit(5)
           );
-          console.log(q);
+
           const querySnapshot = await getDocs(q);
 
           const ordersData: any = [];

@@ -11,6 +11,7 @@ export interface IForm {
   deliveryDate: Date;
   deliveryTime: string;
   paymentMethod: string;
+  paymentId?: string;
   comments?: string;
   createdAt?: string;
   id?: string;

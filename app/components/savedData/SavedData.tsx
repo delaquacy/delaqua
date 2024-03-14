@@ -5,15 +5,29 @@ import styles from "./SavedData.module.css";
 
 interface Props {
   addresses: IAddress[];
-  deleteAddress: any;
-  onAddressClick: any;
+  deleteAddress: (addressId: string | undefined) => Promise<void>;
+  onAddressClick: (address: IAddress) => void;
+  setShowAddresses: any;
 }
 const SavedData: React.FC<Props> = ({
   addresses,
   deleteAddress,
   onAddressClick,
+  setShowAddresses,
 }) => {
   const [emptyOrder, setEmptyOrder] = useState(true);
+  const [selectedAddressId, setSelectedAddressId] = useState<
+    string | undefined
+  >(undefined);
+  const handleAddressClick = (address: IAddress) => {
+    setSelectedAddressId(address.id);
+    onAddressClick(address);
+  };
+  useEffect(() => {
+    if (addresses && addresses.length === 0) {
+      setShowAddresses(false);
+    }
+  }, [addresses]);
 
   useEffect(() => {
     if (addresses && addresses.length !== 1) {
@@ -28,8 +42,10 @@ const SavedData: React.FC<Props> = ({
       {addresses.map((address) => (
         <Box
           key={address?.id}
-          className={styles.container}
-          onClick={() => emptyOrder && onAddressClick(address)}
+          className={`${styles.container} ${
+            selectedAddressId === address.id ? styles.selected : ""
+          }`}
+          onClick={() => emptyOrder && handleAddressClick(address)}
         >
           <Grid container spacing={2}>
             <Grid item xs={12} md={12}>
@@ -53,7 +69,7 @@ const SavedData: React.FC<Props> = ({
               >
                 <span
                   className={styles.btns}
-                  onClick={() => onAddressClick(address)}
+                  onClick={() => handleAddressClick(address)}
                 >
                   Order to this address
                 </span>

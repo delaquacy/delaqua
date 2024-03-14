@@ -91,7 +91,7 @@
 
 .addNewAddress {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   margin: 20px 0;
   cursor: pointer;
   color: var(--main-color);

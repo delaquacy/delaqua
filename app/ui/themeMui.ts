@@ -3,9 +3,6 @@ import { createTheme } from "@mui/material";
 import { theme as t } from "./theme";
 
 export const theme = createTheme({
-  typography: {
-    fontFamily: "Roboto",
-  },
   components: {
     MuiButton: {
       variants: [

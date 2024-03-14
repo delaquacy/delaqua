@@ -23,7 +23,7 @@ import Link from "next/link";
 import styles from "./page.module.css";
 import AlertDialog from "../alert/AlertDialog";
 import { AddressKey, IForm } from "@/app/lib/definitions";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
@@ -345,7 +345,7 @@ const MyForm = () => {
     }
   };
 
-  const deleteAddress = async (addressId: string) => {
+  const deleteAddress = async (addressId: string | undefined) => {
     try {
       const userId = getCurrentUserId();
 
@@ -451,6 +451,19 @@ const MyForm = () => {
   //   }
   // };
   // datepicker settings (hide saturday, week starts from monday)
+  const selectedDate = watch("deliveryDate");
+  const showMessage = useMemo(() => {
+    if (!selectedDate) {
+      return false;
+    }
+
+    const now = dayjs();
+    const noon = now.startOf("day").add(12, "hours");
+    const watchedDate = dayjs(selectedDate);
+
+    return now.isSame(watchedDate, "day") && now.isAfter(noon);
+  }, [selectedDate]);
+
   const isWeekend = (date: Dayjs) => {
     const day = date.day();
     return day === 0;
@@ -463,6 +476,13 @@ const MyForm = () => {
     const formattedDay = dayjs(date).format("dd");
     return formattedDay.toUpperCase();
   };
+
+  useEffect(() => {
+    if (!addresses) {
+      setShowAddresses(false);
+    }
+  }, [addresses, deleteAddress]);
+
   return (
     <SnackbarProvider
       anchorOrigin={{
@@ -689,7 +709,9 @@ const MyForm = () => {
                         disablePast
                         dayOfWeekFormatter={dayOfWeekFormatter}
                         //@ts-ignore
-                        shouldDisableDate={isWeekend}
+                        shouldDisableDate={(date: Dayjs) =>
+                          isWeekend(date)
+                        }
                         format="DD-MM-YYYY"
                         slotProps={{
                           textField: {
@@ -702,6 +724,13 @@ const MyForm = () => {
                 />
               </div>
               <div>
+                {showMessage && (
+                  <p className={styles.helperText}>
+                    The soonest delivery day is{" "}
+                    {dayjs().add(1, "day").format("dddd")}, please
+                    change the day
+                  </p>
+                )}
                 <p className={styles.helperText}>
                   {errors.deliveryDate?.message}
                 </p>
@@ -905,6 +934,7 @@ const MyForm = () => {
           <>
             <SavedData
               addresses={addresses}
+              setShowAddresses={setShowAddresses}
               deleteAddress={deleteAddress}
               onAddressClick={handleAddressClick}
             />

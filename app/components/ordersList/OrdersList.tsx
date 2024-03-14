@@ -15,21 +15,21 @@ export default function OrdersList() {
   if (loading) {
     return <CircularProgress />;
   }
-  console.log(orders);
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">Phone</TableCell>
-            <TableCell align="right">Index</TableCell>
-            <TableCell align="right">Address</TableCell>
+            <TableCell align="center">Phone</TableCell>
+            <TableCell align="center">Index</TableCell>
+            <TableCell align="center">Address</TableCell>
 
-            <TableCell align="right">Pump</TableCell>
-            <TableCell align="right">Bottles to buy</TableCell>
-            <TableCell align="right">Bottles to return</TableCell>
-            <TableCell align="right">Delivery time</TableCell>
-            <TableCell align="right">Payment method</TableCell>
+            <TableCell align="center">Pump</TableCell>
+            <TableCell align="center">Bottles to buy</TableCell>
+            <TableCell align="center">Bottles to return</TableCell>
+            <TableCell align="center">Delivery time</TableCell>
+            <TableCell align="center">Payment method</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -47,30 +47,30 @@ export default function OrdersList() {
                   "&:last-child td, &:last-child th": { border: 0 },
                 }}
               >
-                <TableCell align="right">
+                <TableCell align="center">
                   {order.phoneNumber}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
                   {order.postalIndex}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
                   {order.deliveryAddress}
                 </TableCell>
 
-                <TableCell align="right">
+                <TableCell align="center">
                   {order.pump ? "да" : null}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
                   {order.bottlesNumberToBuy}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
                   {order.bottlesNumberToReturn}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
                   {" "}
                   {order.deliveryTime}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="center">
                   {order.paymentMethod}
                 </TableCell>
               </TableRow>
