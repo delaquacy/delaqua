@@ -9,7 +9,6 @@ import Image from "next/image";
 import Link from "next/link";
 import LoginIcon from "@mui/icons-material/Login";
 import { CircularProgress, MenuItem, Select } from "@mui/material";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import {
   getAuth,

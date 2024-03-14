@@ -332,11 +332,6 @@ const MyForm = () => {
           collection(db, `users/${userId}/addresses`),
           addressObject
         );
-
-        enqueueSnackbar(
-          "Successfully created address. Next time you can choose it",
-          { variant: "info" }
-        );
       } else {
         console.error("User not authenticated!");
       }
@@ -972,12 +967,9 @@ const MyForm = () => {
         )}
 
         <Typography variant="h6" className={styles.titles}>
-          Payment details
+          {t("payment_method")}
         </Typography>
-        <span className={styles.inputName}>
-          {t("payment_method")}{" "}
-          <span className={styles.redStar}>*</span>
-        </span>
+
         <Controller
           name="paymentMethod"
           control={control}

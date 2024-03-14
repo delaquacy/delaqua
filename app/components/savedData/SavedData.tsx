@@ -50,7 +50,7 @@ const SavedData: React.FC<Props> = ({
           <Grid container spacing={2}>
             <Grid item xs={12} md={12}>
               <span className={styles.subtitles}>
-                First and last name *
+                First and last name
               </span>{" "}
               {address?.firstAndLast}
             </Grid>

@@ -8,13 +8,16 @@
   width: 65%;
 }
 .name {
+  font-family: "arial black", "arial-w01-black", "arial-w02-black",
+    "arial-w10 black", sans-serif;
+  font-weight: 700;
   font-weight: bold;
-  font-size: 28px;
+  font-size: 22px;
   color: black;
 }
 .buttonsContainer {
   text-align: right;
-  width: 37%;
+  width: 39%;
 }
 
 .languageContainer {
@@ -27,7 +30,7 @@
   justify-content: center;
 }
 .name span {
-  color: var(--main-color);
+  color: #50c5f6;
 }
 
 .name_descr {
@@ -54,7 +57,7 @@
     display: none;
   }
   .name_container {
-    width: 30%;
+    width: 41%;
   }
   .mobileScreen svg {
     width: 35px;

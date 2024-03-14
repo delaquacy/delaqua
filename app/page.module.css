@@ -61,16 +61,22 @@
     margin: 30px;
   }
   .container h1 {
-    font-size: 3rem;
+    font-size: 2rem;
   }
   .subtitle {
-    font-size: 17px;
+    font-size: 15px;
   }
   .list {
-    font-size: 17px;
+    font-size: 15px;
+  }
+  .waterDescription {
+    font-size: 15px;
   }
 }
 @media (max-width: 640px) {
+  .container h1 {
+    font-size: 27px;
+  }
   .waterDescription {
     display: block;
   }
