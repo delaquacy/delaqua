@@ -49,6 +49,7 @@
 .mobileScreen {
   display: none;
 }
+
 @media (max-width: 748px) {
   .mobileScreen {
     display: block;

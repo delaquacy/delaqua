@@ -61,6 +61,7 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { fetchAddresses, fetchOrders } from "@/app/utils/addressApi";
+import BasicModal from "../OrderCreated/OrderCreated";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
@@ -234,6 +235,7 @@ const MyForm = () => {
     setPriceForDifferentBottles(newPaymentPrice);
     setPaymentText(newPaymentText);
   }, [bottlesToBuy, watch, addressFields, pomp, addresses]);
+  const [cashPaymentTrigger, setCashPaymentTrigger] = useState(false);
 
   const onSubmit = async (data: IForm) => {
     setLoadingForm(true);
@@ -295,10 +297,14 @@ const MyForm = () => {
           currentOrderId
         );
       }
+      if (data.paymentMethod === "Cash") {
+        setCashPaymentTrigger(true);
+      }
       setLoadingForm(false);
       console.log("Form submitted with data:", JSON.stringify(data));
-      window.location.reload();
-      window.scrollTo(0, 0);
+
+      // window.location.reload();
+      // window.scrollTo(0, 0);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -359,7 +365,10 @@ const MyForm = () => {
     setValue("geolocation", address.geolocation);
     setValue("firstAndLast", address.firstAndLast);
   };
+  const [onlinePaymentTrigger, setOnlinePaymentTrigger] =
+    useState(false);
 
+  const [url, setUrl] = useState<string | undefined>("");
   const handleSubmited = async (
     amount: number,
     phoneNumber: string | undefined,
@@ -408,7 +417,9 @@ const MyForm = () => {
         amount: amount,
       });
 
-      window.open(data.checkout_url, "_blank");
+      setUrl(data.checkout_url);
+      setOnlinePaymentTrigger(true);
+      // window.open(data.checkout_url, "_blank");
       console.log("Ответ от сервера:", data);
     } catch (error) {
       console.error("Ошибка при создании заказа:", error);
@@ -500,6 +511,23 @@ const MyForm = () => {
       }}
       autoHideDuration={1500}
     >
+      {onlinePaymentTrigger && (
+        <BasicModal
+          method="online"
+          url={url}
+          isOpen={onlinePaymentTrigger}
+          onClose={() => setOnlinePaymentTrigger(false)}
+        />
+      )}
+      {cashPaymentTrigger && (
+        <BasicModal
+          method="cash"
+          amount={totalPayments}
+          isOpen={cashPaymentTrigger}
+          onClose={() => setCashPaymentTrigger(false)}
+        />
+      )}
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <h1 className={styles.phoneNumber}>
           Order for{" "}

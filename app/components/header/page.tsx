@@ -48,6 +48,7 @@ export default function Header() {
   const auth = getAuth(app);
   const router = useRouter();
   const pathname = usePathname();
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -173,64 +174,6 @@ export default function Header() {
             )}
           </div>
         </Toolbar>
-        {/* <div style={{ margin: "10px" }}>
-          {loading ? (
-            <CircularProgress size={20} />
-          ) : (
-            <>
-              {!user && (
-                <Button
-                  variant="contained"
-                  endIcon={<LoginIcon fontSize="small" />}
-                  onClick={handleLoginToggle}
-                >
-                  Log in
-                </Button>
-              )}
-              {user && (
-                <>
-                  <Box className={styles.loginMyaccountButtons}>
-                    <Link href="/my_account">
-                      <Button
-                        variant="contained"
-                        endIcon={<AccountCircle fontSize="small" />}
-                      >
-                        My account
-                      </Button>
-                    </Link>
-                    <Link href="/">
-                      <Button
-                        variant="contained"
-                        endIcon={<ExitToAppIcon fontSize="small" />}
-                        onClick={handleLogout}
-                      >
-                        Log out
-                      </Button>
-                    </Link>
-                  </Box>
-                  <Box className={styles.mobileScreen}>
-                    <Link href="/my_account">
-                      <Button
-                        variant="contained"
-                        endIcon={<AccountCircle fontSize="small" />}
-                      >
-                        My account
-                      </Button>
-                    </Link>
-                    <Link href="/">
-                      <Button
-                        variant="contained"
-                        endIcon={<ExitToAppIcon fontSize="small" />}
-                      >
-                        Log out
-                      </Button>
-                    </Link>
-                  </Box>
-                </>
-              )}
-            </>
-          )}
-        </div> */}
       </AppBar>
     </Box>
   );
