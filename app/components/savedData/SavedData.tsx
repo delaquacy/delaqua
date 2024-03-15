@@ -8,12 +8,14 @@ interface Props {
   deleteAddress: (addressId: string | undefined) => Promise<void>;
   onAddressClick: (address: IAddress) => void;
   setShowAddresses: any;
+  setAddresses: (updatedAddresses: IAddress[]) => void;
 }
 const SavedData: React.FC<Props> = ({
   addresses,
   deleteAddress,
   onAddressClick,
   setShowAddresses,
+  setAddresses,
 }) => {
   const [emptyOrder, setEmptyOrder] = useState(true);
   const [selectedAddressId, setSelectedAddressId] = useState<
@@ -23,6 +25,17 @@ const SavedData: React.FC<Props> = ({
     setSelectedAddressId(address.id);
     onAddressClick(address);
   };
+  const handleDeleteAddress = async (
+    addressId: string | undefined
+  ) => {
+    await deleteAddress(addressId);
+    // Устанавливаем новый массив адресов после удаления
+    const updatedAddresses = addresses.filter(
+      (address) => address.id !== addressId
+    );
+    setAddresses(updatedAddresses);
+  };
+
   useEffect(() => {
     if (addresses && addresses.length === 0) {
       setShowAddresses(false);
@@ -93,7 +106,7 @@ const SavedData: React.FC<Props> = ({
                 className={styles.btns}
                 onClick={(e) => {
                   e.stopPropagation();
-                  deleteAddress(address?.id);
+                  handleDeleteAddress(address.id);
                 }}
               >
                 Remove
@@ -129,7 +142,7 @@ const SavedData: React.FC<Props> = ({
                 className={styles.btns}
                 onClick={(e) => {
                   e.stopPropagation();
-                  deleteAddress(address?.id);
+                  handleDeleteAddress(address.id);
                 }}
               >
                 Remove

@@ -60,6 +60,7 @@ import {
 } from "@/app/utils/webhoooks";
 import dayjs, { Dayjs } from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
+import { fetchAddresses, fetchOrders } from "@/app/utils/addressApi";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
@@ -76,14 +77,14 @@ const MyForm = () => {
   // loading number from db to render him
   const [loadingNumber, setLoadingNumber] = useState<boolean>(true);
   // address array
-  const [addresses, setAddresses] = useState([]);
+  const [addresses, setAddresses] = useState<any>([]);
   // show saved addresses or show form inputs
   const [showAddresses, setShowAddresses] = useState<boolean>(false);
   // remove address from addresses array
   const [removeTrigger, setRemoveTrigger] = useState<boolean>(false);
   // wait orders loading
   const [ordersLoaded, setOrdersLoaded] = useState<boolean>(true);
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<any>([]);
   const [numberOfBottlesInStock, setNumberOfBottlesInStock] =
     useState<number>(0);
 
@@ -99,28 +100,8 @@ const MyForm = () => {
           const userId = await getCurrentUserId();
 
           if (userId) {
-            const q = query(
-              collection(db, `users/${userId}/addresses`)
-            );
-            const querySnapshot = await getDocs(q);
-
-            const addressesData: any = [];
-            querySnapshot.forEach((doc) => {
-              const addressId = doc.id;
-              const addressData = doc.data();
-              addressesData.push({ id: addressId, ...addressData });
-            });
-
-            const ordersQuery = query(
-              collection(db, `users/${userId}/orders`)
-            );
-            const ordersQuerySnapshot = await getDocs(ordersQuery);
-            const ordersData: any = ordersQuerySnapshot.docs.map(
-              (doc) => ({
-                id: doc.id,
-                ...doc.data(),
-              })
-            );
+            const addressesData = await fetchAddresses(userId);
+            const ordersData = await fetchOrders(userId);
 
             setOrders(ordersData);
             setAddresses(addressesData);
@@ -130,7 +111,7 @@ const MyForm = () => {
             console.error("User not authenticated!");
           }
         } catch (error) {
-          console.error("Error fetching addresses:", error);
+          console.error("Error fetching data:", error);
         }
       }
     });
@@ -322,7 +303,8 @@ const MyForm = () => {
       console.error("Error submitting form:", error);
     }
   };
-
+  const [createAddressSuccess, setCreateAddressSuccess] =
+    useState(false);
   const createAddress = async (addressObject: any) => {
     try {
       const userId = getCurrentUserId();
@@ -332,6 +314,12 @@ const MyForm = () => {
           collection(db, `users/${userId}/addresses`),
           addressObject
         );
+        setCreateAddressSuccess(true);
+        setValue("deliveryAddress", "");
+        setValue("postalIndex", "");
+        setValue("addressDetails", "");
+        setValue("geolocation", "");
+        setValue("firstAndLast", "");
       } else {
         console.error("User not authenticated!");
       }
@@ -351,8 +339,9 @@ const MyForm = () => {
         );
         await deleteDoc(addressRef);
         setRemoveTrigger(true);
-
-        alert("Address deleted successfully!");
+        enqueueSnackbar("Address deleted successfully!", {
+          variant: "info",
+        });
       } else {
         console.error("User not authenticated!");
       }
@@ -386,7 +375,7 @@ const MyForm = () => {
         body: JSON.stringify({
           amount: amount,
           currency: "EUR",
-          description: `тут можем стилизовать под наши нужды.  ${phoneNumber} ${dataAndTime}`,
+          description: `${phoneNumber} ${dataAndTime}`,
         }),
       });
       const data = await response.json();
@@ -476,7 +465,32 @@ const MyForm = () => {
     if (!addresses) {
       setShowAddresses(false);
     }
-  }, [addresses, deleteAddress]);
+  }, [deleteAddress]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userId = await getCurrentUserId();
+        if (userId) {
+          const addressesData = await fetchAddresses(userId);
+          setAddresses(addressesData);
+          if (addressesData) {
+            setShowAddresses(true);
+          }
+        } else {
+          console.error("User not authenticated!");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [createAddressSuccess]);
+  const addNewAddress = () => {
+    setCreateAddressSuccess(false);
+    createAddress(addressObject);
+  };
 
   return (
     <SnackbarProvider
@@ -916,10 +930,7 @@ const MyForm = () => {
                 )}
               />
               {allFieldsFilled && (
-                <Button
-                  variant="contained"
-                  onClick={() => createAddress(addressObject)}
-                >
+                <Button variant="contained" onClick={addNewAddress}>
                   Сохранить данные
                 </Button>
               )}
@@ -932,6 +943,7 @@ const MyForm = () => {
               setShowAddresses={setShowAddresses}
               deleteAddress={deleteAddress}
               onAddressClick={handleAddressClick}
+              setAddresses={setAddresses}
             />
             <Box className={styles.addNewAddress}>
               <a onClick={() => setShowAddresses(false)}>
@@ -994,6 +1006,7 @@ const MyForm = () => {
             </RadioGroup>
           )}
         />
+
         <div>
           <p className={styles.helperText}>
             {errors.paymentMethod?.message}

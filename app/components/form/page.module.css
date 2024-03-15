@@ -108,6 +108,7 @@
 @media (max-width: 748px) {
   .phoneNumber {
     font-size: 27px;
+    text-align: center;
   }
   .marginTopBot {
     display: flex;
@@ -119,5 +120,8 @@
   }
   .bottlesButtons input {
     max-width: 30px;
+  }
+  .blueContainer {
+    height: 100%;
   }
 }
