@@ -30,7 +30,11 @@
   display: none;
 }
 .geolocation {
+  display: inline-flex;
+  max-width: 335px;
   overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   color: var(--main-color);
   text-decoration: underline;
 }
@@ -69,5 +73,9 @@
   }
   .btns {
     font-size: 17px;
+  }
+
+  .geolocation {
+    max-width: 260px;
   }
 }

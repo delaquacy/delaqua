@@ -512,20 +512,24 @@ const MyForm = () => {
       autoHideDuration={1500}
     >
       {onlinePaymentTrigger && (
-        <BasicModal
-          method="online"
-          url={url}
-          isOpen={onlinePaymentTrigger}
-          onClose={() => setOnlinePaymentTrigger(false)}
-        />
+        <Box className={styles.displayNone}>
+          <BasicModal
+            method="online"
+            url={url}
+            isOpen={onlinePaymentTrigger}
+            onClose={() => setOnlinePaymentTrigger(false)}
+          />
+        </Box>
       )}
       {cashPaymentTrigger && (
-        <BasicModal
-          method="cash"
-          amount={totalPayments}
-          isOpen={cashPaymentTrigger}
-          onClose={() => setCashPaymentTrigger(false)}
-        />
+        <Box className={styles.displayNone}>
+          <BasicModal
+            method="cash"
+            amount={totalPayments}
+            isOpen={cashPaymentTrigger}
+            onClose={() => setCashPaymentTrigger(false)}
+          />
+        </Box>
       )}
 
       <form onSubmit={handleSubmit(onSubmit)}>

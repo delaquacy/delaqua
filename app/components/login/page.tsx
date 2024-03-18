@@ -109,6 +109,7 @@ export default function Login({ params }: LogInProps) {
       }
 
       setOtp("");
+      localStorage.setItem("isLoggedIn", "true");
       router.push("/my_account");
     } catch (error) {
       enqueueSnackbar(messages.wrongOtp, { variant: "error" });
