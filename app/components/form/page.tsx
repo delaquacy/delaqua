@@ -32,9 +32,6 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDoc,
-  getDocs,
-  query,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -198,7 +195,7 @@ const MyForm = () => {
   const [priceForDifferentBottles, setPriceForDifferentBottles] =
     useState(0);
   const [paymentText, setPaymentText] = useState(
-    "Price for 1 bottle"
+    `${t("price_for_one_bottle")}`
   );
   useEffect(() => {
     const bottlesNumberToReturn = watch("bottlesNumberToReturn") || 0;
@@ -220,16 +217,20 @@ const MyForm = () => {
     setTotalPayments(totalPayments);
     setPompNumber(pompNumber);
 
-    let newPaymentText = "Price for 1 bottle";
+    let newPaymentText = `${t("price_for_one_bottle")}`;
     let newPaymentPrice = 0;
     if (bottlesToBuy === 1) {
-      newPaymentText = "Price for 1 bottle";
+      newPaymentText = `${t("price_for_one_bottle")}`;
       newPaymentPrice = 7;
     } else if (bottlesToBuy >= 2 && bottlesToBuy <= 9) {
-      newPaymentText = `Price for ${bottlesToBuy} bottles`;
+      newPaymentText = `${t("price_for_bottles", {
+        count: bottlesToBuy,
+      })}`;
       newPaymentPrice = 6;
     } else if (bottlesToBuy >= 10) {
-      newPaymentText = `Price for ${bottlesToBuy} bottles`;
+      newPaymentText = `${t("price_for_bottles", {
+        count: bottlesToBuy,
+      })}`;
       newPaymentPrice = 5.5;
     }
     setPriceForDifferentBottles(newPaymentPrice);
@@ -301,10 +302,6 @@ const MyForm = () => {
         setCashPaymentTrigger(true);
       }
       setLoadingForm(false);
-      console.log("Form submitted with data:", JSON.stringify(data));
-
-      // window.location.reload();
-      // window.scrollTo(0, 0);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -345,7 +342,7 @@ const MyForm = () => {
         );
         await deleteDoc(addressRef);
         setRemoveTrigger(true);
-        enqueueSnackbar("Address deleted successfully!", {
+        enqueueSnackbar(`${t("address_delete_successfully")}`, {
           variant: "info",
         });
       } else {
@@ -357,8 +354,7 @@ const MyForm = () => {
   };
 
   const handleAddressClick = (address: any) => {
-    console.log("selected", address);
-    enqueueSnackbar("Selected", { variant: "info" });
+    enqueueSnackbar(`${t("address_selected")}`, { variant: "info" });
     setValue("deliveryAddress", address.deliveryAddress);
     setValue("postalIndex", address.postalIndex);
     setValue("addressDetails", address.addressDetails);
@@ -419,8 +415,6 @@ const MyForm = () => {
 
       setUrl(data.checkout_url);
       setOnlinePaymentTrigger(true);
-      // window.open(data.checkout_url, "_blank");
-      console.log("Ответ от сервера:", data);
     } catch (error) {
       console.error("Ошибка при создании заказа:", error);
     }
@@ -534,7 +528,7 @@ const MyForm = () => {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <h1 className={styles.phoneNumber}>
-          Order for{" "}
+          {t("order_for")}{" "}
           {loadingNumber ? (
             <CircularProgress size={20} />
           ) : (
@@ -689,7 +683,9 @@ const MyForm = () => {
           </Grid>
           <Grid item xs={12} md={4}>
             <div className={styles.blueContainer}>
-              <p className={styles.marginsTotal}>Total payments</p>
+              <p className={styles.marginsTotal}>
+                {t("total_payments")}
+              </p>
               <div className={styles.marginsTotal}>
                 {totalPayments} €
               </div>
@@ -701,10 +697,12 @@ const MyForm = () => {
               </p>
 
               <p className={styles.margins}>
-                Deposite for bottles: {depositForBottles} €
+                {t("deposit_for_bottles")} {depositForBottles} €
               </p>
 
-              <p className={styles.margins}>Pump: {pompNumber} €</p>
+              <p className={styles.margins}>
+                {t("pump")} {pompNumber} €
+              </p>
             </div>
           </Grid>
 
@@ -713,7 +711,7 @@ const MyForm = () => {
               <RestoreTwoToneIcon />
               <ButtonBase onClick={() => setShowWindow(true)}>
                 {" "}
-                My orders history
+                {t("orders_history")}
               </ButtonBase>
             </div>
           </Grid>
@@ -721,7 +719,7 @@ const MyForm = () => {
 
         <Typography variant="h6" className={styles.titles}>
           {" "}
-          Delivery date and time
+          {t("delivery_date_and_time")}
         </Typography>
 
         <Grid
@@ -767,9 +765,10 @@ const MyForm = () => {
               <div>
                 {showMessage && (
                   <p className={styles.helperText}>
-                    The soonest delivery day is{" "}
-                    {dayjs().add(1, "day").format("dddd")}, please
-                    change the day
+                    {t("delivery_soonest_day", {
+                      day: dayjs().add(1, "day").format("dddd"),
+                    })}
+                    , {t("delivery_please_change_day")}
                   </p>
                 )}
                 <p className={styles.helperText}>
@@ -816,7 +815,7 @@ const MyForm = () => {
           </Grid>
         </Grid>
         <Typography variant="h6" className={styles.titles}>
-          Delivery details
+          {t("delivery_details")}
         </Typography>
         {!showAddresses ? (
           <Grid container spacing={2}>
@@ -876,7 +875,7 @@ const MyForm = () => {
                     {...field}
                     fullWidth
                     margin="normal"
-                    placeholder="street, house number, house/ court name"
+                    placeholder={t("delivery_address_placeholder")}
                     error={!!errors.deliveryAddress}
                     helperText={errors.deliveryAddress?.message}
                   />
@@ -953,7 +952,7 @@ const MyForm = () => {
                     multiline
                     rows={4}
                     fullWidth
-                    placeholder="add any additional comment that you find useful for the delivery"
+                    placeholder={t("comments_placeholder")}
                     variant="outlined"
                     margin="normal"
                     error={!!errors.comments}
@@ -963,7 +962,7 @@ const MyForm = () => {
               />
               {allFieldsFilled && (
                 <Button variant="contained" onClick={addNewAddress}>
-                  Сохранить данные
+                  {t("save_data")}
                 </Button>
               )}
             </Grid>
@@ -979,7 +978,7 @@ const MyForm = () => {
             />
             <Box className={styles.addNewAddress}>
               <a onClick={() => setShowAddresses(false)}>
-                Add new address
+                {t("add_new_address")}
               </a>
             </Box>
             <Grid container>
@@ -997,7 +996,7 @@ const MyForm = () => {
                       multiline
                       rows={4}
                       fullWidth
-                      placeholder="add any additional comment that you find useful for the delivery"
+                      placeholder={t("comments_placeholder")}
                       variant="outlined"
                       margin="normal"
                       error={!!errors.comments}
@@ -1033,7 +1032,7 @@ const MyForm = () => {
               <FormControlLabel
                 value="Online"
                 control={<Radio />}
-                label={t("revolut")}
+                label={t("online")}
               />
             </RadioGroup>
           )}
@@ -1052,7 +1051,7 @@ const MyForm = () => {
         {!loadingForm && (
           <Box className={styles.button}>
             <Button type="submit" variant="contained">
-              Submit order
+              {t("submit_order")}
             </Button>
           </Box>
         )}

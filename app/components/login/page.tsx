@@ -14,6 +14,8 @@ import { app, db } from "../../lib/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import styles from "./page.module.css";
 import CloseIcon from "@mui/icons-material/Close";
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
@@ -29,12 +31,8 @@ export interface LogInProps {
   };
 }
 
-const messages = {
-  otpSent: "OTP code already send to your number",
-  otpSentError: "Something went wrong, reload page or try later",
-  wrongOtp: "Write incorect OTP code",
-};
 export default function Login({ params }: LogInProps) {
+  const { t } = useTranslation("main");
   const { onLogin } = params;
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
@@ -43,7 +41,11 @@ export default function Login({ params }: LogInProps) {
   const [otpSent, setOtpSent] = useState<boolean>(false);
   const [phoneNumberEntered, setPhoneNumberEntered] =
     useState<boolean>(false);
-
+  const messages = {
+    otpSent: `${t("OTP_messages_otpSent")}`,
+    otpSentError: `${t("OTP_messages_otpSentError")}`,
+    wrongOtp: `${t("OTP_messages_wrongOtp")}`,
+  };
   const auth = getAuth(app);
   const router = useRouter();
   useEffect(() => {
@@ -125,16 +127,14 @@ export default function Login({ params }: LogInProps) {
           </Box>
           <Box className={styles.logoAndTitle}>
             <LockOutlinedIcon fontSize="large" />
-            <Typography variant="h4">
-              Log in to make an order
-            </Typography>
+            <Typography variant="h4">{t("login_window")}</Typography>
           </Box>
           <TextField
             type="tel"
             value={phoneNumber}
             onChange={handlePhoneNumberChange}
             className={styles.input}
-            placeholder="Please enter phone number"
+            placeholder={t("placeholder_phone")}
           />
           {phoneNumberEntered && otpSent && (
             <TextField
@@ -142,7 +142,7 @@ export default function Login({ params }: LogInProps) {
               value={otp}
               onChange={handleOtpChange}
               className={styles.input}
-              placeholder="Please enter OTP code from sms"
+              placeholder={t("placeholder_OTP")}
             />
           )}
           <Button
@@ -155,7 +155,9 @@ export default function Login({ params }: LogInProps) {
                 : undefined
             }
           >
-            {otpSent ? "Submit Otp" : "Sent OTP"}
+            {otpSent
+              ? `${t("button_submit_OTP")}`
+              : `${t("button_sent_OTP")}`}
           </Button>
           {!otpSent ? <div id="recaptcha-container"></div> : null}
         </Box>

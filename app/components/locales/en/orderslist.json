@@ -1,0 +1,12 @@
+{
+  "close_button": "Close",
+  "table_phone": "Phone",
+  "table_index": "Index",
+  "table_address": "Address",
+  "table_pump": "Pump",
+  "table_bottles_to_buy": "Bottles to buy",
+  "table_bottles_to_return": "Bottles to return",
+  "table_delivery_time": "Delivery time",
+  "table_payment_method": "Payment method",
+  "table_no_orders_yet": "No orders yet"
+}

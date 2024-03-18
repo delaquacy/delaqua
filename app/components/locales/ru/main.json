@@ -15,8 +15,5 @@
   "button_sent_OTP": "Sent OTP",
   "OTP_messages_otpSent": "OTP code already send to your number",
   "OTP_messages_otpSentError": "Something went wrong, reload page or try later",
-  "OTP_messages_wrongOtp": "Write incorect OTP code",
-  "login": "Log in",
-  "my_account": "My account",
-  "logout": "Log out"
+  "OTP_messages_wrongOtp": "Write incorect OTP code"
 }

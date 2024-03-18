@@ -25,7 +25,7 @@ import { AccountCircle } from "@mui/icons-material";
 
 export default function Header() {
   const { i18n } = useTranslation();
-  const { t } = useTranslation("home");
+  const { t } = useTranslation("main");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
@@ -129,7 +129,7 @@ export default function Header() {
                     endIcon={<LoginIcon fontSize="small" />}
                     onClick={handleLoginToggle}
                   >
-                    Log in
+                    {t("login")}
                   </Button>
                 )}
                 {user && (
@@ -140,7 +140,7 @@ export default function Header() {
                           variant="contained"
                           endIcon={<AccountCircle fontSize="small" />}
                         >
-                          My account
+                          {t("my_account")}
                         </Button>
                       </Link>
                       <Link href="/">
@@ -149,7 +149,7 @@ export default function Header() {
                           endIcon={<ExitToAppIcon fontSize="small" />}
                           onClick={handleLogout}
                         >
-                          Log out
+                          {t("logout")}
                         </Button>
                       </Link>
                     </Box>

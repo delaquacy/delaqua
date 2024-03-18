@@ -1,7 +1,9 @@
 import { IAddress } from "@/app/lib/definitions";
 import { Box, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./SavedData.module.css";
+import "../../i18n";
 
 interface Props {
   addresses: IAddress[];
@@ -21,6 +23,7 @@ const SavedData: React.FC<Props> = ({
   const [selectedAddressId, setSelectedAddressId] = useState<
     string | undefined
   >(undefined);
+  const { t } = useTranslation("savedAddresses");
 
   const handleAddressClick = (address: IAddress) => {
     setSelectedAddressId(address.id);
@@ -65,26 +68,24 @@ const SavedData: React.FC<Props> = ({
           <Grid container>
             <Grid item xs={12} sm={9} md={3}>
               <Box>
-                <span className={styles.subtitles}>
-                  First and last name:
-                </span>{" "}
+                <span className={styles.subtitles}>{t("name")}</span>{" "}
                 {address?.firstAndLast}
               </Box>
               <Box>
-                <span className={styles.subtitles}>Post index:</span>{" "}
+                <span className={styles.subtitles}>{t("index")}</span>{" "}
                 {address?.postalIndex}
               </Box>
             </Grid>
             <Grid item xs={12} sm={9} md={6}>
               <Box>
                 <span className={styles.subtitles}>
-                  Delivery address:
+                  {t("address")}
                 </span>{" "}
                 {address?.deliveryAddress}
               </Box>
               <Box>
                 <span className={styles.subtitles}>
-                  Address details:
+                  {t("details")}
                 </span>{" "}
                 <span className={styles.address}>
                   {address?.addressDetails}
@@ -92,7 +93,7 @@ const SavedData: React.FC<Props> = ({
               </Box>
               <Box>
                 <span className={styles.subtitles}>
-                  Link to your geolocation:
+                  {t("geolocation")}
                 </span>{" "}
                 <a
                   className={styles.geolocation}
@@ -119,7 +120,7 @@ const SavedData: React.FC<Props> = ({
                     handleDeleteAddress(address.id);
                   }}
                 >
-                  Remove
+                  {t("remove")}
                 </p>
 
                 {!emptyOrder && (
@@ -131,7 +132,7 @@ const SavedData: React.FC<Props> = ({
                     }`}
                     onClick={() => handleAddressClick(address)}
                   >
-                    Order to this address
+                    {t("order_to_this_address")}
                   </p>
                 )}
               </Box>
@@ -143,7 +144,7 @@ const SavedData: React.FC<Props> = ({
                     handleDeleteAddress(address.id);
                   }}
                 >
-                  Remove
+                  {t("remove")}
                 </span>
 
                 {!emptyOrder && (
@@ -155,7 +156,7 @@ const SavedData: React.FC<Props> = ({
                     }`}
                     onClick={() => handleAddressClick(address)}
                   >
-                    Order to this address
+                    {t("order_to_this_address")}
                   </span>
                 )}
               </Box>
