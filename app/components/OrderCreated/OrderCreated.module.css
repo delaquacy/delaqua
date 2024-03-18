@@ -1,0 +1,29 @@
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  height: 200px;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 2px solid #000;
+  border-radius: 4px;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.5);
+  padding: 16px;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+@media (max-width: 600px) {
+  .modal {
+    width: 400px;
+  }
+}
+@media (max-width: 450px) {
+  .modal {
+    width: 350px;
+  }
+}

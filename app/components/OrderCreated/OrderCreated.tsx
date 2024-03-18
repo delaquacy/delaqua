@@ -4,26 +4,9 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-const modalWidth = window.innerWidth < 600 ? 360 : 600;
+import styles from "./OrderCreated.module.css";
+import { style } from "@mui/system";
 
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: modalWidth,
-  bgcolor: "rgba(255, 255, 255, 0.8)",
-  backdropFilter: "blur(8px)",
-  border: "2px solid #000",
-  borderRadius: "4px",
-  boxShadow: 24,
-  p: 4,
-};
-const center = {
-  display: "flex",
-  justifyContent: "center",
-  margin: "10px 0",
-};
 interface ModalProps {
   method: "online" | "cash";
   url?: any;
@@ -73,23 +56,22 @@ const BasicModal: React.FC<ModalProps> = ({
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <Box sx={center}>
-            <CheckCircleIcon
-              fontSize="large"
-              color="success"
-              style={{ display: "flex", justifyContent: "center" }}
-            />
+        <Box className={styles.modal}>
+          <Box className={styles.center}>
+            <CheckCircleIcon fontSize="large" color="success" />
           </Box>
           <Typography
-            sx={center}
+            className={styles.center}
             id="modal-modal-title"
             variant="h6"
             component="h2"
           >
             Thanks for your order
           </Typography>
-          <Typography sx={center} id="modal-modal-description">
+          <Typography
+            className={styles.center}
+            id="modal-modal-description"
+          >
             {paymentText}
           </Typography>
         </Box>
