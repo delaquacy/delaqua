@@ -636,7 +636,7 @@ const MyForm = () => {
                         inputProps: {
                           min: 0,
                           max:
-                            orders.length > 0
+                            numberOfBottlesInStock > 0
                               ? numberOfBottlesInStock
                               : 10,
                         },
@@ -650,7 +650,9 @@ const MyForm = () => {
                     onClick={() => {
                       const newValue = Math.min(
                         field.value + 1,
-                        orders.length > 0 ? numberOfBottlesInStock : 0
+                        numberOfBottlesInStock > 0
+                          ? numberOfBottlesInStock
+                          : 0
                       );
                       field.onChange(newValue);
                     }}
