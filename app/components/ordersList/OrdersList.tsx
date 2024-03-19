@@ -6,9 +6,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { IForm } from "@/app/lib/definitions";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Tooltip } from "@mui/material";
 import useGetOrdersFromDb from "@/app/utils/getOrdersfromDb";
 import { useTranslation } from "react-i18next";
+import styles from "./OrdersList.module.css";
 import "../../i18n";
 
 export default function OrdersList() {
@@ -18,7 +19,7 @@ export default function OrdersList() {
   if (loading) {
     return <CircularProgress />;
   }
-
+  console.log(orders);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -63,13 +64,16 @@ export default function OrdersList() {
                 <TableCell align="center">
                   {order.postalIndex}
                 </TableCell>
-                <TableCell align="center">
-                  {order.deliveryAddress}
+                <TableCell
+                  className={styles.truncated}
+                  align="center"
+                >
+                  <Tooltip title={order.deliveryAddress}>
+                    <span>{order.deliveryAddress}</span>
+                  </Tooltip>
                 </TableCell>
 
-                <TableCell align="center">
-                  {order.pump ? "да" : null}
-                </TableCell>
+                <TableCell align="center">{order.pump}</TableCell>
                 <TableCell align="center">
                   {order.bottlesNumberToBuy}
                 </TableCell>

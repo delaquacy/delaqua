@@ -21,6 +21,10 @@ interface CustomWindow extends Window {
   recaptchaVerifier?: any;
 }
 let myWindow: CustomWindow | undefined;
+type CustomError = {
+  message: string;
+  code?: number;
+};
 
 if (typeof window !== "undefined") {
   myWindow = window as CustomWindow;
@@ -46,6 +50,7 @@ export default function Login({ params }: LogInProps) {
     otpSentError: `${t("OTP_messages_otpSentError")}`,
     wrongOtp: `${t("OTP_messages_wrongOtp")}`,
   };
+
   const auth = getAuth(app);
   const router = useRouter();
   useEffect(() => {
@@ -86,10 +91,19 @@ export default function Login({ params }: LogInProps) {
       setConfirmationResult(confirmation);
       enqueueSnackbar(messages.otpSent, { variant: "success" });
       setOtpSent(true);
-    } catch (error) {
-      enqueueSnackbar(messages.otpSentError, {
-        variant: "error",
-      });
+    } catch (error: unknown) {
+      const customError = error as CustomError;
+      console.error(customError.message);
+      if (
+        customError.message.includes("(auth/invalid-phone-number).")
+      ) {
+        enqueueSnackbar(
+          "Please enter your phone number in format: +357 12 567890",
+          { variant: "error" }
+        );
+      } else {
+        enqueueSnackbar(messages.otpSentError, { variant: "error" });
+      }
       console.error(error);
     }
   };
@@ -111,10 +125,24 @@ export default function Login({ params }: LogInProps) {
       }
 
       setOtp("");
-      localStorage.setItem("isLoggedIn", "true");
+
       router.push("/my_account");
-    } catch (error) {
-      enqueueSnackbar(messages.wrongOtp, { variant: "error" });
+    } catch (error: unknown) {
+      const customError = error as CustomError;
+      console.error(customError.message);
+      if (
+        customError.message.includes("auth/invalid-verification-code")
+      ) {
+        enqueueSnackbar("You wrote wrong OTP code", {
+          variant: "error",
+        });
+      } else if (customError.message.includes("auth/user-disabled")) {
+        enqueueSnackbar("Sorry, your account is disabled", {
+          variant: "error",
+        });
+      } else {
+        enqueueSnackbar(messages.wrongOtp, { variant: "error" });
+      }
       console.error(error);
     }
   };
@@ -134,7 +162,7 @@ export default function Login({ params }: LogInProps) {
             value={phoneNumber}
             onChange={handlePhoneNumberChange}
             className={styles.input}
-            placeholder={t("placeholder_phone")}
+            placeholder="XXX-XX-XXXXXXXX"
           />
           {phoneNumberEntered && otpSent && (
             <TextField

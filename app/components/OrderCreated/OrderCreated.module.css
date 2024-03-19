@@ -3,18 +3,23 @@
   top: 50%;
   left: 50%;
   width: 600px;
-  height: 200px;
+  height: 250px;
   transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 1);
   border: 2px solid #000;
   border-radius: 4px;
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.5);
-  padding: 16px;
+  padding: 20px;
+}
+.icon {
+  color: #3db23d;
+}
+.bold {
+  font-weight: bold;
 }
 
 .center {
-  display: flex;
-  justify-content: center;
+  text-align: center;
   margin: 10px 0;
 }
 @media (max-width: 600px) {

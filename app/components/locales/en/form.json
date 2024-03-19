@@ -32,7 +32,6 @@
   "number_of_bottles_to_return": "Number of bottles you want to return",
   "number_to_first_delivery": "1 (7€ — available for the first delivery only))",
   "each": "each",
-  "number_of_bottles_more": "more (add the number below)",
   "delivery_date": "Delivery date (same day delivery is possible, if ordered before 12:00)",
   "delivery_time": "Delivery time",
   "delivery_time_9_17": "9 - 17 — contactless delivery (we will leave bottles near the door)",
@@ -41,7 +40,9 @@
   "cash": "Cash to courier",
   "online": "Online payment",
   "comments": "Additional comments",
-  "save_data": "Saved data",
+  "save_address_details": "Saved data",
   "add_new_address": "Add new address",
-  "submit_order": "Submit order"
+  "submit_order": "Submit order",
+  "select_address": "Select address, please",
+  "address_details": "Address details"
 }

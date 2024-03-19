@@ -157,6 +157,7 @@ const MyForm = () => {
   }, [orders, ordersLoaded]);
 
   const bottlesToBuy = watch("bottlesNumberToBuy") || 0;
+  const notSelectAddress = watch("deliveryAddress");
   const pompStatus = watch(["pump"]);
   const addressFields = watch([
     "firstAndLast",
@@ -237,10 +238,10 @@ const MyForm = () => {
     setPaymentText(newPaymentText);
   }, [bottlesToBuy, watch, addressFields, pomp, addresses]);
   const [cashPaymentTrigger, setCashPaymentTrigger] = useState(false);
+  const [deliveryDate, setDeliveryDate] = useState<any>();
 
   const onSubmit = async (data: IForm) => {
     setLoadingForm(true);
-
     try {
       const formatDataBeforeSubmit = (data: IForm) => {
         const date = data.deliveryDate;
@@ -257,6 +258,7 @@ const MyForm = () => {
           createdAt: serverTimestamp(),
         };
       };
+      setDeliveryDate(data.deliveryDate);
       const formattedData = formatDataBeforeSubmit(data);
       const userId = getCurrentUserId();
 
@@ -496,7 +498,13 @@ const MyForm = () => {
     setCreateAddressSuccess(false);
     createAddress(addressObject);
   };
-
+  const emptyAddress = () => {
+    if (!notSelectAddress) {
+      enqueueSnackbar(`${t("select_address")}`, {
+        variant: "error",
+      });
+    }
+  };
   return (
     <SnackbarProvider
       anchorOrigin={{
@@ -510,6 +518,8 @@ const MyForm = () => {
           <BasicModal
             method="online"
             url={url}
+            bottlesNumber={bottlesToBuy}
+            deliveryDate={deliveryDate}
             isOpen={onlinePaymentTrigger}
             onClose={() => setOnlinePaymentTrigger(false)}
           />
@@ -520,6 +530,8 @@ const MyForm = () => {
           <BasicModal
             method="cash"
             amount={totalPayments}
+            bottlesNumber={bottlesToBuy}
+            deliveryDate={deliveryDate}
             isOpen={cashPaymentTrigger}
             onClose={() => setCashPaymentTrigger(false)}
           />
@@ -794,12 +806,12 @@ const MyForm = () => {
                     defaultValue=""
                   >
                     <FormControlLabel
-                      value="after"
+                      value="9-17"
                       control={<Radio />}
                       label={t("delivery_time_9_17")}
                     />
                     <FormControlLabel
-                      value="before"
+                      value="9-12"
                       control={<Radio />}
                       label={t("delivery_time_9_12")}
                     />
@@ -962,7 +974,7 @@ const MyForm = () => {
               />
               {allFieldsFilled && (
                 <Button variant="contained" onClick={addNewAddress}>
-                  {t("save_data")}
+                  {t("save_address_details")}
                 </Button>
               )}
             </Grid>
@@ -981,6 +993,7 @@ const MyForm = () => {
                 {t("add_new_address")}
               </a>
             </Box>
+
             <Grid container>
               <Grid xs={12} md={4} item>
                 <span className={styles.inputName}>
@@ -1050,7 +1063,11 @@ const MyForm = () => {
         )}
         {!loadingForm && (
           <Box className={styles.button}>
-            <Button type="submit" variant="contained">
+            <Button
+              onClick={emptyAddress}
+              type="submit"
+              variant="contained"
+            >
               {t("submit_order")}
             </Button>
           </Box>

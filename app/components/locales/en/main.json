@@ -12,7 +12,7 @@
   "placeholder_phone": "Please enter phone number",
   "placeholder_OTP": "Please enter OTP code from sms",
   "button_submit_OTP": "Submit Otp",
-  "button_sent_OTP": "Sent OTP",
+  "button_sent_OTP": "Send OTP",
   "OTP_messages_otpSent": "OTP code already send to your number",
   "OTP_messages_otpSentError": "Something went wrong, reload page or try later",
   "OTP_messages_wrongOtp": "Write incorect OTP code",
