@@ -82,7 +82,7 @@ export default function Header() {
         <Toolbar className={styles.toolbar}>
           <Link href="/">
             <Image
-              src="/water.svg"
+              src="/water.png"
               alt="DelAqua logo"
               width={50}
               height={50}

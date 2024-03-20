@@ -14,6 +14,7 @@ import {
   Typography,
   CircularProgress,
   ButtonBase,
+  Skeleton,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -541,7 +542,15 @@ const MyForm = () => {
         <h1 className={styles.phoneNumber}>
           {t("order_for")}{" "}
           {loadingNumber ? (
-            <CircularProgress size={20} />
+            <span className={styles.skeletonText}>
+              <Skeleton
+                style={{ transformOrigin: "0 0" }}
+                variant="text"
+                animation="wave"
+                width={220}
+                height={45}
+              />
+            </span>
           ) : (
             formattedUserPhone
           )}
@@ -571,8 +580,13 @@ const MyForm = () => {
                     -
                   </button>
                   {ordersLoaded ? (
-                    <div className={styles.loadingContainer}>
-                      <CircularProgress size={20} />
+                    <div className={styles.skeletonBottles}>
+                      <Skeleton
+                        variant="rounded"
+                        animation="wave"
+                        width={35}
+                        height={25}
+                      />
                     </div>
                   ) : (
                     <TextField
@@ -623,8 +637,13 @@ const MyForm = () => {
                     -
                   </button>
                   {ordersLoaded ? (
-                    <div className={styles.loadingContainer}>
-                      <CircularProgress size={20} />
+                    <div className={styles.skeletonBottles}>
+                      <Skeleton
+                        variant="rounded"
+                        animation="wave"
+                        width={35}
+                        height={25}
+                      />
                     </div>
                   ) : (
                     <TextField
@@ -671,9 +690,15 @@ const MyForm = () => {
                 render={({ field }) => (
                   <>
                     {ordersLoaded ? (
-                      <div className={styles.loadingContainer}>
-                        <CircularProgress size={20} />
-                      </div>
+                      <span className={styles.skeletonText}>
+                        <Skeleton
+                          style={{ transformOrigin: "0 0" }}
+                          variant="text"
+                          animation="wave"
+                          width={35}
+                          height={30}
+                        />
+                      </span>
                     ) : (
                       <Switch
                         {...field}
@@ -694,30 +719,40 @@ const MyForm = () => {
               </div>
             </div>
           </Grid>
-          <Grid item xs={12} md={4}>
-            <div className={styles.blueContainer}>
-              <p className={styles.marginsTotal}>
-                {t("total_payments")}
-              </p>
-              <div className={styles.marginsTotal}>
-                {totalPayments} €
+          {ordersLoaded ? (
+            <Grid item xs={12} md={4}>
+              <Skeleton
+                style={{ transformOrigin: "0 0" }}
+                width={350}
+                height="20em"
+              />
+            </Grid>
+          ) : (
+            <Grid item xs={12} md={4}>
+              <div className={styles.blueContainer}>
+                <p className={styles.marginsTotal}>
+                  {t("total_payments")}
+                </p>
+                <div className={styles.marginsTotal}>
+                  {totalPayments} €
+                </div>
+                <br></br>
+                <p className={styles.margins}>
+                  {" "}
+                  {paymentText} {priceForDifferentBottles} € :{" "}
+                  {paymentForWater} €{" "}
+                </p>
+
+                <p className={styles.margins}>
+                  {t("deposit_for_bottles")} {depositForBottles} €
+                </p>
+
+                <p className={styles.margins}>
+                  {t("pump")} {pompNumber} €
+                </p>
               </div>
-              <br></br>
-              <p className={styles.margins}>
-                {" "}
-                {paymentText} {priceForDifferentBottles} € :{" "}
-                {paymentForWater} €{" "}
-              </p>
-
-              <p className={styles.margins}>
-                {t("deposit_for_bottles")} {depositForBottles} €
-              </p>
-
-              <p className={styles.margins}>
-                {t("pump")} {pompNumber} €
-              </p>
-            </div>
-          </Grid>
+            </Grid>
+          )}
 
           <Grid item xs={12} md={4}>
             <div className={styles.ordersHistory}>
