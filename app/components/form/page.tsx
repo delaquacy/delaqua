@@ -84,6 +84,7 @@ const MyForm = () => {
   // wait orders loading
   const [ordersLoaded, setOrdersLoaded] = useState<boolean>(true);
   const [orders, setOrders] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [numberOfBottlesInStock, setNumberOfBottlesInStock] =
     useState<number>(0);
 
@@ -105,6 +106,7 @@ const MyForm = () => {
             setOrders(ordersData);
             setAddresses(addressesData);
             setOrdersLoaded(false);
+            setIsLoading(false);
             setShowAddresses(addressesData.length >= 1);
           } else {
             console.error("User not authenticated!");
@@ -865,7 +867,13 @@ const MyForm = () => {
         <Typography variant="h6" className={styles.titles}>
           {t("delivery_details")}
         </Typography>
-        {!showAddresses ? (
+        {isLoading ? (
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={12}>
+              <Skeleton variant="text" width="100%" height={200} />
+            </Grid>
+          </Grid>
+        ) : !showAddresses ? (
           <Grid container spacing={2}>
             <Grid xs={12} md={4} item>
               <span className={styles.inputName}>
