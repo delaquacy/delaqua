@@ -42,6 +42,12 @@ const SavedData: React.FC<Props> = ({
   };
 
   useEffect(() => {
+    if (addresses.length === 1) {
+      handleAddressClick(addresses[0]);
+    }
+  }, [addresses]);
+
+  useEffect(() => {
     if (addresses && addresses.length === 0) {
       setShowAddresses(false);
     }

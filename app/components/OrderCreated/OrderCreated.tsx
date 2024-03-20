@@ -51,7 +51,7 @@ const BasicModal: React.FC<ModalProps> = ({
       </>
     ) : (
       <span style={{ fontWeight: "bold" }}>
-        Prepare ${amount} € for payment
+        Prepare {amount} € for payment
       </span>
     );
 

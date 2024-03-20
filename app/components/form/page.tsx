@@ -356,7 +356,6 @@ const MyForm = () => {
   };
 
   const handleAddressClick = (address: any) => {
-    enqueueSnackbar(`${t("address_selected")}`, { variant: "info" });
     setValue("deliveryAddress", address.deliveryAddress);
     setValue("postalIndex", address.postalIndex);
     setValue("addressDetails", address.addressDetails);
