@@ -77,7 +77,7 @@ const MyForm = () => {
   const [loadingNumber, setLoadingNumber] = useState<boolean>(true);
   // address array
   const [addresses, setAddresses] = useState<any>([]);
-  // show saved addresses or show form inputs
+  // show saved addresses or show inputs
   const [showAddresses, setShowAddresses] = useState<boolean>(false);
   // remove address from addresses array
   const [removeTrigger, setRemoveTrigger] = useState<boolean>(false);
