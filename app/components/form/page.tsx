@@ -60,9 +60,13 @@ import dayjs, { Dayjs } from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { fetchAddresses, fetchOrders } from "@/app/utils/addressApi";
 import BasicModal from "../OrderCreated/OrderCreated";
+import "dayjs/locale/uk";
+import "dayjs/locale/el";
+import "dayjs/locale/ru";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
+  const { i18n } = useTranslation();
   // show orders history
   const [showWindow, setShowWindow] = useState<boolean>(false);
   // phone with spacing
@@ -507,6 +511,13 @@ const MyForm = () => {
       });
     }
   };
+
+  useEffect(() => {
+    dayjs.locale(i18n.language);
+  }, [i18n.language]);
+  const nextDay = dayjs().add(1, "day").format("dddd");
+  console.log(nextDay);
+
   return (
     <SnackbarProvider
       anchorOrigin={{
@@ -815,10 +826,8 @@ const MyForm = () => {
               <div>
                 {showMessage && (
                   <p className={styles.helperText}>
-                    {t("delivery_soonest_day", {
-                      day: dayjs().add(1, "day").format("dddd"),
-                    })}
-                    , {t("delivery_please_change_day")}
+                    {t("delivery_soonest_day")} {nextDay},{" "}
+                    {t("delivery_please_change_day")}
                   </p>
                 )}
                 <p className={styles.helperText}>

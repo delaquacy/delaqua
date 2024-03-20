@@ -97,10 +97,7 @@ export default function Login({ params }: LogInProps) {
       if (
         customError.message.includes("(auth/invalid-phone-number).")
       ) {
-        enqueueSnackbar(
-          "Please enter your phone number in format: +357 12 567890",
-          { variant: "error" }
-        );
+        enqueueSnackbar(t("format_number"), { variant: "error" });
       } else {
         enqueueSnackbar(messages.otpSentError, { variant: "error" });
       }
@@ -133,11 +130,11 @@ export default function Login({ params }: LogInProps) {
       if (
         customError.message.includes("auth/invalid-verification-code")
       ) {
-        enqueueSnackbar("You wrote wrong OTP code", {
+        enqueueSnackbar(t("wrong_otp"), {
           variant: "error",
         });
       } else if (customError.message.includes("auth/user-disabled")) {
-        enqueueSnackbar("Sorry, your account is disabled", {
+        enqueueSnackbar(t("account_disable"), {
           variant: "error",
         });
       } else {

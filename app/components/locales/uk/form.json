@@ -28,6 +28,6 @@
   "online": "Онлайн",
   "comments": "Коментарій до замовлення",
   "submit_button": "Відправити замовлення",
-  "delivery_soonest_day": "ближайший день будет  {{day}}",
+  "delivery_soonest_day": "ближайший день будет",
   "delivery_please_change_day": "пожалуйста поменяйте день"
 }

@@ -17,7 +17,10 @@
 .bold {
   font-weight: bold;
 }
-
+.boldDay {
+  text-transform: capitalize;
+  font-weight: bold;
+}
 .center {
   text-align: center;
   margin: 10px 0;

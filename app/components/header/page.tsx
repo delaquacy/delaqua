@@ -33,6 +33,11 @@ export default function Header() {
   const handleLoginToggle = () => {
     setShowLogin((prevShowLogin) => !prevShowLogin);
   };
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language") || "en";
+    i18n.changeLanguage(savedLanguage);
+    setSelectedLanguage(savedLanguage);
+  }, []);
 
   const handleLanguageChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -40,6 +45,7 @@ export default function Header() {
     const languageValue = event.target.value as string;
     i18n.changeLanguage(languageValue);
     setSelectedLanguage(languageValue);
+    localStorage.setItem("language", languageValue);
   };
   const handleLogin = () => {
     setShowLogin(false);
@@ -111,7 +117,7 @@ export default function Header() {
             >
               <MenuItem value="en">EN</MenuItem>
               <MenuItem value="el">EL</MenuItem>
-              <MenuItem value="ua">UA</MenuItem>
+              <MenuItem value="uk">UA</MenuItem>
               <MenuItem value="ru">RU</MenuItem>
             </Select>
           </Box>

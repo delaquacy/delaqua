@@ -9,7 +9,7 @@
   "pump": "Pump:",
   "orders_history": "My orders history",
   "delivery_date_and_time": " Delivery date and time",
-  "delivery_soonest_day": "The soonest delivery day is  {{day}}",
+  "delivery_soonest_day": "The soonest delivery day is ",
   "delivery_please_change_day": "please change the day",
   "title": "Fill in the form for the first delivery",
   "subtitle": "Delivery is included",

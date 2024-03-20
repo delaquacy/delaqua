@@ -1,10 +1,16 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import { useTranslation } from "react-i18next";
+import dayjs from "dayjs";
+
+import "../../i18n";
 import styles from "./OrderCreated.module.css";
+import { getDayOfWeek } from "@/app/utils/dayOfWeeks";
+import { useRouter } from "next/navigation";
 
 interface ModalProps {
   method: "online" | "cash";
@@ -12,7 +18,7 @@ interface ModalProps {
   amount?: any;
   isOpen: boolean;
   bottlesNumber: number;
-  deliveryDate: any;
+  deliveryDate: dayjs.Dayjs;
   onClose: () => void;
 }
 const BasicModal: React.FC<ModalProps> = ({
@@ -24,56 +30,52 @@ const BasicModal: React.FC<ModalProps> = ({
   bottlesNumber,
   deliveryDate,
 }) => {
+  const { t } = useTranslation("finishModal");
   const [open, setOpen] = React.useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const router = useRouter();
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
     onClose();
-    window.location.reload();
-    window.scrollTo(0, 0);
+    router.push("/");
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       handleOpen();
     }
   }, []);
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language") || "en";
+    setSelectedLanguage(savedLanguage);
+  }, []);
+
+  const dayOfWeek = dayjs(deliveryDate).format("dddd");
+  const formattedDate = dayjs(deliveryDate).format("DD.MM.YYYY");
+  const translatedDayOfWeek = getDayOfWeek(
+    deliveryDate,
+    selectedLanguage
+  );
+  console.log(dayOfWeek);
+
   const paymentText =
     method === "online" ? (
       <>
         {" "}
-        <div> Proceed with online payment:</div>
+        <div> {t("proceed_online_payment")}</div>
         <div>
           <a href={url} style={{ color: "blue" }} target="_blank">
-            Click here to pay online
+            {t("click_to_pay_online")}
           </a>
         </div>
       </>
     ) : (
       <span style={{ fontWeight: "bold" }}>
-        Prepare {amount} € for payment
+        {t("prepare_for_payment", { amount: amount })}
       </span>
     );
-
-  const optionsDayOfWeek: Intl.DateTimeFormatOptions = {
-    weekday: "long",
-  };
-
-  const optionsDate: Intl.DateTimeFormatOptions = {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  };
-
-  const dayOfWeek = new Intl.DateTimeFormat(
-    "en-US",
-    optionsDayOfWeek
-  ).format(deliveryDate);
-
-  const formattedDate = new Intl.DateTimeFormat(
-    "de-DE",
-    optionsDate
-  ).format(deliveryDate);
 
   return (
     <div>
@@ -96,7 +98,7 @@ const BasicModal: React.FC<ModalProps> = ({
           >
             <span className={styles.bold}>
               {" "}
-              Thank you for your order!
+              {t("thanks_for_order")}
             </span>
           </Typography>
 
@@ -104,10 +106,13 @@ const BasicModal: React.FC<ModalProps> = ({
             className={styles.center}
             id="modal-modal-description"
           >
-            We will deliver to you&nbsp;
+            {t("we_will_deliver_to_you")} &nbsp;
             <span className={styles.bold}>{bottlesNumber}</span>&nbsp;
-            bottles of water on&nbsp;
-            <span className={styles.bold}>{dayOfWeek}</span>&nbsp;
+            {t("numbers_of_deliver_water")} &nbsp;
+            <span className={styles.boldDay}>
+              {translatedDayOfWeek}
+            </span>
+            &nbsp;
             <span className={styles.bold}>{formattedDate}</span>.
           </Typography>
           <Typography

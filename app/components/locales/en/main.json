@@ -18,5 +18,8 @@
   "OTP_messages_wrongOtp": "Write incorect OTP code",
   "login": "Log in",
   "my_account": "My account",
-  "logout": "Log out"
+  "logout": "Log out",
+  "format_number": "Please enter your phone number in format: +357 12 567890",
+  "wrong_otp": "You wrote wrong OTP code",
+  "account_disable": "Sorry, your account is disabled"
 }
