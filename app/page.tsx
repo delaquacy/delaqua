@@ -6,8 +6,10 @@ import LocalDrinkOutlinedIcon from "@mui/icons-material/LocalDrinkOutlined";
 import styles from "./page.module.css";
 import { useTranslation } from "react-i18next";
 import "./i18n";
+import { useEffect } from "react";
 export default function Home() {
   const { t } = useTranslation("main");
+  useEffect(() => {}, []);
   return (
     <main>
       <Box className={styles.container}>

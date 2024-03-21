@@ -12,9 +12,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { app, db } from "../../lib/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import styles from "./page.module.css";
+import PhoneInput from "react-phone-number-input";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTranslation } from "react-i18next";
+import styles from "./page.module.css";
 import "../../i18n";
 
 interface CustomWindow extends Window {
@@ -38,7 +39,9 @@ export interface LogInProps {
 export default function Login({ params }: LogInProps) {
   const { t } = useTranslation("main");
   const { onLogin } = params;
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string | undefined>(
+    undefined
+  );
   const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
     useState<ConfirmationResult | null>(null);
@@ -53,6 +56,7 @@ export default function Login({ params }: LogInProps) {
 
   const auth = getAuth(app);
   const router = useRouter();
+
   useEffect(() => {
     if (myWindow) {
       myWindow.recaptchaVerifier = new RecaptchaVerifier(
@@ -67,11 +71,9 @@ export default function Login({ params }: LogInProps) {
     }
   }, [auth]);
 
-  const handlePhoneNumberChange = (
-    e: ChangeEvent<HTMLInputElement>
-  ) => {
-    setPhoneNumber(e.target.value);
-    setPhoneNumberEntered(!!e.target.value);
+  const handlePhoneNumberChange = (event: string | undefined) => {
+    setPhoneNumber(event);
+    setPhoneNumberEntered(!!event);
   };
 
   const handleOtpChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -79,18 +81,16 @@ export default function Login({ params }: LogInProps) {
   };
   const handleSentOtp = async () => {
     try {
-      const formatterPhoneNumber = `+${phoneNumber.replace(
-        /\D/g,
-        ""
-      )}`;
-      const confirmation = await signInWithPhoneNumber(
-        auth,
-        formatterPhoneNumber,
-        myWindow?.recaptchaVerifier
-      );
-      setConfirmationResult(confirmation);
-      enqueueSnackbar(messages.otpSent, { variant: "success" });
-      setOtpSent(true);
+      if (phoneNumber) {
+        const confirmation = await signInWithPhoneNumber(
+          auth,
+          phoneNumber,
+          myWindow?.recaptchaVerifier
+        );
+        setConfirmationResult(confirmation);
+        enqueueSnackbar(messages.otpSent, { variant: "success" });
+        setOtpSent(true);
+      }
     } catch (error: unknown) {
       const customError = error as CustomError;
       console.error(customError.message);
@@ -143,6 +143,7 @@ export default function Login({ params }: LogInProps) {
       console.error(error);
     }
   };
+
   return (
     <SnackbarProvider>
       <Box className={styles.container}>
@@ -154,14 +155,15 @@ export default function Login({ params }: LogInProps) {
             <LockOutlinedIcon fontSize="large" />
             <Typography variant="h4">{t("login_window")}</Typography>
           </Box>
-          <TextField
-            type="tel"
-            disabled={otpSent}
-            value={phoneNumber}
-            onChange={handlePhoneNumberChange}
-            className={styles.input}
-            placeholder="357 77 123342"
-          />
+          <div className={styles.inputContainer}>
+            <PhoneInput
+              type="tel"
+              disabled={otpSent}
+              value={phoneNumber}
+              onChange={handlePhoneNumberChange}
+              placeholder="357 77 123342"
+            />
+          </div>
           {!otpSent && (
             <span className={styles.helpMessage}>
               {t("enter_phone_with_code")}
@@ -177,6 +179,8 @@ export default function Login({ params }: LogInProps) {
               placeholder={t("placeholder_OTP")}
             />
           )}
+          {!otpSent ? <div id="recaptcha-container"></div> : null}
+          <br></br>
           <Button
             variant="contained"
             onClick={
@@ -191,7 +195,6 @@ export default function Login({ params }: LogInProps) {
               ? `${t("button_submit_OTP")}`
               : `${t("button_sent_OTP")}`}
           </Button>
-          {!otpSent ? <div id="recaptcha-container"></div> : null}
         </Box>
       </Box>
     </SnackbarProvider>
