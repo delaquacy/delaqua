@@ -156,11 +156,18 @@ export default function Login({ params }: LogInProps) {
           </Box>
           <TextField
             type="tel"
+            disabled={otpSent}
             value={phoneNumber}
             onChange={handlePhoneNumberChange}
             className={styles.input}
-            placeholder="(XXX)-XX-XXXXXXXX"
+            placeholder="357 77 123342"
           />
+          {!otpSent && (
+            <span className={styles.helpMessage}>
+              {t("enter_phone_with_code")}
+            </span>
+          )}
+
           {phoneNumberEntered && otpSent && (
             <TextField
               type="text"
