@@ -44,5 +44,6 @@
   "add_new_address": "Add new address",
   "submit_order": "Submit order",
   "select_address": "Select address, please",
-  "address_details": "Address details"
+  "address_details": "Address details",
+  "fill_all_fields": "Check if you filled in all required fields"
 }

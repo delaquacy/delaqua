@@ -246,10 +246,11 @@ const MyForm = () => {
   }, [bottlesToBuy, watch, addressFields, pomp, addresses]);
   const [cashPaymentTrigger, setCashPaymentTrigger] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState<any>();
-
+  const [submitAttempted, setSubmitAttempted] = useState(false);
   const onSubmit = async (data: IForm) => {
     setLoadingForm(true);
     try {
+      setSubmitAttempted(false);
       const formatDataBeforeSubmit = (data: IForm) => {
         const date = data.deliveryDate;
         const deliveryDate = new Date(date);
@@ -315,6 +316,11 @@ const MyForm = () => {
       console.error("Error submitting form:", error);
     }
   };
+
+  const handleError = () => {
+    setSubmitAttempted(true);
+  };
+
   const [createAddressSuccess, setCreateAddressSuccess] =
     useState(false);
   const createAddress = async (addressObject: any) => {
@@ -505,7 +511,7 @@ const MyForm = () => {
     createAddress(addressObject);
   };
   const emptyAddress = () => {
-    if (!notSelectAddress) {
+    if (!notSelectAddress && addresses.length > 0) {
       enqueueSnackbar(`${t("select_address")}`, {
         variant: "error",
       });
@@ -516,7 +522,6 @@ const MyForm = () => {
     dayjs.locale(i18n.language);
   }, [i18n.language]);
   const nextDay = dayjs().add(1, "day").format("dddd");
-  console.log(nextDay);
 
   return (
     <SnackbarProvider
@@ -551,7 +556,7 @@ const MyForm = () => {
         </Box>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit, handleError)}>
         <h1 className={styles.phoneNumber}>
           {t("order_for")}{" "}
           {loadingNumber ? (
@@ -737,19 +742,12 @@ const MyForm = () => {
               <Skeleton
                 style={{ transformOrigin: "0 0" }}
                 width={350}
-                height="20em"
+                height="15em"
               />
             </Grid>
           ) : (
             <Grid item xs={12} md={4}>
               <div className={styles.blueContainer}>
-                <p className={styles.marginsTotal}>
-                  {t("total_payments")}
-                </p>
-                <div className={styles.marginsTotal}>
-                  {totalPayments} €
-                </div>
-                <br></br>
                 <p className={styles.margins}>
                   {" "}
                   {paymentText} {priceForDifferentBottles} € :{" "}
@@ -763,6 +761,13 @@ const MyForm = () => {
                 <p className={styles.margins}>
                   {t("pump")} {pompNumber} €
                 </p>
+                <br></br>
+                <p className={styles.marginsTotal}>
+                  {t("total_payments")}
+                </p>
+                <div className={styles.marginsTotal}>
+                  {totalPayments} €
+                </div>
               </div>
             </Grid>
           )}
@@ -877,11 +882,16 @@ const MyForm = () => {
           {t("delivery_details")}
         </Typography>
         {isLoading ? (
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={12}>
-              <Skeleton variant="text" width="100%" height={200} />
-            </Grid>
-          </Grid>
+          <Skeleton
+            variant="text"
+            width="100%"
+            height={200}
+            style={{
+              top: "-35px",
+              marginBottom: "-35px",
+              position: "relative",
+            }}
+          />
         ) : !showAddresses ? (
           <Grid container spacing={2}>
             <Grid xs={12} md={4} item>
@@ -1112,6 +1122,11 @@ const MyForm = () => {
         {loadingForm && (
           <div className={styles.button}>
             <CircularProgress />
+          </div>
+        )}
+        {submitAttempted && Object.keys(errors).length > 0 && (
+          <div className={styles.helperTextFinalError}>
+            {t("fill_all_fields")}
           </div>
         )}
         {!loadingForm && (

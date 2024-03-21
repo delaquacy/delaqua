@@ -159,7 +159,7 @@ export default function Login({ params }: LogInProps) {
             value={phoneNumber}
             onChange={handlePhoneNumberChange}
             className={styles.input}
-            placeholder="XXX-XX-XXXXXXXX"
+            placeholder="(XXX)-XX-XXXXXXXX"
           />
           {phoneNumberEntered && otpSent && (
             <TextField

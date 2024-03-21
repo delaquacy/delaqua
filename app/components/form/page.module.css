@@ -9,6 +9,12 @@
   margin-bottom: 0;
   margin-left: 14px;
 }
+.helperTextFinalError {
+  color: var(--error-color);
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: center;
+}
 .redStar {
   color: var(--error-color);
 }
