@@ -41,8 +41,8 @@ export const dayOfWeekEn: DayOfWeekMap = {
 };
 
 export function getDayOfWeek(date: any, lang: string): string {
-  const engDayOfWeek = dayjs(date).format("dddd");
-  console.log(engDayOfWeek);
+  const engDayOfWeek = dayjs(date).locale("en").format("dddd");
+
   switch (lang) {
     case "uk":
       return dayOfWeekUk[engDayOfWeek];

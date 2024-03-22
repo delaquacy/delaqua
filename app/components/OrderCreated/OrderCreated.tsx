@@ -58,7 +58,6 @@ const BasicModal: React.FC<ModalProps> = ({
     deliveryDate,
     selectedLanguage
   );
-  console.log(dayOfWeek);
 
   const paymentText =
     method === "online" ? (
