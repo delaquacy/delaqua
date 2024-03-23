@@ -34,6 +34,9 @@ export default function Header() {
     setShowLogin((prevShowLogin) => !prevShowLogin);
   };
   useEffect(() => {
+    console.log(selectedLanguage);
+  }, [selectedLanguage]);
+  useEffect(() => {
     const savedLanguage = localStorage.getItem("language") || "en";
     i18n.changeLanguage(savedLanguage);
     setSelectedLanguage(savedLanguage);
