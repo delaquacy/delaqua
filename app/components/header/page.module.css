@@ -5,7 +5,6 @@
 }
 .name_container {
   margin-left: 20px;
-  width: 65%;
 }
 .name {
   font-family: "arial black", "arial-w01-black", "arial-w02-black",
@@ -16,8 +15,8 @@
   color: black;
 }
 .buttonsContainer {
+  display: flex;
   text-align: right;
-  width: 39%;
 }
 
 .languageContainer {
@@ -57,9 +56,6 @@
   .loginMyaccountButtons {
     display: none;
   }
-  .name_container {
-    width: 41%;
-  }
   .mobileScreen svg {
     width: 35px;
     height: 35px;
@@ -71,12 +67,9 @@
   .toolbar {
     padding: 0 7px;
   }
-  .languageContainer {
-    width: 27%;
-  }
 }
-@media (max-width: 870px) and (min-width: 748px) {
+@media (max-width: 485px) {
   .name_container {
-    width: 46%;
+    width: 28%;
   }
 }

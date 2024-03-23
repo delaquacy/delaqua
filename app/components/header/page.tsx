@@ -107,23 +107,21 @@ export default function Header() {
               We deliver spring water in Limassol
             </p>
           </Box>
-          <Box
-            className={styles.languageContainer}
-            sx={{ flexGrow: 1 }}
-          >
-            <Select
-              className={styles.language}
-              value={selectedLanguage}
-              onChange={handleLanguageChange}
-            >
-              <MenuItem value="en">EN</MenuItem>
-              <MenuItem value="el">EL</MenuItem>
-              <MenuItem value="uk">UA</MenuItem>
-              <MenuItem value="ru">RU</MenuItem>
-            </Select>
-          </Box>
+
           {showLogin && <Login {...loginProps} />}
           <div className={styles.buttonsContainer}>
+            <Box style={{ marginRight: "5px" }}>
+              <Select
+                className={styles.language}
+                value={selectedLanguage}
+                onChange={handleLanguageChange}
+              >
+                <MenuItem value="en">EN</MenuItem>
+                <MenuItem value="el">EL</MenuItem>
+                <MenuItem value="uk">UA</MenuItem>
+                <MenuItem value="ru">RU</MenuItem>
+              </Select>
+            </Box>
             {loading ? (
               <div className={styles.loadingContainer}>
                 <CircularProgress size={20} />

@@ -29,6 +29,9 @@
 .inputName {
   font-weight: bold;
 }
+.inputNameTime {
+  margin-top: 30px;
+}
 .blueContainer {
   background-color: var(--grey-color);
   border-radius: 4px;
@@ -43,6 +46,12 @@
 }
 .ordersHistory svg {
   margin-right: 10px;
+}
+.ordersHistoryDesktop {
+  display: block;
+}
+.ordersHistoryMobile {
+  display: none;
 }
 .titles {
   margin: 15px 0;
@@ -124,6 +133,13 @@
   margin-right: 15px;
 }
 @media (max-width: 748px) {
+  .ordersHistoryDesktop {
+    display: none;
+  }
+  .ordersHistoryMobile {
+    display: block;
+    margin-top: 15px;
+  }
   .phoneNumber {
     font-size: 22px;
     text-align: center;

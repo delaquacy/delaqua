@@ -11,7 +11,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { app, db } from "../../lib/config";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import PhoneInput from "react-phone-number-input";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTranslation } from "react-i18next";
@@ -111,18 +111,37 @@ export default function Login({ params }: LogInProps) {
 
       const user = auth.currentUser;
       if (user) {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
 
         if (!userDoc.exists()) {
-          await setDoc(doc(db, "users", user.uid), {
+          const lastUserNumberDocRef = doc(
+            db,
+            "list/5n9NPK8Faw87bjbeenPw"
+          );
+
+          const lastUserNumberDoc = await getDoc(
+            lastUserNumberDocRef
+          );
+          let lastUserNumber = lastUserNumberDoc.exists()
+            ? lastUserNumberDoc.data().lastUserNumber
+            : 0;
+
+          const newUserNumber = lastUserNumber + 1;
+
+          await setDoc(userDocRef, {
             phoneNumber: user.phoneNumber,
             numberOfBottles: 0,
+            userNumber: newUserNumber,
+          });
+
+          await updateDoc(lastUserNumberDocRef, {
+            lastUserNumber: newUserNumber,
           });
         }
       }
 
       setOtp("");
-
       router.push("/my_account");
     } catch (error: unknown) {
       const customError = error as CustomError;

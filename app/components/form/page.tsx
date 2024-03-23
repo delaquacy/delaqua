@@ -573,6 +573,21 @@ const MyForm = () => {
             formattedUserPhone
           )}
         </h1>
+        <Grid
+          item
+          xs={12}
+          md={4}
+          className={styles.ordersHistoryMobile}
+        >
+          <div className={styles.ordersHistory}>
+            <RestoreTwoToneIcon />
+            <ButtonBase onClick={() => setShowWindow(true)}>
+              {" "}
+              {t("orders_history")}
+            </ButtonBase>
+          </div>
+        </Grid>
+
         <h6 className={styles.titles}>{""}</h6>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
@@ -737,66 +752,8 @@ const MyForm = () => {
               </div>
             </div>
           </Grid>
-          {ordersLoaded ? (
-            <Grid item xs={12} md={4}>
-              <Skeleton
-                style={{ transformOrigin: "0 0" }}
-                width={350}
-                height="15em"
-              />
-            </Grid>
-          ) : (
-            <Grid item xs={12} md={4}>
-              <div className={styles.blueContainer}>
-                <p className={styles.margins}>
-                  {" "}
-                  {paymentText} {priceForDifferentBottles} € :{" "}
-                  {paymentForWater} €{" "}
-                </p>
-
-                <p className={styles.margins}>
-                  {t("deposit_for_bottles")} {depositForBottles} €
-                </p>
-
-                <p className={styles.margins}>
-                  {t("pump")} {pompNumber} €
-                </p>
-                <br></br>
-                <p className={styles.marginsTotal}>
-                  {t("total_payments")}
-                </p>
-                <div className={styles.marginsTotal}>
-                  {totalPayments} €
-                </div>
-              </div>
-            </Grid>
-          )}
 
           <Grid item xs={12} md={4}>
-            <div className={styles.ordersHistory}>
-              <RestoreTwoToneIcon />
-              <ButtonBase onClick={() => setShowWindow(true)}>
-                {" "}
-                {t("orders_history")}
-              </ButtonBase>
-            </div>
-          </Grid>
-        </Grid>
-
-        <Typography variant="h6" className={styles.titles}>
-          {" "}
-          {t("delivery_date_and_time")}
-        </Typography>
-
-        <Grid
-          container
-          spacing={2}
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <Grid xs={12} md={4} item>
             <Box>
               <div className={styles.inputName}>
                 {t("delivery_date")}{" "}
@@ -840,13 +797,12 @@ const MyForm = () => {
                 </p>
               </div>
             </Box>
-          </Grid>
-          <Grid xs={12} md={6} item>
+
             <Box>
-              <span className={styles.inputName}>
+              <div className={styles.inputNameTime}>
                 {t("delivery_time")}{" "}
                 <span className={styles.redStar}>*</span>
-              </span>
+              </div>
               <Controller
                 name="deliveryTime"
                 control={control}
@@ -877,7 +833,23 @@ const MyForm = () => {
               </div>
             </Box>
           </Grid>
+
+          <Grid
+            item
+            xs={12}
+            md={4}
+            className={styles.ordersHistoryDesktop}
+          >
+            <div className={styles.ordersHistory}>
+              <RestoreTwoToneIcon />
+              <ButtonBase onClick={() => setShowWindow(true)}>
+                {" "}
+                {t("orders_history")}
+              </ButtonBase>
+            </div>
+          </Grid>
         </Grid>
+
         <Typography variant="h6" className={styles.titles}>
           {t("delivery_details")}
         </Typography>
@@ -1088,6 +1060,40 @@ const MyForm = () => {
         <Typography variant="h6" className={styles.titles}>
           {t("payment_method")}
         </Typography>
+        {ordersLoaded ? (
+          <Grid item xs={12} md={4}>
+            <Skeleton
+              style={{ transformOrigin: "0 0" }}
+              width={350}
+              height="15em"
+            />
+          </Grid>
+        ) : (
+          <Grid item xs={12} md={12}>
+            <div className={styles.blueContainer}>
+              <p className={styles.margins}>
+                {" "}
+                {paymentText} {priceForDifferentBottles} € :{" "}
+                {paymentForWater} €{" "}
+              </p>
+
+              <p className={styles.margins}>
+                {t("deposit_for_bottles")} {depositForBottles} €
+              </p>
+
+              <p className={styles.margins}>
+                {t("pump")} {pompNumber} €
+              </p>
+              <br></br>
+              <p className={styles.marginsTotal}>
+                {t("total_payments")}
+              </p>
+              <div className={styles.marginsTotal}>
+                {totalPayments} €
+              </div>
+            </div>
+          </Grid>
+        )}
 
         <Controller
           name="paymentMethod"
