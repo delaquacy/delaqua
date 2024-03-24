@@ -1,9 +1,9 @@
 {
-  "name": "First and last name:",
-  "index": "Post index:",
-  "address": "Delivery address:",
-  "details": "Address details:",
-  "geolocation": "Link to your geolocation:",
-  "remove": "Remove",
-  "order_to_this_address": "Order to this address"
+  "name": "Όνομα και επώνυμο:",
+  "index": "Ταχυδρομικός δείκτης:",
+  "address": "Διεύθυνση παράδοσης:",
+  "details": "Λεπτομέρειες διεύθυνσης:",
+  "geolocation": "Σύνδεσμος προς την τοποθεσία σας:",
+  "remove": "Αφαίρεση",
+  "order_to_this_address": "Παραγγελία σε αυτήν τη διεύθυνση"
 }

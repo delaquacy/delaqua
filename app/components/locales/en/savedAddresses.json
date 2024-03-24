@@ -3,7 +3,7 @@
   "index": "Post index:",
   "address": "Delivery address:",
   "details": "Address details:",
-  "geolocation": "Link to your geolocation:",
+  "geolocation": "Link to your location:",
   "remove": "Remove",
   "order_to_this_address": "Order to this address"
 }

@@ -5,5 +5,12 @@
   "thursday_in": "четвер",
   "friday_in": "п’ятницю",
   "saturday_in": "суботу",
-  "sunday_in": "неділю"
+  "sunday_in": "неділю",
+  "proceed_online_payment": "Оплатіть доставку онлайн для завершення вашого замовлення:",
+  "click_to_pay_online": "Натисніть тут, щоб оплатити онлайн",
+  "prepare_for_payment": "Підготуйте {{amount}} € для оплати",
+  "thanks_for_order": "Дякуємо за ваше замовлення!",
+  "we_will_deliver_to_you": "Ми доставимо вам",
+  "we_will_deliver_to_you_pay": "Після отримання вашої оплати, ми організуємо доставку",
+  "numbers_of_deliver_water": "пляшок води у"
 }

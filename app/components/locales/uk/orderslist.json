@@ -1,1 +1,12 @@
-{}
+{
+  "close_button": "Закрити",
+  "table_phone": "Телефон",
+  "table_index": "Індекс",
+  "table_address": "Адреса",
+  "table_pump": "Помпа",
+  "table_bottles_to_buy": "Пляшок доставлено",
+  "table_bottles_to_return": "Пляшок повернуто",
+  "table_delivery_time": "Час доставки",
+  "table_payment_method": "Спосіб оплати",
+  "table_no_orders_yet": "Поки що немає замовлень"
+}

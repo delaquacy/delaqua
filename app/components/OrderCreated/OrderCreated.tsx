@@ -6,11 +6,10 @@ import Modal from "@mui/material/Modal";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
-
+import { getDayOfWeek } from "@/app/utils/dayOfWeeks";
+import CloseIcon from "@mui/icons-material/Close";
 import "../../i18n";
 import styles from "./OrderCreated.module.css";
-import { getDayOfWeek } from "@/app/utils/dayOfWeeks";
-import { useRouter } from "next/navigation";
 
 interface ModalProps {
   method: "online" | "cash";
@@ -33,12 +32,12 @@ const BasicModal: React.FC<ModalProps> = ({
   const { t } = useTranslation("finishModal");
   const [open, setOpen] = React.useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("en");
-  const router = useRouter();
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
     onClose();
-    router.push("/");
+    window.location.reload();
+    window.scrollTo(0, 0);
   };
 
   useEffect(() => {
@@ -52,7 +51,6 @@ const BasicModal: React.FC<ModalProps> = ({
     setSelectedLanguage(savedLanguage);
   }, []);
 
-  const dayOfWeek = dayjs(deliveryDate).format("dddd");
   const formattedDate = dayjs(deliveryDate).format("DD.MM.YYYY");
   const translatedDayOfWeek = getDayOfWeek(
     deliveryDate,
@@ -75,6 +73,12 @@ const BasicModal: React.FC<ModalProps> = ({
         {t("prepare_for_payment", { amount: amount })}
       </span>
     );
+  const deliveryText =
+    method === "cash" ? (
+      <span>{t("we_will_deliver_to_you")}</span>
+    ) : (
+      <span>{t("we_will_deliver_to_you_pay")}</span>
+    );
 
   return (
     <div>
@@ -86,9 +90,15 @@ const BasicModal: React.FC<ModalProps> = ({
         aria-describedby="modal-modal-description"
       >
         <Box className={styles.modal}>
+          <CloseIcon
+            className={styles.closeButton}
+            onClick={handleClose}
+          />
+
           <Box className={styles.center}>
             <CheckBoxIcon fontSize="large" className={styles.icon} />
           </Box>
+
           <Typography
             className={styles.center}
             id="modal-modal-title"
@@ -105,7 +115,7 @@ const BasicModal: React.FC<ModalProps> = ({
             className={styles.center}
             id="modal-modal-description"
           >
-            {t("we_will_deliver_to_you")} &nbsp;
+            {deliveryText}&nbsp;
             <span className={styles.bold}>{bottlesNumber}</span>&nbsp;
             {t("numbers_of_deliver_water")} &nbsp;
             <span className={styles.boldDay}>

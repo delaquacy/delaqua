@@ -1,9 +1,9 @@
 {
-  "name": "First and last name:",
-  "index": "Post index:",
-  "address": "Delivery address:",
-  "details": "Address details:",
-  "geolocation": "Link to your geolocation:",
-  "remove": "Remove",
-  "order_to_this_address": "Order to this address"
+  "name": "Ім'я та прізвище:",
+  "index": "Поштовий індекс:",
+  "address": "Адреса доставки:",
+  "details": "Деталі адреси:",
+  "geolocation": "Посилання на вашу локацію:",
+  "remove": "Видалити",
+  "order_to_this_address": "Замовити за цією адресою"
 }

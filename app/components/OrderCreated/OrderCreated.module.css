@@ -25,6 +25,13 @@
   text-align: center;
   margin: 10px 0;
 }
+.closeButton {
+  color: black;
+  position: inherit;
+  cursor: pointer;
+  right: 20px;
+}
+
 @media (max-width: 600px) {
   .modal {
     width: 400px;
