@@ -1,1 +1,12 @@
-{}
+{
+  "close_button": "Κλείσιμο",
+  "table_phone": "Τηλέφωνο",
+  "table_index": "Δείκτης",
+  "table_address": "Διεύθυνση",
+  "table_pump": "Αντλία",
+  "table_bottles_to_buy": "Μπουκάλια για αγορά",
+  "table_bottles_to_return": "Μπουκάλια για επιστροφή",
+  "table_delivery_time": "Ώρα παράδοσης",
+  "table_payment_method": "Μέθοδος πληρωμής",
+  "table_no_orders_yet": "Καμία παραγγελία ακόμα"
+}
