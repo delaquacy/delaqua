@@ -31,4 +31,6 @@ export interface IAddress {
   addressDetails: string | undefined;
   geolocation: string | undefined;
   id: string | undefined;
+  archived: boolean | undefined;
+  numberOfBottles: number | undefined;
 }

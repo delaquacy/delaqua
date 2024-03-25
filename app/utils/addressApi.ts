@@ -6,10 +6,13 @@ export async function fetchAddresses(userId: string) {
     const q = query(collection(db, `users/${userId}/addresses`));
     const querySnapshot = await getDocs(q);
 
-    const addressesData = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const addressesData = querySnapshot.docs
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      //@ts-ignore
+      .filter((address) => !address.archived);
 
     return addressesData;
   } catch (error) {

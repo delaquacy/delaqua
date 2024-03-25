@@ -63,113 +63,127 @@ const SavedData: React.FC<Props> = ({
 
   return (
     <>
-      {addresses.map((address) => (
-        <Box
-          key={address?.id}
-          className={`${styles.container} ${
-            selectedAddressId === address.id ? styles.selected : ""
-          }`}
-          onClick={() => emptyOrder && handleAddressClick(address)}
-        >
-          <Grid container>
-            <Grid item xs={12} sm={9} md={3}>
-              <Box>
-                <span className={styles.subtitles}>{t("name")}</span>{" "}
-                {address?.firstAndLast}
-              </Box>
-              <Box>
-                <span className={styles.subtitles}>{t("index")}</span>{" "}
-                {address?.postalIndex}
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={9} md={6}>
-              <Box>
-                <span className={styles.subtitles}>
-                  {t("address")}
-                </span>{" "}
-                {address?.deliveryAddress}
-              </Box>
-              <Box>
-                <span className={styles.subtitles}>
-                  {t("details")}
-                </span>{" "}
-                <span className={styles.address}>
-                  {address?.addressDetails}
-                </span>
-              </Box>
-              <Box>
-                <span className={styles.subtitles}>
-                  {t("geolocation")}
-                </span>{" "}
-                <a
-                  className={styles.geolocation}
-                  href={address?.geolocation}
-                  target="_blank"
-                >
-                  {" "}
-                  {address?.geolocation}
-                </a>
-              </Box>
-            </Grid>
-            <Grid
-              item
-              sm={12}
-              xs={12}
-              md={3}
-              className={styles.buttonsContainer}
-            >
-              <Box className={styles.hideToMobile}>
-                <p
-                  className={styles.btns}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteAddress(address.id);
-                  }}
-                >
-                  {t("remove")}
-                </p>
-
-                {!emptyOrder && (
-                  <p
-                    className={`${styles.btns} ${
-                      selectedAddressId === address.id
-                        ? styles.active
-                        : ""
-                    }`}
-                    onClick={() => handleAddressClick(address)}
-                  >
-                    {t("order_to_this_address")}
-                  </p>
-                )}
-              </Box>
-              <Box className={styles.mobileButtons}>
-                <span
-                  className={styles.btns}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteAddress(address.id);
-                  }}
-                >
-                  {t("remove")}
-                </span>
-
-                {!emptyOrder && (
-                  <span
-                    className={`${styles.btns} ${
-                      selectedAddressId === address.id
-                        ? styles.active
-                        : ""
-                    }`}
-                    onClick={() => handleAddressClick(address)}
-                  >
-                    {t("order_to_this_address")}
+      {addresses
+        .filter((address) => !address.archived)
+        .map((address) => (
+          <Box
+            key={address?.id}
+            className={`${styles.container} ${
+              selectedAddressId === address.id ? styles.selected : ""
+            }`}
+            onClick={() => emptyOrder && handleAddressClick(address)}
+          >
+            <Grid container>
+              <Grid item xs={12} sm={9} md={3}>
+                <Box>
+                  <span className={styles.subtitles}>
+                    {t("name")}
+                  </span>{" "}
+                  {address?.firstAndLast}
+                </Box>
+                <Box>
+                  <span className={styles.subtitles}>
+                    {t("index")}
+                  </span>{" "}
+                  {address?.postalIndex}
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={9} md={6}>
+                <Box>
+                  <span className={styles.subtitles}>
+                    {t("address")}
+                  </span>{" "}
+                  {address?.deliveryAddress}
+                </Box>
+                <Box>
+                  <span className={styles.subtitles}>
+                    {t("details")}
+                  </span>{" "}
+                  <span className={styles.address}>
+                    {address?.addressDetails}
                   </span>
-                )}
-              </Box>
+                </Box>
+                <Box>
+                  <span className={styles.subtitles}>
+                    {t("geolocation")}
+                  </span>{" "}
+                  <a
+                    className={styles.geolocation}
+                    href={address?.geolocation}
+                    target="_blank"
+                  >
+                    {" "}
+                    {address?.geolocation}
+                  </a>
+                </Box>
+                <Box>
+                  <span className={styles.subtitles}>
+                    Number of bottles on this address:
+                  </span>{" "}
+                  <span className={styles.address}>
+                    {address?.numberOfBottles}
+                  </span>
+                </Box>
+              </Grid>
+              <Grid
+                item
+                sm={12}
+                xs={12}
+                md={3}
+                className={styles.buttonsContainer}
+              >
+                <Box className={styles.hideToMobile}>
+                  <p
+                    className={styles.btns}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteAddress(address.id);
+                    }}
+                  >
+                    {t("remove")}
+                  </p>
+
+                  {!emptyOrder && (
+                    <p
+                      className={`${styles.btns} ${
+                        selectedAddressId === address.id
+                          ? styles.active
+                          : ""
+                      }`}
+                      onClick={() => handleAddressClick(address)}
+                    >
+                      {t("order_to_this_address")}
+                    </p>
+                  )}
+                </Box>
+                <Box className={styles.mobileButtons}>
+                  <span
+                    className={styles.btns}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteAddress(address.id);
+                    }}
+                  >
+                    {t("remove")}
+                  </span>
+
+                  {!emptyOrder && (
+                    <span
+                      className={`${styles.btns} ${
+                        selectedAddressId === address.id
+                          ? styles.active
+                          : ""
+                      }`}
+                      onClick={() => handleAddressClick(address)}
+                    >
+                      {t("order_to_this_address")}
+                    </span>
+                  )}
+                </Box>
+              </Grid>
             </Grid>
-          </Grid>
-        </Box>
-      ))}
+          </Box>
+        ))}
     </>
   );
 };

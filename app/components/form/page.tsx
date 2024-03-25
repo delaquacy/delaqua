@@ -247,8 +247,15 @@ const MyForm = () => {
   const [cashPaymentTrigger, setCashPaymentTrigger] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState<any>();
   const [submitAttempted, setSubmitAttempted] = useState(false);
+
   const onSubmit = async (data: IForm) => {
     setLoadingForm(true);
+    if (
+      (!orders || orders.length === 0) &&
+      (!addresses || addresses.length === 0)
+    ) {
+      createAddress(addressObject);
+    }
     try {
       setSubmitAttempted(false);
       const formatDataBeforeSubmit = (data: IForm) => {
@@ -266,6 +273,7 @@ const MyForm = () => {
           createdAt: serverTimestamp(),
         };
       };
+
       setDeliveryDate(data.deliveryDate);
       const formattedData = formatDataBeforeSubmit(data);
       const userId = getCurrentUserId();
@@ -323,14 +331,20 @@ const MyForm = () => {
 
   const [createAddressSuccess, setCreateAddressSuccess] =
     useState(false);
+
   const createAddress = async (addressObject: any) => {
     try {
       const userId = getCurrentUserId();
 
       if (userId) {
+        const updatedAddressObject = {
+          ...addressObject,
+          archived: false,
+          numberOfBottles: 0,
+        };
         await addDoc(
           collection(db, `users/${userId}/addresses`),
-          addressObject
+          updatedAddressObject
         );
         setCreateAddressSuccess(true);
         setValue("deliveryAddress", "");
@@ -355,7 +369,9 @@ const MyForm = () => {
           db,
           `users/${userId}/addresses/${addressId}`
         );
-        await deleteDoc(addressRef);
+
+        await updateDoc(addressRef, { archived: true });
+
         setRemoveTrigger(true);
         enqueueSnackbar(`${t("address_delete_successfully")}`, {
           variant: "info",
@@ -492,6 +508,7 @@ const MyForm = () => {
         const userId = await getCurrentUserId();
         if (userId) {
           const addressesData = await fetchAddresses(userId);
+          console.log(addressesData);
           setAddresses(addressesData);
           if (addressesData) {
             setShowAddresses(true);

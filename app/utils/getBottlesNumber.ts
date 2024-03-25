@@ -41,3 +41,26 @@ export const updateNumberOfBottlesInDB = async (
     return false;
   }
 };
+
+export const getNumberOfBottlesFromDBAddresses = async (
+  userId: string,
+  addressId: string
+) => {
+  try {
+    const addressDocRef = doc(
+      db,
+      `users/${userId}/addresses/${addressId}`
+    );
+    const addressDocSnapshot = await getDoc(addressDocRef);
+    if (addressDocSnapshot.exists()) {
+      const addressData = addressDocSnapshot.data();
+      return addressData.numberOfBottles;
+    } else {
+      console.error("Address document does not exist");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+};
