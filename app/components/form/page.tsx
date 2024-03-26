@@ -33,9 +33,16 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
+  getDocs,
+  increment,
+  limit,
+  orderBy,
+  query,
   serverTimestamp,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { db, getCurrentUserId } from "@/app/lib/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -49,7 +56,7 @@ import { v4 as uuidv4 } from "uuid";
 import SavedData from "../savedData/SavedData";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import {
-  getNumberOfBottlesFromDB,
+  getNumberOfBottlesFromDBAddresses,
   updateNumberOfBottlesInDB,
 } from "@/app/utils/getBottlesNumber";
 import {
@@ -126,25 +133,6 @@ const MyForm = () => {
     };
   }, [removeTrigger]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userId = await getCurrentUserId();
-        if (userId) {
-          const numberOfBottlesFromDB =
-            await getNumberOfBottlesFromDB(userId);
-          setNumberOfBottlesInStock(numberOfBottlesFromDB);
-        } else {
-          console.error("User not authenticated!");
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, [userPhone]);
-
   const {
     control,
     handleSubmit,
@@ -207,6 +195,7 @@ const MyForm = () => {
   );
   useEffect(() => {
     const bottlesNumberToReturn = watch("bottlesNumberToReturn") || 0;
+
     setPomp(pompValue);
 
     const {
@@ -290,12 +279,14 @@ const MyForm = () => {
         data.bottlesNumberToReturn,
         numberOfBottlesInStock
       );
+
       updateNumberOfBottlesInDB(
         bottlesCalculate(
           data.bottlesNumberToBuy,
           data.bottlesNumberToReturn,
           numberOfBottlesInStock
-        )
+        ),
+        addressId
       );
 
       const response = await axios.post(
@@ -331,21 +322,41 @@ const MyForm = () => {
 
   const [createAddressSuccess, setCreateAddressSuccess] =
     useState(false);
+  const [addressId, setAddressId] = useState<string>("");
 
   const createAddress = async (addressObject: any) => {
     try {
       const userId = getCurrentUserId();
 
       if (userId) {
+        const userDocRef = doc(db, `users/${userId}`);
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        let generalNumberOfBottles = 0;
+        if (userDocSnapshot.exists()) {
+          const userData = userDocSnapshot.data();
+          generalNumberOfBottles =
+            userData.generalNumberOfBottles || 0;
+        }
+
         const updatedAddressObject = {
           ...addressObject,
           archived: false,
-          numberOfBottles: 0,
+          createdAt: serverTimestamp(),
+          numberOfBottles: generalNumberOfBottles,
         };
+
         await addDoc(
           collection(db, `users/${userId}/addresses`),
           updatedAddressObject
         );
+
+        if (generalNumberOfBottles > 0) {
+          await updateDoc(userDocRef, {
+            generalNumberOfBottles: 0,
+          });
+        }
+
         setCreateAddressSuccess(true);
         setValue("deliveryAddress", "");
         setValue("postalIndex", "");
@@ -370,12 +381,31 @@ const MyForm = () => {
           `users/${userId}/addresses/${addressId}`
         );
 
-        await updateDoc(addressRef, { archived: true });
+        const addressDocSnapshot = await getDoc(addressRef);
 
-        setRemoveTrigger(true);
-        enqueueSnackbar(`${t("address_delete_successfully")}`, {
-          variant: "info",
-        });
+        if (addressDocSnapshot.exists()) {
+          const addressData = addressDocSnapshot.data();
+          const numberOfBottles = addressData.numberOfBottles;
+
+          if (numberOfBottles && numberOfBottles > 0) {
+            const userDocRef = doc(db, `users/${userId}`);
+            await updateDoc(userDocRef, {
+              generalNumberOfBottles: increment(numberOfBottles),
+            });
+            await updateDoc(addressRef, {
+              numberOfBottles: 0,
+            });
+          }
+
+          await updateDoc(addressRef, { archived: true });
+
+          setRemoveTrigger(true);
+          enqueueSnackbar(`${t("address_delete_successfully")}`, {
+            variant: "info",
+          });
+        } else {
+          console.error("Address document does not exist");
+        }
       } else {
         console.error("User not authenticated!");
       }
@@ -385,12 +415,36 @@ const MyForm = () => {
   };
 
   const handleAddressClick = (address: any) => {
+    setAddressId(address.id);
     setValue("deliveryAddress", address.deliveryAddress);
     setValue("postalIndex", address.postalIndex);
     setValue("addressDetails", address.addressDetails);
     setValue("geolocation", address.geolocation);
     setValue("firstAndLast", address.firstAndLast);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userId = await getCurrentUserId();
+        if (userId) {
+          const numberOfBottlesFromDB =
+            await getNumberOfBottlesFromDBAddresses(
+              userId,
+              addressId
+            );
+          setNumberOfBottlesInStock(numberOfBottlesFromDB);
+        } else {
+          console.error("User not authenticated!");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [addressId]);
+
   const [onlinePaymentTrigger, setOnlinePaymentTrigger] =
     useState(false);
 
@@ -454,21 +508,6 @@ const MyForm = () => {
     requestToReturnSuccessStatus();
     requestToReturnFailStatus();
   }, []);
-  // const result = async (orderId: string) => {
-  //   try {
-  //     const response = await fetch(`/api/back/${orderId}`, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     const nest = await response.json();
-  //     console.log("Back", nest);
-  //   } catch (error) {
-  //     console.error("Ошибка при получении данных о заказе:", error);
-  //   }
-  // };
   // datepicker settings (hide saturday, week starts from monday)
   const selectedDate = watch("deliveryDate");
   const showMessage = useMemo(() => {
@@ -703,10 +742,7 @@ const MyForm = () => {
                         readOnly: true,
                         inputProps: {
                           min: 0,
-                          max:
-                            numberOfBottlesInStock > 0
-                              ? numberOfBottlesInStock
-                              : 10,
+                          max: 1000,
                         },
                       }}
                       error={!!errors.bottlesNumberToReturn}
@@ -716,12 +752,7 @@ const MyForm = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      const newValue = Math.min(
-                        field.value + 1,
-                        numberOfBottlesInStock > 0
-                          ? numberOfBottlesInStock
-                          : 0
-                      );
+                      const newValue = Math.min(field.value + 1);
                       field.onChange(newValue);
                     }}
                   >

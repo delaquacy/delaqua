@@ -21,7 +21,7 @@ const useGetOrdersFromDb = () => {
         if (userId) {
           const q = query(
             collection(db, `users/${userId}/orders`),
-            orderBy("createdAt"),
+            orderBy("createdAt", "desc"),
             limit(5)
           );
 

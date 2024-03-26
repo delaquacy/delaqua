@@ -131,7 +131,7 @@ export default function Login({ params }: LogInProps) {
 
           await setDoc(userDocRef, {
             phoneNumber: user.phoneNumber,
-            numberOfBottles: 0,
+            generalNumberOfBottles: 0,
             userNumber: newUserNumber,
           });
 

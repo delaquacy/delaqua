@@ -1,25 +1,9 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db, getCurrentUserId } from "../lib/config";
 
-export const getNumberOfBottlesFromDB = async (userId: string) => {
-  try {
-    const userDocRef = doc(db, `users/${userId}`);
-    const userDocSnapshot = await getDoc(userDocRef);
-    if (userDocSnapshot.exists()) {
-      const userData = userDocSnapshot.data();
-      return userData.numberOfBottles;
-    } else {
-      console.error("User document does not exist");
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return null;
-  }
-};
-
 export const updateNumberOfBottlesInDB = async (
-  newNumberOfBottles: number
+  newNumberOfBottles: number,
+  addressId: string
 ) => {
   try {
     const userId = getCurrentUserId();
@@ -28,7 +12,11 @@ export const updateNumberOfBottlesInDB = async (
       return false;
     }
 
-    const userDocRef = doc(db, `users/${userId}`);
+    const userDocRef = doc(
+      db,
+      `users/${userId}/addresses/${addressId}`
+    );
+
     await setDoc(
       userDocRef,
       { numberOfBottles: newNumberOfBottles },
@@ -51,7 +39,9 @@ export const getNumberOfBottlesFromDBAddresses = async (
       db,
       `users/${userId}/addresses/${addressId}`
     );
+
     const addressDocSnapshot = await getDoc(addressDocRef);
+
     if (addressDocSnapshot.exists()) {
       const addressData = addressDocSnapshot.data();
       return addressData.numberOfBottles;

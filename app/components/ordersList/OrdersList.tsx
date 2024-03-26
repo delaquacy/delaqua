@@ -15,7 +15,6 @@ import "../../i18n";
 export default function OrdersList() {
   const { orders, loading } = useGetOrdersFromDb();
   const { t } = useTranslation("orderslist");
-
   if (loading) {
     return <CircularProgress />;
   }
