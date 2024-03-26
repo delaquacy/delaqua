@@ -23,7 +23,7 @@ import { schema } from "./schema";
 import Link from "next/link";
 import styles from "./page.module.css";
 import AlertDialog from "../alert/AlertDialog";
-import { AddressKey, IForm } from "@/app/lib/definitions";
+import { AddressKey, IAddress, IForm } from "@/app/lib/definitions";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -70,6 +70,7 @@ import BasicModal from "../OrderCreated/OrderCreated";
 import "dayjs/locale/uk";
 import "dayjs/locale/el";
 import "dayjs/locale/ru";
+import { ModalRemoveAddress } from "../ModalRemoveAddress/ModalRemoveAddress";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
@@ -239,12 +240,7 @@ const MyForm = () => {
 
   const onSubmit = async (data: IForm) => {
     setLoadingForm(true);
-    if (
-      (!orders || orders.length === 0) &&
-      (!addresses || addresses.length === 0)
-    ) {
-      createAddress(addressObject);
-    }
+
     try {
       setSubmitAttempted(false);
       const formatDataBeforeSubmit = (data: IForm) => {
@@ -274,20 +270,24 @@ const MyForm = () => {
 
       let currentOrderId = orderRef.id;
 
-      bottlesCalculate(
+      const bottleNumber = bottlesCalculate(
         data.bottlesNumberToBuy,
         data.bottlesNumberToReturn,
         numberOfBottlesInStock
       );
 
-      updateNumberOfBottlesInDB(
-        bottlesCalculate(
-          data.bottlesNumberToBuy,
-          data.bottlesNumberToReturn,
-          numberOfBottlesInStock
-        ),
-        addressId
-      );
+      if (
+        (!orders || orders.length === 0) &&
+        (!addresses || addresses.length === 0)
+      ) {
+        const enrichedAddressObject = {
+          ...addressObject,
+          numberOfBottles: bottleNumber,
+        };
+
+        createAddress(enrichedAddressObject);
+      }
+      updateNumberOfBottlesInDB(bottleNumber, addressId);
 
       const response = await axios.post(
         "https://script.google.com/macros/s/AKfycbyIRDUN_RbC__oKgI6cT6pvh8WKTbZmg9lRn4YBanvry1ULk2nql0znbmp0YRYpyVchPg/exec",
@@ -338,13 +338,24 @@ const MyForm = () => {
           generalNumberOfBottles =
             userData.generalNumberOfBottles || 0;
         }
-
-        const updatedAddressObject = {
-          ...addressObject,
-          archived: false,
-          createdAt: serverTimestamp(),
-          numberOfBottles: generalNumberOfBottles,
-        };
+        let updatedAddressObject;
+        if (
+          (!orders || orders.length === 0) &&
+          (!addresses || addresses.length === 0)
+        ) {
+          updatedAddressObject = {
+            ...addressObject,
+            archived: false,
+            createdAt: serverTimestamp(),
+          };
+        } else {
+          updatedAddressObject = {
+            ...addressObject,
+            archived: false,
+            createdAt: serverTimestamp(),
+            numberOfBottles: generalNumberOfBottles,
+          };
+        }
 
         await addDoc(
           collection(db, `users/${userId}/addresses`),
@@ -370,48 +381,116 @@ const MyForm = () => {
       console.error("Error submitting form:", error);
     }
   };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentAddressId, setCurrentAddressId] = useState<
+    string | null
+  >(null);
+  const askUserAboutTransfer = (addressId: string) => {
+    setCurrentAddressId(addressId);
+    setIsModalOpen(true);
+  };
+  const handleConfirm = async () => {
+    if (!currentAddressId) return;
 
-  const deleteAddress = async (addressId: string | undefined) => {
-    try {
-      const userId = getCurrentUserId();
+    setIsModalOpen(false);
+    await transferBottlesToLastAddress(currentAddressId);
 
-      if (userId) {
-        const addressRef = doc(
-          db,
-          `users/${userId}/addresses/${addressId}`
-        );
+    setCurrentAddressId(null);
+  };
+  const handleDecline = async () => {
+    if (!currentAddressId) return;
 
-        const addressDocSnapshot = await getDoc(addressRef);
+    setIsModalOpen(false);
+    await deleteAddressAndMoveBottles(currentAddressId);
 
-        if (addressDocSnapshot.exists()) {
-          const addressData = addressDocSnapshot.data();
-          const numberOfBottles = addressData.numberOfBottles;
-
-          if (numberOfBottles && numberOfBottles > 0) {
-            const userDocRef = doc(db, `users/${userId}`);
-            await updateDoc(userDocRef, {
-              generalNumberOfBottles: increment(numberOfBottles),
-            });
-            await updateDoc(addressRef, {
-              numberOfBottles: 0,
-            });
-          }
-
-          await updateDoc(addressRef, { archived: true });
-
-          setRemoveTrigger(true);
-          enqueueSnackbar(`${t("address_delete_successfully")}`, {
-            variant: "info",
-          });
-        } else {
-          console.error("Address document does not exist");
-        }
-      } else {
-        console.error("User not authenticated!");
-      }
-    } catch (error) {
-      console.error("Error deleting address:", error);
+    setCurrentAddressId(null);
+  };
+  const deleteAddress = async (addressId: any) => {
+    if (addresses.length > 1) {
+      askUserAboutTransfer(addressId);
+    } else {
+      await deleteAddressAndMoveBottles(addressId);
     }
+  };
+  useEffect(() => {
+    const fetchAndSetAddresses = async () => {
+      const userId = await getCurrentUserId();
+      if (userId) {
+        const addressesData = await fetchAddresses(userId);
+        setAddresses(addressesData);
+      }
+    };
+
+    fetchAndSetAddresses();
+  }, [deleteAddress]);
+  const deleteAddressAndMoveBottles = async (
+    addressId: string | undefined
+  ) => {
+    const userId = await getCurrentUserId();
+    if (!userId) return;
+
+    const addressRef = doc(
+      db,
+      `users/${userId}/addresses/${addressId}`
+    );
+    const addressDoc = await getDoc(addressRef);
+    if (!addressDoc.exists()) return;
+
+    const addressData = addressDoc.data();
+    const numberOfBottles = addressData.numberOfBottles || 0;
+
+    const userDocRef = doc(db, `users/${userId}`);
+    await updateDoc(userDocRef, {
+      generalNumberOfBottles: increment(numberOfBottles),
+    });
+    await updateDoc(addressRef, {
+      archived: true,
+      numberOfBottles: 0,
+    });
+    setRemoveTrigger(true);
+    enqueueSnackbar(`${t("address_delete_successfully")}`, {
+      variant: "info",
+    });
+  };
+
+  const transferBottlesToLastAddress = async (
+    sourceAddressId: string | undefined
+  ) => {
+    const userId = await getCurrentUserId();
+    if (!userId) return;
+
+    const sortedAddresses = addresses.sort(
+      (a: { createdAt: number }, b: { createdAt: number }) =>
+        b.createdAt - a.createdAt
+    );
+    const lastAddress = sortedAddresses.find(
+      (address: { id: string | undefined }) =>
+        address.id !== sourceAddressId
+    );
+    if (!lastAddress) return;
+
+    const sourceAddressRef = doc(
+      db,
+      `users/${userId}/addresses/${sourceAddressId}`
+    );
+    const sourceAddressDoc = await getDoc(sourceAddressRef);
+    if (!sourceAddressDoc.exists()) return;
+    const sourceAddressData = sourceAddressDoc.data();
+
+    const targetAddressRef = doc(
+      db,
+      `users/${userId}/addresses/${lastAddress.id}`
+    );
+    await updateDoc(targetAddressRef, {
+      numberOfBottles: increment(
+        sourceAddressData.numberOfBottles || 0
+      ),
+    });
+
+    await updateDoc(sourceAddressRef, {
+      archived: true,
+      numberOfBottles: 0,
+    });
   };
 
   const handleAddressClick = (address: any) => {
@@ -547,7 +626,6 @@ const MyForm = () => {
         const userId = await getCurrentUserId();
         if (userId) {
           const addressesData = await fetchAddresses(userId);
-          console.log(addressesData);
           setAddresses(addressesData);
           if (addressesData) {
             setShowAddresses(true);
@@ -1064,6 +1142,11 @@ const MyForm = () => {
           </Grid>
         ) : (
           <>
+            <ModalRemoveAddress
+              isOpen={isModalOpen}
+              onClose={handleDecline}
+              onConfirm={handleConfirm}
+            />
             <SavedData
               addresses={addresses}
               setShowAddresses={setShowAddresses}

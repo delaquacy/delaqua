@@ -60,11 +60,11 @@ const SavedData: React.FC<Props> = ({
       setEmptyOrder(true);
     }
   }, [addresses]);
-
   return (
     <>
       {addresses
         .filter((address) => !address.archived)
+        .sort((a, b) => a.createdAt - b.createdAt)
         .map((address) => (
           <Box
             key={address?.id}
@@ -118,7 +118,7 @@ const SavedData: React.FC<Props> = ({
                 </Box>
                 <Box>
                   <span className={styles.subtitles}>
-                    Number of bottles on this address:
+                    Number of bottles here:
                   </span>{" "}
                   <span className={styles.address}>
                     {address?.numberOfBottles}

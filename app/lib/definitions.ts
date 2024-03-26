@@ -33,4 +33,5 @@ export interface IAddress {
   id: string | undefined;
   archived: boolean | undefined;
   numberOfBottles: number | undefined;
+  createdAt?: any;
 }
