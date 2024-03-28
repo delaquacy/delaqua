@@ -16,6 +16,7 @@ import {
   ButtonBase,
   Skeleton,
 } from "@mui/material";
+import Alert from "@mui/material/Alert";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -31,18 +32,12 @@ import "../../i18n";
 import {
   addDoc,
   collection,
-  deleteDoc,
   doc,
   getDoc,
-  getDocs,
   increment,
-  limit,
-  orderBy,
-  query,
   serverTimestamp,
   setDoc,
   updateDoc,
-  where,
 } from "firebase/firestore";
 import { db, getCurrentUserId } from "@/app/lib/config";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -146,9 +141,23 @@ const MyForm = () => {
   });
 
   useEffect(() => {
-    if (orders) {
-      setValue("bottlesNumberToBuy", orders.length > 0 ? 2 : 2);
-      setValue("pump", orders.length > 0 ? false : true);
+    if (orders && orders.length > 0) {
+      const sortedOrders = orders.sort(
+        (a: { createdAt: any }, b: { createdAt: any }) =>
+          a.createdAt - b.createdAt
+      );
+
+      const lastOrder = sortedOrders[orders.length - 1];
+      setValue("bottlesNumberToBuy", lastOrder.bottlesNumberToBuy);
+      setValue(
+        "bottlesNumberToReturn",
+        lastOrder.bottlesNumberToReturn
+      );
+      setValue("pump", false);
+    } else {
+      setValue("bottlesNumberToBuy", 2);
+      setValue("bottlesNumberToReturn", 0);
+      setValue("pump", true);
     }
   }, [orders, ordersLoaded]);
 
@@ -194,6 +203,17 @@ const MyForm = () => {
   const [paymentText, setPaymentText] = useState(
     `${t("price_for_one_bottle")}`
   );
+
+  const [usedBottlesMessage, setUsedBottlesMessage] = useState(false);
+  const firstBottlesReturn = watch("bottlesNumberToReturn");
+  useEffect(() => {
+    if (orders.length === 0 && firstBottlesReturn !== 0) {
+      setUsedBottlesMessage(true);
+    } else {
+      setUsedBottlesMessage(false);
+    }
+  }, [firstBottlesReturn, orders]);
+  console.log(usedBottlesMessage);
   useEffect(() => {
     const bottlesNumberToReturn = watch("bottlesNumberToReturn") || 0;
 
@@ -280,15 +300,33 @@ const MyForm = () => {
         (!orders || orders.length === 0) &&
         (!addresses || addresses.length === 0)
       ) {
+        const bottleSummary = bottlesCalculate(
+          data.bottlesNumberToBuy,
+          data.bottlesNumberToReturn,
+          data.bottlesNumberToReturn
+        );
         const enrichedAddressObject = {
           ...addressObject,
-          numberOfBottles: bottleNumber,
+          numberOfBottles: bottleSummary,
+        };
+
+        createAddress(enrichedAddressObject);
+      }
+
+      if (addresses.length > 1 && !showAddresses) {
+        const bottleSummary = bottlesCalculate(
+          data.bottlesNumberToBuy,
+          data.bottlesNumberToReturn,
+          data.bottlesNumberToReturn
+        );
+        const enrichedAddressObject = {
+          ...addressObject,
+          numberOfBottles: bottleSummary,
         };
 
         createAddress(enrichedAddressObject);
       }
       updateNumberOfBottlesInDB(bottleNumber, addressId);
-
       const response = await axios.post(
         "https://script.google.com/macros/s/AKfycbyIRDUN_RbC__oKgI6cT6pvh8WKTbZmg9lRn4YBanvry1ULk2nql0znbmp0YRYpyVchPg/exec",
         formattedData,
@@ -322,6 +360,7 @@ const MyForm = () => {
 
   const [createAddressSuccess, setCreateAddressSuccess] =
     useState(false);
+
   const [addressId, setAddressId] = useState<string>("");
 
   const createAddress = async (addressObject: any) => {
@@ -354,6 +393,13 @@ const MyForm = () => {
             archived: false,
             createdAt: serverTimestamp(),
             numberOfBottles: generalNumberOfBottles,
+          };
+        }
+        if (addresses.length > 1 && !showAddresses) {
+          updatedAddressObject = {
+            ...addressObject,
+            archived: false,
+            createdAt: serverTimestamp(),
           };
         }
 
@@ -681,6 +727,13 @@ const MyForm = () => {
             onClose={() => setCashPaymentTrigger(false)}
           />
         </Box>
+      )}
+      {usedBottlesMessage && (
+        <Alert severity="info">
+          Our courier will check the bottles condition and may ask you
+          to pay for the deposit, if the state of bottles is not
+          satisfactory
+        </Alert>
       )}
 
       <form onSubmit={handleSubmit(onSubmit, handleError)}>
@@ -1202,7 +1255,10 @@ const MyForm = () => {
               </p>
 
               <p className={styles.margins}>
-                {t("deposit_for_bottles")} {depositForBottles} €
+                {t("deposit_for_bottles")} {depositForBottles} €{" "}
+                {usedBottlesMessage && (
+                  <span>(may be changed based on check)</span>
+                )}
               </p>
 
               <p className={styles.margins}>
