@@ -85,7 +85,6 @@ const BasicModal: React.FC<ModalProps> = ({
       <Button onClick={handleOpen}>Open modal</Button>
       <Modal
         open={open}
-        onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
