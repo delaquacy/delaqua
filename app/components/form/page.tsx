@@ -394,7 +394,11 @@ const MyForm = () => {
 
     setIsModalOpen(false);
     await transferBottlesToLastAddress(currentAddressId);
-
+    const userId = await getCurrentUserId();
+    if (userId) {
+      const addressesData = await fetchAddresses(userId);
+      setAddresses(addressesData);
+    }
     setCurrentAddressId(null);
   };
   const handleDecline = async () => {
@@ -412,17 +416,6 @@ const MyForm = () => {
       await deleteAddressAndMoveBottles(addressId);
     }
   };
-  useEffect(() => {
-    const fetchAndSetAddresses = async () => {
-      const userId = await getCurrentUserId();
-      if (userId) {
-        const addressesData = await fetchAddresses(userId);
-        setAddresses(addressesData);
-      }
-    };
-
-    fetchAndSetAddresses();
-  }, [deleteAddress]);
   const deleteAddressAndMoveBottles = async (
     addressId: string | undefined
   ) => {
