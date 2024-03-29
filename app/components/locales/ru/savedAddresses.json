@@ -5,5 +5,6 @@
   "details": "Детали адреса:",
   "geolocation": "Ссылка на вашу локацию:",
   "remove": "Удалить",
-  "order_to_this_address": "Заказать по этому адресу"
+  "order_to_this_address": "Заказать по этому адресу",
+  "number_of_bottles": "Количество бутылок по адресу:"
 }

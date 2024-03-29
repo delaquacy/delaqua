@@ -5,5 +5,6 @@
   "details": "Деталі адреси:",
   "geolocation": "Посилання на вашу локацію:",
   "remove": "Видалити",
-  "order_to_this_address": "Замовити за цією адресою"
+  "order_to_this_address": "Замовити за цією адресою",
+  "number_of_bottles": "Кількість пляшок за адресою:"
 }

@@ -4,6 +4,6 @@
   "prepare_for_payment": "Подготовьте {{amount}} € для оплаты",
   "thanks_for_order": "Спасибо за ваш заказ!",
   "we_will_deliver_to_you": "Мы доставим вам",
-  "we_will_deliver_to_you_pay": "После получения оплаты, мы организуем доставку",
-  "numbers_of_deliver_water": "бутылей воды в "
+  "numbers_of_deliver_water": " воды в ",
+  "we_will_deliver_to_you_pay": "После получения оплаты, мы организуем доставку"
 }

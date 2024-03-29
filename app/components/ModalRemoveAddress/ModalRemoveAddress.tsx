@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Box, Typography, Button } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface ModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ export const ModalRemoveAddress: React.FC<ModalProps> = ({
   onClose,
   onConfirm,
 }) => {
+  const { t } = useTranslation("form");
   const style = {
     position: "absolute" as "absolute",
     top: "50%",
@@ -37,11 +39,10 @@ export const ModalRemoveAddress: React.FC<ModalProps> = ({
           variant="h6"
           component="h2"
         >
-          Bottles transfer
+          {t("bottles_transfer")}
         </Typography>
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          Do you want to transfer bottles from this address to last
-          added address?
+          {t("bottles_transfer_question")}
         </Typography>
         <Box
           sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}

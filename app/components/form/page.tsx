@@ -213,7 +213,7 @@ const MyForm = () => {
       setUsedBottlesMessage(false);
     }
   }, [firstBottlesReturn, orders]);
-  console.log(usedBottlesMessage);
+
   useEffect(() => {
     const bottlesNumberToReturn = watch("bottlesNumberToReturn") || 0;
 
@@ -313,7 +313,7 @@ const MyForm = () => {
         createAddress(enrichedAddressObject);
       }
 
-      if (addresses.length > 1 && !showAddresses) {
+      if (addresses.length > 1 && !showAddresses && allFieldsFilled) {
         const bottleSummary = bottlesCalculate(
           data.bottlesNumberToBuy,
           data.bottlesNumberToReturn,
@@ -326,6 +326,7 @@ const MyForm = () => {
 
         createAddress(enrichedAddressObject);
       }
+
       updateNumberOfBottlesInDB(bottleNumber, addressId);
       const response = await axios.post(
         "https://script.google.com/macros/s/AKfycbyIRDUN_RbC__oKgI6cT6pvh8WKTbZmg9lRn4YBanvry1ULk2nql0znbmp0YRYpyVchPg/exec",
@@ -395,7 +396,11 @@ const MyForm = () => {
             numberOfBottles: generalNumberOfBottles,
           };
         }
-        if (addresses.length > 1 && !showAddresses) {
+        if (
+          addresses.length > 1 &&
+          !showAddresses &&
+          allFieldsFilled
+        ) {
           updatedAddressObject = {
             ...addressObject,
             archived: false,
@@ -403,6 +408,14 @@ const MyForm = () => {
           };
         }
 
+        if (addresses.length > 1 && !showAddresses) {
+          updatedAddressObject = {
+            ...addressObject,
+            archived: false,
+            createdAt: serverTimestamp(),
+            numberOfBottles: generalNumberOfBottles,
+          };
+        }
         await addDoc(
           collection(db, `users/${userId}/addresses`),
           updatedAddressObject
@@ -427,6 +440,7 @@ const MyForm = () => {
       console.error("Error submitting form:", error);
     }
   };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAddressId, setCurrentAddressId] = useState<
     string | null
@@ -730,9 +744,7 @@ const MyForm = () => {
       )}
       {usedBottlesMessage && (
         <Alert severity="info">
-          Our courier will check the bottles condition and may ask you
-          to pay for the deposit, if the state of bottles is not
-          satisfactory
+          {t("check_bottles_to_condition")}
         </Alert>
       )}
 
@@ -1257,7 +1269,7 @@ const MyForm = () => {
               <p className={styles.margins}>
                 {t("deposit_for_bottles")} {depositForBottles} €{" "}
                 {usedBottlesMessage && (
-                  <span>(may be changed based on check)</span>
+                  <span>({t("deposit_may_be_changed")})</span>
                 )}
               </p>
 

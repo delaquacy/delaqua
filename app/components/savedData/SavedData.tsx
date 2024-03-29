@@ -118,7 +118,7 @@ const SavedData: React.FC<Props> = ({
                 </Box>
                 <Box>
                   <span className={styles.subtitles}>
-                    Number of bottles here:
+                    {t("number_of_bottles")}
                   </span>{" "}
                   <span className={styles.address}>
                     {address?.numberOfBottles}

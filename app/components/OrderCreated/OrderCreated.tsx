@@ -80,6 +80,49 @@ const BasicModal: React.FC<ModalProps> = ({
       <span>{t("we_will_deliver_to_you_pay")}</span>
     );
 
+  function formatDeliveryText(numBottles: number) {
+    let bottlesText;
+
+    if (selectedLanguage === "ru") {
+      if (numBottles === 1) {
+        bottlesText = "бутыль";
+      } else if (numBottles >= 2 && numBottles <= 4) {
+        bottlesText = "бутыля";
+      } else {
+        bottlesText = "бутылей";
+      }
+    } else if (selectedLanguage === "uk") {
+      if (numBottles === 1) {
+        bottlesText = "пляшку";
+      } else if (numBottles >= 2 && numBottles <= 4) {
+        bottlesText = "пляшки";
+      } else {
+        bottlesText = "пляшок";
+      }
+    } else if (selectedLanguage === "en") {
+      if (numBottles === 1) {
+        bottlesText = "";
+      } else if (numBottles >= 2 && numBottles <= 4) {
+        bottlesText = "";
+      } else {
+        bottlesText = "";
+      }
+    } else if (selectedLanguage === "el") {
+      if (numBottles === 1) {
+        bottlesText = "μπουκάλι";
+      } else if (numBottles >= 2 && numBottles <= 4) {
+        bottlesText = "μπουκάλια";
+      } else {
+        bottlesText = "μπουκάλια";
+      }
+    }
+
+    return bottlesText;
+  }
+
+  const numbersOfDeliverWater = t("numbers_of_deliver_water");
+  const bottlesText = formatDeliveryText(bottlesNumber);
+
   return (
     <div>
       <Button onClick={handleOpen}>Open modal</Button>
@@ -116,7 +159,7 @@ const BasicModal: React.FC<ModalProps> = ({
           >
             {deliveryText}&nbsp;
             <span className={styles.bold}>{bottlesNumber}</span>&nbsp;
-            {t("numbers_of_deliver_water")} &nbsp;
+            {`${bottlesText} ${numbersOfDeliverWater}`} &nbsp;
             <span className={styles.boldDay}>
               {translatedDayOfWeek}
             </span>

@@ -41,5 +41,9 @@
   "submit_order": "Submit order",
   "select_address": "Select address, please",
   "address_details": "Address details",
-  "fill_all_fields": "Check if you filled in all required fields"
+  "fill_all_fields": "Check if you filled in all required fields",
+  "check_bottles_to_condition": "Our courier will check the bottles condition and may ask you to pay for the deposit, if the state of bottles is not satisfactory",
+  "deposit_may_be_changed": "may be changed based on check",
+  "bottles_transfer": "Bottles transfer",
+  "bottles_transfer_question": " Do you want to transfer bottles from this address to last added address?"
 }
