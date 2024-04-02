@@ -1,15 +1,18 @@
-import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAuGTH5cqRTsKIPAxxAupaL7yHHQPU0IaY",
-  authDomain: "water-eadb1.firebaseapp.com",
-  projectId: "water-eadb1",
-  storageBucket: "water-eadb1.appspot.com",
-  messagingSenderId: "356863911957",
-  appId: "1:356863911957:web:4223ae3d98f141c2fe461c",
+  apiKey: "AIzaSyBmHfL_hBjgDUHBNTEc7cM1MSjFyCITUyo",
+  authDomain: "delaqua-cy.firebaseapp.com",
+  projectId: "delaqua-cy",
+  storageBucket: "delaqua-cy.appspot.com",
+  messagingSenderId: "864142248122",
+  appId: "1:864142248122:web:519c8bc1bb2359c3805a83",
+  measurementId: "G-KKJWM4CM48",
 };
+
 const getCurrentUserId = () => {
   const auth = getAuth();
   const user = auth.currentUser;
@@ -22,6 +25,10 @@ const getCurrentUserId = () => {
 };
 
 const app = initializeApp(firebaseConfig);
+
+if (typeof window !== "undefined") {
+  const analytics = getAnalytics(app);
+}
 const db = getFirestore(app);
 
 export { app, db, getCurrentUserId };

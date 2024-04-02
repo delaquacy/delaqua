@@ -14,7 +14,6 @@ export default function Home() {
   useEffect(() => {
     const preferredLanguage = localStorage.getItem("language");
 
-    // Установка языка для i18next
     if (preferredLanguage) {
       i18n.changeLanguage(preferredLanguage);
     }

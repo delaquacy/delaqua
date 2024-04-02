@@ -148,7 +148,10 @@ const MyForm = () => {
       );
 
       const lastOrder = sortedOrders[orders.length - 1];
-      setValue("bottlesNumberToBuy", lastOrder.bottlesNumberToBuy);
+      setValue(
+        "bottlesNumberToBuy",
+        lastOrder.bottlesNumberToBuy || 2
+      );
       setValue(
         "bottlesNumberToReturn",
         lastOrder.bottlesNumberToReturn
