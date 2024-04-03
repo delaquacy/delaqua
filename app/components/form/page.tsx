@@ -154,7 +154,7 @@ const MyForm = () => {
       );
       setValue(
         "bottlesNumberToReturn",
-        lastOrder.bottlesNumberToReturn
+        lastOrder.bottlesNumberToReturn || 0
       );
       setValue("pump", false);
     } else {
@@ -562,7 +562,7 @@ const MyForm = () => {
     const fetchData = async () => {
       try {
         const userId = await getCurrentUserId();
-        if (userId) {
+        if (userId && addressId.trim() !== "") {
           const numberOfBottlesFromDB =
             await getNumberOfBottlesFromDBAddresses(
               userId,

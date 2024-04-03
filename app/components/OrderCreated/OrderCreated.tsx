@@ -95,7 +95,7 @@ const BasicModal: React.FC<ModalProps> = ({
       if (numBottles === 1) {
         bottlesText = "пляшку";
       } else if (numBottles >= 2 && numBottles <= 4) {
-        bottlesText = "пляшки";
+        bottlesText = "пляшок";
       } else {
         bottlesText = "пляшок";
       }
