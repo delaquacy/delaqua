@@ -40,13 +40,11 @@ export default function Home() {
               </Box>
             </Box>
           </Grid>
-          <Grid item xs={12} md={4}>
-            <Image
-              layout="responsive"
+          <Grid style={{ position: "relative" }} item xs={12} md={4}>
+            <img
+              style={{ width: "100%", height: "auto" }}
               src="/bottles.webp"
               alt="bottles"
-              width={400}
-              height={410}
             />
             <div className={styles.imageDescr}>*18.9 litres</div>
           </Grid>
