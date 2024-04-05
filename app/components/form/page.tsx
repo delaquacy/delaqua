@@ -605,7 +605,7 @@ const MyForm = () => {
         body: JSON.stringify({
           amount: amount,
           currency: "EUR",
-          description: `${phoneNumber} ${dataAndTime}`,
+          description: `Delaqua Water delivery for ${phoneNumber}, ordered on ${dataAndTime}`,
         }),
       });
       const data = await response.json();
@@ -614,9 +614,9 @@ const MyForm = () => {
         "https://script.google.com/macros/s/AKfycbz2IdNKqrkMPE9c7SFnBRp4A-rqP2MLIlaHqjabq_yf_1muCtol5nzWLtKSj6MmdNddjQ/exec",
         {
           userPhone: formatPhoneNumber,
-          amount: amount,
+          amount: `${amount}€`,
           orderId: data.id,
-          description: phoneNumber + dataAndTime,
+          description: `date:${dataAndTime}, number: ${phoneNumber}`,
         },
         {
           headers: {
