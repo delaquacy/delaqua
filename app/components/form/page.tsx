@@ -165,13 +165,15 @@ const MyForm = () => {
   }, [orders, ordersLoaded]);
 
   const bottlesToBuy = watch("bottlesNumberToBuy") || 0;
-  const notSelectAddress = watch("deliveryAddress");
+  const notSelectAddress = watch("addressDetails");
+  const notSelectName = watch("firstAndLast");
   const pompStatus = watch(["pump"]);
   const addressFields = watch([
     "firstAndLast",
     "postalIndex",
     "deliveryAddress",
     "geolocation",
+
     "addressDetails",
   ]);
   const allFieldsFilled = addressFields.every(
@@ -315,7 +317,6 @@ const MyForm = () => {
 
         createAddress(enrichedAddressObject);
       }
-
       if (addresses.length > 1 && !showAddresses && allFieldsFilled) {
         const bottleSummary = bottlesCalculate(
           data.bottlesNumberToBuy,
@@ -330,7 +331,11 @@ const MyForm = () => {
         createAddress(enrichedAddressObject);
       }
 
-      updateNumberOfBottlesInDB(bottleNumber, addressId);
+      if (numberOfBottlesInStock === 0) {
+        updateNumberOfBottlesInDB(data.bottlesNumberToBuy, addressId);
+      } else {
+        updateNumberOfBottlesInDB(bottleNumber, addressId);
+      }
       const response = await axios.post(
         "https://script.google.com/macros/s/AKfycbyIRDUN_RbC__oKgI6cT6pvh8WKTbZmg9lRn4YBanvry1ULk2nql0znbmp0YRYpyVchPg/exec",
         formattedData,
@@ -419,6 +424,7 @@ const MyForm = () => {
             numberOfBottles: generalNumberOfBottles,
           };
         }
+
         await addDoc(
           collection(db, `users/${userId}/addresses`),
           updatedAddressObject
@@ -701,7 +707,10 @@ const MyForm = () => {
     createAddress(addressObject);
   };
   const emptyAddress = () => {
-    if (!notSelectAddress && addresses.length > 0) {
+    if (
+      (!notSelectAddress || !notSelectName) &&
+      addresses.length > 0
+    ) {
       enqueueSnackbar(`${t("select_address")}`, {
         variant: "error",
       });

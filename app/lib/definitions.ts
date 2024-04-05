@@ -2,7 +2,7 @@ export interface IForm {
   firstAndLast: string;
   phoneNumber?: string | undefined;
   postalIndex: string;
-  deliveryAddress: string;
+  deliveryAddress?: string;
   addressDetails: string;
   geolocation: string;
   pump?: boolean;

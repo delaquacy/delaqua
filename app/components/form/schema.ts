@@ -6,7 +6,7 @@ export const schema = yup.object().shape({
     .string()
     .matches(/^\d{4}$/, "Postal Index must contain 4 digits")
     .required("Enter a valid phone number"),
-  deliveryAddress: yup.string().required("Enter delivery address"),
+  deliveryAddress: yup.string(),
   addressDetails: yup.string().required("Enter address details"),
   geolocation: yup.string().required("Enter you geolocation"),
   pump: yup.boolean(),

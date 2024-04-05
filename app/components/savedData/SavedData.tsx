@@ -27,7 +27,6 @@ const SavedData: React.FC<Props> = ({
 
   const handleAddressClick = (address: IAddress) => {
     setSelectedAddressId(address.id);
-
     onAddressClick(address);
   };
   const handleDeleteAddress = async (
@@ -60,6 +59,7 @@ const SavedData: React.FC<Props> = ({
       setEmptyOrder(true);
     }
   }, [addresses]);
+
   return (
     <>
       {addresses
@@ -121,7 +121,7 @@ const SavedData: React.FC<Props> = ({
                     {t("number_of_bottles")}
                   </span>{" "}
                   <span className={styles.address}>
-                    {address?.numberOfBottles}
+                    {address?.numberOfBottles || 0}
                   </span>
                 </Box>
               </Grid>
