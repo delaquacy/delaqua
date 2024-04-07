@@ -1,4 +1,10 @@
-import { collection, getDocs, query } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+} from "firebase/firestore";
 import { db } from "../lib/config";
 
 export async function fetchAddresses(userId: string) {
@@ -35,6 +41,25 @@ export async function fetchOrders(userId: string) {
     return ordersData;
   } catch (error) {
     console.error("Error fetching orders:", error);
+    throw error;
+  }
+}
+
+export async function fetchUserNumber(userId: string) {
+  try {
+    const userDocRef = doc(db, `users/${userId}`);
+    const userDocSnapshot = await getDoc(userDocRef);
+
+    if (userDocSnapshot.exists()) {
+      const userData = userDocSnapshot.data();
+      const userNumber = userData.userNumber;
+      return userNumber;
+    } else {
+      console.error("User document does not exist");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user number:", error);
     throw error;
   }
 }

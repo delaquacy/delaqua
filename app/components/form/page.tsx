@@ -60,7 +60,11 @@ import {
 } from "@/app/utils/webhoooks";
 import dayjs, { Dayjs } from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
-import { fetchAddresses, fetchOrders } from "@/app/utils/addressApi";
+import {
+  fetchAddresses,
+  fetchOrders,
+  fetchUserNumber,
+} from "@/app/utils/addressApi";
 import BasicModal from "../OrderCreated/OrderCreated";
 import "dayjs/locale/uk";
 import "dayjs/locale/el";
@@ -94,7 +98,7 @@ const MyForm = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [numberOfBottlesInStock, setNumberOfBottlesInStock] =
     useState<number>(0);
-
+  const [userUniqId, setUserUniqId] = useState(null);
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -109,9 +113,11 @@ const MyForm = () => {
           if (userId) {
             const addressesData = await fetchAddresses(userId);
             const ordersData = await fetchOrders(userId);
+            const userUniqId = await fetchUserNumber(userId);
 
             setOrders(ordersData);
             setAddresses(addressesData);
+            setUserUniqId(userUniqId);
             setOrdersLoaded(false);
             setIsLoading(false);
             setShowAddresses(addressesData.length >= 1);
@@ -278,9 +284,23 @@ const MyForm = () => {
           ...data,
           deliveryDate: formattedDate,
           phoneNumber: userPhone,
+          bottlesNumberToReturn:
+            data.bottlesNumberToReturn == 0
+              ? "0"
+              : data.bottlesNumberToReturn,
           pump: data.pump ? "yes" : "no",
           id: uuidv4(),
           createdAt: serverTimestamp(),
+          useId: userUniqId,
+          priceOfWater: paymentForWater,
+          depositForBottles:
+            depositForBottles == 0 ? "0" : depositForBottles,
+          totalPayments: totalPayments,
+          pumpPrice: data.pump == false ? "0" : data.pump,
+          numberOfBottlesAtThisAddress:
+            numberOfBottlesInStock == 0
+              ? "0"
+              : numberOfBottlesInStock,
         };
       };
 
