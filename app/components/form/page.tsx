@@ -357,7 +357,7 @@ const MyForm = () => {
         updateNumberOfBottlesInDB(bottleNumber, addressId);
       }
       const response = await axios.post(
-        "https://script.google.com/macros/s/AKfycbyIRDUN_RbC__oKgI6cT6pvh8WKTbZmg9lRn4YBanvry1ULk2nql0znbmp0YRYpyVchPg/exec",
+        "https://script.google.com/macros/s/AKfycbxrDfoLIa_EpVOfUlyjCyYawEjxUbFuaLXCLIBkUuUL_zZsWGtjOHC8woDYsrpLVlGibQ/exec",
         formattedData,
         {
           headers: {
@@ -631,7 +631,7 @@ const MyForm = () => {
       const data = await response.json();
       const formatPhoneNumber = userPhone?.replace(/\+/g, "");
       await axios.post(
-        "https://script.google.com/macros/s/AKfycbz2IdNKqrkMPE9c7SFnBRp4A-rqP2MLIlaHqjabq_yf_1muCtol5nzWLtKSj6MmdNddjQ/exec",
+        "https://script.google.com/macros/s/AKfycbzEentV0YD4nSimcQH9K1bBDacAC4I5lXqxyYuNR4u6dozcGrwkNVg406r9QOLHKr6cvA/exec",
         {
           userPhone: formatPhoneNumber,
           amount: `${amount}€`,

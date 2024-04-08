@@ -5,7 +5,7 @@ import type { NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
 
 const link =
-  "https://script.google.com/macros/s/AKfycbz2IdNKqrkMPE9c7SFnBRp4A-rqP2MLIlaHqjabq_yf_1muCtol5nzWLtKSj6MmdNddjQ/exec";
+  "https://script.google.com/macros/s/AKfycbzEentV0YD4nSimcQH9K1bBDacAC4I5lXqxyYuNR4u6dozcGrwkNVg406r9QOLHKr6cvA/exec";
 
 export async function POST(
   req: NextRequest,
