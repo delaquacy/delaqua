@@ -97,7 +97,7 @@ const MyForm = () => {
   const [numberOfBottlesInStock, setNumberOfBottlesInStock] =
     useState<number>(0);
   const [userUniqId, setUserUniqId] = useState(null);
-  console.log(process.env.NEXT_PUBLIC_NEXT_PUBLIC);
+
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {

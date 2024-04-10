@@ -1,6 +1,5 @@
 import axios from "axios";
-const key =
-  "sk_r-rVS2vIlgIfhVpv-Cw1mWazWOY6JypuXTbvx1Cw5EhoxjjA4cZkyXpAwbiTCqxT";
+const key = process.env.REVOLUT_KEY;
 export const requestGeneral = async () => {
   const webhookUrl = "https://delaqua.vercel.app/api/returnHook";
   const events = [
