@@ -124,7 +124,7 @@ const MyForm = () => {
             console.error("");
           }
         } catch (error) {
-          console.error("Error fetching data:", error);
+          console.error("Error fetching:", error);
         }
       }
     });
