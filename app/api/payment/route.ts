@@ -5,6 +5,7 @@ const key = process.env.REVOLUT_KEY;
 export async function POST(req: any, res: any) {
   const body = await req.json();
   const { currency, amount, description } = body;
+  console.log(key);
   try {
     const response = await axios.post(
       "https://merchant.revolut.com/api/orders",
