@@ -18,6 +18,7 @@
     "axios": "^1.6.2",
     "dayjs": "^1.11.10",
     "firebase": "^10.7.1",
+    "firebase-admin": "^12.0.0",
     "i18next": "^23.7.8",
     "next": "14.0.3",
     "notistack": "^3.0.1",

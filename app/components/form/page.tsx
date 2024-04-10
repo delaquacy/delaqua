@@ -62,11 +62,12 @@ import {
   fetchOrders,
   fetchUserNumber,
 } from "@/app/utils/addressApi";
+import { ModalRemoveAddress } from "../ModalRemoveAddress/ModalRemoveAddress";
+import { RegisterButton } from "../registerComponent/RegisterButton";
 import BasicModal from "../OrderCreated/OrderCreated";
 import "dayjs/locale/uk";
 import "dayjs/locale/el";
 import "dayjs/locale/ru";
-import { ModalRemoveAddress } from "../ModalRemoveAddress/ModalRemoveAddress";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
@@ -96,6 +97,7 @@ const MyForm = () => {
   const [numberOfBottlesInStock, setNumberOfBottlesInStock] =
     useState<number>(0);
   const [userUniqId, setUserUniqId] = useState(null);
+  console.log(process.env.NEXT_PUBLIC_NEXT_PUBLIC);
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -664,8 +666,6 @@ const MyForm = () => {
   };
 
   useEffect(() => {
-    // requestToReturnSuccessStatus();
-    // requestToReturnFailStatus();
     requestGeneral();
   }, []);
   // datepicker settings (hide saturday, week starts from monday)
@@ -781,6 +781,7 @@ const MyForm = () => {
 
       <form onSubmit={handleSubmit(onSubmit, handleError)}>
         <h1 className={styles.phoneNumber}>
+          {userPhone === "+380639496331" && <RegisterButton />}
           {t("order_for")}{" "}
           {loadingNumber ? (
             <span className={styles.skeletonText}>

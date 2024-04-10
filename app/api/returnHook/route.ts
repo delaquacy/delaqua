@@ -44,7 +44,6 @@ export async function POST(
         status: 200,
       }
     );
-    console.log(response);
     return response;
   } catch (error) {
     console.log("Ошибка при обработке запроса:", error);
