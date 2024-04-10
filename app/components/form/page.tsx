@@ -356,7 +356,7 @@ const MyForm = () => {
         updateNumberOfBottlesInDB(bottleNumber, addressId);
       }
       const response = await axios.post(
-        "https://script.google.com/macros/s/AKfycbxrDfoLIa_EpVOfUlyjCyYawEjxUbFuaLXCLIBkUuUL_zZsWGtjOHC8woDYsrpLVlGibQ/exec",
+        process.env.ORDERS_SHEET_LINK as string,
         formattedData,
         {
           headers: {
@@ -631,7 +631,7 @@ const MyForm = () => {
       console.log(data.id);
       const formatPhoneNumber = userPhone?.replace(/\+/g, "");
       const resp = await axios.post(
-        "https://script.google.com/macros/s/AKfycbzEentV0YD4nSimcQH9K1bBDacAC4I5lXqxyYuNR4u6dozcGrwkNVg406r9QOLHKr6cvA/exec",
+        process.env.PAYMENT_SHEET_LINK as string,
         {
           userPhone: formatPhoneNumber,
           amount: `${amount}€`,
