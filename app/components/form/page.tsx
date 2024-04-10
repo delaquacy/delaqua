@@ -267,7 +267,7 @@ const MyForm = () => {
   const [cashPaymentTrigger, setCashPaymentTrigger] = useState(false);
   const [deliveryDate, setDeliveryDate] = useState<any>();
   const [submitAttempted, setSubmitAttempted] = useState(false);
-  console.log(process.env.NEXT_PUBLIC_ORDERS_SHEET_LINK);
+
   const onSubmit = async (data: IForm) => {
     setLoadingForm(true);
 
