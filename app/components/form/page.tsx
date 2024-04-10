@@ -24,7 +24,7 @@ import { schema } from "./schema";
 import Link from "next/link";
 import styles from "./page.module.css";
 import AlertDialog from "../alert/AlertDialog";
-import { AddressKey, IAddress, IForm } from "@/app/lib/definitions";
+import { AddressKey, IForm } from "@/app/lib/definitions";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -54,10 +54,7 @@ import {
   getNumberOfBottlesFromDBAddresses,
   updateNumberOfBottlesInDB,
 } from "@/app/utils/getBottlesNumber";
-import {
-  requestToReturnFailStatus,
-  requestToReturnSuccessStatus,
-} from "@/app/utils/webhoooks";
+import { requestGeneral } from "@/app/utils/webhoooks";
 import dayjs, { Dayjs } from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 import {
@@ -666,8 +663,9 @@ const MyForm = () => {
   };
 
   useEffect(() => {
-    requestToReturnSuccessStatus();
-    requestToReturnFailStatus();
+    // requestToReturnSuccessStatus();
+    // requestToReturnFailStatus();
+    requestGeneral();
   }, []);
   // datepicker settings (hide saturday, week starts from monday)
   const selectedDate = watch("deliveryDate");

@@ -62,6 +62,7 @@ export const bottlesCalculate = (
 };
 
 const now = new Date();
+now.setHours(now.getHours() + 3);
 export const formattedDateTime = now
   .toISOString()
   .replace("T", " ")

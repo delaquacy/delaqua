@@ -1,34 +1,65 @@
 import axios from "axios";
 
-export const requestToReturnSuccessStatus = async () => {
-  const webhookUrl = "https://delaqua.vercel.app/api/return";
-  const events = ["ORDER_COMPLETED"];
-  try {
-    const response = await axios.post(
-      "/api/webhookSuccess",
-      {
-        webhookUrl,
-        events,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+// export const requestToReturnSuccessStatus = async () => {
+//   const webhookUrl = "https://delaqua.vercel.app/api/return";
+//   const events = ["ORDER_COMPLETED"];
+//   try {
+//     const response = await axios.post(
+//       "/api/webhookSuccess",
+//       {
+//         webhookUrl,
+//         events,
+//       },
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
 
-    return null;
-  } catch (error) {
-    console.error("Ошибка при создании webhook:", error);
-  }
-};
+//     return null;
+//   } catch (error) {
+//     console.error("Ошибка при создании webhook:", error);
+//   }
+// };
 const key = process.env.REVOLUT_KEY;
-export const requestToReturnFailStatus = async () => {
-  const webhookUrl = "https://delaqua.vercel.app/api/returnNot";
-  const events = ["ORDER_PAYMENT_DECLINED"];
+// export const requestToReturnFailStatus = async () => {
+//   const webhookUrl = "https://delaqua.vercel.app/api/returnNot";
+//   const events = ["ORDER_PAYMENT_DECLINED"];
+//   try {
+//     const response = await axios.post(
+//       "/api/webhookFail",
+//       {
+//         webhookUrl,
+//         events,
+//       },
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${key}`,
+//         },
+//       }
+//     );
+
+//     return null;
+//   } catch (error) {
+//     console.error("Ошибка при создании webhook:", error);
+//   }
+// };
+
+export const requestGeneral = async () => {
+  const webhookUrl = "https://delaqua.vercel.app/api/returnHook";
+  const events = [
+    "ORDER_COMPLETED",
+    "ORDER_AUTHORISED",
+    "ORDER_CANCELLED",
+    "ORDER_PAYMENT_AUTHENTICATED",
+    "ORDER_PAYMENT_DECLINED",
+    "ORDER_PAYMENT_FAILED",
+  ];
   try {
     const response = await axios.post(
-      "/api/webhookFail",
+      "/api/webhook",
       {
         webhookUrl,
         events,
@@ -40,7 +71,7 @@ export const requestToReturnFailStatus = async () => {
         },
       }
     );
-
+    console.log("success");
     return null;
   } catch (error) {
     console.error("Ошибка при создании webhook:", error);

@@ -31,7 +31,6 @@ export async function POST(
         "Content-Type": "application/json",
       },
     });
-
     const paymentRef = doc(db, `payments/${eventData.order_id}`);
     await updateDoc(paymentRef, {
       paymentStatus: arrayUnion(eventData.event),
@@ -45,6 +44,7 @@ export async function POST(
         status: 200,
       }
     );
+    console.log(response);
     return response;
   } catch (error) {
     console.log("Ошибка при обработке запроса:", error);

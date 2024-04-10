@@ -8,7 +8,7 @@ export async function POST(req: any, res: any) {
 
   try {
     const response = await axios.post(
-      "https://sandbox-merchant.revolut.com/api/1.0/webhooks",
+      "https://merchant.revolut.com/api/1.0/webhooks",
       {
         url: webhookUrl,
         events: events,

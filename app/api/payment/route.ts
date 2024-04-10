@@ -7,9 +7,9 @@ export async function POST(req: any, res: any) {
   const { currency, amount, description } = body;
   try {
     const response = await axios.post(
-      "https://sandbox-merchant.revolut.com/api/orders",
+      "https://merchant.revolut.com/api/orders",
       {
-        amount: amount * 100,
+        amount: amount,
         currency,
         description,
       },

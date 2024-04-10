@@ -12,6 +12,7 @@ export async function POST(
   res: NextApiResponse<string>
 ) {
   const now = new Date();
+  now.setHours(now.getHours() + 3);
   const formattedDateTime = now
     .toISOString()
     .replace("T", " ")
