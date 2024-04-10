@@ -626,6 +626,7 @@ const MyForm = () => {
         }),
       });
       const data = await response.json();
+      console.log(data.id);
       const formatPhoneNumber = userPhone?.replace(/\+/g, "");
       const resp = await axios.post(
         "https://script.google.com/macros/s/AKfycbzEentV0YD4nSimcQH9K1bBDacAC4I5lXqxyYuNR4u6dozcGrwkNVg406r9QOLHKr6cvA/exec",
