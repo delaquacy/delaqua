@@ -22,7 +22,7 @@ import axios from "axios";
 //     console.error("Ошибка при создании webhook:", error);
 //   }
 // };
-const key = process.env.REVOLUT_KEY;
+const key = process.env.NEXT_PUBLIC_REVOLUT_KEY;
 // export const requestToReturnFailStatus = async () => {
 //   const webhookUrl = "https://delaqua.vercel.app/api/returnNot";
 //   const events = ["ORDER_PAYMENT_DECLINED"];
