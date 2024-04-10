@@ -1,7 +1,6 @@
 import axios from "axios";
 import { NextResponse } from "next/server";
-const key =
-  "sk_CAWFozjx49HzfPb05oju56ciYeaVc28IG8-fAgNO3oE_KyvdPGaSW3ysNZIDiCVB";
+const key = process.env.REVOLUT_KEY;
 
 export async function POST(req: any, res: any) {
   const body = await req.json();

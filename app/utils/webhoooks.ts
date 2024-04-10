@@ -17,13 +17,12 @@ export const requestToReturnSuccessStatus = async () => {
       }
     );
 
-    console.log("Webhook создан успешно:", response.config.data);
+    return null;
   } catch (error) {
     console.error("Ошибка при создании webhook:", error);
   }
 };
-const key =
-  "sk_CAWFozjx49HzfPb05oju56ciYeaVc28IG8-fAgNO3oE_KyvdPGaSW3ysNZIDiCVB";
+const key = process.env.REVOLUT_KEY;
 export const requestToReturnFailStatus = async () => {
   const webhookUrl = "https://delaqua.vercel.app/api/returnNot";
   const events = ["ORDER_PAYMENT_DECLINED"];
@@ -42,7 +41,7 @@ export const requestToReturnFailStatus = async () => {
       }
     );
 
-    console.log("Webhook создан успешно:", response.config.data);
+    return null;
   } catch (error) {
     console.error("Ошибка при создании webhook:", error);
   }
