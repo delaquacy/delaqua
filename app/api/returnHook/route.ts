@@ -4,7 +4,7 @@ import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import type { NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
 
-const link = process.env.PAYMENT_SHEET_LINK as string;
+const link = process.env.NEXT_PUBLIC_PAYMENT_SHEET_LINK as string;
 
 export async function POST(
   req: NextRequest,

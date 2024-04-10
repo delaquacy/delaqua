@@ -356,7 +356,7 @@ const MyForm = () => {
         updateNumberOfBottlesInDB(bottleNumber, addressId);
       }
       const response = await axios.post(
-        process.env.ORDERS_SHEET_LINK as string,
+        process.env.NEXT_PUBLIC_ORDERS_SHEET_LINK as string,
         formattedData,
         {
           headers: {
@@ -631,7 +631,7 @@ const MyForm = () => {
       console.log(data.id);
       const formatPhoneNumber = userPhone?.replace(/\+/g, "");
       const resp = await axios.post(
-        process.env.PAYMENT_SHEET_LINK as string,
+        process.env.NEXT_PUBLIC_PAYMENT_SHEET_LINK as string,
         {
           userPhone: formatPhoneNumber,
           amount: `${amount}€`,
