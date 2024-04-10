@@ -121,7 +121,7 @@ const MyForm = () => {
             setIsLoading(false);
             setShowAddresses(addressesData.length >= 1);
           } else {
-            console.error("User not authenticated!");
+            console.error("");
           }
         } catch (error) {
           console.error("Error fetching data:", error);
