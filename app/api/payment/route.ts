@@ -1,12 +1,11 @@
 import axios from "axios";
 import { NextResponse } from "next/server";
-const key =
-  "sk_r-rVS2vIlgIfhVpv-Cw1mWazWOY6JypuXTbvx1Cw5EhoxjjA4cZkyXpAwbiTCqxT";
+const key = process.env.REVOLUT_KEY;
 
 export async function POST(req: any, res: any) {
   const body = await req.json();
   const { currency, amount, description } = body;
-
+  console.log(key);
   try {
     const response = await axios.post(
       "https://merchant.revolut.com/api/orders",

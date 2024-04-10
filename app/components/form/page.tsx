@@ -605,12 +605,7 @@ const MyForm = () => {
 
   const [onlinePaymentTrigger, setOnlinePaymentTrigger] =
     useState(false);
-  console.log(
-    process.env.REVOLUT_KEY,
-    process.env.REVOLUT_KEYS,
-    process.env.NEXT_PUBLIC_REVOLUT_KEY,
-    process.env.NEXT_PUBLIC_REVOLUT_KEYS
-  );
+
   const [url, setUrl] = useState<string | undefined>("");
   const handleSubmited = async (
     amount: number,
