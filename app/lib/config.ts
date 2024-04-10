@@ -2,15 +2,14 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_CONFIG_APIKEY,
+  apiKey: "AIzaSyBmHfL_hBjgDUHBNTEc7cM1MSjFyCITUyo",
   authDomain: "delaqua-cy.firebaseapp.com",
   projectId: "delaqua-cy",
   storageBucket: "delaqua-cy.appspot.com",
   messagingSenderId: "864142248122",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_CONFIG_APPID,
-  measurementId: "G-KKJWM4CM48",
+  appId: "1:864142248122:web:82cbe223836d11eb805a83",
+  measurementId: "G-KHGJRN2BNZ",
 };
 
 const getCurrentUserId = () => {
