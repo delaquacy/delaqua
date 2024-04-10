@@ -4,12 +4,12 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_CONFIG_APIKEY,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_CONFIG_APIKEY,
   authDomain: "delaqua-cy.firebaseapp.com",
   projectId: "delaqua-cy",
   storageBucket: "delaqua-cy.appspot.com",
   messagingSenderId: "864142248122",
-  appId: process.env.FIREBASE_CONFIG_APPID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_CONFIG_APPID,
   measurementId: "G-KKJWM4CM48",
 };
 
