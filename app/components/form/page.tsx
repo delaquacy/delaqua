@@ -295,7 +295,7 @@ const MyForm = () => {
           depositForBottles:
             depositForBottles == 0 ? "0" : depositForBottles,
           totalPayments: totalPayments,
-          pumpPrice: data.pump == false ? "0" : data.pump,
+          pumpPrice: data.pump == false ? "0" : "10",
           numberOfBottlesAtThisAddress:
             numberOfBottlesInStock == 0
               ? "0"

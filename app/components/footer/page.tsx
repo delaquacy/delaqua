@@ -1,11 +1,11 @@
 import React from "react";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import TelegramIcon from "@mui/icons-material/Telegram";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import EmailIcon from "@mui/icons-material/Email";
+import InstagramIcon from "@mui/icons-material/Instagram";
 import styles from "./page.module.css";
-import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -33,20 +33,18 @@ export default function Footer() {
         >
           <FacebookIcon />
         </IconButton>
-        <IconButton href="#" color="default">
+        <IconButton
+          href="mailto:delaqua.cy@gmail.com"
+          color="default"
+        >
           <EmailIcon />
         </IconButton>
-      </Box>
-
-      <Box className={styles.copyright}>
-        <Typography
-          variant="body2"
-          color="textSecondary"
-          align="center"
+        <IconButton
+          target="_blank"
+          href="https://www.instagram.com/delaqua.cy"
         >
-          DelAqua Copyright © 2023 Water - All rights reserved ||
-          Designed By: Illia
-        </Typography>
+          <InstagramIcon />
+        </IconButton>
       </Box>
     </footer>
   );

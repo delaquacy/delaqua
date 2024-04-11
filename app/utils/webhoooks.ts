@@ -4,9 +4,7 @@ export const requestGeneral = async () => {
   const webhookUrl = "https://delaqua.vercel.app/api/returnHook";
   const events = [
     "ORDER_COMPLETED",
-    "ORDER_AUTHORISED",
     "ORDER_CANCELLED",
-    "ORDER_PAYMENT_AUTHENTICATED",
     "ORDER_PAYMENT_DECLINED",
     "ORDER_PAYMENT_FAILED",
   ];
