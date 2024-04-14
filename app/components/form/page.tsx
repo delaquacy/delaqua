@@ -678,9 +678,7 @@ const MyForm = () => {
     const now = dayjs();
     const noon = now.startOf("day").add(12, "hours");
     const watchedDate = dayjs(selectedDate);
-    if (watchedDate.day() === 2 && now.isAfter(noon)) {
-      return true;
-    }
+
     return now.isSame(watchedDate, "day") && now.isAfter(noon);
   }, [selectedDate]);
 
@@ -689,7 +687,7 @@ const MyForm = () => {
     dayjs().day() === 6 &&
     dayjs().isAfter(dayjs().startOf("day").add(12, "hours"))
   ) {
-    nextDay = dayjs().add(2, "day").format("dddd");
+    nextDay = dayjs().add(1, "day").format("dddd");
   }
   const isWeekend = (date: Dayjs) => {
     const day = date.day();
