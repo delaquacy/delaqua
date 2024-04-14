@@ -678,10 +678,19 @@ const MyForm = () => {
     const now = dayjs();
     const noon = now.startOf("day").add(12, "hours");
     const watchedDate = dayjs(selectedDate);
-
+    if (watchedDate.day() === 2 && now.isAfter(noon)) {
+      return true;
+    }
     return now.isSame(watchedDate, "day") && now.isAfter(noon);
   }, [selectedDate]);
 
+  let nextDay = dayjs().add(1, "day").format("dddd");
+  if (
+    dayjs().day() === 6 &&
+    dayjs().isAfter(dayjs().startOf("day").add(12, "hours"))
+  ) {
+    nextDay = dayjs().add(2, "day").format("dddd");
+  }
   const isWeekend = (date: Dayjs) => {
     const day = date.day();
     return day === 0;
@@ -739,7 +748,6 @@ const MyForm = () => {
   useEffect(() => {
     dayjs.locale(i18n.language);
   }, [i18n.language]);
-  const nextDay = dayjs().add(1, "day").format("dddd");
 
   return (
     <SnackbarProvider
@@ -773,11 +781,6 @@ const MyForm = () => {
           />
         </Box>
       )}
-      {usedBottlesMessage && (
-        <Alert severity="info">
-          {t("check_bottles_to_condition")}
-        </Alert>
-      )}
 
       <form onSubmit={handleSubmit(onSubmit, handleError)}>
         <h1 className={styles.phoneNumber}>
@@ -797,6 +800,11 @@ const MyForm = () => {
             formattedUserPhone
           )}
         </h1>
+        {usedBottlesMessage && (
+          <Alert style={{ marginTop: "15px" }} severity="info">
+            {t("check_bottles_to_condition")}
+          </Alert>
+        )}
         <Grid
           item
           xs={12}
@@ -1359,11 +1367,17 @@ const MyForm = () => {
             {t("fill_all_fields")}
           </div>
         )}
+        {showMessage && (
+          <p className={styles.helperTextFinalError}>
+            {t("change_day")}
+          </p>
+        )}
         {!loadingForm && (
           <Box className={styles.button}>
             <Button
               onClick={emptyAddress}
               type="submit"
+              disabled={showMessage}
               variant="contained"
             >
               {t("submit_order")}
