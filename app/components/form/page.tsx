@@ -297,9 +297,10 @@ const MyForm = () => {
           totalPayments: totalPayments,
           pumpPrice: data.pump == false ? "0" : "10",
           numberOfBottlesAtThisAddress:
-            numberOfBottlesInStock == 0
-              ? "0"
-              : numberOfBottlesInStock,
+            numberOfBottlesInStock !== undefined &&
+            numberOfBottlesInStock != 0
+              ? numberOfBottlesInStock
+              : "0",
         };
       };
 
@@ -313,44 +314,35 @@ const MyForm = () => {
       );
 
       let currentOrderId = orderRef.id;
-
       const bottleNumber = bottlesCalculate(
         data.bottlesNumberToBuy,
         data.bottlesNumberToReturn,
         numberOfBottlesInStock
       );
-
       if (
         (!orders || orders.length === 0) &&
         (!addresses || addresses.length === 0)
       ) {
-        const bottleSummary = bottlesCalculate(
-          data.bottlesNumberToBuy,
-          data.bottlesNumberToReturn,
-          data.bottlesNumberToReturn
-        );
         const enrichedAddressObject = {
           ...addressObject,
-          numberOfBottles: bottleSummary,
+          numberOfBottles: data.bottlesNumberToBuy,
         };
 
         createAddress(enrichedAddressObject);
       }
       if (addresses.length > 1 && !showAddresses && allFieldsFilled) {
-        const bottleSummary = bottlesCalculate(
-          data.bottlesNumberToBuy,
-          data.bottlesNumberToReturn,
-          data.bottlesNumberToReturn
-        );
         const enrichedAddressObject = {
           ...addressObject,
-          numberOfBottles: bottleSummary,
+          numberOfBottles: data.bottlesNumberToBuy,
         };
 
         createAddress(enrichedAddressObject);
       }
 
-      if (numberOfBottlesInStock === 0) {
+      if (
+        numberOfBottlesInStock === 0 ||
+        numberOfBottlesInStock == undefined
+      ) {
         updateNumberOfBottlesInDB(data.bottlesNumberToBuy, addressId);
       } else {
         updateNumberOfBottlesInDB(bottleNumber, addressId);
@@ -381,7 +373,7 @@ const MyForm = () => {
       console.error("Error submitting form:", error);
     }
   };
-
+  console.log(numberOfBottlesInStock);
   const handleError = () => {
     setSubmitAttempted(true);
   };
@@ -628,7 +620,7 @@ const MyForm = () => {
         }),
       });
       const data = await response.json();
-      console.log(data.id);
+
       const formatPhoneNumber = userPhone?.replace(/\+/g, "");
       const resp = await axios.post(
         process.env.NEXT_PUBLIC_PAYMENT_SHEET_LINK as string,

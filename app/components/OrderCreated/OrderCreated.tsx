@@ -166,12 +166,9 @@ const BasicModal: React.FC<ModalProps> = ({
             &nbsp;
             <span className={styles.bold}>{formattedDate}</span>.
           </Typography>
-          <Typography
-            className={styles.center}
-            id="modal-modal-description"
-          >
+          <Box className={styles.center} id="modal-modal-description">
             {paymentText}
-          </Typography>
+          </Box>
         </Box>
       </Modal>
     </div>
