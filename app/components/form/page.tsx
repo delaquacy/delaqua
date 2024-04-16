@@ -373,7 +373,7 @@ const MyForm = () => {
       console.error("Error submitting form:", error);
     }
   };
-  console.log(numberOfBottlesInStock);
+
   const handleError = () => {
     setSubmitAttempted(true);
   };

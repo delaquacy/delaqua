@@ -19,6 +19,19 @@ export async function POST(
 
   try {
     const eventData = await req.json();
+    const tableEvents = [
+      "ORDER_COMPLETED",
+      "ORDER_CANCELLED",
+      "ORDER_PAYMENT_DECLINED",
+      "ORDER_PAYMENT_FAILED",
+    ];
+    if (tableEvents.includes(eventData.event)) {
+      await axios.post(link, eventData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
 
     const postData = {
       event: eventData.event,
@@ -43,6 +56,7 @@ export async function POST(
         status: 200,
       }
     );
+    console.log(eventData);
     return response;
   } catch (error) {
     console.log("Ошибка при обработке запроса:", error);
