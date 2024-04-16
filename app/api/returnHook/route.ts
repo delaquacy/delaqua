@@ -26,23 +26,18 @@ export async function POST(
       "ORDER_PAYMENT_FAILED",
     ];
     if (tableEvents.includes(eventData.event)) {
-      await axios.post(link, eventData, {
+      const postData = {
+        event: eventData.event,
+        order_id: eventData.order_id,
+        date_time: formattedDateTime,
+      };
+      await axios.post(link, postData, {
         headers: {
           "Content-Type": "application/json",
         },
       });
     }
 
-    const postData = {
-      event: eventData.event,
-      order_id: eventData.order_id,
-      date_time: formattedDateTime,
-    };
-    await axios.post(link, postData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
     const paymentRef = doc(db, `payments/${eventData.order_id}`);
     await updateDoc(paymentRef, {
       paymentStatus: arrayUnion(eventData.event),
