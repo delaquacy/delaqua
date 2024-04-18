@@ -63,9 +63,11 @@ const BasicModal: React.FC<ModalProps> = ({
         {" "}
         <div> {t("proceed_online_payment")}</div>
         <div>
-          <a href={url} style={{ color: "blue" }} target="_blank">
-            {t("click_to_pay_online")}
-          </a>
+          <Button style={{ marginTop: "10px" }} variant="contained">
+            <a href={url} target="_blank">
+              {t("click_to_pay_online")}
+            </a>
+          </Button>
         </div>
       </>
     ) : (
