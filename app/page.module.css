@@ -15,6 +15,12 @@
   font-size: 20px;
   margin: 10px 0;
 }
+.blockLogin {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  margin-top: 80px;
+}
 .blocks svg {
   height: 55px;
   width: 55px;
@@ -55,6 +61,9 @@
   display: block;
   margin-top: 1em;
 }
+.colorText {
+  color: #1976d2;
+}
 @media (max-width: 768px) {
   .container {
     padding: 10px;
@@ -71,6 +80,9 @@
   }
   .waterDescription {
     font-size: 15px;
+  }
+  .blockLogin {
+    margin-top: 30px;
   }
 }
 @media (max-width: 640px) {

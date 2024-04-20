@@ -46,5 +46,6 @@
   "deposit_may_be_changed": "may be changed based on check",
   "bottles_transfer": "Bottles transfer",
   "bottles_transfer_question": " Do you want to transfer bottles from this address to last added address?",
-  "change_day": "Please change the day"
+  "change_day": "Please change the day",
+  "pump_installation": "How to install a pump"
 }

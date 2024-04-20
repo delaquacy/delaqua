@@ -62,6 +62,7 @@ import {
   fetchOrders,
   fetchUserNumber,
 } from "@/app/utils/addressApi";
+import CloseIcon from "@mui/icons-material/Close";
 import { ModalRemoveAddress } from "../ModalRemoveAddress/ModalRemoveAddress";
 import { RegisterButton } from "../registerComponent/RegisterButton";
 import BasicModal from "../OrderCreated/OrderCreated";
@@ -738,321 +739,70 @@ const MyForm = () => {
   useEffect(() => {
     dayjs.locale(i18n.language);
   }, [i18n.language]);
+  const [isImageOpen, setIsImageOpen] = useState(false);
 
   return (
-    <SnackbarProvider
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "center",
-      }}
-      autoHideDuration={1500}
-    >
-      {onlinePaymentTrigger && (
-        <Box className={styles.displayNone}>
-          <BasicModal
-            method="online"
-            url={url}
-            bottlesNumber={bottlesToBuy}
-            deliveryDate={deliveryDate}
-            isOpen={onlinePaymentTrigger}
-            onClose={() => setOnlinePaymentTrigger(false)}
-          />
-        </Box>
-      )}
-      {cashPaymentTrigger && (
-        <Box className={styles.displayNone}>
-          <BasicModal
-            method="cash"
-            amount={totalPayments}
-            bottlesNumber={bottlesToBuy}
-            deliveryDate={deliveryDate}
-            isOpen={cashPaymentTrigger}
-            onClose={() => setCashPaymentTrigger(false)}
-          />
-        </Box>
-      )}
-
-      <form onSubmit={handleSubmit(onSubmit, handleError)}>
-        <h1 className={styles.phoneNumber}>
-          {userPhone === "+380639496331" && <RegisterButton />}
-          {t("order_for")}{" "}
-          {loadingNumber ? (
-            <span className={styles.skeletonText}>
-              <Skeleton
-                style={{ transformOrigin: "0 0" }}
-                variant="text"
-                animation="wave"
-                width={220}
-                height={45}
-              />
-            </span>
-          ) : (
-            formattedUserPhone
-          )}
-        </h1>
-        {usedBottlesMessage && (
-          <Alert style={{ marginTop: "15px" }} severity="info">
-            {t("check_bottles_to_condition")}
-          </Alert>
+    <>
+      <SnackbarProvider
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        autoHideDuration={1500}
+      >
+        {onlinePaymentTrigger && (
+          <Box className={styles.displayNone}>
+            <BasicModal
+              method="online"
+              url={url}
+              bottlesNumber={bottlesToBuy}
+              deliveryDate={deliveryDate}
+              isOpen={onlinePaymentTrigger}
+              onClose={() => setOnlinePaymentTrigger(false)}
+            />
+          </Box>
         )}
-        <Grid
-          item
-          xs={12}
-          md={4}
-          className={styles.ordersHistoryMobile}
-        >
-          <div className={styles.ordersHistory}>
-            <RestoreTwoToneIcon />
-            <ButtonBase onClick={() => setShowWindow(true)}>
-              {" "}
-              {t("orders_history")}
-            </ButtonBase>
-          </div>
-        </Grid>
-
-        <h6 className={styles.titles}>{""}</h6>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
-            <div className={styles.marginTopBot}>
-              {t("number_of_bottles_to_buy")}
-            </div>
-
-            <Controller
-              name="bottlesNumberToBuy"
-              control={control}
-              render={({ field }) => (
-                <div className={styles.bottlesButtons}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newValue = Math.max(
-                        field.value - 1,
-                        orders.length > 0 ? 2 : 1
-                      );
-                      field.onChange(newValue);
-                    }}
-                  >
-                    -
-                  </button>
-                  {ordersLoaded ? (
-                    <div className={styles.skeletonBottles}>
-                      <Skeleton
-                        variant="rounded"
-                        animation="wave"
-                        width={35}
-                        height={25}
-                      />
-                    </div>
-                  ) : (
-                    <TextField
-                      {...field}
-                      type="number"
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                      error={!!errors.bottlesNumberToBuy}
-                    />
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newValue = Math.max(
-                        field.value + 1,
-                        orders.length > 0 ? 2 : 1
-                      );
-                      field.onChange(newValue);
-                    }}
-                  >
-                    +
-                  </button>
-                </div>
-              )}
+        {cashPaymentTrigger && (
+          <Box className={styles.displayNone}>
+            <BasicModal
+              method="cash"
+              amount={totalPayments}
+              bottlesNumber={bottlesToBuy}
+              deliveryDate={deliveryDate}
+              isOpen={cashPaymentTrigger}
+              onClose={() => setCashPaymentTrigger(false)}
             />
+          </Box>
+        )}
 
-            <span className={styles.inputErrors}>
-              {errors.bottlesNumberToBuy?.message}
-            </span>
-            <div className={styles.marginTopBot}>
-              {t("number_of_bottles_to_return")}
-            </div>
-            <Controller
-              name="bottlesNumberToReturn"
-              control={control}
-              defaultValue={0}
-              render={({ field }) => (
-                <div className={styles.bottlesButtons}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newValue = Math.max(field.value - 1, 0);
-                      field.onChange(newValue);
-                    }}
-                  >
-                    -
-                  </button>
-                  {ordersLoaded ? (
-                    <div className={styles.skeletonBottles}>
-                      <Skeleton
-                        variant="rounded"
-                        animation="wave"
-                        width={35}
-                        height={25}
-                      />
-                    </div>
-                  ) : (
-                    <TextField
-                      {...field}
-                      type="number"
-                      InputProps={{
-                        readOnly: true,
-                        inputProps: {
-                          min: 0,
-                          max: 1000,
-                        },
-                      }}
-                      error={!!errors.bottlesNumberToReturn}
-                    />
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newValue = Math.min(field.value + 1);
-                      field.onChange(newValue);
-                    }}
-                  >
-                    +
-                  </button>
-                </div>
-              )}
-            />
-            <span className={styles.inputErrors}>
-              {errors.bottlesNumberToReturn?.message}
-            </span>
-            <div className={styles.marginTopBot}>
-              <Controller
-                name="pump"
-                control={control}
-                render={({ field }) => (
-                  <>
-                    {ordersLoaded ? (
-                      <span className={styles.skeletonText}>
-                        <Skeleton
-                          style={{ transformOrigin: "0 0" }}
-                          variant="text"
-                          animation="wave"
-                          width={35}
-                          height={30}
-                        />
-                      </span>
-                    ) : (
-                      <Switch
-                        {...field}
-                        color="primary"
-                        checked={field.value || false}
-                      />
-                    )}
-                  </>
-                )}
-              />
-              <span className={styles.inputName}>
-                {t("do_you_need_pump")}
-              </span>
-              <div>
-                <p className={styles.helperText}>
-                  {errors.pump?.message}
-                </p>
-              </div>
-            </div>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Box>
-              <div className={styles.inputName}>
-                {t("delivery_date")}{" "}
-                <span className={styles.redStar}>*</span>
-              </div>
-              <div className={styles.datePicker}>
-                <Controller
-                  name="deliveryDate"
-                  control={control}
-                  defaultValue={undefined}
-                  render={({ field }) => (
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker
-                        {...field}
-                        disablePast
-                        dayOfWeekFormatter={dayOfWeekFormatter}
-                        //@ts-ignore
-                        shouldDisableDate={(date: Dayjs) =>
-                          isWeekend(date)
-                        }
-                        format="DD-MM-YYYY"
-                        slotProps={{
-                          textField: {
-                            fullWidth: true,
-                          },
-                        }}
-                      />
-                    </LocalizationProvider>
-                  )}
+        <form onSubmit={handleSubmit(onSubmit, handleError)}>
+          <h1 className={styles.phoneNumber}>
+            {userPhone === "+380639496331" && <RegisterButton />}
+            {t("order_for")}{" "}
+            {loadingNumber ? (
+              <span className={styles.skeletonText}>
+                <Skeleton
+                  style={{ transformOrigin: "0 0" }}
+                  variant="text"
+                  animation="wave"
+                  width={220}
+                  height={45}
                 />
-              </div>
-              <div>
-                {showMessage && (
-                  <p className={styles.helperText}>
-                    {t("delivery_soonest_day")} {nextDay},{" "}
-                    {t("delivery_please_change_day")}
-                  </p>
-                )}
-                <p className={styles.helperText}>
-                  {errors.deliveryDate?.message}
-                </p>
-              </div>
-            </Box>
-
-            <Box>
-              <div className={styles.inputNameTime}>
-                {t("delivery_time")}{" "}
-                <span className={styles.redStar}>*</span>
-              </div>
-              <Controller
-                name="deliveryTime"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <RadioGroup
-                    {...field}
-                    aria-label="deliveryTime"
-                    defaultValue=""
-                  >
-                    <FormControlLabel
-                      value="9-17"
-                      control={<Radio />}
-                      label={t("delivery_time_9_17")}
-                    />
-                    <FormControlLabel
-                      value="9-12"
-                      control={<Radio />}
-                      label={t("delivery_time_9_12")}
-                    />
-                  </RadioGroup>
-                )}
-              />
-              <div>
-                <p className={styles.helperText}>
-                  {errors.deliveryTime?.message}
-                </p>
-              </div>
-            </Box>
-          </Grid>
-
+              </span>
+            ) : (
+              formattedUserPhone
+            )}
+          </h1>
+          {usedBottlesMessage && (
+            <Alert style={{ marginTop: "15px" }} severity="info">
+              {t("check_bottles_to_condition")}
+            </Alert>
+          )}
           <Grid
             item
             xs={12}
             md={4}
-            className={styles.ordersHistoryDesktop}
+            className={styles.ordersHistoryMobile}
           >
             <div className={styles.ordersHistory}>
               <RestoreTwoToneIcon />
@@ -1062,193 +812,420 @@ const MyForm = () => {
               </ButtonBase>
             </div>
           </Grid>
-        </Grid>
 
-        <Typography variant="h6" className={styles.titles}>
-          {t("delivery_details")}
-        </Typography>
-        {isLoading ? (
-          <Skeleton
-            variant="text"
-            width="100%"
-            height={200}
-            style={{
-              top: "-35px",
-              marginBottom: "-35px",
-              position: "relative",
-            }}
-          />
-        ) : !showAddresses ? (
+          <h6 className={styles.titles}>{""}</h6>
           <Grid container spacing={2}>
-            <Grid xs={12} md={4} item>
-              <span className={styles.inputName}>
-                {t("first_and_last")}{" "}
-                <span className={styles.redStar}>*</span>
-              </span>
-              <Controller
-                name="firstAndLast"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    margin="normal"
-                    placeholder="John Smith"
-                    error={!!errors.firstAndLast}
-                    helperText={errors.firstAndLast?.message}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid xs={12} md={4} item>
-              <span className={styles.inputName}>
-                {t("post_index")}{" "}
-                <span className={styles.redStar}>*</span>
-              </span>
-              <Controller
-                name="postalIndex"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    margin="normal"
-                    placeholder={t("post_index_placeholder")}
-                    error={!!errors.postalIndex}
-                    helperText={errors.postalIndex?.message}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid xs={12} md={4} item>
-              <span className={styles.inputName}>
-                {t("delivery_address")}{" "}
-                <span className={styles.redStar}>*</span>
-              </span>
-              <Controller
-                name="deliveryAddress"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    margin="normal"
-                    placeholder={t("delivery_address_placeholder")}
-                    error={!!errors.deliveryAddress}
-                    helperText={errors.deliveryAddress?.message}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid xs={12} md={4} item>
-              <span className={styles.inputName}>
-                {t("geolocation_link")}{" "}
-                <span className={styles.redStar}>*</span>
-              </span>
-              <Controller
-                name="geolocation"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    margin="normal"
-                    placeholder="https://maps.app.goo.gl/example"
-                    error={!!errors.geolocation}
-                    helperText={errors.geolocation?.message}
-                  />
-                )}
-              />
-              <div>
-                {t("follow_the_link")}{" "}
-                <Link
-                  style={{
-                    fontWeight: "bold",
-                    textDecoration: "underline",
-                  }}
-                  target="_blank"
-                  href="https://www.google.com/maps"
-                >
-                  {t("google_maps")}
-                </Link>
-                {t("and_choose")}
+            <Grid item xs={12} md={4}>
+              <div className={styles.marginTopBot}>
+                {t("number_of_bottles_to_buy")}
               </div>
-            </Grid>
-            <Grid xs={12} md={4} item>
-              <span className={styles.inputName}>
-                {t("address_details")}{" "}
-                <span className={styles.redStar}>*</span>
-              </span>
+
               <Controller
-                name="addressDetails"
+                name="bottlesNumberToBuy"
                 control={control}
-                defaultValue=""
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    placeholder={t("address_placeholder")}
-                    fullWidth
-                    margin="normal"
-                    error={!!errors.addressDetails}
-                    helperText={errors.addressDetails?.message}
-                  />
+                  <div className={styles.bottlesButtons}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newValue = Math.max(
+                          field.value - 1,
+                          orders.length > 0 ? 2 : 1
+                        );
+                        field.onChange(newValue);
+                      }}
+                    >
+                      -
+                    </button>
+                    {ordersLoaded ? (
+                      <div className={styles.skeletonBottles}>
+                        <Skeleton
+                          variant="rounded"
+                          animation="wave"
+                          width={35}
+                          height={25}
+                        />
+                      </div>
+                    ) : (
+                      <TextField
+                        {...field}
+                        type="number"
+                        InputProps={{
+                          readOnly: true,
+                        }}
+                        error={!!errors.bottlesNumberToBuy}
+                      />
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newValue = Math.max(
+                          field.value + 1,
+                          orders.length > 0 ? 2 : 1
+                        );
+                        field.onChange(newValue);
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
                 )}
               />
-            </Grid>
-            <Grid xs={12} md={4} item>
-              <span className={styles.inputName}>
-                {t("comments")}
+
+              <span className={styles.inputErrors}>
+                {errors.bottlesNumberToBuy?.message}
               </span>
+              <div className={styles.marginTopBot}>
+                {t("number_of_bottles_to_return")}
+              </div>
               <Controller
-                name="comments"
+                name="bottlesNumberToReturn"
                 control={control}
-                defaultValue=""
+                defaultValue={0}
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    multiline
-                    rows={4}
-                    fullWidth
-                    placeholder={t("comments_placeholder")}
-                    variant="outlined"
-                    margin="normal"
-                    error={!!errors.comments}
-                    helperText={errors.comments?.message}
-                  />
+                  <div className={styles.bottlesButtons}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newValue = Math.max(field.value - 1, 0);
+                        field.onChange(newValue);
+                      }}
+                    >
+                      -
+                    </button>
+                    {ordersLoaded ? (
+                      <div className={styles.skeletonBottles}>
+                        <Skeleton
+                          variant="rounded"
+                          animation="wave"
+                          width={35}
+                          height={25}
+                        />
+                      </div>
+                    ) : (
+                      <TextField
+                        {...field}
+                        type="number"
+                        InputProps={{
+                          readOnly: true,
+                          inputProps: {
+                            min: 0,
+                            max: 1000,
+                          },
+                        }}
+                        error={!!errors.bottlesNumberToReturn}
+                      />
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newValue = Math.min(field.value + 1);
+                        field.onChange(newValue);
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
                 )}
               />
-              {allFieldsFilled && (
-                <Button variant="contained" onClick={addNewAddress}>
-                  {t("save_address_details")}
-                </Button>
+              <span className={styles.inputErrors}>
+                {errors.bottlesNumberToReturn?.message}
+              </span>
+              <div className={styles.marginTopBot}>
+                <Controller
+                  name="pump"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      {ordersLoaded ? (
+                        <span className={styles.skeletonText}>
+                          <Skeleton
+                            style={{ transformOrigin: "0 0" }}
+                            variant="text"
+                            animation="wave"
+                            width={35}
+                            height={30}
+                          />
+                        </span>
+                      ) : (
+                        <Switch
+                          {...field}
+                          color="primary"
+                          checked={field.value || false}
+                        />
+                      )}
+                    </>
+                  )}
+                />
+
+                <span className={styles.inputName}>
+                  {t("do_you_need_pump")}
+                </span>
+              </div>
+              <div>
+                <p className={styles.helperText}>
+                  {errors.pump?.message}
+                </p>
+              </div>
+              {pomp && (
+                <div
+                  onClick={() => setIsImageOpen(true)}
+                  className={styles.pumpInstruction}
+                >
+                  {t("pump_installation")}
+                </div>
+              )}
+              {isImageOpen && (
+                <div className={styles.instructionImagesContainer}>
+                  <span
+                    className={styles.instructionImagesClose}
+                    onClick={() => setIsImageOpen(false)}
+                  >
+                    <CloseIcon />
+                  </span>
+                  <div className={styles.instructionImages}>
+                    <img src="./fullInstruction.jpeg" />
+                  </div>
+                </div>
               )}
             </Grid>
-          </Grid>
-        ) : (
-          <>
-            <ModalRemoveAddress
-              isOpen={isModalOpen}
-              onClose={handleDecline}
-              onConfirm={handleConfirm}
-            />
-            <SavedData
-              addresses={addresses}
-              setShowAddresses={setShowAddresses}
-              deleteAddress={deleteAddress}
-              onAddressClick={handleAddressClick}
-              setAddresses={setAddresses}
-            />
-            <Box className={styles.addNewAddress}>
-              <a onClick={() => setShowAddresses(false)}>
-                {t("add_new_address")}
-              </a>
-            </Box>
 
-            <Grid container>
+            <Grid item xs={12} md={4}>
+              <Box>
+                <div className={styles.inputName}>
+                  {t("delivery_date")}{" "}
+                  <span className={styles.redStar}>*</span>
+                </div>
+                <div className={styles.datePicker}>
+                  <Controller
+                    name="deliveryDate"
+                    control={control}
+                    defaultValue={undefined}
+                    render={({ field }) => (
+                      <LocalizationProvider
+                        dateAdapter={AdapterDayjs}
+                      >
+                        <DatePicker
+                          {...field}
+                          disablePast
+                          dayOfWeekFormatter={dayOfWeekFormatter}
+                          //@ts-ignore
+                          shouldDisableDate={(date: Dayjs) =>
+                            isWeekend(date)
+                          }
+                          format="DD-MM-YYYY"
+                          slotProps={{
+                            textField: {
+                              fullWidth: true,
+                            },
+                          }}
+                        />
+                      </LocalizationProvider>
+                    )}
+                  />
+                </div>
+                <div>
+                  {showMessage && (
+                    <p className={styles.helperText}>
+                      {t("delivery_soonest_day")} {nextDay},{" "}
+                      {t("delivery_please_change_day")}
+                    </p>
+                  )}
+                  <p className={styles.helperText}>
+                    {errors.deliveryDate?.message}
+                  </p>
+                </div>
+              </Box>
+
+              <Box>
+                <div className={styles.inputNameTime}>
+                  {t("delivery_time")}{" "}
+                  <span className={styles.redStar}>*</span>
+                </div>
+                <Controller
+                  name="deliveryTime"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <RadioGroup
+                      {...field}
+                      aria-label="deliveryTime"
+                      defaultValue=""
+                    >
+                      <FormControlLabel
+                        value="9-17"
+                        control={<Radio />}
+                        label={t("delivery_time_9_17")}
+                      />
+                      <FormControlLabel
+                        value="9-12"
+                        control={<Radio />}
+                        label={t("delivery_time_9_12")}
+                      />
+                    </RadioGroup>
+                  )}
+                />
+                <div>
+                  <p className={styles.helperText}>
+                    {errors.deliveryTime?.message}
+                  </p>
+                </div>
+              </Box>
+            </Grid>
+
+            <Grid
+              item
+              xs={12}
+              md={4}
+              className={styles.ordersHistoryDesktop}
+            >
+              <div className={styles.ordersHistory}>
+                <RestoreTwoToneIcon />
+                <ButtonBase onClick={() => setShowWindow(true)}>
+                  {" "}
+                  {t("orders_history")}
+                </ButtonBase>
+              </div>
+            </Grid>
+          </Grid>
+
+          <Typography variant="h6" className={styles.titles}>
+            {t("delivery_details")}
+          </Typography>
+          {isLoading ? (
+            <Skeleton
+              variant="text"
+              width="100%"
+              height={200}
+              style={{
+                top: "-35px",
+                marginBottom: "-35px",
+                position: "relative",
+              }}
+            />
+          ) : !showAddresses ? (
+            <Grid container spacing={2}>
+              <Grid xs={12} md={4} item>
+                <span className={styles.inputName}>
+                  {t("first_and_last")}{" "}
+                  <span className={styles.redStar}>*</span>
+                </span>
+                <Controller
+                  name="firstAndLast"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      margin="normal"
+                      placeholder="John Smith"
+                      error={!!errors.firstAndLast}
+                      helperText={errors.firstAndLast?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid xs={12} md={4} item>
+                <span className={styles.inputName}>
+                  {t("post_index")}{" "}
+                  <span className={styles.redStar}>*</span>
+                </span>
+                <Controller
+                  name="postalIndex"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      margin="normal"
+                      placeholder={t("post_index_placeholder")}
+                      error={!!errors.postalIndex}
+                      helperText={errors.postalIndex?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid xs={12} md={4} item>
+                <span className={styles.inputName}>
+                  {t("delivery_address")}{" "}
+                  <span className={styles.redStar}>*</span>
+                </span>
+                <Controller
+                  name="deliveryAddress"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      margin="normal"
+                      placeholder={t("delivery_address_placeholder")}
+                      error={!!errors.deliveryAddress}
+                      helperText={errors.deliveryAddress?.message}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid xs={12} md={4} item>
+                <span className={styles.inputName}>
+                  {t("geolocation_link")}{" "}
+                  <span className={styles.redStar}>*</span>
+                </span>
+                <Controller
+                  name="geolocation"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      margin="normal"
+                      placeholder="https://maps.app.goo.gl/example"
+                      error={!!errors.geolocation}
+                      helperText={errors.geolocation?.message}
+                    />
+                  )}
+                />
+                <div>
+                  {t("follow_the_link")}{" "}
+                  <Link
+                    style={{
+                      fontWeight: "bold",
+                      textDecoration: "underline",
+                    }}
+                    target="_blank"
+                    href="https://www.google.com/maps"
+                  >
+                    {t("google_maps")}
+                  </Link>
+                  {t("and_choose")}
+                </div>
+              </Grid>
+              <Grid xs={12} md={4} item>
+                <span className={styles.inputName}>
+                  {t("address_details")}{" "}
+                  <span className={styles.redStar}>*</span>
+                </span>
+                <Controller
+                  name="addressDetails"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      placeholder={t("address_placeholder")}
+                      fullWidth
+                      margin="normal"
+                      error={!!errors.addressDetails}
+                      helperText={errors.addressDetails?.message}
+                    />
+                  )}
+                />
+              </Grid>
               <Grid xs={12} md={4} item>
                 <span className={styles.inputName}>
                   {t("comments")}
@@ -1271,117 +1248,168 @@ const MyForm = () => {
                     />
                   )}
                 />
+                {allFieldsFilled && (
+                  <Button variant="contained" onClick={addNewAddress}>
+                    {t("save_address_details")}
+                  </Button>
+                )}
               </Grid>
             </Grid>
-          </>
-        )}
-
-        <Typography variant="h6" className={styles.titles}>
-          {t("payment_method")}
-        </Typography>
-        {ordersLoaded ? (
-          <Grid item xs={12} md={4}>
-            <Skeleton
-              style={{ transformOrigin: "0 0" }}
-              width={350}
-              height="15em"
-            />
-          </Grid>
-        ) : (
-          <Grid item xs={12} md={12}>
-            <div className={styles.blueContainer}>
-              <p className={styles.margins}>
-                {" "}
-                {paymentText} {priceForDifferentBottles} € :{" "}
-                {paymentForWater} €{" "}
-              </p>
-
-              <p className={styles.margins}>
-                {t("deposit_for_bottles")} {depositForBottles} €{" "}
-                {usedBottlesMessage && (
-                  <span>({t("deposit_may_be_changed")})</span>
-                )}
-              </p>
-
-              <p className={styles.margins}>
-                {t("pump")} {pompNumber} €
-              </p>
-              <br></br>
-              <p className={styles.marginsTotal}>
-                {t("total_payments")}
-              </p>
-              <div className={styles.marginsTotal}>
-                {totalPayments} €
-              </div>
-            </div>
-          </Grid>
-        )}
-
-        <Controller
-          name="paymentMethod"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <RadioGroup
-              {...field}
-              row
-              aria-label="paymentMethod"
-              defaultValue=""
-            >
-              <FormControlLabel
-                value="Cash"
-                control={<Radio />}
-                label={t("cash")}
+          ) : (
+            <>
+              <ModalRemoveAddress
+                isOpen={isModalOpen}
+                onClose={handleDecline}
+                onConfirm={handleConfirm}
               />
-              <FormControlLabel
-                value="Online"
-                control={<Radio />}
-                label={t("online")}
+              <SavedData
+                addresses={addresses}
+                setShowAddresses={setShowAddresses}
+                deleteAddress={deleteAddress}
+                onAddressClick={handleAddressClick}
+                setAddresses={setAddresses}
               />
-            </RadioGroup>
+              <Box className={styles.addNewAddress}>
+                <a onClick={() => setShowAddresses(false)}>
+                  {t("add_new_address")}
+                </a>
+              </Box>
+
+              <Grid container>
+                <Grid xs={12} md={4} item>
+                  <span className={styles.inputName}>
+                    {t("comments")}
+                  </span>
+                  <Controller
+                    name="comments"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        multiline
+                        rows={4}
+                        fullWidth
+                        placeholder={t("comments_placeholder")}
+                        variant="outlined"
+                        margin="normal"
+                        error={!!errors.comments}
+                        helperText={errors.comments?.message}
+                      />
+                    )}
+                  />
+                </Grid>
+              </Grid>
+            </>
           )}
-        />
 
-        <div>
-          <p className={styles.helperText}>
-            {errors.paymentMethod?.message}
-          </p>
-        </div>
-        {loadingForm && (
-          <div className={styles.button}>
-            <CircularProgress />
-          </div>
-        )}
-        {submitAttempted && Object.keys(errors).length > 0 && (
-          <div className={styles.helperTextFinalError}>
-            {t("fill_all_fields")}
-          </div>
-        )}
-        {showMessage && (
-          <p className={styles.helperTextFinalError}>
-            {t("change_day")}
-          </p>
-        )}
-        {!loadingForm && (
-          <Box className={styles.button}>
-            <Button
-              onClick={emptyAddress}
-              type="submit"
-              disabled={showMessage}
-              variant="contained"
-            >
-              {t("submit_order")}
-            </Button>
-          </Box>
-        )}
-        {showWindow && (
-          <AlertDialog
-            showWindow={showWindow}
-            setShowWindow={setShowWindow}
+          <Typography variant="h6" className={styles.titles}>
+            {t("payment_method")}
+          </Typography>
+          {ordersLoaded ? (
+            <Grid item xs={12} md={4}>
+              <Skeleton
+                style={{ transformOrigin: "0 0" }}
+                width={350}
+                height="15em"
+              />
+            </Grid>
+          ) : (
+            <Grid item xs={12} md={12}>
+              <div className={styles.blueContainer}>
+                <p className={styles.margins}>
+                  {" "}
+                  {paymentText} {priceForDifferentBottles} € :{" "}
+                  {paymentForWater} €{" "}
+                </p>
+
+                <p className={styles.margins}>
+                  {t("deposit_for_bottles")} {depositForBottles} €{" "}
+                  {usedBottlesMessage && (
+                    <span>({t("deposit_may_be_changed")})</span>
+                  )}
+                </p>
+
+                <p className={styles.margins}>
+                  {t("pump")} {pompNumber} €
+                </p>
+                <br></br>
+                <p className={styles.marginsTotal}>
+                  {t("total_payments")}
+                </p>
+                <div className={styles.marginsTotal}>
+                  {totalPayments} €
+                </div>
+              </div>
+            </Grid>
+          )}
+
+          <Controller
+            name="paymentMethod"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <RadioGroup
+                {...field}
+                row
+                aria-label="paymentMethod"
+                defaultValue=""
+              >
+                <FormControlLabel
+                  value="Cash"
+                  control={<Radio />}
+                  label={t("cash")}
+                />
+                <FormControlLabel
+                  value="Online"
+                  control={<Radio />}
+                  label={t("online")}
+                />
+              </RadioGroup>
+            )}
           />
-        )}
-      </form>
-    </SnackbarProvider>
+
+          <div>
+            <p className={styles.helperText}>
+              {errors.paymentMethod?.message}
+            </p>
+          </div>
+          {loadingForm && (
+            <div className={styles.button}>
+              <CircularProgress />
+            </div>
+          )}
+          {submitAttempted && Object.keys(errors).length > 0 && (
+            <div className={styles.helperTextFinalError}>
+              {t("fill_all_fields")}
+            </div>
+          )}
+          {showMessage && (
+            <p className={styles.helperTextFinalError}>
+              {t("change_day")}
+            </p>
+          )}
+          {!loadingForm && (
+            <Box className={styles.button}>
+              <Button
+                onClick={emptyAddress}
+                type="submit"
+                disabled={showMessage}
+                variant="contained"
+              >
+                {t("submit_order")}
+              </Button>
+            </Box>
+          )}
+          {showWindow && (
+            <AlertDialog
+              showWindow={showWindow}
+              setShowWindow={setShowWindow}
+            />
+          )}
+        </form>
+      </SnackbarProvider>
+    </>
   );
 };
 
