@@ -22,6 +22,8 @@ import { useTranslation } from "react-i18next";
 import "../../i18n";
 import Login, { LogInProps } from "../login/page";
 import { AccountCircle } from "@mui/icons-material";
+import { useToggle } from "@/app/lib/ToggleContext";
+import useAmplitudeContext from "@/app/utils/amplitudeHook";
 
 export default function Header() {
   const { i18n } = useTranslation();
@@ -30,7 +32,28 @@ export default function Header() {
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const { isToggled, setToggle } = useToggle();
+
+  const router = useRouter();
+  const auth = getAuth(app);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (isToggled && !user) {
+      setShowLogin(true);
+    }
+    if (user && isToggled) {
+      router.push("my_account");
+    }
+  }, [isToggled]);
+  const { trackAmplitudeEvent } = useAmplitudeContext();
+  const clickHandler = () => {
+    trackAmplitudeEvent("loginFromHeader", {
+      text: "each click is a new event, and each star or like helps me a lot!",
+    });
+  };
   const handleLoginToggle = () => {
+    clickHandler();
     setShowLogin((prevShowLogin) => !prevShowLogin);
   };
 
@@ -49,12 +72,9 @@ export default function Header() {
     localStorage.setItem("language", languageValue);
   };
   const handleLogin = () => {
+    setToggle(false);
     setShowLogin(false);
   };
-
-  const auth = getAuth(app);
-  const router = useRouter();
-  const pathname = usePathname();
 
   const handleLogout = async () => {
     try {

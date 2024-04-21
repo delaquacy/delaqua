@@ -6,6 +6,8 @@ import { ThemeProvider } from "@mui/material";
 import { theme } from "./ui/themeMui";
 import Header from "./components/header/page";
 import Script from "next/script";
+import { AmplitudeContextProvider } from "./lib/amplitudeConfig";
+import { ToggleProvider } from "./lib/ToggleContext";
 
 export const metadata: Metadata = {
   title: "DelAqua",
@@ -38,9 +40,13 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider theme={theme}>
-          <Header />
-          {children}
-          <Footer />
+          <AmplitudeContextProvider>
+            <ToggleProvider>
+              <Header />
+              {children}
+              <Footer />
+            </ToggleProvider>
+          </AmplitudeContextProvider>
         </ThemeProvider>
       </body>
     </html>

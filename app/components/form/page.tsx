@@ -680,7 +680,7 @@ const MyForm = () => {
     dayjs().day() === 6 &&
     dayjs().isAfter(dayjs().startOf("day").add(12, "hours"))
   ) {
-    nextDay = dayjs().add(1, "day").format("dddd");
+    nextDay = dayjs().add(2, "day").format("dddd");
   }
   const isWeekend = (date: Dayjs) => {
     const day = date.day();

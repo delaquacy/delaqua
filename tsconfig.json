@@ -29,7 +29,8 @@
     ".next/types/**/*.ts",
     "app/lib/recaptcha.js",
     "app/lib/sentNumber.js",
-    "api/payment.js"
+    "api/payment.js",
+    "app/lib/amplitudeConfig.tsч"
   ],
   "exclude": ["node_modules"]
 }

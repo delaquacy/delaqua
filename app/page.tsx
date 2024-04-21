@@ -1,12 +1,15 @@
 "use client";
-import { Box, Grid } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import React, { useEffect } from "react";
 import Image from "next/image";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import LocalDrinkOutlinedIcon from "@mui/icons-material/LocalDrinkOutlined";
 import styles from "./page.module.css";
 import { useTranslation } from "react-i18next";
+import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import "./i18n";
+import useAmplitudeContext from "./utils/amplitudeHook";
+import { useToggle } from "./lib/ToggleContext";
 
 export default function Home() {
   const { t } = useTranslation("main");
@@ -18,6 +21,17 @@ export default function Home() {
       i18n.changeLanguage(preferredLanguage);
     }
   }, [i18n]);
+  const { trackAmplitudeEvent } = useAmplitudeContext();
+  const clickHandler = () => {
+    trackAmplitudeEvent("logInFromMainPage", {
+      text: "each click is a new event, and each star or like helps me a lot!",
+    });
+  };
+  const { setToggle, isToggled } = useToggle();
+  const handleToggle = () => {
+    clickHandler();
+    setToggle(!isToggled);
+  };
 
   return (
     <>
@@ -45,10 +59,16 @@ export default function Home() {
               </Box>
               <Box>
                 <div className={styles.blockLogin}>
-                  <span className={styles.colorText}>
+                  <div className={styles.colorText}>
                     {t("log_in_with_phone")}
-                  </span>
+                  </div>
                 </div>
+              </Box>
+              <Box className={styles.button}>
+                <Button onClick={handleToggle} variant="contained">
+                  <LocalShippingOutlinedIcon />
+                  {t("order_now")}
+                </Button>
               </Box>
             </Grid>
             <Grid
