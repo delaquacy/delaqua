@@ -73,3 +73,8 @@
     width: 28%;
   }
 }
+@media (min-width: 390px) and (max-width: 394px) {
+  .name_container {
+    margin-left: 13px;
+  }
+}
