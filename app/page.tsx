@@ -46,7 +46,17 @@ export default function Home() {
                   <ul>
                     <li> {t("one_bottle_price")}</li>
                     <li>{t("order_2-9")}</li>
-                    <li> {t("order_more_than_10")}</li>
+                    <li>
+                      {" "}
+                      {t("order_more_than_10")}{" "}
+                      <a
+                        className={styles.link}
+                        target="_blank"
+                        href="https://t.me/delaquacy"
+                      >
+                        {t("message_us_telegram")}
+                      </a>
+                    </li>
                   </ul>
                 </Box>
               </Box>

@@ -76,12 +76,15 @@
 }
 .colorText {
   color: #1976d2;
-  text-align: center;
+  text-align: left;
+}
+.link {
+  color: #1976d2;
 }
 @media (max-width: 768px) {
   .container {
     padding: 10px;
-    margin: 30px;
+    margin: 20px;
   }
   .container h1 {
     font-size: 2rem;
@@ -101,7 +104,7 @@
 }
 @media (max-width: 640px) {
   .container h1 {
-    font-size: 27px;
+    font-size: 26px;
   }
   .waterDescription {
     display: block;
@@ -109,5 +112,11 @@
   .borderContainer {
     border-right: none;
     border-bottom: 2px solid black;
+  }
+  .button button {
+    width: 100%;
+  }
+  .colorText {
+    font-size: 19px;
   }
 }

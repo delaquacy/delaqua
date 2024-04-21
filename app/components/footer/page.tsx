@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Box, IconButton } from "@mui/material";
 import TelegramIcon from "@mui/icons-material/Telegram";
@@ -6,23 +7,25 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import EmailIcon from "@mui/icons-material/Email";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import styles from "./page.module.css";
-
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 export default function Footer() {
+  const { t } = useTranslation("main");
   return (
     <footer className={styles.container}>
       <Box className={styles.returnContainer}>
         <div>
           <p className={styles.returnText}>
-            If you encounter any issues with an online order or want
-            to return a deposit, please{" "}
+            {t("message_us_1")}{" "}
             <a
               className={styles.returnLink}
               target="_blank"
               href="https://t.me/delaquacy"
             >
-              message us on Telegram.
+              {t("message_us_2")}
             </a>{" "}
-            Find us as @delaquacy.
+            {t("find_us")}
+            @delaquacy.
           </p>
         </div>
       </Box>
