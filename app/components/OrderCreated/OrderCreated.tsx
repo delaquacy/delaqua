@@ -10,6 +10,7 @@ import { getDayOfWeek } from "@/app/utils/dayOfWeeks";
 import CloseIcon from "@mui/icons-material/Close";
 import "../../i18n";
 import styles from "./OrderCreated.module.css";
+import useAmplitudeContext from "@/app/utils/amplitudeHook";
 
 interface ModalProps {
   method: "online" | "cash";
@@ -30,12 +31,24 @@ const BasicModal: React.FC<ModalProps> = ({
   deliveryDate,
 }) => {
   const { t } = useTranslation("finishModal");
+  const { trackAmplitudeEvent } = useAmplitudeContext();
   const [open, setOpen] = React.useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const clickToPay = () => {
+    trackAmplitudeEvent("clickToPay", {
+      text: "Click ot payment link",
+    });
+  };
+  const closePayment = () => {
+    trackAmplitudeEvent("closePayment", {
+      text: "Close payment",
+    });
+  };
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
     onClose();
+    closePayment();
     window.location.reload();
     window.scrollTo(0, 0);
   };
@@ -63,7 +76,11 @@ const BasicModal: React.FC<ModalProps> = ({
         {" "}
         <div> {t("proceed_online_payment")}</div>
         <div>
-          <Button style={{ marginTop: "10px" }} variant="contained">
+          <Button
+            onClick={clickToPay}
+            style={{ marginTop: "10px" }}
+            variant="contained"
+          >
             <a href={url} target="_blank">
               {t("click_to_pay_online")}
             </a>

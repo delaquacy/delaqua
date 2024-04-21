@@ -69,6 +69,7 @@ import BasicModal from "../OrderCreated/OrderCreated";
 import "dayjs/locale/uk";
 import "dayjs/locale/el";
 import "dayjs/locale/ru";
+import useAmplitudeContext from "@/app/utils/amplitudeHook";
 
 const MyForm = () => {
   const { t } = useTranslation("form");
@@ -98,7 +99,7 @@ const MyForm = () => {
   const [numberOfBottlesInStock, setNumberOfBottlesInStock] =
     useState<number>(0);
   const [userUniqId, setUserUniqId] = useState(null);
-
+  const { trackAmplitudeEvent } = useAmplitudeContext();
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -271,7 +272,9 @@ const MyForm = () => {
 
   const onSubmit = async (data: IForm) => {
     setLoadingForm(true);
-
+    trackAmplitudeEvent("submitOrder", {
+      text: "On submit click",
+    });
     try {
       setSubmitAttempted(false);
       const formatDataBeforeSubmit = (data: IForm) => {
@@ -700,6 +703,12 @@ const MyForm = () => {
       setShowAddresses(false);
     }
   }, [deleteAddress]);
+  const showOrdersHistory = () => {
+    setShowWindow(true);
+    trackAmplitudeEvent("myHistory", {
+      text: "My history",
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -724,6 +733,9 @@ const MyForm = () => {
   const addNewAddress = () => {
     setCreateAddressSuccess(false);
     createAddress(addressObject);
+    trackAmplitudeEvent("addNewAddress", {
+      text: "Add new address",
+    });
   };
   const emptyAddress = () => {
     if (
@@ -806,7 +818,7 @@ const MyForm = () => {
           >
             <div className={styles.ordersHistory}>
               <RestoreTwoToneIcon />
-              <ButtonBase onClick={() => setShowWindow(true)}>
+              <ButtonBase onClick={showOrdersHistory}>
                 {" "}
                 {t("orders_history")}
               </ButtonBase>
@@ -1083,7 +1095,7 @@ const MyForm = () => {
             >
               <div className={styles.ordersHistory}>
                 <RestoreTwoToneIcon />
-                <ButtonBase onClick={() => setShowWindow(true)}>
+                <ButtonBase onClick={showOrdersHistory}>
                   {" "}
                   {t("orders_history")}
                 </ButtonBase>
@@ -1348,12 +1360,25 @@ const MyForm = () => {
             name="paymentMethod"
             control={control}
             defaultValue=""
-            render={({ field }) => (
+            render={({ field: { onChange, ...field } }) => (
               <RadioGroup
                 {...field}
                 row
                 aria-label="paymentMethod"
                 defaultValue=""
+                onChange={(e) => {
+                  onChange(e);
+                  const paymentMethod = e.target.value;
+                  if (paymentMethod === "Cash") {
+                    trackAmplitudeEvent("payCash", {
+                      text: "Payment by cash selected",
+                    });
+                  } else if (paymentMethod === "Online") {
+                    trackAmplitudeEvent("payOnline", {
+                      text: "Payment online selected",
+                    });
+                  }
+                }}
               >
                 <FormControlLabel
                   value="Cash"

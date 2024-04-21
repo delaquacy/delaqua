@@ -17,6 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useTranslation } from "react-i18next";
 import styles from "./page.module.css";
 import "../../i18n";
+import useAmplitudeContext from "@/app/utils/amplitudeHook";
 
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
@@ -53,6 +54,7 @@ export default function Login({ params }: LogInProps) {
     otpSentError: `${t("OTP_messages_otpSentError")}`,
     wrongOtp: `${t("OTP_messages_wrongOtp")}`,
   };
+  const { trackAmplitudeEvent } = useAmplitudeContext();
 
   const auth = getAuth(app);
   const router = useRouter();
@@ -79,9 +81,13 @@ export default function Login({ params }: LogInProps) {
   const handleOtpChange = (e: ChangeEvent<HTMLInputElement>) => {
     setOtp(e.target.value);
   };
+
   const handleSentOtp = async () => {
     try {
       if (phoneNumber) {
+        trackAmplitudeEvent("enterPhone", {
+          text: "Enter phone",
+        });
         const confirmation = await signInWithPhoneNumber(
           auth,
           phoneNumber,
@@ -89,6 +95,9 @@ export default function Login({ params }: LogInProps) {
         );
         setConfirmationResult(confirmation);
         enqueueSnackbar(messages.otpSent, { variant: "success" });
+        trackAmplitudeEvent("requestOTP", {
+          text: "Request OTP",
+        });
         setOtpSent(true);
       }
     } catch (error: unknown) {
@@ -107,6 +116,9 @@ export default function Login({ params }: LogInProps) {
 
   const handleOtpSubmit = async () => {
     try {
+      trackAmplitudeEvent("enterOTP", {
+        text: "Enter OTP",
+      });
       await confirmationResult?.confirm(otp);
 
       const user = auth.currentUser;
@@ -138,11 +150,20 @@ export default function Login({ params }: LogInProps) {
           await updateDoc(lastUserNumberDocRef, {
             lastUserNumber: newUserNumber,
           });
+          trackAmplitudeEvent("newUser", {
+            text: "New user",
+          });
         }
       }
 
+      trackAmplitudeEvent("submitOTP", {
+        text: "Submit OTP",
+      });
       setOtp("");
       router.push("/my_account");
+      trackAmplitudeEvent("myAccount", {
+        text: "Redirect to my_account",
+      });
     } catch (error: unknown) {
       const customError = error as CustomError;
       console.error(customError.message);

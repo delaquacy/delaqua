@@ -14,7 +14,7 @@ interface AmplitudeContextType {
   ) => void;
 }
 
-// const API_KEY = "5facbe9a2068497964a3316947ed914d";
+// const API_KEY = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY as string;
 const API_KEY = "cf2c41a14d1a53777092d427d9a2e834";
 
 const defaultContextValue: AmplitudeContextType = {

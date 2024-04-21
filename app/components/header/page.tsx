@@ -28,6 +28,7 @@ import useAmplitudeContext from "@/app/utils/amplitudeHook";
 export default function Header() {
   const { i18n } = useTranslation();
   const { t } = useTranslation("main");
+  const { trackAmplitudeEvent } = useAmplitudeContext();
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
@@ -41,20 +42,20 @@ export default function Header() {
   useEffect(() => {
     if (isToggled && !user) {
       setShowLogin(true);
+      trackAmplitudeEvent("loginFromMainPage", {
+        text: "Login from main page",
+      });
     }
     if (user && isToggled) {
       router.push("my_account");
     }
   }, [isToggled]);
-  const { trackAmplitudeEvent } = useAmplitudeContext();
-  const clickHandler = () => {
-    trackAmplitudeEvent("loginFromHeader", {
-      text: "each click is a new event, and each star or like helps me a lot!",
-    });
-  };
+
   const handleLoginToggle = () => {
-    clickHandler();
     setShowLogin((prevShowLogin) => !prevShowLogin);
+    trackAmplitudeEvent("loginFromHeader", {
+      text: "Login from header",
+    });
   };
 
   useEffect(() => {
@@ -79,7 +80,11 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+
       router.push("/");
+      trackAmplitudeEvent("logOut", {
+        text: "Log out",
+      });
     } catch (error) {
       console.log(error);
     }
