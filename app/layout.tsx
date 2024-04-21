@@ -10,7 +10,7 @@ import { AmplitudeContextProvider } from "./lib/amplitudeConfig";
 import { ToggleProvider } from "./lib/ToggleContext";
 
 export const metadata: Metadata = {
-  title: "DelAqua",
+  title: "DelAqua – Water delivery in Limassol, Cyprus",
   description: "Water delivery",
 };
 
