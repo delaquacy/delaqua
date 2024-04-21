@@ -10,6 +10,22 @@ import styles from "./page.module.css";
 export default function Footer() {
   return (
     <footer className={styles.container}>
+      <Box className={styles.returnContainer}>
+        <div>
+          <p className={styles.returnText}>
+            If you encounter any issues with an online order or want
+            to return a deposit, please{" "}
+            <a
+              className={styles.returnLink}
+              target="_blank"
+              href="https://t.me/delaquacy"
+            >
+              message us on Telegram.
+            </a>{" "}
+            Find us as @delaquacy.
+          </p>
+        </div>
+      </Box>
       <Box className={styles.social_media}>
         <IconButton
           target="_blank"

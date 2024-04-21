@@ -6,21 +6,21 @@
 .social_media {
   padding: 10px;
   display: flex;
+
   justify-content: center;
 }
 .social_media svg {
   height: 35px;
   width: 35px;
 }
-.pages {
-  padding: 10px;
+.returnContainer {
+  padding: 10px 10px 0 10px;
+  margin-top: 10px;
   display: flex;
   justify-content: center;
+  text-align: center;
 }
-
-.pages a {
-  margin: 0 25px;
-}
-.copyright {
-  padding: 10px;
+.returnLink {
+  cursor: pointer;
+  color: #1976d2;
 }
