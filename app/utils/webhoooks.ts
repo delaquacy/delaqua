@@ -1,7 +1,7 @@
 import axios from "axios";
 const key = process.env.REVOLUT_KEY;
 export const requestGeneral = async () => {
-  const webhookUrl = "https://delaqua.vercel.app/api/returnHook";
+  const webhookUrl = "https://delaqua.cy/api/returnHook";
   const events = [
     "ORDER_COMPLETED",
     "ORDER_CANCELLED",
