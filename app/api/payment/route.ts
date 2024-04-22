@@ -10,7 +10,7 @@ export async function POST(req: any, res: any) {
     const response = await axios.post(
       "https://merchant.revolut.com/api/orders",
       {
-        amount: amount,
+        amount: amount * 100,
         currency,
         description,
       },

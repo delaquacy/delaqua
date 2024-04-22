@@ -316,7 +316,10 @@ const MyForm = () => {
         collection(db, `users/${userId}/orders`),
         formattedData
       );
-
+      if (data.paymentMethod === "Cash") {
+        setCashPaymentTrigger(true);
+      }
+      setLoadingForm(false);
       let currentOrderId = orderRef.id;
       const bottleNumber = bottlesCalculate(
         data.bottlesNumberToBuy,
@@ -369,10 +372,6 @@ const MyForm = () => {
           currentOrderId
         );
       }
-      if (data.paymentMethod === "Cash") {
-        setCashPaymentTrigger(true);
-      }
-      setLoadingForm(false);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
