@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
-export default () => {
+const NotFound = () => {
   useEffect(() => {
     window.location.href = "/";
   }, []);
   return <div></div>;
 };
+
+export default NotFound;
