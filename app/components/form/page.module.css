@@ -23,8 +23,15 @@
 }
 .button {
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  text-align: center;
   margin: 20px 0;
+}
+
+.button span {
+  margin-bottom: 15px;
 }
 .inputName {
   font-weight: bold;

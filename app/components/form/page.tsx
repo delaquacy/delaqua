@@ -216,6 +216,7 @@ const MyForm = () => {
     `${t("price_for_one_bottle")}`
   );
 
+  const paymentMethod = watch("paymentMethod");
   const [usedBottlesMessage, setUsedBottlesMessage] = useState(false);
   const firstBottlesReturn = watch("bottlesNumberToReturn");
   useEffect(() => {
@@ -318,8 +319,9 @@ const MyForm = () => {
       );
       if (data.paymentMethod === "Cash") {
         setCashPaymentTrigger(true);
+        setLoadingForm(false);
       }
-      setLoadingForm(false);
+
       let currentOrderId = orderRef.id;
       const bottleNumber = bottlesCalculate(
         data.bottlesNumberToBuy,
@@ -372,6 +374,7 @@ const MyForm = () => {
           currentOrderId
         );
       }
+      setLoadingForm(false);
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -1400,6 +1403,9 @@ const MyForm = () => {
           </div>
           {loadingForm && (
             <div className={styles.button}>
+              {paymentMethod == "Online" && (
+                <span> {t("loading_paymentLink")}</span>
+              )}
               <CircularProgress />
             </div>
           )}

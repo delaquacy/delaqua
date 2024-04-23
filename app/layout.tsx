@@ -11,7 +11,8 @@ import { ToggleProvider } from "./lib/ToggleContext";
 
 export const metadata: Metadata = {
   title: "DelAqua – Water delivery in Limassol, Cyprus",
-  description: "Water delivery",
+  description:
+    "We do water delivery of 19l bottles to homes and offices in Limassol (Cyprus) from 9 AM to 5 PM from Monday to Saturday. 6 euros for each 19l bottle. We deliver Mersini Spring Water, which is bottled at the source within minutes of leaving the ground.",
 };
 
 export default function RootLayout({
