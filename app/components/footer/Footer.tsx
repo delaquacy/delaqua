@@ -6,7 +6,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import EmailIcon from "@mui/icons-material/Email";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import styles from "./page.module.css";
+import styles from "./Footer.module.css";
 import { useTranslation } from "react-i18next";
 
 export default function Footer() {

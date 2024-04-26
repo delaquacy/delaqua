@@ -4,7 +4,7 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
-import styles from "./page.module.css";
+import styles from "./Header.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import LoginIcon from "@mui/icons-material/Login";
