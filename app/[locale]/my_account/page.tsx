@@ -1,8 +1,8 @@
 import initTranslations from "../../i18n";
 import TranslationsProvider from "../../components/TranslationsProvider/TranslationsProvider";
-import Account from "@/app/components/Account/Account";
-import Header from "@/app/components/Header/Header";
-import Footer from "@/app/components/Footer/Footer";
+import Account from "../../components/Account/Account";
+import Header from "../../components/Header/Header";
+import Footer from "../../components/Footer/Footer";
 
 const i18nNamespaces = [
   "finishModal",
