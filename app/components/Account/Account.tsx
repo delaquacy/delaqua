@@ -2,11 +2,11 @@
 import { useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Container } from "@mui/material";
-import styles from "./page.module.css";
-import MyForm from "../components/form/page";
+import styles from "./Account.module.css";
+import MyForm from "../form/page";
 import { useRouter } from "next/navigation";
 
-export default function Page() {
+export default function Account() {
   const route = useRouter();
   const auth = getAuth();
 

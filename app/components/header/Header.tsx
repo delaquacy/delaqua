@@ -24,16 +24,17 @@ import Login, { LogInProps } from "../login/page";
 import { AccountCircle } from "@mui/icons-material";
 import { useToggle } from "@/app/lib/ToggleContext";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
+import i18nConfig from "@/i18nConfig";
 
 export default function Header() {
-  const { i18n } = useTranslation();
-  const { t } = useTranslation("main");
+  const { i18n, t } = useTranslation("main");
   const { trackAmplitudeEvent } = useAmplitudeContext();
-  const [selectedLanguage, setSelectedLanguage] = useState("en");
+
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { isToggled, setToggle } = useToggle();
+  const currentLocale = i18n.language;
 
   const router = useRouter();
   const auth = getAuth(app);
@@ -58,19 +59,22 @@ export default function Header() {
     });
   };
 
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem("language") || "en";
-    i18n.changeLanguage(savedLanguage);
-    setSelectedLanguage(savedLanguage);
-  }, []);
-
   const handleLanguageChange = (event: {
     target: { value: React.SetStateAction<string> };
   }) => {
     const languageValue = event.target.value as string;
-    i18n.changeLanguage(languageValue);
-    setSelectedLanguage(languageValue);
-    localStorage.setItem("language", languageValue);
+    if (
+      currentLocale === i18nConfig.defaultLocale &&
+      //@ts-ignore
+      !i18nConfig.prefixDefault
+    ) {
+      router.push("/" + languageValue + pathname);
+    } else {
+      router.push(
+        pathname.replace(`/${currentLocale}`, `/${languageValue}`)
+      );
+    }
+    router.refresh();
   };
   const handleLogin = () => {
     setToggle(false);
@@ -89,11 +93,13 @@ export default function Header() {
       console.log(error);
     }
   };
+
   useEffect(() => {
     if (pathname == "/my_account") {
       setShowLogin(false);
     }
   }, [pathname, router]);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
@@ -138,7 +144,7 @@ export default function Header() {
             <Box style={{ marginRight: "5px" }}>
               <Select
                 className={styles.language}
-                value={selectedLanguage}
+                value={currentLocale}
                 onChange={handleLanguageChange}
               >
                 <MenuItem value="en">EN</MenuItem>

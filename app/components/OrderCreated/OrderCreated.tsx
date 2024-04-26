@@ -30,10 +30,10 @@ const BasicModal: React.FC<ModalProps> = ({
   bottlesNumber,
   deliveryDate,
 }) => {
-  const { t } = useTranslation("finishModal");
+  const { t, i18n } = useTranslation("finishModal");
   const { trackAmplitudeEvent } = useAmplitudeContext();
   const [open, setOpen] = React.useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const currentLocale = i18n.language;
   const clickToPay = () => {
     trackAmplitudeEvent("clickToPay", {
       text: "Click ot payment link",
@@ -59,15 +59,10 @@ const BasicModal: React.FC<ModalProps> = ({
     }
   }, []);
 
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem("language") || "en";
-    setSelectedLanguage(savedLanguage);
-  }, []);
-
   const formattedDate = dayjs(deliveryDate).format("DD.MM.YYYY");
   const translatedDayOfWeek = getDayOfWeek(
     deliveryDate,
-    selectedLanguage
+    currentLocale
   );
 
   const paymentText =
@@ -102,7 +97,7 @@ const BasicModal: React.FC<ModalProps> = ({
   function formatDeliveryText(numBottles: number) {
     let bottlesText;
 
-    if (selectedLanguage === "ru") {
+    if (currentLocale === "ru") {
       if (numBottles === 1) {
         bottlesText = "бутыль";
       } else if (numBottles >= 2 && numBottles <= 4) {
@@ -110,7 +105,7 @@ const BasicModal: React.FC<ModalProps> = ({
       } else {
         bottlesText = "бутылей";
       }
-    } else if (selectedLanguage === "uk") {
+    } else if (currentLocale === "uk") {
       if (numBottles === 1) {
         bottlesText = "пляшку";
       } else if (numBottles >= 2 && numBottles <= 4) {
@@ -118,7 +113,7 @@ const BasicModal: React.FC<ModalProps> = ({
       } else {
         bottlesText = "пляшок";
       }
-    } else if (selectedLanguage === "en") {
+    } else if (currentLocale === "en") {
       if (numBottles === 1) {
         bottlesText = "";
       } else if (numBottles >= 2 && numBottles <= 4) {
@@ -126,7 +121,7 @@ const BasicModal: React.FC<ModalProps> = ({
       } else {
         bottlesText = "";
       }
-    } else if (selectedLanguage === "el") {
+    } else if (currentLocale === "el") {
       if (numBottles === 1) {
         bottlesText = "μπουκάλι";
       } else if (numBottles >= 2 && numBottles <= 4) {

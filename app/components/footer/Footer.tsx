@@ -8,7 +8,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import styles from "./page.module.css";
 import { useTranslation } from "react-i18next";
-import "../../i18n";
+
 export default function Footer() {
   const { t } = useTranslation("main");
   return (

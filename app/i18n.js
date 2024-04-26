@@ -1,42 +1,40 @@
-import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
+import { createInstance } from "i18next";
+import { initReactI18next } from "react-i18next/initReactI18next";
+import resourcesToBackend from "i18next-resources-to-backend";
+import i18nConfig from "@/i18nConfig";
 
-i18n.use(initReactI18next).init({
-  resources: {
-    en: {
-      form: require("./components/locales/en/form.json"),
-      main: require("./components/locales/en/main.json"),
-      orderslist: require("./components/locales/en/orderslist.json"),
-      savedAddresses: require("./components/locales/en/savedAddresses.json"),
-      finishModal: require("./components/locales/en/finishModal.json"),
-    },
-    uk: {
-      form: require("./components/locales/uk/form.json"),
-      main: require("./components/locales/uk/main.json"),
-      orderslist: require("./components/locales/uk/orderslist.json"),
-      savedAddresses: require("./components/locales/uk/savedAddresses.json"),
-      finishModal: require("./components/locales/uk/finishModal.json"),
-    },
-    el: {
-      form: require("./components/locales/el/form.json"),
-      main: require("./components/locales/el/main.json"),
-      orderslist: require("./components/locales/el/orderslist.json"),
-      savedAddresses: require("./components/locales/el/savedAddresses.json"),
-      finishModal: require("./components/locales/el/finishModal.json"),
-    },
-    ru: {
-      form: require("./components/locales/ru/form.json"),
-      main: require("./components/locales/ru/main.json"),
-      orderslist: require("./components/locales/ru/orderslist.json"),
-      savedAddresses: require("./components/locales/ru/savedAddresses.json"),
-      finishModal: require("./components/locales/ru/finishModal.json"),
-    },
-  },
-  lng: "en",
-  fallbackLng: "en",
-  interpolation: {
-    escapeValue: false,
-  },
-});
+export default async function initTranslations(
+  locale,
+  namespaces,
+  i18nInstance,
+  resources
+) {
+  i18nInstance = i18nInstance || createInstance();
 
-export default i18n;
+  i18nInstance.use(initReactI18next);
+
+  if (!resources) {
+    i18nInstance.use(
+      resourcesToBackend((language, namespace) =>
+        import(`./components/locales/${language}/${namespace}.json`)
+      )
+    );
+  }
+
+  await i18nInstance.init({
+    lng: locale,
+    resources,
+    fallbackLng: i18nConfig.defaultLocale,
+    supportedLngs: i18nConfig.locales,
+    defaultNS: namespaces[0],
+    fallbackNS: namespaces[0],
+    ns: namespaces,
+    preload: resources ? [] : i18nConfig.locales,
+  });
+
+  return {
+    i18n: i18nInstance,
+    resources: i18nInstance.services.resourceStore.data,
+    t: i18nInstance.t,
+  };
+}

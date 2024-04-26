@@ -1,25 +1,17 @@
 "use client";
 import { Box, Button, Grid } from "@mui/material";
-import React, { useEffect } from "react";
+import React from "react";
 import Image from "next/image";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import LocalDrinkOutlinedIcon from "@mui/icons-material/LocalDrinkOutlined";
-import styles from "./page.module.css";
+import styles from "./MainPage.module.css";
 import { useTranslation } from "react-i18next";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
-import "./i18n";
-import { useToggle } from "./lib/ToggleContext";
+import { useToggle } from "@/app/lib/ToggleContext";
+import "../../i18n";
 
-export default function Home() {
-  const { t } = useTranslation("main");
-  const { i18n } = useTranslation();
-  useEffect(() => {
-    const preferredLanguage = localStorage.getItem("language");
-
-    if (preferredLanguage) {
-      i18n.changeLanguage(preferredLanguage);
-    }
-  }, [i18n]);
+export default function MainPage() {
+  const { t } = useTranslation();
 
   const { setToggle, isToggled } = useToggle();
   const handleToggle = () => {

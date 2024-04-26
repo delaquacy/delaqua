@@ -72,8 +72,8 @@ import "dayjs/locale/ru";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 
 const MyForm = () => {
-  const { t } = useTranslation("form");
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation("form");
+
   // show orders history
   const [showWindow, setShowWindow] = useState<boolean>(false);
   // phone with spacing
@@ -100,6 +100,7 @@ const MyForm = () => {
     useState<number>(0);
   const [userUniqId, setUserUniqId] = useState(null);
   const { trackAmplitudeEvent } = useAmplitudeContext();
+
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -1000,7 +1001,7 @@ const MyForm = () => {
                     <CloseIcon />
                   </span>
                   <div className={styles.instructionImages}>
-                    <img src="./fullInstruction.jpeg" />
+                    <img src="/fullInstruction.jpeg" />
                   </div>
                 </div>
               )}

@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import styles from "./page.module.css";
 import "../../i18n";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
+import { useToggle } from "@/app/lib/ToggleContext";
 
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
@@ -49,6 +50,7 @@ export default function Login({ params }: LogInProps) {
   const [otpSent, setOtpSent] = useState<boolean>(false);
   const [phoneNumberEntered, setPhoneNumberEntered] =
     useState<boolean>(false);
+  const { setToggle } = useToggle();
   const messages = {
     otpSent: `${t("OTP_messages_otpSent")}`,
     otpSentError: `${t("OTP_messages_otpSentError")}`,
@@ -161,6 +163,7 @@ export default function Login({ params }: LogInProps) {
       });
       setOtp("");
       router.push("/my_account");
+      setToggle(false);
       trackAmplitudeEvent("myAccount", {
         text: "Redirect to my_account",
       });
