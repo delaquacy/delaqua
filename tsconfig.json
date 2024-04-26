@@ -26,11 +26,12 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "**/*.js",
     ".next/types/**/*.ts",
     "app/lib/recaptcha.js",
     "app/lib/sentNumber.js",
     "api/payment.js",
-    "app/lib/amplitudeConfig.tsч"
+    "app/lib/amplitudeConfig.tsx"
   ],
   "exclude": ["node_modules"]
 }
