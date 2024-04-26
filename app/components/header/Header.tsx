@@ -25,6 +25,7 @@ import { AccountCircle } from "@mui/icons-material";
 import { useToggle } from "@/app/lib/ToggleContext";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import i18nConfig from "@/i18nConfig";
+import { SnackbarProvider } from "notistack";
 
 export default function Header() {
   const { i18n, t } = useTranslation("main");
@@ -115,102 +116,111 @@ export default function Header() {
   };
 
   return (
-    <Box className={styles.container} sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar className={styles.toolbar}>
-          <Link href="/">
-            <Image
-              src="/water.png"
-              alt="DelAqua logo"
-              width={50}
-              height={50}
-            />
-          </Link>
-          <Box className={styles.name_container} sx={{ flexGrow: 1 }}>
+    <SnackbarProvider>
+      <Box className={styles.container} sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar className={styles.toolbar}>
             <Link href="/">
-              <div className={styles.name}>
-                Del
-                <span>Aqua</span>
-              </div>
+              <Image
+                src="/water.png"
+                alt="DelAqua logo"
+                width={50}
+                height={50}
+              />
             </Link>
+            <Box
+              className={styles.name_container}
+              sx={{ flexGrow: 1 }}
+            >
+              <Link href="/">
+                <div className={styles.name}>
+                  Del
+                  <span>Aqua</span>
+                </div>
+              </Link>
 
-            <p className={styles.name_descr}>
-              We deliver spring water in Limassol
-            </p>
-          </Box>
-
-          {showLogin && <Login {...loginProps} />}
-          <div className={styles.buttonsContainer}>
-            <Box style={{ marginRight: "5px" }}>
-              <Select
-                className={styles.language}
-                value={currentLocale}
-                onChange={handleLanguageChange}
-              >
-                <MenuItem value="en">EN</MenuItem>
-                <MenuItem value="el">EL</MenuItem>
-                <MenuItem value="uk">UA</MenuItem>
-                <MenuItem value="ru">RU</MenuItem>
-              </Select>
+              <p className={styles.name_descr}>
+                We deliver spring water in Limassol
+              </p>
             </Box>
-            {loading ? (
-              <div className={styles.loadingContainer}>
-                <CircularProgress size={20} />
-              </div>
-            ) : (
-              <>
-                {!user && (
-                  <Button
-                    variant="contained"
-                    endIcon={<LoginIcon fontSize="small" />}
-                    onClick={handleLoginToggle}
-                  >
-                    {t("login")}
-                  </Button>
-                )}
-                {user && (
-                  <>
-                    <Box className={styles.loginMyaccountButtons}>
-                      <Link href="/my_account">
-                        <Button
-                          variant="contained"
-                          endIcon={<AccountCircle fontSize="small" />}
-                        >
-                          {t("my_account")}
-                        </Button>
-                      </Link>
-                      <Link href="/">
-                        <Button
-                          variant="contained"
-                          endIcon={<ExitToAppIcon fontSize="small" />}
-                          onClick={handleLogout}
-                        >
-                          {t("logout")}
-                        </Button>
-                      </Link>
-                    </Box>
-                    <Box className={styles.mobileScreen}>
-                      <Link href="/my_account">
-                        <AccountCircle
-                          color="primary"
-                          fontSize="small"
-                        />
-                      </Link>
-                      <Link href="/">
-                        <ExitToAppIcon
-                          color="primary"
-                          onClick={handleLogout}
-                          fontSize="small"
-                        />
-                      </Link>
-                    </Box>
-                  </>
-                )}
-              </>
-            )}
-          </div>
-        </Toolbar>
-      </AppBar>
-    </Box>
+
+            {showLogin && <Login {...loginProps} />}
+            <div className={styles.buttonsContainer}>
+              <Box style={{ marginRight: "5px" }}>
+                <Select
+                  className={styles.language}
+                  value={currentLocale}
+                  onChange={handleLanguageChange}
+                >
+                  <MenuItem value="en">EN</MenuItem>
+                  <MenuItem value="el">EL</MenuItem>
+                  <MenuItem value="uk">UA</MenuItem>
+                  <MenuItem value="ru">RU</MenuItem>
+                </Select>
+              </Box>
+              {loading ? (
+                <div className={styles.loadingContainer}>
+                  <CircularProgress size={20} />
+                </div>
+              ) : (
+                <>
+                  {!user && (
+                    <Button
+                      variant="contained"
+                      endIcon={<LoginIcon fontSize="small" />}
+                      onClick={handleLoginToggle}
+                    >
+                      {t("login")}
+                    </Button>
+                  )}
+                  {user && (
+                    <>
+                      <Box className={styles.loginMyaccountButtons}>
+                        <Link href="/my_account">
+                          <Button
+                            variant="contained"
+                            endIcon={
+                              <AccountCircle fontSize="small" />
+                            }
+                          >
+                            {t("my_account")}
+                          </Button>
+                        </Link>
+                        <Link href="/">
+                          <Button
+                            variant="contained"
+                            endIcon={
+                              <ExitToAppIcon fontSize="small" />
+                            }
+                            onClick={handleLogout}
+                          >
+                            {t("logout")}
+                          </Button>
+                        </Link>
+                      </Box>
+                      <Box className={styles.mobileScreen}>
+                        <Link href="/my_account">
+                          <AccountCircle
+                            color="primary"
+                            fontSize="small"
+                          />
+                        </Link>
+                        <Link href="/">
+                          <ExitToAppIcon
+                            color="primary"
+                            onClick={handleLogout}
+                            fontSize="small"
+                          />
+                        </Link>
+                      </Box>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </Toolbar>
+        </AppBar>
+      </Box>
+    </SnackbarProvider>
   );
 }

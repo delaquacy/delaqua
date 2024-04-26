@@ -9,7 +9,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { enqueueSnackbar, SnackbarProvider } from "notistack";
+import { enqueueSnackbar } from "notistack";
 import { app, db } from "../../lib/config";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import PhoneInput from "react-phone-number-input";
@@ -188,58 +188,56 @@ export default function Login({ params }: LogInProps) {
   };
 
   return (
-    <SnackbarProvider>
-      <Box className={styles.container}>
-        <Box className={styles.wrapper}>
-          <Box className={styles.closeButton}>
-            <CloseIcon onClick={onLogin} />
-          </Box>
-          <Box className={styles.logoAndTitle}>
-            <LockOutlinedIcon fontSize="large" />
-            <Typography variant="h4">{t("login_window")}</Typography>
-          </Box>
-          <div className={styles.inputContainer}>
-            <PhoneInput
-              type="tel"
-              disabled={otpSent}
-              value={phoneNumber}
-              onChange={handlePhoneNumberChange}
-              placeholder="357 77 123342"
-            />
-          </div>
-          {!otpSent && (
-            <span className={styles.helpMessage}>
-              {t("enter_phone_with_code")}
-            </span>
-          )}
-
-          {phoneNumberEntered && otpSent && (
-            <TextField
-              type="text"
-              value={otp}
-              onChange={handleOtpChange}
-              className={styles.input}
-              placeholder={t("placeholder_OTP")}
-            />
-          )}
-          {!otpSent ? <div id="recaptcha-container"></div> : null}
-          <br></br>
-          <Button
-            variant="contained"
-            onClick={
-              phoneNumberEntered
-                ? otpSent
-                  ? handleOtpSubmit
-                  : handleSentOtp
-                : undefined
-            }
-          >
-            {otpSent
-              ? `${t("button_submit_OTP")}`
-              : `${t("button_sent_OTP")}`}
-          </Button>
+    <Box className={styles.container}>
+      <Box className={styles.wrapper}>
+        <Box className={styles.closeButton}>
+          <CloseIcon onClick={onLogin} />
         </Box>
+        <Box className={styles.logoAndTitle}>
+          <LockOutlinedIcon fontSize="large" />
+          <Typography variant="h4">{t("login_window")}</Typography>
+        </Box>
+        <div className={styles.inputContainer}>
+          <PhoneInput
+            type="tel"
+            disabled={otpSent}
+            value={phoneNumber}
+            onChange={handlePhoneNumberChange}
+            placeholder="357 77 123342"
+          />
+        </div>
+        {!otpSent && (
+          <span className={styles.helpMessage}>
+            {t("enter_phone_with_code")}
+          </span>
+        )}
+
+        {phoneNumberEntered && otpSent && (
+          <TextField
+            type="text"
+            value={otp}
+            onChange={handleOtpChange}
+            className={styles.input}
+            placeholder={t("placeholder_OTP")}
+          />
+        )}
+        {!otpSent ? <div id="recaptcha-container"></div> : null}
+        <br></br>
+        <Button
+          variant="contained"
+          onClick={
+            phoneNumberEntered
+              ? otpSent
+                ? handleOtpSubmit
+                : handleSentOtp
+              : undefined
+          }
+        >
+          {otpSent
+            ? `${t("button_submit_OTP")}`
+            : `${t("button_sent_OTP")}`}
+        </Button>
       </Box>
-    </SnackbarProvider>
+    </Box>
   );
 }
