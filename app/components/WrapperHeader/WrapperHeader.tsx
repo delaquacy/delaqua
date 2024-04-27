@@ -1,5 +1,5 @@
-import Header from "../Header/Header";
+import Headers from "../Headers/Headers";
 
 export default function WrapperHeader() {
-  return <Header />;
+  return <Headers />;
 }

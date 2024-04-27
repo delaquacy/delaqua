@@ -27,7 +27,7 @@ import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import i18nConfig from "@/i18nConfig";
 import { SnackbarProvider } from "notistack";
 
-export default function Header() {
+export default function Headers() {
   const { i18n, t } = useTranslation("main");
   const { trackAmplitudeEvent } = useAmplitudeContext();
 
