@@ -9,7 +9,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import styles from "./Footer.module.css";
 import { useTranslation } from "react-i18next";
 
-export default function Footer() {
+export default function Footers() {
   const { t } = useTranslation("main");
   return (
     <footer className={styles.container}>

@@ -1,8 +1,8 @@
 import initTranslations from "../../i18n";
 import TranslationsProvider from "../../components/TranslationsProvider/TranslationsProvider";
 import Account from "../../components/Account/Account";
-import Footer from "../../components/Footer/Footer";
 import WrapperHeader from "@/app/components/WrapperHeader/WrapperHeader";
+import WrapperFooter from "@/app/components/WrapperFooter/WrapperFooter";
 
 const i18nNamespaces = [
   "finishModal",
@@ -30,7 +30,7 @@ export default async function MyAccount({
     >
       <WrapperHeader />
       <Account />
-      <Footer />
+      <WrapperFooter />
     </TranslationsProvider>
   );
 }

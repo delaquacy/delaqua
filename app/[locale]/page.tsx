@@ -1,8 +1,8 @@
 import initTranslations from "../i18n";
 import TranslationsProvider from "../components/TranslationsProvider/TranslationsProvider";
 import MainPage from "../components/MainPage/MainPage";
-import Headers from "../components/Headers/Headers";
-import Footer from "../components/Footer/Footer";
+import WrapperHeader from "../components/WrapperHeader/WrapperHeader";
+import WrapperFooter from "../components/WrapperFooter/WrapperFooter";
 
 const i18nNamespaces = ["main"];
 
@@ -22,9 +22,9 @@ export default async function Home({
       locale={locale}
       resources={resources}
     >
-      <Headers />
+      <WrapperHeader />
       <MainPage />
-      <Footer />
+      <WrapperFooter />
     </TranslationsProvider>
   );
 }
