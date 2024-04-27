@@ -20,12 +20,13 @@ import { app } from "@/app/lib/config";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
-import Login, { LogInProps } from "../Login/Login";
+import { LogInProps } from "../Login/Login";
 import { AccountCircle } from "@mui/icons-material";
 import { useToggle } from "@/app/lib/ToggleContext";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import i18nConfig from "@/i18nConfig";
 import { SnackbarProvider } from "notistack";
+import WrapperLogin from "../WrapperLogin/WrapperLogin";
 
 export default function Headers() {
   const { i18n, t } = useTranslation("main");
@@ -144,7 +145,7 @@ export default function Headers() {
               </p>
             </Box>
 
-            {showLogin && <Login {...loginProps} />}
+            {showLogin && <WrapperLogin {...loginProps} />}
             <div className={styles.buttonsContainer}>
               <Box style={{ marginRight: "5px" }}>
                 <Select
