@@ -1,8 +1,8 @@
 import React from "react";
-import Login, { LogInProps } from "../Login/Login";
+import Logins, { LogInProps } from "../Logins/Logins";
 
 const WrapperLogin: React.FC<LogInProps> = (props) => {
-  return <Login {...props} />;
+  return <Logins {...props} />;
 };
 
 export default WrapperLogin;

@@ -38,7 +38,7 @@ export interface LogInProps {
   };
 }
 
-export default function Login({ params }: LogInProps) {
+export default function Logins({ params }: LogInProps) {
   const { t } = useTranslation("main");
   const { onLogin } = params;
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>(

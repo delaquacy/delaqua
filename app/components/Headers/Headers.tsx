@@ -20,7 +20,7 @@ import { app } from "@/app/lib/config";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
-import { LogInProps } from "../Login/Login";
+import { LogInProps } from "../Logins/Logins";
 import { AccountCircle } from "@mui/icons-material";
 import { useToggle } from "@/app/lib/ToggleContext";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
