@@ -50,6 +50,7 @@ export default function Headers() {
       });
     }
     if (user && isToggled) {
+      setToggle(false);
       router.push("my_account");
     }
   }, [isToggled]);
