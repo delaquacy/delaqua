@@ -70,6 +70,7 @@ import "dayjs/locale/uk";
 import "dayjs/locale/el";
 import "dayjs/locale/ru";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
+import useDatesFromDB from "@/app/utils/getUnableDates";
 
 const MyForm = () => {
   const { t, i18n } = useTranslation("form");
@@ -100,6 +101,7 @@ const MyForm = () => {
     useState<number>(0);
   const [userUniqId, setUserUniqId] = useState(null);
   const { trackAmplitudeEvent } = useAmplitudeContext();
+  const disabledDates = useDatesFromDB();
 
   useEffect(() => {
     const auth = getAuth();
@@ -156,6 +158,7 @@ const MyForm = () => {
       );
 
       const lastOrder = sortedOrders[orders.length - 1];
+
       setValue(
         "bottlesNumberToBuy",
         lastOrder.bottlesNumberToBuy || 2
@@ -688,10 +691,19 @@ const MyForm = () => {
   ) {
     nextDay = dayjs().add(2, "day").format("dddd");
   }
+
   const isWeekend = (date: Dayjs) => {
     const day = date.day();
     return day === 0;
   };
+  const shouldDisableDate = (date: Dayjs) => {
+    return (
+      isWeekend(date) ||
+      //@ts-ignore
+      disabledDates.includes(date.format("DD-MM-YYYY"))
+    );
+  };
+
   dayjs.extend(updateLocale);
   dayjs.updateLocale("en", {
     weekStart: 1,
@@ -1028,7 +1040,7 @@ const MyForm = () => {
                           dayOfWeekFormatter={dayOfWeekFormatter}
                           //@ts-ignore
                           shouldDisableDate={(date: Dayjs) =>
-                            isWeekend(date)
+                            shouldDisableDate(date)
                           }
                           format="DD-MM-YYYY"
                           slotProps={{

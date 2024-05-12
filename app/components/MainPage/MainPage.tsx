@@ -1,6 +1,6 @@
 "use client";
 import { Box, Button, Grid } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import LocalDrinkOutlinedIcon from "@mui/icons-material/LocalDrinkOutlined";
@@ -9,19 +9,25 @@ import { useTranslation } from "react-i18next";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import { useToggle } from "@/app/lib/ToggleContext";
 import "../../i18n";
+import InfoModal from "../InfoModal/InfoModal";
 
 export default function MainPage() {
   const { t } = useTranslation();
-
   const { setToggle, isToggled } = useToggle();
+  const [showModal, setShowModal] = useState(true);
   const handleToggle = () => {
     setToggle(!isToggled);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   return (
     <>
       <main>
         <Box className={styles.container}>
+          {showModal && <InfoModal onClose={handleCloseModal} />}
           <Grid container spacing={2}>
             <Grid item xs={12} md={8}>
               <h1>{t("title")}</h1>

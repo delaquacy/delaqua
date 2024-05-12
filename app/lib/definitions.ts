@@ -35,3 +35,11 @@ export interface IAddress {
   numberOfBottles: number | undefined;
   createdAt?: any;
 }
+
+export interface InfoData {
+  status: boolean;
+  enText: string;
+  elText: string;
+  ruText: string;
+  ukText: string;
+}
