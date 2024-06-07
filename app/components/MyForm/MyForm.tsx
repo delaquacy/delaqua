@@ -160,9 +160,11 @@ const MyForm = () => {
 
       const lastOrder = sortedOrders[orders.length - 1];
       const defaultBottlesToBuy =
+        lastOrder.bottlesNumberToBuy === undefined ||
         lastOrder.bottlesNumberToBuy < 2
           ? 2
           : lastOrder.bottlesNumberToBuy;
+
       setValue("bottlesNumberToBuy", defaultBottlesToBuy);
       setValue(
         "bottlesNumberToReturn",
