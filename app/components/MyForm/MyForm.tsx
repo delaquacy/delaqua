@@ -15,6 +15,7 @@ import {
   CircularProgress,
   ButtonBase,
   Skeleton,
+  Tooltip,
 } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -158,11 +159,11 @@ const MyForm = () => {
       );
 
       const lastOrder = sortedOrders[orders.length - 1];
-
-      setValue(
-        "bottlesNumberToBuy",
-        lastOrder.bottlesNumberToBuy || 2
-      );
+      const defaultBottlesToBuy =
+        lastOrder.bottlesNumberToBuy < 2
+          ? 2
+          : lastOrder.bottlesNumberToBuy;
+      setValue("bottlesNumberToBuy", defaultBottlesToBuy);
       setValue(
         "bottlesNumberToReturn",
         lastOrder.bottlesNumberToReturn || 0
@@ -752,6 +753,7 @@ const MyForm = () => {
       text: "Add new address",
     });
   };
+
   const emptyAddress = () => {
     if (
       (!notSelectAddress || !notSelectName) &&
@@ -767,7 +769,12 @@ const MyForm = () => {
     dayjs.locale(i18n.language);
   }, [i18n.language]);
   const [isImageOpen, setIsImageOpen] = useState(false);
-
+  const [isFirstOrder, setIsFirstOrder] = useState(true);
+  const [isDecreasingFromTwo, setIsDecreasingFromTwo] =
+    useState(false);
+  useEffect(() => {
+    setIsFirstOrder(orders.length === 0);
+  }, [orders]);
   return (
     <>
       <SnackbarProvider
@@ -852,18 +859,29 @@ const MyForm = () => {
                 control={control}
                 render={({ field }) => (
                   <div className={styles.bottlesButtons}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newValue = Math.max(
-                          field.value - 1,
-                          orders.length > 0 ? 2 : 1
-                        );
-                        field.onChange(newValue);
-                      }}
+                    <Tooltip
+                      title={t("info_message_more_one_bottle")}
+                      arrow
+                      open={isDecreasingFromTwo}
                     >
-                      -
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!isFirstOrder && field.value === 2) {
+                            setIsDecreasingFromTwo(true);
+                          } else {
+                            setIsDecreasingFromTwo(false);
+                          }
+                          const newValue = Math.max(
+                            field.value - 1,
+                            isFirstOrder ? 1 : 2
+                          );
+                          field.onChange(newValue);
+                        }}
+                      >
+                        -
+                      </button>
+                    </Tooltip>
                     {ordersLoaded ? (
                       <div className={styles.skeletonBottles}>
                         <Skeleton
@@ -887,6 +905,7 @@ const MyForm = () => {
                     <button
                       type="button"
                       onClick={() => {
+                        setIsDecreasingFromTwo(false);
                         const newValue = Math.max(
                           field.value + 1,
                           orders.length > 0 ? 2 : 1
