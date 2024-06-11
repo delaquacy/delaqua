@@ -18,7 +18,8 @@
   display: flex;
   text-align: right;
 }
-
+.text {
+}
 .languageContainer {
   display: flex;
   justify-content: flex-end;
