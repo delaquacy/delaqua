@@ -145,6 +145,8 @@ const MyForm = () => {
     handleSubmit,
     watch,
     setValue,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -711,6 +713,24 @@ const MyForm = () => {
   dayjs.updateLocale("en", {
     weekStart: 1,
   });
+  const validateDate = (date: Dayjs | null) => {
+    if (!date) {
+      return false;
+    }
+    if (shouldDisableDate(date)) {
+      setError("deliveryDate", {
+        type: "manual",
+        message:
+          "Sunday is the only non-delivery day for us 🙌   You can place your order for Monday-Saturday",
+      });
+      setSubmitAttempted(true);
+      return false;
+    }
+    clearErrors("deliveryDate");
+    setSubmitAttempted(false);
+    return true;
+  };
+
   const dayOfWeekFormatter = (dayOfWeek: string, date: Date) => {
     const formattedDay = dayjs(date).format("dd");
     return formattedDay.toUpperCase();
@@ -1064,9 +1084,21 @@ const MyForm = () => {
                             shouldDisableDate(date)
                           }
                           format="DD-MM-YYYY"
+                          onChange={(date) => {
+                            const dayjsDate = date
+                              ? dayjs(date)
+                              : null;
+                            field.onChange(dayjsDate);
+                            validateDate(dayjsDate);
+                          }}
                           slotProps={{
                             textField: {
                               fullWidth: true,
+                              onBlur: (e) => {
+                                validateDate(
+                                  dayjs(e.target.value, "DD-MM-YYYY")
+                                );
+                              },
                             },
                           }}
                         />
@@ -1458,7 +1490,7 @@ const MyForm = () => {
               <Button
                 onClick={emptyAddress}
                 type="submit"
-                disabled={showMessage}
+                disabled={showMessage || submitAttempted}
                 variant="contained"
               >
                 {t("submit_order")}
