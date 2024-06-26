@@ -1,15 +1,13 @@
 import { db } from "@/app/lib/config";
 import axios from "axios";
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import type { NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
 
 const link = process.env.NEXT_PUBLIC_PAYMENT_SHEET_LINK as string;
 
-export async function POST(
-  req: NextRequest,
-  res: NextApiResponse<string>
-) {
+export async function POST(req: NextRequest, res: NextApiResponse<string>) {
   const now = new Date();
   now.setHours(now.getHours() + 3);
   const formattedDateTime = now
@@ -19,18 +17,21 @@ export async function POST(
 
   try {
     const eventData = await req.json();
+
     const tableEvents = [
       "ORDER_COMPLETED",
       "ORDER_CANCELLED",
       "ORDER_PAYMENT_DECLINED",
       "ORDER_PAYMENT_FAILED",
     ];
+
     if (tableEvents.includes(eventData.event)) {
       const postData = {
         event: eventData.event,
         order_id: eventData.order_id,
         date_time: formattedDateTime,
       };
+
       await axios.post(link, postData, {
         headers: {
           "Content-Type": "application/json",
@@ -42,6 +43,22 @@ export async function POST(
     await updateDoc(paymentRef, {
       paymentStatus: arrayUnion(eventData.event),
     });
+
+    if (eventData.event === "ORDER_COMPLETED") {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      const orderRef = doc(
+        db,
+        `users/${user?.uid}/orders/${eventData.order_id}`
+      );
+      const orderData = (await getDoc(orderRef)).data();
+
+      await setDoc(paymentRef, {
+        userId: user?.uid,
+        number: user?.phoneNumber,
+        amount: orderData?.totalPayments,
+      });
+    }
 
     const response = NextResponse.json(
       {

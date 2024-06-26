@@ -1,6 +1,7 @@
 import axios from "axios";
 import { NextResponse } from "next/server";
 const key = process.env.REVOLUT_KEY;
+
 export async function POST(req: any, res: any) {
   const body = await req.json();
   const { webhookUrl, events } = body;
@@ -21,7 +22,6 @@ export async function POST(req: any, res: any) {
         maxBodyLength: Infinity,
       }
     );
-    console.log(response.data);
     return NextResponse.json(response.data);
   } catch (error) {
     return NextResponse.json({

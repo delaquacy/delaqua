@@ -1,7 +1,9 @@
 import axios from "axios";
 const key = process.env.REVOLUT_KEY;
+
 export const requestGeneral = async () => {
-  const webhookUrl = "https://www.delaqua.cy/api/returnHook";
+  const webhookUrl = "https://us-central1-delaqua.cy/api/returnHook";
+
   const events = [
     "ORDER_COMPLETED",
     "ORDER_CANCELLED",
@@ -22,6 +24,7 @@ export const requestGeneral = async () => {
         },
       }
     );
+
     return null;
   } catch (error) {
     console.error("Ошибка при создании webhook:", error);
