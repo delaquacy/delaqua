@@ -583,6 +583,7 @@ const MyForm = () => {
     orderIdFromDB: string
   ) => {
     try {
+      // Call API to create payment
       const response = await fetch("/api/payment", {
         method: "POST",
         headers: {
@@ -594,10 +595,15 @@ const MyForm = () => {
           description: `Delaqua Water delivery for ${phoneNumber}, ordered on ${dataAndTime}`,
         }),
       });
+
+      // Get response data from API
       const data = await response.json();
 
-      const formatPhoneNumber = userPhone?.replace(/\+/g, "");
-      const resp = await axios.post(
+      // Format phone number
+      const formatPhoneNumber = phoneNumber?.replace(/\+/g, "");
+
+      // Call API to create payment sheet
+      await axios.post(
         process.env.NEXT_PUBLIC_PAYMENT_SHEET_LINK as string,
         {
           userPhone: formatPhoneNumber,
@@ -611,17 +617,15 @@ const MyForm = () => {
           },
         }
       );
+
+      // Get current user ID
       const userId = getCurrentUserId();
+
+      // Update order document in Firestore
       const orderRef = doc(db, `users/${userId}/orders/${orderIdFromDB}`);
       await updateDoc(orderRef, { paymentId: data.id });
 
-      const paymentRef = doc(db, `payments/${data.id}`);
-      await setDoc(paymentRef, {
-        userId: userId,
-        number: phoneNumber,
-        amount: amount,
-      });
-
+      // Update state to redirect to payment URL
       setUrl(data.checkout_url);
       setOnlinePaymentTrigger(true);
     } catch (error) {
