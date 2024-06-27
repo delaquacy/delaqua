@@ -79,9 +79,9 @@ const MyForm = () => {
   // show orders history
   const [showWindow, setShowWindow] = useState<boolean>(false);
   // phone with spacing
-  const [formattedUserPhone, setFormattedUserPhone] = useState<
-    string | null
-  >(null);
+  const [formattedUserPhone, setFormattedUserPhone] = useState<string | null>(
+    null
+  );
   // phone without spacing
   const [userPhone, setUserPhone] = useState<string | null>(null);
   // submit form
@@ -168,10 +168,7 @@ const MyForm = () => {
           : lastOrder.bottlesNumberToBuy;
 
       setValue("bottlesNumberToBuy", defaultBottlesToBuy);
-      setValue(
-        "bottlesNumberToReturn",
-        lastOrder.bottlesNumberToReturn || 0
-      );
+      setValue("bottlesNumberToReturn", lastOrder.bottlesNumberToReturn || 0);
       setValue("pump", false);
     } else {
       setValue("bottlesNumberToBuy", 2);
@@ -192,25 +189,21 @@ const MyForm = () => {
 
     "addressDetails",
   ]);
-  const allFieldsFilled = addressFields.every(
-    (field) => field !== ""
-  );
+  const allFieldsFilled = addressFields.every((field) => field !== "");
 
-  const addressObject: Record<
-    AddressKey,
-    string | boolean | undefined
-  > = addressFields.reduce((acc, field, index) => {
-    const keys: AddressKey[] = [
-      "firstAndLast",
-      "postalIndex",
-      "deliveryAddress",
-      "geolocation",
-      "addressDetails",
-    ];
-    const fieldKey = keys[index];
-    acc[fieldKey] = field;
-    return acc;
-  }, {} as Record<AddressKey, string | boolean | undefined>);
+  const addressObject: Record<AddressKey, string | boolean | undefined> =
+    addressFields.reduce((acc, field, index) => {
+      const keys: AddressKey[] = [
+        "firstAndLast",
+        "postalIndex",
+        "deliveryAddress",
+        "geolocation",
+        "addressDetails",
+      ];
+      const fieldKey = keys[index];
+      acc[fieldKey] = field;
+      return acc;
+    }, {} as Record<AddressKey, string | boolean | undefined>);
 
   const pompValue = pompStatus[0];
 
@@ -219,8 +212,7 @@ const MyForm = () => {
   const [depositForBottles, setDepositForBottles] = useState(0);
   const [totalPayments, setTotalPayments] = useState<any>(0);
   const [pompNumber, setPompNumber] = useState(0);
-  const [priceForDifferentBottles, setPriceForDifferentBottles] =
-    useState(0);
+  const [priceForDifferentBottles, setPriceForDifferentBottles] = useState(0);
   const [paymentText, setPaymentText] = useState(
     `${t("price_for_one_bottle")}`
   );
@@ -241,16 +233,8 @@ const MyForm = () => {
 
     setPomp(pompValue);
 
-    const {
-      paymentForWater,
-      depositForBottles,
-      totalPayments,
-      pompNumber,
-    } = calculatePrice(
-      bottlesToBuy,
-      bottlesNumberToReturn,
-      pompValue
-    );
+    const { paymentForWater, depositForBottles, totalPayments, pompNumber } =
+      calculatePrice(bottlesToBuy, bottlesNumberToReturn, pompValue);
 
     setPaymentForWater(paymentForWater);
     setDepositForBottles(depositForBottles);
@@ -298,21 +282,17 @@ const MyForm = () => {
           deliveryDate: formattedDate,
           phoneNumber: userPhone,
           bottlesNumberToReturn:
-            data.bottlesNumberToReturn == 0
-              ? "0"
-              : data.bottlesNumberToReturn,
+            data.bottlesNumberToReturn == 0 ? "0" : data.bottlesNumberToReturn,
           pump: data.pump ? "yes" : "no",
           id: uuidv4(),
           createdAt: serverTimestamp(),
           useId: userUniqId,
           priceOfWater: paymentForWater,
-          depositForBottles:
-            depositForBottles == 0 ? "0" : depositForBottles,
+          depositForBottles: depositForBottles == 0 ? "0" : depositForBottles,
           totalPayments: totalPayments,
           pumpPrice: data.pump == false ? "0" : "10",
           numberOfBottlesAtThisAddress:
-            numberOfBottlesInStock !== undefined &&
-            numberOfBottlesInStock != 0
+            numberOfBottlesInStock !== undefined && numberOfBottlesInStock != 0
               ? numberOfBottlesInStock
               : "0",
         };
@@ -357,10 +337,7 @@ const MyForm = () => {
         createAddress(enrichedAddressObject);
       }
 
-      if (
-        numberOfBottlesInStock === 0 ||
-        numberOfBottlesInStock == undefined
-      ) {
+      if (numberOfBottlesInStock === 0 || numberOfBottlesInStock == undefined) {
         updateNumberOfBottlesInDB(data.bottlesNumberToBuy, addressId);
       } else {
         updateNumberOfBottlesInDB(bottleNumber, addressId);
@@ -393,8 +370,7 @@ const MyForm = () => {
     setSubmitAttempted(true);
   };
 
-  const [createAddressSuccess, setCreateAddressSuccess] =
-    useState(false);
+  const [createAddressSuccess, setCreateAddressSuccess] = useState(false);
 
   const [addressId, setAddressId] = useState<string>("");
 
@@ -409,8 +385,7 @@ const MyForm = () => {
         let generalNumberOfBottles = 0;
         if (userDocSnapshot.exists()) {
           const userData = userDocSnapshot.data();
-          generalNumberOfBottles =
-            userData.generalNumberOfBottles || 0;
+          generalNumberOfBottles = userData.generalNumberOfBottles || 0;
         }
         let updatedAddressObject;
         if (
@@ -430,11 +405,7 @@ const MyForm = () => {
             numberOfBottles: generalNumberOfBottles,
           };
         }
-        if (
-          addresses.length > 1 &&
-          !showAddresses &&
-          allFieldsFilled
-        ) {
+        if (addresses.length > 1 && !showAddresses && allFieldsFilled) {
           updatedAddressObject = {
             ...addressObject,
             archived: false,
@@ -477,9 +448,7 @@ const MyForm = () => {
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentAddressId, setCurrentAddressId] = useState<
-    string | null
-  >(null);
+  const [currentAddressId, setCurrentAddressId] = useState<string | null>(null);
   const askUserAboutTransfer = (addressId: string) => {
     setCurrentAddressId(addressId);
     setIsModalOpen(true);
@@ -511,16 +480,11 @@ const MyForm = () => {
       await deleteAddressAndMoveBottles(addressId);
     }
   };
-  const deleteAddressAndMoveBottles = async (
-    addressId: string | undefined
-  ) => {
+  const deleteAddressAndMoveBottles = async (addressId: string | undefined) => {
     const userId = await getCurrentUserId();
     if (!userId) return;
 
-    const addressRef = doc(
-      db,
-      `users/${userId}/addresses/${addressId}`
-    );
+    const addressRef = doc(db, `users/${userId}/addresses/${addressId}`);
     const addressDoc = await getDoc(addressRef);
     if (!addressDoc.exists()) return;
 
@@ -552,8 +516,7 @@ const MyForm = () => {
         b.createdAt - a.createdAt
     );
     const lastAddress = sortedAddresses.find(
-      (address: { id: string | undefined }) =>
-        address.id !== sourceAddressId
+      (address: { id: string | undefined }) => address.id !== sourceAddressId
     );
     if (!lastAddress) return;
 
@@ -570,9 +533,7 @@ const MyForm = () => {
       `users/${userId}/addresses/${lastAddress.id}`
     );
     await updateDoc(targetAddressRef, {
-      numberOfBottles: increment(
-        sourceAddressData.numberOfBottles || 0
-      ),
+      numberOfBottles: increment(sourceAddressData.numberOfBottles || 0),
     });
 
     await updateDoc(sourceAddressRef, {
@@ -595,11 +556,10 @@ const MyForm = () => {
       try {
         const userId = await getCurrentUserId();
         if (userId && addressId.trim() !== "") {
-          const numberOfBottlesFromDB =
-            await getNumberOfBottlesFromDBAddresses(
-              userId,
-              addressId
-            );
+          const numberOfBottlesFromDB = await getNumberOfBottlesFromDBAddresses(
+            userId,
+            addressId
+          );
           setNumberOfBottlesInStock(numberOfBottlesFromDB);
         } else {
           console.error("User not authenticated!");
@@ -612,10 +572,10 @@ const MyForm = () => {
     fetchData();
   }, [addressId]);
 
-  const [onlinePaymentTrigger, setOnlinePaymentTrigger] =
-    useState(false);
+  const [onlinePaymentTrigger, setOnlinePaymentTrigger] = useState(false);
 
   const [url, setUrl] = useState<string | undefined>("");
+
   const handleSubmited = async (
     amount: number,
     phoneNumber: string | undefined,
@@ -652,10 +612,7 @@ const MyForm = () => {
         }
       );
       const userId = getCurrentUserId();
-      const orderRef = doc(
-        db,
-        `users/${userId}/orders/${orderIdFromDB}`
-      );
+      const orderRef = doc(db, `users/${userId}/orders/${orderIdFromDB}`);
       await updateDoc(orderRef, { paymentId: data.id });
 
       const paymentRef = doc(db, `payments/${data.id}`);
@@ -777,10 +734,7 @@ const MyForm = () => {
   };
 
   const emptyAddress = () => {
-    if (
-      (!notSelectAddress || !notSelectName) &&
-      addresses.length > 0
-    ) {
+    if ((!notSelectAddress || !notSelectName) && addresses.length > 0) {
       enqueueSnackbar(`${t("select_address")}`, {
         variant: "error",
       });
@@ -792,8 +746,7 @@ const MyForm = () => {
   }, [i18n.language]);
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [isFirstOrder, setIsFirstOrder] = useState(true);
-  const [isDecreasingFromTwo, setIsDecreasingFromTwo] =
-    useState(false);
+  const [isDecreasingFromTwo, setIsDecreasingFromTwo] = useState(false);
   useEffect(() => {
     setIsFirstOrder(orders.length === 0);
   }, [orders]);
@@ -854,12 +807,7 @@ const MyForm = () => {
               {t("check_bottles_to_condition")}
             </Alert>
           )}
-          <Grid
-            item
-            xs={12}
-            md={4}
-            className={styles.ordersHistoryMobile}
-          >
+          <Grid item xs={12} md={4} className={styles.ordersHistoryMobile}>
             <div className={styles.ordersHistory}>
               <RestoreTwoToneIcon />
               <ButtonBase onClick={showOrdersHistory}>
@@ -1033,9 +981,7 @@ const MyForm = () => {
                 </span>
               </div>
               <div>
-                <p className={styles.helperText}>
-                  {errors.pump?.message}
-                </p>
+                <p className={styles.helperText}>{errors.pump?.message}</p>
               </div>
               {pomp && (
                 <div
@@ -1063,8 +1009,7 @@ const MyForm = () => {
             <Grid item xs={12} md={4}>
               <Box>
                 <div className={styles.inputName}>
-                  {t("delivery_date")}{" "}
-                  <span className={styles.redStar}>*</span>
+                  {t("delivery_date")} <span className={styles.redStar}>*</span>
                 </div>
                 <div className={styles.datePicker}>
                   <Controller
@@ -1072,9 +1017,7 @@ const MyForm = () => {
                     control={control}
                     defaultValue={undefined}
                     render={({ field }) => (
-                      <LocalizationProvider
-                        dateAdapter={AdapterDayjs}
-                      >
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
                           {...field}
                           disablePast
@@ -1085,9 +1028,7 @@ const MyForm = () => {
                           }
                           format="DD-MM-YYYY"
                           onChange={(date) => {
-                            const dayjsDate = date
-                              ? dayjs(date)
-                              : null;
+                            const dayjsDate = date ? dayjs(date) : null;
                             field.onChange(dayjsDate);
                             validateDate(dayjsDate);
                           }}
@@ -1121,8 +1062,7 @@ const MyForm = () => {
 
               <Box>
                 <div className={styles.inputNameTime}>
-                  {t("delivery_time")}{" "}
-                  <span className={styles.redStar}>*</span>
+                  {t("delivery_time")} <span className={styles.redStar}>*</span>
                 </div>
                 <Controller
                   name="deliveryTime"
@@ -1155,12 +1095,7 @@ const MyForm = () => {
               </Box>
             </Grid>
 
-            <Grid
-              item
-              xs={12}
-              md={4}
-              className={styles.ordersHistoryDesktop}
-            >
+            <Grid item xs={12} md={4} className={styles.ordersHistoryDesktop}>
               <div className={styles.ordersHistory}>
                 <RestoreTwoToneIcon />
                 <ButtonBase onClick={showOrdersHistory}>
@@ -1210,8 +1145,7 @@ const MyForm = () => {
               </Grid>
               <Grid xs={12} md={4} item>
                 <span className={styles.inputName}>
-                  {t("post_index")}{" "}
-                  <span className={styles.redStar}>*</span>
+                  {t("post_index")} <span className={styles.redStar}>*</span>
                 </span>
                 <Controller
                   name="postalIndex"
@@ -1307,9 +1241,7 @@ const MyForm = () => {
                 />
               </Grid>
               <Grid xs={12} md={4} item>
-                <span className={styles.inputName}>
-                  {t("comments")}
-                </span>
+                <span className={styles.inputName}>{t("comments")}</span>
                 <Controller
                   name="comments"
                   control={control}
@@ -1357,9 +1289,7 @@ const MyForm = () => {
 
               <Grid container>
                 <Grid xs={12} md={4} item>
-                  <span className={styles.inputName}>
-                    {t("comments")}
-                  </span>
+                  <span className={styles.inputName}>{t("comments")}</span>
                   <Controller
                     name="comments"
                     control={control}
@@ -1399,8 +1329,8 @@ const MyForm = () => {
               <div className={styles.blueContainer}>
                 <p className={styles.margins}>
                   {" "}
-                  {paymentText} {priceForDifferentBottles} € :{" "}
-                  {paymentForWater} €{" "}
+                  {paymentText} {priceForDifferentBottles} € : {paymentForWater}{" "}
+                  €{" "}
                 </p>
 
                 <p className={styles.margins}>
@@ -1414,12 +1344,8 @@ const MyForm = () => {
                   {t("pump")} {pompNumber} €
                 </p>
                 <br></br>
-                <p className={styles.marginsTotal}>
-                  {t("total_payments")}
-                </p>
-                <div className={styles.marginsTotal}>
-                  {totalPayments} €
-                </div>
+                <p className={styles.marginsTotal}>{t("total_payments")}</p>
+                <div className={styles.marginsTotal}>{totalPayments} €</div>
               </div>
             </Grid>
           )}
@@ -1463,9 +1389,7 @@ const MyForm = () => {
           />
 
           <div>
-            <p className={styles.helperText}>
-              {errors.paymentMethod?.message}
-            </p>
+            <p className={styles.helperText}>{errors.paymentMethod?.message}</p>
           </div>
           {loadingForm && (
             <div className={styles.button}>
@@ -1481,9 +1405,7 @@ const MyForm = () => {
             </div>
           )}
           {showMessage && (
-            <p className={styles.helperTextFinalError}>
-              {t("change_day")}
-            </p>
+            <p className={styles.helperTextFinalError}>{t("change_day")}</p>
           )}
           {!loadingForm && (
             <Box className={styles.button}>
