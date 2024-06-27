@@ -1,6 +1,6 @@
 import { db } from "@/app/lib/config";
 import axios from "axios";
-import { doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import type { NextApiResponse } from "next";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -16,9 +16,13 @@ export async function POST(req: NextRequest, res: NextApiResponse<string>) {
 
   try {
     const eventData = await req.json();
-    const successEvent = "ORDER_COMPLETED";
-
-    if (eventData.event === successEvent) {
+    const tableEvents = [
+      "ORDER_COMPLETED",
+      "ORDER_CANCELLED",
+      "ORDER_PAYMENT_DECLINED",
+      "ORDER_PAYMENT_FAILED",
+    ];
+    if (tableEvents.includes(eventData.event)) {
       const postData = {
         event: eventData.event,
         order_id: eventData.order_id,
@@ -29,17 +33,12 @@ export async function POST(req: NextRequest, res: NextApiResponse<string>) {
           "Content-Type": "application/json",
         },
       });
-
-      // Creating payment document in Firestore
-      const paymentRef = doc(db, `payments/${eventData.order_id}`);
-
-      await setDoc(paymentRef, {
-        userId: eventData.userId,
-        number: eventData.phoneNumber,
-        amount: eventData.amount,
-        paymentStatus: successEvent,
-      });
     }
+
+    const paymentRef = doc(db, `payments/${eventData.order_id}`);
+    await updateDoc(paymentRef, {
+      paymentStatus: arrayUnion(eventData.event),
+    });
 
     const response = NextResponse.json(
       {
@@ -53,13 +52,5 @@ export async function POST(req: NextRequest, res: NextApiResponse<string>) {
     return response;
   } catch (error) {
     console.log("Ошибка при обработке запроса:", error);
-    return NextResponse.json(
-      {
-        message: "Error",
-      },
-      {
-        status: 500,
-      }
-    );
   }
 }
