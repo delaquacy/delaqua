@@ -1,0 +1,43 @@
+{
+  "paymentStatus": {
+    "cash": "Cash",
+    "unpaid": "Unpaid (Online)",
+    "completed": "Completed (Online)"
+  },
+  "orderStatus": {
+    "progress": "In progress",
+    "completed": "Completed",
+    "canceled": "Canceled"
+  },
+  "fieldsLabel": {
+    "columns": "Columns",
+    "equal": "Equal",
+    "from": "from",
+    "to": "to",
+    "paymentStatus": "Payment Status",
+    "deliveryTime": "Delivery Time",
+    "orderStatus": "Order Status",
+    "value": "Value"
+  },
+  "tableHeadCells": {
+      "clientId": "Client ID",
+      "contact": "contact",
+      "name": "name",
+      "buy": "buy",
+      "return": "return",
+      "pump": "pump",
+      "address": "address",
+      "date": "date",
+      "time": "time",
+      "total": "total",
+      "payStatus": "pay status",
+      "comments": "comments",
+      "created": "created",
+      "orderStatus": "order status",
+      "bottles": "Bottles to buy / to return / pump",
+      "dateAndTime": "Delivery date and time",
+      "status": "Status",
+      "paymentLink": "Payment link"
+  },
+  "removeFilter": "Remove filter"
+}

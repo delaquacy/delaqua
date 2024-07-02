@@ -1,5 +1,5 @@
 "use client";
-import { createTheme } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 import { theme as t } from "./theme";
 
 export const theme = createTheme({

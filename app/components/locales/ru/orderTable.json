@@ -1,0 +1,43 @@
+{
+  "paymentStatus": {
+    "cash": "Наличные",
+    "unpaid": "Неоплаченный (онлайн)",
+    "completed": "Оплаченный (онлайн)"
+  },
+  "orderStatus": {
+    "progress": "В процессе",
+    "completed": "Завершен",
+    "canceled": "Отменен"
+  },
+  "fieldsLabel": {
+    "columns": "Колонки",
+    "equal": "Равно",
+    "from": "от",
+    "to": "до",
+    "paymentStatus": "Статус оплаты",
+    "deliveryTime": "Время доставки",
+    "orderStatus": "Статус заказа",
+    "value": "Значение"
+  },
+  "tableHeadCells": {
+    "clientId": "ID клиента",
+    "contact": "контакт",
+    "name": "имя",
+    "buy": "купить",
+    "return": "вернуть",
+    "pump": "насос",
+    "address": "адрес",
+    "date": "дата",
+    "time": "время",
+    "total": "всего",
+    "payStatus": "статус оплаты",
+    "comments": "комментарии",
+    "created": "создано",
+    "orderStatus": "статус заказа",
+    "bottles": "Бутыли для покупки / для возврата / насос",     
+    "dateAndTime": "Дата и время доставки",
+    "status": "Статус",
+    "paymentLink": "Линк к оплате"
+  },
+  "removeFilter": "Удалить фильтр"
+}

@@ -29,9 +29,7 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {"Orders history"}
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Orders history"}</DialogTitle>
         <DialogContent>
           <OrdersList />
         </DialogContent>

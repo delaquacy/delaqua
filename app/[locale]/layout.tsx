@@ -1,5 +1,5 @@
 import { inter } from "@/app/ui/fonts";
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "../ui/themeMui";
 import Script from "next/script";
 import { AmplitudeContextProvider } from "../lib/amplitudeConfig";
@@ -7,10 +7,24 @@ import { ToggleProvider } from "../lib/ToggleContext";
 import initTranslations from "../i18n";
 import i18nConfig from "@/i18nConfig";
 import "../globals.css";
+import TranslationsProvider from "../components/TranslationsProvider/TranslationsProvider";
+import WrapperHeader from "../components/WrapperHeader/WrapperHeader";
+import { UserProvider } from "../contexts/UserContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function generateStaticParams() {
   return i18nConfig.locales.map((locale) => ({ locale }));
 }
+
+const i18nNamespaces = [
+  "finishModal",
+  "form",
+  "orderslist",
+  "orderTable",
+  "savedAddresses",
+  "main",
+];
 
 export default async function RootLayout({
   children,
@@ -19,7 +33,7 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { t } = await initTranslations(locale, ["main"]);
+  const { t, resources } = await initTranslations(locale, ["main"]);
 
   return (
     <html lang={locale}>
@@ -41,31 +55,28 @@ export default async function RootLayout({
         </Script>
         <meta name="description" content={t("description_tag")} />
         <link rel="icon" href="/favicon.png" />
-        <link
-          rel="alternate"
-          href="https://delaqua.cy"
-          hrefLang="en"
-        />
-        <link
-          rel="alternate"
-          href="https://delaqua.cy/el"
-          hrefLang="el"
-        />
-        <link
-          rel="alternate"
-          href="https://delaqua.cy/ru"
-          hrefLang="ru"
-        />
-        <link
-          rel="alternate"
-          href="https://delaqua.cy/uk"
-          hrefLang="uk"
-        />
+        <link rel="alternate" href="https://delaqua.cy" hrefLang="en" />
+        <link rel="alternate" href="https://delaqua.cy/el" hrefLang="el" />
+        <link rel="alternate" href="https://delaqua.cy/ru" hrefLang="ru" />
+        <link rel="alternate" href="https://delaqua.cy/uk" hrefLang="uk" />
       </head>
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider theme={theme}>
           <AmplitudeContextProvider>
-            <ToggleProvider>{children}</ToggleProvider>
+            <ToggleProvider>
+              <TranslationsProvider
+                namespaces={i18nNamespaces}
+                locale={locale}
+                resources={resources}
+              >
+                <UserProvider>
+                  <ToastContainer />
+                  <WrapperHeader />
+
+                  {children}
+                </UserProvider>
+              </TranslationsProvider>
+            </ToggleProvider>
           </AmplitudeContextProvider>
         </ThemeProvider>
       </body>

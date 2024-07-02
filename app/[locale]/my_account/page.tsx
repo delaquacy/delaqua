@@ -17,10 +17,7 @@ export default async function MyAccount({
 }: {
   params: { locale: string };
 }) {
-  const { resources } = await initTranslations(
-    locale,
-    i18nNamespaces
-  );
+  const { resources } = await initTranslations(locale, i18nNamespaces);
 
   return (
     <TranslationsProvider
@@ -28,7 +25,6 @@ export default async function MyAccount({
       locale={locale}
       resources={resources}
     >
-      <WrapperHeader />
       <Account />
       <WrapperFooter />
     </TranslationsProvider>
