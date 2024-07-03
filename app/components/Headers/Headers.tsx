@@ -122,42 +122,44 @@ export default function Headers({
 
   return (
     <SnackbarProvider>
-      {user && unpaidOrders && !pathname.endsWith("/admin_dashboard") && (
-        <Box
-          sx={{
-            background: "#D34942",
-            color: "white",
-            padding: 2,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontSize: "22px",
-            fontWeight: "bold",
-          }}
-        >
-          {t("paymentWarning")}
-          <Button
-            onClick={() => setShowWindow(true)}
-            size="large"
+      {user &&
+        unpaidOrders.length !== 0 &&
+        !pathname.endsWith("/admin_dashboard") && (
+          <Box
             sx={{
-              paddingInline: 4,
-              marginLeft: 2,
-              background: "#fff",
-              border: "solid 2px #A72A24",
-              color: "#A72A24",
+              background: "#D34942",
+              color: "white",
+              padding: 2,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "22px",
               fontWeight: "bold",
-
-              ":hover": {
-                background: "#A83A34",
-                color: "#fff",
-                boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
-              },
             }}
           >
-            {t("pay")}
-          </Button>
-        </Box>
-      )}
+            {t("paymentWarning")}
+            <Button
+              onClick={() => setShowWindow(true)}
+              size="large"
+              sx={{
+                paddingInline: 4,
+                marginLeft: 2,
+                background: "#fff",
+                border: "solid 2px #A72A24",
+                color: "#A72A24",
+                fontWeight: "bold",
+
+                ":hover": {
+                  background: "#A83A34",
+                  color: "#fff",
+                  boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+                },
+              }}
+            >
+              {t("pay")}
+            </Button>
+          </Box>
+        )}
       <Box className={styles.container}>
         <AppBar position="static">
           <Toolbar className={styles.toolbar}>
