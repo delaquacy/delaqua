@@ -70,9 +70,32 @@ export async function POST(req: NextRequest, res: NextApiResponse<string>) {
     // Iterate over each document in the query snapshot and update its 'paymentStatus'
     querySnapshot.forEach(async (doc) => {
       const orderRef = doc.ref; // Reference to the Firestore document
+
       await updateDoc(orderRef, {
         paymentStatus: arrayUnion(eventData.event),
       });
+
+      // Extract the userId from the order document (assuming the field exists)
+      const userId = doc.data().userId;
+
+      if (userId) {
+        // Query the 'users/{userId}/orders' collection to find matching documents
+        const userOrdersQuery = query(
+          collection(db, `users/${userId}/orders`),
+          where("orderId", "==", eventData.order_id)
+        );
+
+        // Get the query snapshot containing documents that match the query
+        const userOrdersSnapshot = await getDocs(userOrdersQuery);
+
+        // Iterate over each document in the query snapshot and update its 'paymentStatus'
+        userOrdersSnapshot.forEach(async (userOrderDoc) => {
+          const userOrderRef = userOrderDoc.ref; // Reference to the Firestore document
+          await updateDoc(userOrderRef, {
+            paymentStatus: arrayUnion(eventData.event),
+          });
+        });
+      }
     });
 
     // Respond with a success message
