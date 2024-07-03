@@ -45,6 +45,7 @@ export interface OrdersData {
   id: string;
   numberOfBottlesAtThisAddress: number;
   paymentMethod: string;
+  paymentId: string;
   paymentStatus: string;
   paymentLink?: string;
   phoneNumber: string;
