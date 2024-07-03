@@ -11,7 +11,16 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { enqueueSnackbar } from "notistack";
 import { app, db } from "../../lib/config";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import PhoneInput from "react-phone-number-input";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTranslation } from "react-i18next";
@@ -19,6 +28,8 @@ import styles from "./page.module.css";
 import "../../i18n";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import { useToggle } from "@/app/lib/ToggleContext";
+import { adminCheck } from "@/app/utils/adminCheck";
+import { useUserContext } from "@/app/contexts/UserContext";
 
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
@@ -41,15 +52,12 @@ export interface LogInProps {
 export default function Logins({ params }: LogInProps) {
   const { t } = useTranslation("main");
   const { onLogin } = params;
-  const [phoneNumber, setPhoneNumber] = useState<string | undefined>(
-    undefined
-  );
+  const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
   const [otp, setOtp] = useState<string>("");
   const [confirmationResult, setConfirmationResult] =
     useState<ConfirmationResult | null>(null);
   const [otpSent, setOtpSent] = useState<boolean>(false);
-  const [phoneNumberEntered, setPhoneNumberEntered] =
-    useState<boolean>(false);
+  const [phoneNumberEntered, setPhoneNumberEntered] = useState<boolean>(false);
   const { setToggle } = useToggle();
   const messages = {
     otpSent: `${t("OTP_messages_otpSent")}`,
@@ -60,6 +68,7 @@ export default function Logins({ params }: LogInProps) {
 
   const auth = getAuth(app);
   const router = useRouter();
+  const { user, setUser } = useUserContext();
 
   useEffect(() => {
     if (myWindow) {
@@ -105,9 +114,7 @@ export default function Logins({ params }: LogInProps) {
     } catch (error: unknown) {
       const customError = error as CustomError;
       console.error(customError.message);
-      if (
-        customError.message.includes("(auth/invalid-phone-number).")
-      ) {
+      if (customError.message.includes("(auth/invalid-phone-number).")) {
         enqueueSnackbar(t("format_number"), { variant: "error" });
       } else {
         enqueueSnackbar(messages.otpSentError, { variant: "error" });
@@ -125,18 +132,20 @@ export default function Logins({ params }: LogInProps) {
 
       const user = auth.currentUser;
       if (user) {
+        // console.log(isAdmin);
+
+        // if (isAdmin) {
+        //   // User is an administrator, access to admin section allowed
+        // }
+
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
+        setUser(user);
 
         if (!userDoc.exists()) {
-          const lastUserNumberDocRef = doc(
-            db,
-            "list/5n9NPK8Faw87bjbeenPw"
-          );
+          const lastUserNumberDocRef = doc(db, "list/5n9NPK8Faw87bjbeenPw");
 
-          const lastUserNumberDoc = await getDoc(
-            lastUserNumberDocRef
-          );
+          const lastUserNumberDoc = await getDoc(lastUserNumberDocRef);
           let lastUserNumber = lastUserNumberDoc.exists()
             ? lastUserNumberDoc.data().lastUserNumber
             : 0;
@@ -158,11 +167,16 @@ export default function Logins({ params }: LogInProps) {
         }
       }
 
+      const isAdmin = await adminCheck(user?.phoneNumber as string).then(
+        (res) => res
+      );
+
       trackAmplitudeEvent("submitOTP", {
         text: "Submit OTP",
       });
       setOtp("");
-      router.push("/my_account");
+      // User is an administrator, access to admin section allowed
+      isAdmin ? router.push("/admin_dashboard") : router.push("/my_account");
       setToggle(false);
       trackAmplitudeEvent("myAccount", {
         text: "Redirect to my_account",
@@ -170,9 +184,7 @@ export default function Logins({ params }: LogInProps) {
     } catch (error: unknown) {
       const customError = error as CustomError;
       console.error(customError.message);
-      if (
-        customError.message.includes("auth/invalid-verification-code")
-      ) {
+      if (customError.message.includes("auth/invalid-verification-code")) {
         enqueueSnackbar(t("wrong_otp"), {
           variant: "error",
         });
@@ -188,56 +200,60 @@ export default function Logins({ params }: LogInProps) {
   };
 
   return (
-    <Box className={styles.container}>
-      <Box className={styles.wrapper}>
-        <Box className={styles.closeButton}>
-          <CloseIcon onClick={onLogin} />
-        </Box>
-        <Box className={styles.logoAndTitle}>
-          <LockOutlinedIcon fontSize="large" />
-          <Typography variant="h4">{t("login_window")}</Typography>
-        </Box>
-        <div className={styles.inputContainer}>
-          <PhoneInput
-            type="tel"
-            disabled={otpSent}
-            value={phoneNumber}
-            onChange={handlePhoneNumberChange}
-            placeholder="357 77 123342"
-          />
-        </div>
-        {!otpSent && (
-          <span className={styles.helpMessage}>
-            {t("enter_phone_with_code")}
-          </span>
-        )}
+    <>
+      {!user && (
+        <Box className={styles.container}>
+          <Box className={styles.wrapper}>
+            <Box className={styles.closeButton}>
+              <CloseIcon onClick={onLogin} />
+            </Box>
+            <Box className={styles.logoAndTitle}>
+              <LockOutlinedIcon fontSize="large" />
+              <Typography variant="h4">{t("login_window")}</Typography>
+            </Box>
+            <div className={styles.inputContainer}>
+              <PhoneInput
+                type="tel"
+                disabled={otpSent}
+                value={phoneNumber}
+                onChange={handlePhoneNumberChange}
+                placeholder="357 77 123342"
+              />
+            </div>
+            {!otpSent && (
+              <span className={styles.helpMessage}>
+                {t("enter_phone_with_code")}
+              </span>
+            )}
 
-        {phoneNumberEntered && otpSent && (
-          <TextField
-            type="text"
-            value={otp}
-            onChange={handleOtpChange}
-            className={styles.input}
-            placeholder={t("placeholder_OTP")}
-          />
-        )}
-        {!otpSent ? <div id="recaptcha-container"></div> : null}
-        <br></br>
-        <Button
-          variant="contained"
-          onClick={
-            phoneNumberEntered
-              ? otpSent
-                ? handleOtpSubmit
-                : handleSentOtp
-              : undefined
-          }
-        >
-          {otpSent
-            ? `${t("button_submit_OTP")}`
-            : `${t("button_sent_OTP")}`}
-        </Button>
-      </Box>
-    </Box>
+            {phoneNumberEntered && otpSent && (
+              <TextField
+                type="text"
+                value={otp}
+                onChange={handleOtpChange}
+                className={styles.input}
+                placeholder={t("placeholder_OTP")}
+              />
+            )}
+            {!otpSent ? <div id="recaptcha-container"></div> : null}
+            <br></br>
+            <Button
+              variant="contained"
+              onClick={
+                phoneNumberEntered
+                  ? otpSent
+                    ? handleOtpSubmit
+                    : handleSentOtp
+                  : undefined
+              }
+            >
+              {otpSent
+                ? `${t("button_submit_OTP")}`
+                : `${t("button_sent_OTP")}`}
+            </Button>
+          </Box>
+        </Box>
+      )}
+    </>
   );
 }

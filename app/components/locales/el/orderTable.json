@@ -1,0 +1,43 @@
+{
+  "paymentStatus": {
+    "cash": "Μετρητά",
+    "unpaid": "Μη πληρωμένο (Online)",
+    "completed": "Ολοκληρώθηκε (Online)"
+  },
+  "orderStatus": {
+    "progress": "Σε εξέλιξη",
+    "completed": "Ολοκληρώθηκε",
+    "canceled": "Ακυρώθηκε"
+  },
+  "fieldsLabel": {
+    "columns": "Στήλες",
+    "equal": "Ίσο",
+    "from": "από",
+    "to": "προς",
+    "paymentStatus": "Κατάσταση πληρωμής",
+    "deliveryTime": "Ώρα παράδοσης",
+    "orderStatus": "Κατάσταση παραγγελίας",
+    "value": "Τιμή"
+  },
+  "tableHeadCells": {
+    "clientId": "Αναγνωριστικό πελάτη",
+    "contact": "επικοινωνία",
+    "name": "όνομα",
+    "buy": "αγορά",
+    "return": "επιστροφή",
+    "pump": "αντλία",
+    "address": "διεύθυνση",
+    "date": "ημερομηνία",
+    "time": "ώρα",
+    "total": "σύνολο",
+    "payStatus": "κατάσταση πληρωμής",
+    "comments": "σχόλια",
+    "created": "δημιουργήθηκε",
+    "orderStatus": "κατάσταση παραγγελίας",
+    "bottles": "Μπουκάλια για αγορά / για επιστροφή / αντλία",
+    "dateAndTime": "Ημερομηνία και ώρα παράδοσης",
+    "status": "Κατάσταση",
+    "paymentLink": "Σύνδεσμος πληρωμής"
+  },
+  "removeFilter": "Αφαίρεση φίλτρου"
+}

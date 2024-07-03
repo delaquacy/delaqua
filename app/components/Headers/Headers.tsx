@@ -10,33 +10,38 @@ import Link from "next/link";
 import LoginIcon from "@mui/icons-material/Login";
 import { CircularProgress, MenuItem, Select } from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut,
-  User,
-} from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut, User } from "firebase/auth";
 import { app } from "@/app/lib/config";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 import { LogInProps } from "../Logins/Logins";
-import { AccountCircle } from "@mui/icons-material";
+import {
+  AccountCircle,
+  AdminPanelSettings,
+  ManageAccounts,
+} from "@mui/icons-material";
 import { useToggle } from "@/app/lib/ToggleContext";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import i18nConfig from "@/i18nConfig";
 import { SnackbarProvider } from "notistack";
 import WrapperLogin from "../WrapperLogin/WrapperLogin";
+import { useUserContext } from "@/app/contexts/UserContext";
 
-export default function Headers() {
+export default function Headers({
+  setShowWindow,
+}: {
+  setShowWindow: (val: boolean) => void;
+}) {
   const { i18n, t } = useTranslation("main");
   const { trackAmplitudeEvent } = useAmplitudeContext();
 
   const [showLogin, setShowLogin] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { isToggled, setToggle } = useToggle();
   const currentLocale = i18n.language;
+
+  const { user, isAdmin, unpaidOrders, setUser } = useUserContext();
 
   const router = useRouter();
   const auth = getAuth(app);
@@ -73,9 +78,7 @@ export default function Headers() {
     ) {
       router.push("/" + languageValue + pathname);
     } else {
-      router.push(
-        pathname.replace(`/${currentLocale}`, `/${languageValue}`)
-      );
+      router.push(pathname.replace(`/${currentLocale}`, `/${languageValue}`));
     }
     router.refresh();
   };
@@ -105,7 +108,7 @@ export default function Headers() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+      setUser(user as User);
       setLoading(false);
     });
 
@@ -119,7 +122,43 @@ export default function Headers() {
 
   return (
     <SnackbarProvider>
-      <Box className={styles.container} sx={{ flexGrow: 1 }}>
+      {user && unpaidOrders && !pathname.endsWith("/admin_dashboard") && (
+        <Box
+          sx={{
+            background: "#D34942",
+            color: "white",
+            padding: 2,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontSize: "22px",
+            fontWeight: "bold",
+          }}
+        >
+          {t("paymentWarning")}
+          <Button
+            onClick={() => setShowWindow(true)}
+            size="large"
+            sx={{
+              paddingInline: 4,
+              marginLeft: 2,
+              background: "#fff",
+              border: "solid 2px #A72A24",
+              color: "#A72A24",
+              fontWeight: "bold",
+
+              ":hover": {
+                background: "#A83A34",
+                color: "#fff",
+                boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+              },
+            }}
+          >
+            {t("pay")}
+          </Button>
+        </Box>
+      )}
+      <Box className={styles.container}>
         <AppBar position="static">
           <Toolbar className={styles.toolbar}>
             <Link href="/">
@@ -130,10 +169,7 @@ export default function Headers() {
                 height={50}
               />
             </Link>
-            <Box
-              className={styles.name_container}
-              sx={{ flexGrow: 1 }}
-            >
+            <Box className={styles.name_container} sx={{ flexGrow: 1 }}>
               <Link href="/">
                 <div className={styles.name}>
                   Del
@@ -181,19 +217,25 @@ export default function Headers() {
                         <Link href="/my_account">
                           <Button
                             variant="contained"
-                            endIcon={
-                              <AccountCircle fontSize="small" />
-                            }
+                            endIcon={<AccountCircle fontSize="small" />}
                           >
                             {t("my_account")}
                           </Button>
                         </Link>
+                        {isAdmin && (
+                          <Link href="/admin_dashboard">
+                            <Button
+                              variant="contained"
+                              endIcon={<ManageAccounts fontSize="small" />}
+                            >
+                              Admin
+                            </Button>
+                          </Link>
+                        )}
                         <Link href="/">
                           <Button
                             variant="contained"
-                            endIcon={
-                              <ExitToAppIcon fontSize="small" />
-                            }
+                            endIcon={<ExitToAppIcon fontSize="small" />}
                             onClick={handleLogout}
                           >
                             {t("logout")}
@@ -202,10 +244,7 @@ export default function Headers() {
                       </Box>
                       <Box className={styles.mobileScreen}>
                         <Link href="/my_account">
-                          <AccountCircle
-                            color="primary"
-                            fontSize="small"
-                          />
+                          <AccountCircle color="primary" fontSize="small" />
                         </Link>
                         <Link href="/">
                           <ExitToAppIcon

@@ -1,0 +1,43 @@
+{
+  "paymentStatus": {
+    "cash": "Готівка",
+    "unpaid": "Неоплачений (онлайн)",
+    "completed": "Оплачений (онлайн)"
+  },
+  "orderStatus": {
+    "progress": "В процесі",
+    "completed": "Завершений",
+    "canceled": "Скасований"
+  },
+  "fieldsLabel": {
+    "columns": "Колонки",
+    "equal": "Рівно",
+    "from": "з",
+    "to": "до",
+    "paymentStatus": "Статус оплати",
+    "deliveryTime": "Час доставки",
+    "orderStatus": "Статус замовлення",
+    "value": "Значення"
+  },
+  "tableHeadCells": {
+    "clientId": "ID клієнта",
+    "contact": "контакт",
+    "name": "ім'я",
+    "buy": "купити",
+    "return": "повернути",
+    "pump": "насос",
+    "address": "адреса",
+    "date": "дата",
+    "time": "час",
+    "total": "всього",
+    "payStatus": "статус оплати",
+    "comments": "коментарі",
+    "created": "створено",
+    "orderStatus": "статус замовлення",
+    "bottles": "Пляшки для покупки / для повернення / насос",
+    "dateAndTime": "Дата та час доставки",
+    "status": "Статус",
+    "paymentLink": "Посилання для оплати"
+  },
+  "removeFilter": "Видалити фільтр"
+}

@@ -274,12 +274,9 @@ const MyForm = () => {
       const formatDataBeforeSubmit = (data: IForm) => {
         const date = data.deliveryDate;
         const deliveryDate = new Date(date);
-        const formattedDate = `${deliveryDate.getDate()}.${
-          deliveryDate.getMonth() + 1
-        }.${deliveryDate.getFullYear()}`;
         return {
           ...data,
-          deliveryDate: formattedDate,
+          deliveryDate: dayjs(deliveryDate).format("DD.MM.YYYY"),
           phoneNumber: userPhone,
           bottlesNumberToReturn:
             data.bottlesNumberToReturn == 0 ? "0" : data.bottlesNumberToReturn,
@@ -295,6 +292,9 @@ const MyForm = () => {
             numberOfBottlesInStock !== undefined && numberOfBottlesInStock != 0
               ? numberOfBottlesInStock
               : "0",
+          completed: false,
+          paymentStatus: "Unpaid",
+          canceled: false,
         };
       };
 
@@ -306,12 +306,21 @@ const MyForm = () => {
         collection(db, `users/${userId}/orders`),
         formattedData
       );
+      const allOrderRef = await addDoc(
+        collection(db, `allOrders`),
+        formattedData
+      );
+
+      let currentOrderId = orderRef.id;
+      const currentAllOrderId = allOrderRef.id;
+
       if (data.paymentMethod === "Cash") {
+        await updateDoc(allOrderRef, { paymentStatus: "CASH" });
+
         setCashPaymentTrigger(true);
         setLoadingForm(false);
       }
 
-      let currentOrderId = orderRef.id;
       const bottleNumber = bottlesCalculate(
         data.bottlesNumberToBuy,
         data.bottlesNumberToReturn,
@@ -357,7 +366,8 @@ const MyForm = () => {
           totalPayments,
           formatPhoneNumber,
           formattedDateTime,
-          currentOrderId
+          currentOrderId,
+          currentAllOrderId
         );
       }
       setLoadingForm(false);
@@ -579,7 +589,8 @@ const MyForm = () => {
     amount: number,
     phoneNumber: string | undefined,
     dataAndTime: string,
-    orderIdFromDB: string
+    orderIdFromDB: string,
+    currentAllOrderId: string
   ) => {
     try {
       const response = await fetch("/api/payment", {
@@ -612,9 +623,20 @@ const MyForm = () => {
       );
       const userId = getCurrentUserId();
       const orderRef = doc(db, `users/${userId}/orders/${orderIdFromDB}`);
-      await updateDoc(orderRef, { paymentId: data.id });
+      const allOrdersRef = doc(db, `allOrders/${currentAllOrderId}`);
+
+      await updateDoc(orderRef, {
+        paymentId: data.id,
+        paymentLink: data.checkout_url,
+      });
+
+      await updateDoc(allOrdersRef, {
+        paymentId: data.id,
+        paymentLink: data.checkout_url,
+      });
 
       const paymentRef = doc(db, `payments/${data.id}`);
+
       await setDoc(paymentRef, {
         userId: userId,
         number: phoneNumber,
@@ -697,6 +719,7 @@ const MyForm = () => {
       setShowAddresses(false);
     }
   }, [deleteAddress]);
+
   const showOrdersHistory = () => {
     setShowWindow(true);
     trackAmplitudeEvent("myHistory", {
@@ -724,6 +747,7 @@ const MyForm = () => {
 
     fetchData();
   }, [createAddressSuccess]);
+
   const addNewAddress = () => {
     setCreateAddressSuccess(false);
     createAddress(addressObject);
