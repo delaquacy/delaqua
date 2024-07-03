@@ -241,17 +241,20 @@ export default function OrdersTable() {
                         row.firstAndLast
                       }\t ${row.bottlesNumberToBuy}\t ${
                         row.bottlesNumberToReturn
-                      }\t ${row.pump}\t ${row.deliveryDate}\t ${row.index}\t ${
-                        row.deliveryAddress
-                      }\t ${row.geolocation}\t ${row.deliveryTime}\t ${
-                        row.comments
-                      }\t ${row.totalPayments}\t ${row.paymentMethod} - ${
-                        row.paymentStatus
-                      }\t
+                      }\t ${row.pump}\t ${row.deliveryDate}\t ${
+                        row.postalIndex
+                      }\t ${row.deliveryAddress}\t ${(
+                        row.addressDetails as string
+                      ).replace("\n", "")}\t ${row.geolocation}\t ${
+                        row.deliveryTime
+                      }\t ${(row.comments as string).replace("\n", "")}\t ${
+                        row.totalPayments
+                      }\t ${row.paymentMethod} - ${row.paymentStatus}\t
                       `
                     );
                     showSuccessToast("Copied!");
                   };
+                  console.log((row.comments as string).replace("\n", ""));
                   return (
                     <TableRow
                       // hover={!row.completed && !row.expire}
@@ -337,7 +340,7 @@ export default function OrdersTable() {
                         align="center"
                         sx={{
                           position: "sticky",
-                          left: "289px",
+                          left: "281px",
                           zIndex: 2,
                           background: "inherit",
                           borderRight: "solid 1px rgba(38, 40, 82, 0.1)",
@@ -368,12 +371,17 @@ export default function OrdersTable() {
                               },
                             }}
                           >
-                            {row.index
-                              ? `${row.index}, ${row.deliveryAddress}`
-                              : `${row.deliveryAddress}`}
+                            {row.postalIndex
+                              ? `${row.postalIndex} ${
+                                  row.deliveryAddress
+                                    ? `, ${row.deliveryAddress}`
+                                    : ""
+                                }`
+                              : row.deliveryAddress}
                           </Box>
                         </Link>
                       </TableCell>
+                      <TableCell align="center">{row.addressDetails}</TableCell>
                       <TableCell align="center">{row.deliveryDate}</TableCell>
                       <TableCell align="center">{row.deliveryTime}</TableCell>
                       <TableCell align="center">{row.totalPayments}</TableCell>

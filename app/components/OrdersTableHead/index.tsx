@@ -121,7 +121,7 @@ export function OrdersTableHead(props: OrdersTableHeadProps) {
                   : headCell.id === "phoneNumber"
                   ? "154px"
                   : headCell.id === "firstAndLast"
-                  ? "289px"
+                  ? "281px"
                   : "",
               zIndex:
                 headCell.id === "index" ||
@@ -131,9 +131,10 @@ export function OrdersTableHead(props: OrdersTableHeadProps) {
                   : 0,
               minWidth:
                 headCell.id === "comments" ||
+                headCell.id === "addressDetails" ||
                 headCell.id === "deliveryAddress" ||
                 headCell.id === "firstAndLast"
-                  ? "150px"
+                  ? "180px"
                   : "80px",
             }}
           >

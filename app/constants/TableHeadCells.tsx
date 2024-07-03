@@ -5,6 +5,7 @@ import FullBottle from "../../public/fullBottle.png";
 import Phone from "../../public/phoneNumber.png";
 import Pump from "../../public/pump.png";
 import Address from "../../public/address.png";
+import AddressDetail from "../../public/addressDetail.png";
 import DeliveryDate from "../../public/deliveryDate.png";
 import DeliveryTime from "../../public/deliveryTime.png";
 import PaymentsTotal from "../../public/billEuro.png";
@@ -83,6 +84,14 @@ export const TableHeadCells: readonly HeadCell[] = [
     label: "tableHeadCells.address",
     sortable: false,
     image: <Image src={Address} alt="Delivery Address" width={30} />,
+  },
+  {
+    id: "addressDetails",
+    numeric: false,
+    disablePadding: false,
+    label: "tableHeadCells.addressDetail",
+    sortable: false,
+    image: <Image src={AddressDetail} alt="Delivery Address" width={35} />,
   },
   {
     id: "deliveryDate",

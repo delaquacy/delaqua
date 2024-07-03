@@ -27,6 +27,7 @@
       "return": "return",
       "pump": "pump",
       "address": "address",
+      "addressDetail": "detail",
       "date": "date",
       "time": "time",
       "total": "total",
