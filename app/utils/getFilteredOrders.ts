@@ -37,7 +37,8 @@ export const getFilteredOrders = (
 
   filters.forEach((filter) => {
     const filterFunction = filterFunctions[filter.column];
-    if (filterFunction) {
+
+    if (filterFunction && !!filter.value1) {
       filteredOrders = filteredOrders.filter((order) =>
         filterFunction(order, filter)
       );

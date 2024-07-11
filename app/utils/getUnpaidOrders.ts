@@ -58,6 +58,5 @@ export const getUnpaidOrders = async (
       result.push(order);
     }
   }
-  console.log(result);
   return result;
 };

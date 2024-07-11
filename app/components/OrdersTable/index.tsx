@@ -254,7 +254,6 @@ export default function OrdersTable() {
                     );
                     showSuccessToast("Copied!");
                   };
-                  console.log((row.comments as string).replace("\n", ""));
                   return (
                     <TableRow
                       // hover={!row.completed && !row.expire}
