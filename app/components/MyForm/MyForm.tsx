@@ -72,10 +72,11 @@ import "dayjs/locale/el";
 import "dayjs/locale/ru";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import useDatesFromDB from "@/app/utils/getUnableDates";
+import { useUserContext } from "@/app/contexts/UserContext";
 
 const MyForm = () => {
   const { t, i18n } = useTranslation("form");
-
+  const { user } = useUserContext();
   // show orders history
   const [showWindow, setShowWindow] = useState<boolean>(false);
   // phone with spacing
@@ -112,8 +113,9 @@ const MyForm = () => {
         setUserPhone(phoneNumber);
         setFormattedUserPhone(formatPhoneNumber(phoneNumber!));
         setLoadingNumber(false);
+
         try {
-          const userId = await getCurrentUserId();
+          const userId = user.uid;
 
           if (userId) {
             const addressesData = await fetchAddresses(userId);
@@ -170,11 +172,11 @@ const MyForm = () => {
       setValue("bottlesNumberToBuy", defaultBottlesToBuy);
       setValue("bottlesNumberToReturn", lastOrder.bottlesNumberToReturn || 0);
       setValue("pump", false);
-    } else {
-      setValue("bottlesNumberToBuy", 2);
-      setValue("bottlesNumberToReturn", 0);
-      setValue("pump", true);
+      return;
     }
+    setValue("bottlesNumberToBuy", 2);
+    setValue("bottlesNumberToReturn", 0);
+    setValue("pump", true);
   }, [orders, ordersLoaded]);
 
   const bottlesToBuy = watch("bottlesNumberToBuy") || 0;
@@ -220,6 +222,7 @@ const MyForm = () => {
   const paymentMethod = watch("paymentMethod");
   const [usedBottlesMessage, setUsedBottlesMessage] = useState(false);
   const firstBottlesReturn = watch("bottlesNumberToReturn");
+
   useEffect(() => {
     if (orders.length === 0 && firstBottlesReturn !== 0) {
       setUsedBottlesMessage(true);
@@ -272,11 +275,11 @@ const MyForm = () => {
     try {
       setSubmitAttempted(false);
       const formatDataBeforeSubmit = (data: IForm) => {
-        const date = data.deliveryDate;
-        const deliveryDate = new Date(date);
+        const deliveryDate = dayjs(data.deliveryDate).format("DD.MM.YYYY");
+
         return {
           ...data,
-          deliveryDate: dayjs(deliveryDate).format("DD.MM.YYYY"),
+          deliveryDate,
           phoneNumber: userPhone,
           bottlesNumberToReturn:
             data.bottlesNumberToReturn == 0 ? "0" : data.bottlesNumberToReturn,
@@ -463,6 +466,7 @@ const MyForm = () => {
     setCurrentAddressId(addressId);
     setIsModalOpen(true);
   };
+
   const handleConfirm = async () => {
     if (!currentAddressId) return;
 
@@ -475,6 +479,7 @@ const MyForm = () => {
     }
     setCurrentAddressId(null);
   };
+
   const handleDecline = async () => {
     if (!currentAddressId) return;
 
@@ -490,6 +495,7 @@ const MyForm = () => {
       await deleteAddressAndMoveBottles(addressId);
     }
   };
+
   const deleteAddressAndMoveBottles = async (addressId: string | undefined) => {
     const userId = await getCurrentUserId();
     if (!userId) return;
@@ -563,16 +569,17 @@ const MyForm = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!user) return;
+
       try {
-        const userId = await getCurrentUserId();
-        if (userId && addressId.trim() !== "") {
+        const userId = user?.uid;
+
+        if (userId && !!addressId) {
           const numberOfBottlesFromDB = await getNumberOfBottlesFromDBAddresses(
             userId,
             addressId
           );
           setNumberOfBottlesInStock(numberOfBottlesFromDB);
-        } else {
-          console.error("User not authenticated!");
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -580,11 +587,12 @@ const MyForm = () => {
     };
 
     fetchData();
-  }, [addressId]);
+  }, [user, addressId]);
 
   const [onlinePaymentTrigger, setOnlinePaymentTrigger] = useState(false);
 
   const [url, setUrl] = useState<string | undefined>("");
+
   const handleSubmited = async (
     amount: number,
     phoneNumber: string | undefined,
@@ -653,13 +661,12 @@ const MyForm = () => {
   useEffect(() => {
     requestGeneral();
   }, []);
+
   // datepicker settings (hide saturday, week starts from monday)
   const selectedDate = watch("deliveryDate");
-  const showMessage = useMemo(() => {
-    if (!selectedDate) {
-      return false;
-    }
 
+  // Checks if the selected date is today and if the current time is after noon
+  const isCurrentDayAfterNoon = useMemo(() => {
     const now = dayjs();
     const noon = now.startOf("day").add(12, "hours");
     const watchedDate = dayjs(selectedDate);
@@ -667,7 +674,10 @@ const MyForm = () => {
     return now.isSame(watchedDate, "day") && now.isAfter(noon);
   }, [selectedDate]);
 
+  // Calculate the next delivery day.
+  // If today is Saturday and the current time is after noon, set the next delivery day to Monday.
   let nextDay = dayjs().add(1, "day").format("dddd");
+
   if (
     dayjs().day() === 6 &&
     dayjs().isAfter(dayjs().startOf("day").add(12, "hours"))
@@ -675,11 +685,12 @@ const MyForm = () => {
     nextDay = dayjs().add(2, "day").format("dddd");
   }
 
-  const isWeekend = (date: Dayjs) => {
-    const day = date.day();
-    return day === 0;
-  };
   const shouldDisableDate = (date: Dayjs) => {
+    const isWeekend = (date: Dayjs) => {
+      const day = date.day();
+      return day === 0;
+    };
+
     return (
       isWeekend(date) ||
       //@ts-ignore
@@ -688,9 +699,11 @@ const MyForm = () => {
   };
 
   dayjs.extend(updateLocale);
+
   dayjs.updateLocale("en", {
     weekStart: 1,
   });
+
   const validateDate = (date: Dayjs | null) => {
     if (!date) {
       return false;
@@ -709,6 +722,7 @@ const MyForm = () => {
     return true;
   };
 
+  // Formats the day of the week from a Date object into a two-letter abbreviation in uppercase - DataPicker.
   const dayOfWeekFormatter = (dayOfWeek: string, date: Date) => {
     const formattedDay = dayjs(date).format("dd");
     return formattedDay.toUpperCase();
@@ -729,8 +743,10 @@ const MyForm = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!user) return;
+
       try {
-        const userId = await getCurrentUserId();
+        const userId = user.uid;
         if (userId) {
           const addressesData = await fetchAddresses(userId);
           setAddresses(addressesData);
@@ -746,7 +762,7 @@ const MyForm = () => {
     };
 
     fetchData();
-  }, [createAddressSuccess]);
+  }, [user, createAddressSuccess]);
 
   const addNewAddress = () => {
     setCreateAddressSuccess(false);
@@ -767,12 +783,14 @@ const MyForm = () => {
   useEffect(() => {
     dayjs.locale(i18n.language);
   }, [i18n.language]);
+
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [isFirstOrder, setIsFirstOrder] = useState(true);
   const [isDecreasingFromTwo, setIsDecreasingFromTwo] = useState(false);
   useEffect(() => {
     setIsFirstOrder(orders.length === 0);
   }, [orders]);
+
   return (
     <>
       <SnackbarProvider
@@ -1038,7 +1056,11 @@ const MyForm = () => {
                   <Controller
                     name="deliveryDate"
                     control={control}
-                    defaultValue={undefined}
+                    defaultValue={
+                      (isCurrentDayAfterNoon && !!selectedDate
+                        ? dayjs()
+                        : dayjs().add(1, "day")) as any
+                    }
                     render={({ field }) => (
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
@@ -1050,8 +1072,9 @@ const MyForm = () => {
                             shouldDisableDate(date)
                           }
                           format="DD-MM-YYYY"
+                          value={field.value}
                           onChange={(date) => {
-                            const dayjsDate = date ? dayjs(date) : null;
+                            const dayjsDate = dayjs(date);
                             field.onChange(dayjsDate);
                             validateDate(dayjsDate);
                           }}
@@ -1071,7 +1094,7 @@ const MyForm = () => {
                   />
                 </div>
                 <div>
-                  {showMessage && (
+                  {isCurrentDayAfterNoon && selectedDate && (
                     <p className={styles.helperText}>
                       {t("delivery_soonest_day")} {nextDay},{" "}
                       {t("delivery_please_change_day")}
@@ -1095,6 +1118,10 @@ const MyForm = () => {
                     <RadioGroup
                       {...field}
                       aria-label="deliveryTime"
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setSubmitAttempted(false);
+                      }}
                       defaultValue=""
                     >
                       <FormControlLabel
@@ -1390,11 +1417,13 @@ const MyForm = () => {
                     trackAmplitudeEvent("payCash", {
                       text: "Payment by cash selected",
                     });
-                  } else if (paymentMethod === "Online") {
+                  }
+                  if (paymentMethod === "Online") {
                     trackAmplitudeEvent("payOnline", {
                       text: "Payment online selected",
                     });
                   }
+                  setSubmitAttempted(false);
                 }}
               >
                 <FormControlLabel
@@ -1427,7 +1456,7 @@ const MyForm = () => {
               {t("fill_all_fields")}
             </div>
           )}
-          {showMessage && (
+          {isCurrentDayAfterNoon && selectedDate && (
             <p className={styles.helperTextFinalError}>{t("change_day")}</p>
           )}
           {!loadingForm && (
@@ -1435,7 +1464,9 @@ const MyForm = () => {
               <Button
                 onClick={emptyAddress}
                 type="submit"
-                disabled={showMessage || submitAttempted}
+                disabled={
+                  submitAttempted || (isCurrentDayAfterNoon && !!selectedDate)
+                }
                 variant="contained"
               >
                 {t("submit_order")}

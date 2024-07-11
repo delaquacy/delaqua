@@ -86,6 +86,7 @@ export function OrdersTableToolbar(props: OrdersTableToolbarProps) {
   const handleClearAllFilters = () => {
     onFiltersClear();
     handleAddFilter();
+    handleClose();
   };
 
   useEffect(() => {
@@ -192,7 +193,10 @@ export function OrdersTableToolbar(props: OrdersTableToolbarProps) {
                 </Button>
                 <Button
                   variant="contained"
-                  onClick={() => onFiltersApply()}
+                  onClick={() => {
+                    onFiltersApply();
+                    handleClose();
+                  }}
                   sx={{
                     background: "#478547",
                     ":hover": {
