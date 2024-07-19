@@ -17,7 +17,6 @@ export const RegisterButton = () => {
         body: JSON.stringify({ phoneNumber }),
       });
       const data = await response.json();
-      console.log(data);
     } catch (error) {
       console.log("Ошибка при создании пользователя:", error);
     }

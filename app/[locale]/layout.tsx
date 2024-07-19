@@ -43,6 +43,7 @@ export default async function RootLayout({
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-Y4KS00EC7H"
         />
+        <Script src="https://www.google.com/recaptcha/api.js?render=explicit" />
 
         <Script id="google-analytics">
           {`

@@ -4,9 +4,12 @@
   "table_index": "Индекс",
   "table_address": "Адрес",
   "table_pump": "Помпа",
-  "table_bottles_to_buy": "Бутылей доставлено",
+  "table_bottles_to_buy": "Бутылей доставлено /возвращено / помпа",
   "table_bottles_to_return": "Бутылей возвращено",
   "table_delivery_time": "Время доставки",
+  "table_order_time": "Создано",
   "table_payment_method": "Способ оплаты",
+  "table_status": "Статус",
+  "table_total": "Сумма",
   "table_no_orders_yet": "Пока нет заказов"
 }

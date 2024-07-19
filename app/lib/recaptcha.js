@@ -7,7 +7,6 @@ window.recaptchaVerifier = new RecaptchaVerifier(
   {
     size: "invisible",
     callback: (response) => {
-      console.log(response);
       onSignInSubmit();
     },
   }

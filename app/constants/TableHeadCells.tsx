@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { OrdersData } from "../components/OrdersTable";
 import EmptyBottle from "../../public/emptyBottle.png";
 import FullBottle from "../../public/fullBottle.png";
 import Phone from "../../public/phoneNumber.png";
@@ -9,12 +8,12 @@ import AddressDetail from "../../public/addressDetail.png";
 import DeliveryDate from "../../public/deliveryDate.png";
 import DeliveryTime from "../../public/deliveryTime.png";
 import PaymentsTotal from "../../public/billEuro.png";
-import PaymentsMethod from "../../public/paymentMethod.png";
 import PaymentsStatus from "../../public/paymentStatus.png";
 import Bage from "../../public/bage.png";
 import Comments from "../../public/comments.png";
 import CreatedAt from "../../public/calendar.png";
 import CompletedStatus from "../../public/completedStatus.png";
+import { OrdersData } from "../types";
 
 interface HeadCell {
   disablePadding: boolean;

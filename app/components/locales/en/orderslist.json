@@ -3,10 +3,12 @@
   "table_phone": "Phone",
   "table_index": "Index",
   "table_address": "Address",
-  "table_pump": "Pump",
-  "table_bottles_to_buy": "Bottles to buy",
-  "table_bottles_to_return": "Bottles to return",
+  "table_bottles_to_buy": "Bottles to buy / to return / pump",
+  "table_bottles_to_return": "Bottles ",
   "table_delivery_time": "Delivery time",
+  "table_order_time": "Created at",
   "table_payment_method": "Payment method",
+  "table_status": "Status",
+  "table_total": "Total",
   "table_no_orders_yet": "No orders yet"
 }

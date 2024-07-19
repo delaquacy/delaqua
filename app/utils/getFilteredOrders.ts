@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
-import { FilterItem, OrdersData } from "../components/OrdersTable";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { getFormattedDateString } from "./getFormattedDateString";
+import { FilterItem, OrdersData } from "../types";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);

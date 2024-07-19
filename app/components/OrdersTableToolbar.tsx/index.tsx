@@ -1,10 +1,12 @@
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
-  AddCircle,
   AddCircleOutline,
   CancelOutlined,
   DeleteOutline,
   FileDownloadOutlined,
   TaskAlt,
+  FilterList,
+  CheckCircle,
 } from "@mui/icons-material";
 import {
   Box,
@@ -15,16 +17,14 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { updateOrderStatus } from "@/app/utils/updateOrderStatus";
+import { updateOrderStatus, getFormattedDataForCVS } from "@/app/utils";
 import { OrdersTableFilter } from "../OrdersTableFilter";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { FilterItem, OrdersData } from "../OrdersTable";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { CSVLink } from "react-csv";
-import { getFormattedDataForCVS } from "@/app/utils/getFormattedDataForCVS";
+import { FilterItem, OrdersData } from "@/app/types";
+import { useScreenSize } from "@/app/hooks";
+import dayjs from "dayjs";
 
 interface OrdersTableToolbarProps {
   selected: string[];
@@ -46,6 +46,9 @@ export function OrdersTableToolbar(props: OrdersTableToolbarProps) {
     onFiltersApply,
     onFiltersClear,
   } = props;
+
+  const { isSmallScreen } = useScreenSize();
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [dataForCVS, setDataForCVS] = useState<any[]>([]);
 
@@ -122,7 +125,7 @@ export function OrdersTableToolbar(props: OrdersTableToolbarProps) {
             variant="h6"
             id="tableTitle"
             component="div"
-            fontSize="30px"
+            fontSize={isSmallScreen ? "24px" : "30px"}
             fontWeight="bold"
           >
             Orders
@@ -132,7 +135,7 @@ export function OrdersTableToolbar(props: OrdersTableToolbarProps) {
           <>
             <Tooltip title="Mark as Completed" onClick={handleCompleted}>
               <IconButton>
-                <CheckCircleIcon />
+                <CheckCircle />
               </IconButton>
             </Tooltip>
 
@@ -144,7 +147,10 @@ export function OrdersTableToolbar(props: OrdersTableToolbarProps) {
           </>
         ) : (
           <Box display="flex" flexDirection="row">
-            <CSVLink data={dataForCVS}>
+            <CSVLink
+              data={dataForCVS}
+              filename={`Orders_Report_${dayjs().format("DD-MM-YYYY")}.csv`}
+            >
               <Tooltip title="Download CSV">
                 <IconButton id="download-button" size="large">
                   <FileDownloadOutlined fontSize="large" />
@@ -160,11 +166,21 @@ export function OrdersTableToolbar(props: OrdersTableToolbarProps) {
                 aria-expanded={open ? "true" : undefined}
                 onClick={handleClick}
               >
-                <FilterListIcon fontSize="large" />
+                <FilterList fontSize="large" />
               </IconButton>
             </Tooltip>
             <Menu
               id="filter-menu"
+              sx={
+                isSmallScreen
+                  ? {
+                      "& .MuiPaper-root": {
+                        maxWidth: "98%",
+                        left: "4px !important",
+                      },
+                    }
+                  : {}
+              }
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
@@ -182,7 +198,15 @@ export function OrdersTableToolbar(props: OrdersTableToolbarProps) {
                 justifyContent="space-between"
                 paddingInline={3}
               >
-                <Button variant="contained" onClick={handleAddFilter}>
+                <Button
+                  variant="contained"
+                  onClick={handleAddFilter}
+                  size={isSmallScreen ? "small" : "medium"}
+                  sx={{
+                    textTransform: "capitalize",
+                    fontSize: isSmallScreen ? "10px" : "12px",
+                  }}
+                >
                   <AddCircleOutline
                     fontSize="small"
                     sx={{
@@ -193,11 +217,14 @@ export function OrdersTableToolbar(props: OrdersTableToolbarProps) {
                 </Button>
                 <Button
                   variant="contained"
+                  size={isSmallScreen ? "small" : "medium"}
                   onClick={() => {
                     onFiltersApply();
                     handleClose();
                   }}
                   sx={{
+                    textTransform: "capitalize",
+                    fontSize: isSmallScreen ? "10px" : "12px",
                     background: "#478547",
                     ":hover": {
                       background: "#356435",
@@ -215,7 +242,10 @@ export function OrdersTableToolbar(props: OrdersTableToolbarProps) {
                 <Button
                   variant="contained"
                   onClick={handleClearAllFilters}
+                  size={isSmallScreen ? "small" : "medium"}
                   sx={{
+                    textTransform: "capitalize",
+                    fontSize: isSmallScreen ? "10px" : "12px",
                     background: "#B43636",
                     ":hover": { background: "#7D2525" },
                   }}
