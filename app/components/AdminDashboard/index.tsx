@@ -1,7 +1,6 @@
 "use client";
 import { adminCheck } from "@/app/utils/adminCheck";
 import { CircularProgress, Container } from "@mui/material";
-import { User, getAuth } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import OrdersTable from "../OrdersTable";
@@ -11,14 +10,15 @@ const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  const { user, isAdmin } = useUserContext();
+  const { user } = useUserContext();
 
   useEffect(() => {
-    if (!user) return;
-
-    if (!isAdmin) {
-      return router.push("/");
+    if (user) {
+      adminCheck(user.phoneNumber as string).then((res) => {
+        !res && router.push("/");
+      });
     }
+
     setIsLoading(false);
   }, [user]);
 

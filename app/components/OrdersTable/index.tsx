@@ -1,10 +1,17 @@
-import * as React from "react";
-import { getOrdersArray } from "@/app/utils/getOrdersArray";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
+import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from "react";
+import Link from "next/link.js";
+import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
-import customParseFormat from "dayjs";
-import { getComparator, getFilteredOrders, stableSort } from "@/app/utils";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
+import { useToast, useScreenSize } from "@/app/hooks";
+import { FilterItem, OrdersData } from "@/app/types";
+import {
+  getComparator,
+  getFilteredOrders,
+  stableSort,
+  getOrdersArray,
+  getClipboardOrderRowData,
+} from "@/app/utils";
 import { OrdersTableHead } from "@/app/components/OrdersTableHead";
 import {
   Box,
@@ -20,71 +27,32 @@ import {
   Button,
 } from "@mui/material";
 import { OrdersTableToolbar } from "../OrdersTableToolbar.tsx";
-import Link from "next/link.js";
-import { CancelOutlined } from "@mui/icons-material";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { useToast } from "@/app/hooks/useToast";
-import { useTranslation } from "react-i18next";
+import {
+  CancelOutlined,
+  ContentCopy,
+  CheckCircle,
+  HourglassBottom,
+} from "@mui/icons-material";
 
 dayjs.extend(customParseFormat);
-
-export interface OrdersData {
-  index?: number;
-  addressDetails: string;
-  bottlesNumberToBuy: number;
-  bottlesNumberToReturn: number;
-  comments: string;
-  createdAt: string;
-  completed: boolean;
-  deliveryAddress: string;
-  deliveryDate: string;
-  deliveryTime: string;
-  depositForBottles: string;
-  firstAndLast: string;
-  geolocation: string;
-  id: string;
-  numberOfBottlesAtThisAddress: number;
-  paymentMethod: string;
-  paymentId: string;
-  paymentStatus: string;
-  paymentLink?: string;
-  phoneNumber: string;
-  postalIndex: string;
-  priceOfWater: number;
-  pump: string;
-  pumpPrice: string;
-  totalPayments: number;
-  userId: number;
-  useId?: number;
-  expire: boolean;
-  canceled: boolean;
-}
-
-export interface FilterItem {
-  id: string;
-  column: string;
-  operator?: string;
-  value1: string;
-  value2?: string;
-}
 
 type Order = "asc" | "desc";
 
 export default function OrdersTable() {
-  const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] =
-    React.useState<keyof OrdersData>("deliveryDate");
-  const [selected, setSelected] = React.useState<string[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [rows, setRows] = React.useState<OrdersData[]>([]);
-  const [filteredRows, setFilteredRows] = React.useState<OrdersData[]>([]);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [filters, setFilters] = React.useState<FilterItem[]>([]);
-  const [applyFilters, setApplyFilters] = React.useState<boolean>(false);
+  const [order, setOrder] = useState<Order>("asc");
+  const [orderBy, setOrderBy] = useState<keyof OrdersData>("deliveryDate");
+  const [selected, setSelected] = useState<string[]>([]);
+  const [page, setPage] = useState(0);
+  const [rows, setRows] = useState<OrdersData[]>([]);
+  const [filteredRows, setFilteredRows] = useState<OrdersData[]>([]);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [filters, setFilters] = useState<FilterItem[]>([]);
+  const [applyFilters, setApplyFilters] = useState<boolean>(false);
 
   const { t } = useTranslation("orderTable");
 
   const { showSuccessToast } = useToast();
+  const { isSmallScreen } = useScreenSize();
 
   const getOrdersRows = async () => {
     try {
@@ -97,24 +65,12 @@ export default function OrdersTable() {
     }
   };
 
-  React.useEffect(() => {
-    getOrdersRows();
-  }, []);
-
   const handleApplyFilters = () => {
     setApplyFilters(true);
   };
 
-  React.useEffect(() => {
-    if (applyFilters) {
-      const filteredOrders = getFilteredOrders(filters, rows);
-      setFilteredRows(filteredOrders);
-      setApplyFilters(false);
-    }
-  }, [filters, applyFilters]);
-
   const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
+    event: MouseEvent<unknown>,
     property: keyof OrdersData
   ) => {
     const isAsc = orderBy === property && order === "asc";
@@ -122,7 +78,7 @@ export default function OrdersTable() {
     setOrderBy(property);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
+  const handleClick = (event: MouseEvent<unknown>, id: string) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected: string[] = [];
 
@@ -151,9 +107,7 @@ export default function OrdersTable() {
     setSelected([]);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -164,7 +118,7 @@ export default function OrdersTable() {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-  const visibleRows = React.useMemo(
+  const visibleRows = useMemo(
     () =>
       stableSort(filteredRows as any, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
@@ -188,9 +142,28 @@ export default function OrdersTable() {
     setFilters([]);
   };
 
+  useEffect(() => {
+    getOrdersRows();
+  }, []);
+
+  useEffect(() => {
+    if (applyFilters) {
+      const filteredOrders = getFilteredOrders(filters, rows);
+      setFilteredRows(filteredOrders);
+      setApplyFilters(false);
+    }
+  }, [filters, applyFilters]);
+
   return (
     <>
-      <Box sx={{ width: "100vw", maxHeight: `calc(100vh - 85px)` }}>
+      <Box
+        sx={{
+          width: "100vw",
+          maxHeight: isSmallScreen
+            ? `calc(100dvh - 123px)`
+            : `calc(100dvh - 85px)`,
+        }}
+      >
         <Paper sx={{ width: "100%", mb: 2 }}>
           <OrdersTableToolbar
             selected={selected}
@@ -204,7 +177,9 @@ export default function OrdersTable() {
 
           <TableContainer
             sx={{
-              height: `calc(100vh - 205px)`,
+              height: isSmallScreen
+                ? `calc(100dvh - 240px)`
+                : `calc(100dvh - 205px)`,
               width: "100vw",
             }}
           >
@@ -215,7 +190,6 @@ export default function OrdersTable() {
                 overflowY: "scroll",
                 width: "100vw",
               }}
-              // aria-labelledby="tableTitle"
               size="small"
             >
               <TableHead>
@@ -229,210 +203,204 @@ export default function OrdersTable() {
                 />
               </TableHead>
 
-              <TableBody>
-                {visibleRows.map((row, index) => {
-                  const isItemSelected = isSelected(row.id as string);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+              {
+                <TableBody>
+                  {visibleRows.map((row, index) => {
+                    const isItemSelected = isSelected(row.id as string);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  const onCopy = (event: any) => {
-                    event.stopPropagation();
-                    navigator.clipboard.writeText(
-                      `${row.userId || row.useId}\t ${row.phoneNumber}\t  ${
-                        row.firstAndLast
-                      }\t ${row.bottlesNumberToBuy}\t ${
-                        row.bottlesNumberToReturn
-                      }\t ${row.pump}\t ${row.deliveryDate}\t ${
-                        row.postalIndex
-                      }\t ${row.deliveryAddress}\t ${(
-                        row.addressDetails as string
-                      ).replace("\n", "")}\t ${row.geolocation}\t ${
-                        row.deliveryTime
-                      }\t ${(row.comments as string).replace("\n", "")}\t ${
-                        row.totalPayments
-                      }\t ${row.paymentMethod} - ${row.paymentStatus}\t
-                      `
-                    );
-                    showSuccessToast("Copied!");
-                  };
-                  return (
-                    <TableRow
-                      // hover={!row.completed && !row.expire}
-                      onClick={(event: any) =>
-                        handleClick(event, row.id as string)
-                      }
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.id as string}
-                      selected={isItemSelected}
-                      sx={{
-                        cursor: "pointer",
-                        transition: "all, 0.3s",
-                        background: row.completed
-                          ? "#EAF4EA"
-                          : row.expire || row.canceled
-                          ? "#FFE5E5"
-                          : "#fff",
+                    const onCopy = (event: any) => {
+                      event.stopPropagation();
 
-                        "&.Mui-selected": {
-                          background: "#D1E3F6",
-                          "&:hover": {
-                            background: "#E8F1FA",
+                      navigator.clipboard
+                        .writeText(getClipboardOrderRowData(row as OrdersData))
+                        .then(() => showSuccessToast("Copied!"));
+                    };
+                    return (
+                      <TableRow
+                        onClick={(event: any) =>
+                          handleClick(event, row.id as string)
+                        }
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.id as string}
+                        selected={isItemSelected}
+                        sx={{
+                          cursor: "pointer",
+                          transition: "all, 0.3s",
+                          background: row.completed
+                            ? "#EAF4EA"
+                            : row.expire || row.canceled
+                            ? "#FFE5E5"
+                            : "#fff",
+
+                          "&.Mui-selected": {
+                            background: "#D1E3F6",
+                            "&:hover": {
+                              background: "#E8F1FA",
+                            },
                           },
-                        },
-                        ":hover": {
-                          background:
-                            !row.completed && !row.expire ? "#E8F1FA" : "",
-                        },
+                          ":hover": {
+                            background:
+                              !row.completed && !row.expire ? "#E8F1FA" : "",
+                          },
+                        }}
+                      >
+                        <TableCell
+                          sx={{
+                            position: isSmallScreen ? "static" : "sticky",
+                            left: 0,
+                            zIndex: 2,
+                            background: "inherit",
+                          }}
+                        >
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              "aria-labelledby": labelId,
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          padding="none"
+                          align="center"
+                          sx={{
+                            position: isSmallScreen ? "static" : "sticky",
+                            left: "74px",
+                            zIndex: 2,
+                            background: "inherit",
+                          }}
+                        >
+                          {row.userId || row.useId}
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="normal"
+                          align="center"
+                          sx={{
+                            position: isSmallScreen ? "static" : "sticky",
+                            left: "155.45px",
+                            zIndex: 2,
+                            background: "inherit",
+                          }}
+                        >
+                          {row.phoneNumber}
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="normal"
+                          align="center"
+                          sx={{
+                            position: isSmallScreen ? "static" : "sticky",
+                            left: "290.9px",
+                            zIndex: 2,
+                            background: "inherit",
+                            borderRight: "solid 1px rgba(38, 40, 82, 0.1)",
+                          }}
+                        >
+                          {row.firstAndLast}
+                        </TableCell>
+                        <TableCell align="center">
+                          {row.bottlesNumberToBuy}
+                        </TableCell>
+                        <TableCell align="center">
+                          {row.bottlesNumberToReturn}
+                        </TableCell>
+                        <TableCell align="center">{row.pump}</TableCell>
+                        <TableCell align="center" padding="none">
+                          <Link
+                            href={row.geolocation as string}
+                            onClick={(event) => event.stopPropagation()}
+                          >
+                            <Box
+                              paddingBlock={2}
+                              sx={{
+                                transition: "all 0.3s",
+                                ":hover": {
+                                  color: "#4788C7",
+                                  textDecoration: "underline",
+                                  textUnderlineOffset: "2px",
+                                },
+                              }}
+                            >
+                              {row.postalIndex
+                                ? `${row.postalIndex} ${
+                                    row.deliveryAddress
+                                      ? `, ${row.deliveryAddress}`
+                                      : ""
+                                  }`
+                                : row.deliveryAddress}
+                            </Box>
+                          </Link>
+                        </TableCell>
+                        <TableCell align="center">
+                          {row.addressDetails}
+                        </TableCell>
+                        <TableCell align="center">{row.deliveryDate}</TableCell>
+                        <TableCell align="center">{row.deliveryTime}</TableCell>
+                        <TableCell align="center">
+                          {row.totalPayments}
+                        </TableCell>
+                        {/* <TableCell align="center">{row.paymentMethod}</TableCell> */}
+                        <TableCell align="center">
+                          {row.paymentStatus}
+                        </TableCell>
+                        <TableCell align="center" padding="none">
+                          {row.comments || "-"}
+                        </TableCell>
+                        <TableCell align="center">{row.createdAt}</TableCell>
+                        <TableCell align="center" padding="none">
+                          {row.completed ? (
+                            <CheckCircle
+                              sx={{
+                                color: "green",
+                              }}
+                            />
+                          ) : row.canceled ? (
+                            <CancelOutlined
+                              sx={{
+                                color: "red",
+                              }}
+                            />
+                          ) : (
+                            <HourglassBottom
+                              sx={{
+                                color: "#1976d2",
+                              }}
+                            />
+                          )}
+                        </TableCell>
+                        <TableCell align="center">
+                          <Button onClick={onCopy}>
+                            <ContentCopy
+                              sx={{
+                                color: "#4788C7",
+                              }}
+                            />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                  {emptyRows > 0 && (
+                    <TableRow
+                      style={{
+                        height: 33 * emptyRows,
                       }}
                     >
-                      <TableCell
-                        sx={{
-                          position: "sticky",
-                          left: 0,
-                          zIndex: 2,
-                          background: "inherit",
-                        }}
-                      >
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            "aria-labelledby": labelId,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        padding="none"
-                        align="center"
-                        sx={{
-                          position: "sticky",
-                          left: "74px",
-                          zIndex: 2,
-                          background: "inherit",
-                        }}
-                      >
-                        {row.userId || row.useId}
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="normal"
-                        align="center"
-                        sx={{
-                          position: "sticky",
-                          left: "154px",
-                          zIndex: 2,
-                          background: "inherit",
-                        }}
-                      >
-                        {row.phoneNumber}
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="normal"
-                        align="center"
-                        sx={{
-                          position: "sticky",
-                          left: "281px",
-                          zIndex: 2,
-                          background: "inherit",
-                          borderRight: "solid 1px rgba(38, 40, 82, 0.1)",
-                        }}
-                      >
-                        {row.firstAndLast}
-                      </TableCell>
-                      <TableCell align="center">
-                        {row.bottlesNumberToBuy}
-                      </TableCell>
-                      <TableCell align="center">
-                        {row.bottlesNumberToReturn}
-                      </TableCell>
-                      <TableCell align="center">{row.pump}</TableCell>
-                      <TableCell align="center" padding="none">
-                        <Link
-                          href={row.geolocation as string}
-                          onClick={(event) => event.stopPropagation()}
-                        >
-                          <Box
-                            paddingBlock={2}
-                            sx={{
-                              transition: "all 0.3s",
-                              ":hover": {
-                                color: "#4788C7",
-                                textDecoration: "underline",
-                                textUnderlineOffset: "2px",
-                              },
-                            }}
-                          >
-                            {row.postalIndex
-                              ? `${row.postalIndex} ${
-                                  row.deliveryAddress
-                                    ? `, ${row.deliveryAddress}`
-                                    : ""
-                                }`
-                              : row.deliveryAddress}
-                          </Box>
-                        </Link>
-                      </TableCell>
-                      <TableCell align="center">{row.addressDetails}</TableCell>
-                      <TableCell align="center">{row.deliveryDate}</TableCell>
-                      <TableCell align="center">{row.deliveryTime}</TableCell>
-                      <TableCell align="center">{row.totalPayments}</TableCell>
-                      {/* <TableCell align="center">{row.paymentMethod}</TableCell> */}
-                      <TableCell align="center">{row.paymentStatus}</TableCell>
-                      <TableCell align="center" padding="none">
-                        {row.comments || "-"}
-                      </TableCell>
-                      <TableCell align="center">{row.createdAt}</TableCell>
-                      <TableCell align="center" padding="none">
-                        {row.completed ? (
-                          <CheckCircleIcon
-                            sx={{
-                              color: "green",
-                            }}
-                          />
-                        ) : row.canceled ? (
-                          <CancelOutlined
-                            sx={{
-                              color: "red",
-                            }}
-                          />
-                        ) : (
-                          <HourglassBottomIcon
-                            sx={{
-                              color: "#1976d2",
-                            }}
-                          />
-                        )}
-                      </TableCell>
-                      <TableCell align="center">
-                        <Button onClick={onCopy}>
-                          <ContentCopyIcon
-                            sx={{
-                              color: "#4788C7",
-                            }}
-                          />
-                        </Button>
-                      </TableCell>
+                      <TableCell colSpan={6} />
                     </TableRow>
-                  );
-                })}
-                {emptyRows > 0 && (
-                  <TableRow
-                    style={{
-                      height: 33 * emptyRows,
-                    }}
-                  >
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
+                  )}
+                </TableBody>
+              }
             </Table>
           </TableContainer>
 

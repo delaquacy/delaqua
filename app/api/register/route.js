@@ -4,7 +4,6 @@ export async function POST(req, res) {
   const body = await req.json();
 
   const { phoneNumber } = body;
-  console.log(phoneNumber);
   try {
     const userRecord = await admin.auth().createUser({
       phoneNumber,

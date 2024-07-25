@@ -1,15 +1,18 @@
 "use client";
-import { useEffect, useState } from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Button from "@mui/material/Button";
+
 import styles from "./Header.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import LoginIcon from "@mui/icons-material/Login";
-import { CircularProgress, MenuItem, Select } from "@mui/material";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import {
+  CircularProgress,
+  MenuItem,
+  Select,
+  AppBar,
+  Box,
+  Toolbar,
+  Button,
+} from "@mui/material";
 import { getAuth, onAuthStateChanged, signOut, User } from "firebase/auth";
 import { app } from "@/app/lib/config";
 import { usePathname, useRouter } from "next/navigation";
@@ -18,8 +21,9 @@ import "../../i18n";
 import { LogInProps } from "../Logins/Logins";
 import {
   AccountCircle,
-  AdminPanelSettings,
   ManageAccounts,
+  ManageAccountsSharp,
+  ExitToApp,
 } from "@mui/icons-material";
 import { useToggle } from "@/app/lib/ToggleContext";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
@@ -27,6 +31,7 @@ import i18nConfig from "@/i18nConfig";
 import { SnackbarProvider } from "notistack";
 import WrapperLogin from "../WrapperLogin/WrapperLogin";
 import { useUserContext } from "@/app/contexts/UserContext";
+import { useEffect, useState } from "react";
 
 export default function Headers({
   setShowWindow,
@@ -163,25 +168,28 @@ export default function Headers({
       <Box className={styles.container}>
         <AppBar position="static">
           <Toolbar className={styles.toolbar}>
-            <Link href="/">
-              <Image
-                src="/water.png"
-                alt="DelAqua logo"
-                width={50}
-                height={50}
-              />
-            </Link>
             <Box className={styles.name_container} sx={{ flexGrow: 1 }}>
               <Link href="/">
-                <div className={styles.name}>
-                  Del
-                  <span>Aqua</span>
-                </div>
+                <Image
+                  src="/water.png"
+                  alt="DelAqua logo"
+                  width={50}
+                  height={50}
+                />
               </Link>
 
-              <p className={styles.name_descr}>
-                We deliver spring water in Limassol
-              </p>
+              <Box>
+                <Link href="/">
+                  <div className={styles.name}>
+                    Del
+                    <span>Aqua</span>
+                  </div>
+                </Link>
+
+                <p className={styles.name_descr}>
+                  We deliver spring water in Limassol
+                </p>
+              </Box>
             </Box>
 
             {showLogin && <WrapperLogin {...loginProps} />}
@@ -237,7 +245,7 @@ export default function Headers({
                         <Link href="/">
                           <Button
                             variant="contained"
-                            endIcon={<ExitToAppIcon fontSize="small" />}
+                            endIcon={<ExitToApp fontSize="small" />}
                             onClick={handleLogout}
                           >
                             {t("logout")}
@@ -248,8 +256,16 @@ export default function Headers({
                         <Link href="/my_account">
                           <AccountCircle color="primary" fontSize="small" />
                         </Link>
+                        {isAdmin && (
+                          <Link href="/admin_dashboard">
+                            <ManageAccountsSharp
+                              color="primary"
+                              fontSize="small"
+                            />
+                          </Link>
+                        )}
                         <Link href="/">
-                          <ExitToAppIcon
+                          <ExitToApp
                             color="primary"
                             onClick={handleLogout}
                             fontSize="small"

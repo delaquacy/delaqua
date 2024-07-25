@@ -4,7 +4,9 @@
   padding: 10px 0;
 }
 .name_container {
-  margin-left: 20px;
+  display: flex;
+  flex-direction: row;
+
 }
 .name {
   font-family: "arial black", "arial-w01-black", "arial-w02-black",
@@ -18,8 +20,7 @@
   display: flex;
   text-align: right;
 }
-.text {
-}
+
 .languageContainer {
   display: flex;
   justify-content: flex-end;
@@ -52,8 +53,13 @@
 
 @media (max-width: 748px) {
   .mobileScreen {
-    display: block;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
   }
+
   .loginMyaccountButtons {
     display: none;
   }
@@ -62,20 +68,11 @@
     height: 35px;
     margin: 0 7px;
   }
-  .name_container {
-    margin-left: 10px;
-  }
   .toolbar {
-    padding: 0 7px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
+
 }
-@media (max-width: 485px) {
-  .name_container {
-    width: 28%;
-  }
-}
-@media (min-width: 390px) and (max-width: 394px) {
-  .name_container {
-    margin-left: 13px;
-  }
-}
+

@@ -11,16 +11,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { enqueueSnackbar } from "notistack";
 import { app, db } from "../../lib/config";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import PhoneInput from "react-phone-number-input";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTranslation } from "react-i18next";
@@ -82,7 +73,7 @@ export default function Logins({ params }: LogInProps) {
         }
       );
     }
-  }, [auth]);
+  }, [auth, myWindow]);
 
   const handlePhoneNumberChange = (event: string | undefined) => {
     setPhoneNumber(event);
@@ -99,11 +90,13 @@ export default function Logins({ params }: LogInProps) {
         trackAmplitudeEvent("enterPhone", {
           text: "Enter phone",
         });
+
         const confirmation = await signInWithPhoneNumber(
           auth,
           phoneNumber,
           myWindow?.recaptchaVerifier
         );
+
         setConfirmationResult(confirmation);
         enqueueSnackbar(messages.otpSent, { variant: "success" });
         trackAmplitudeEvent("requestOTP", {
@@ -132,12 +125,6 @@ export default function Logins({ params }: LogInProps) {
 
       const user = auth.currentUser;
       if (user) {
-        // console.log(isAdmin);
-
-        // if (isAdmin) {
-        //   // User is an administrator, access to admin section allowed
-        // }
-
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
         setUser(user);

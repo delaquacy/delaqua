@@ -1,14 +1,16 @@
 "use client";
 
-import { User, getAuth, onAuthStateChanged } from "firebase/auth";
+import { User, getAuth } from "firebase/auth";
 import React, { ReactNode, useEffect, useState } from "react";
 import { getUnpaidOrders } from "../utils/getUnpaidOrders";
 import { adminCheck } from "../utils";
-import { OrdersData } from "../components/OrdersTable";
 import dayjs from "dayjs";
 
 import { fetchOrdersWithSpecificDate } from "../utils/fetchOrdersWithSpecificDate";
 import { checkAndAddAllOrder } from "../utils/checkAndAddAllOrder";
+import { OrdersData } from "../types";
+
+const auth = getAuth();
 
 interface UserContextType {
   user: User | null;
@@ -33,33 +35,25 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [unpaidOrders, setUnpaidOrders] = useState<OrdersData[]>([]);
   let order: any = [];
 
-  const verifyAdmin = async (user: User) => {
-    if (user) {
-      const isAdmin = await adminCheck(user.phoneNumber as string);
-
-      setIsAdmin(isAdmin);
-    }
-  };
-
   useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (newUser) => {
-      setUser(newUser);
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      if (currentUser) {
+        adminCheck(currentUser.phoneNumber as string).then((res) =>
+          setIsAdmin(res as boolean)
+        );
+
+        getUnpaidOrders(currentUser?.uid as string).then(setUnpaidOrders);
+        setUser(currentUser);
+      }
     });
 
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (!user) return;
-
-    verifyAdmin(user);
-    getUnpaidOrders(user?.uid as string).then(setUnpaidOrders);
-  }, [user]);
-
   //sync all data to allOrders collection
   useEffect(() => {
     const today = dayjs().format("D.M.YYYY");
+    // const today = "17.7.2024";
 
     fetchOrdersWithSpecificDate(today).then((orders: any[]) => {
       const current = orders.filter((order) => {
@@ -69,10 +63,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
         const deliveryDate = dayjs(`${year}-${month}-${day}`);
 
-        return deliveryDate.isSameOrAfter(dayjs().format("YYYY-MM-DD"), "day");
+        return deliveryDate.isSameOrAfter(
+          dayjs(deliveryDate).format("YYYY-MM-DD"),
+          "day"
+        );
       });
-
-      console.log(`Orders with delivery date from ${today}:`, current);
 
       if (!current.length) return;
 

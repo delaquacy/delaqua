@@ -1,4 +1,4 @@
-import { OrdersData } from "../components/OrdersTable";
+import { OrdersData } from "../types";
 
 export const getFormattedDataForCVS = (orders: OrdersData[]) => {
   return orders.map((order) => {

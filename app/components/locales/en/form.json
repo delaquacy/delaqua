@@ -10,6 +10,7 @@
   "orders_history": "My orders history",
   "delivery_date_and_time": " Delivery date and time",
   "delivery_soonest_day": "The soonest delivery day is ",
+  "delivery_soonest_time": "The soonest delivery time is ",
   "delivery_please_change_day": "please change the day",
   "first_and_last": "First and last name",
   "post_index": "Post index",
@@ -49,5 +50,8 @@
   "change_day": "Please change the day",
   "pump_installation": "How to install a pump",
   "loading_paymentLink": "Please wait a few more seconds for the payment link, and do not interact with the page",
-  "info_message_more_one_bottle": "Order of 1 bottle available for the first delivery only"
+  "info_message_more_one_bottle": "Order of 1 bottle available for the first delivery only",
+  "soonest_day": "The soonest delivery day is {{nextDay}}, please change the day",
+  "sunday": "Sunday is the only non-delivery day for us 🙌  You can place your order for Monday-Saturday"
+
 }

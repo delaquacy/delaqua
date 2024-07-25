@@ -3,7 +3,6 @@
 // only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
 // with exampleArray.slice().sort(exampleComparator)
 
-// TODO: EDIT SORT FUNCTION DUE TO CURRENT CONDITION
 export function stableSort<T>(
   array: readonly T[],
   comparator: (a: T, b: T) => number

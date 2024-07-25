@@ -7,7 +7,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../lib/config";
-import { OrdersData } from "../components/OrdersTable";
+import { OrdersData } from "../types";
 
 export const getUnpaidOrders = async (
   userId: string

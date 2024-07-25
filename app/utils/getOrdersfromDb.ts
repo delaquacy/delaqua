@@ -1,8 +1,7 @@
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db, getCurrentUserId } from "../lib/config";
-import { IForm } from "../lib/definitions";
-import { OrdersData } from "../components/OrdersTable";
+import { OrdersData } from "../types";
 
 const useGetOrdersFromDb = () => {
   const [orders, setOrders] = useState<[] | OrdersData[]>([]);

@@ -9,6 +9,5 @@ signInWithPhoneNumber(auth, phoneNumber, appVerifier)
     window.confirmationResult = confirmationResult;
   })
   .catch((error) => {
-    console.log(error);
     grecaptcha.reset(window.recaptchaWidgetId);
   });

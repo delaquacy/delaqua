@@ -13,10 +13,10 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { OrdersData } from "../OrdersTable";
 import { useUserContext } from "@/app/contexts/UserContext";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { OrdersData } from "@/app/types";
 
 export default function WrapperHeader() {
   const [showWindow, setShowWindow] = useState<boolean>(false);
