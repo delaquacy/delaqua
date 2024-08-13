@@ -1,3 +1,4 @@
+"use client";
 import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link.js";
 import { useTranslation } from "react-i18next";

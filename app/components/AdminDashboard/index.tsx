@@ -1,10 +1,18 @@
 "use client";
 import { adminCheck } from "@/app/utils/adminCheck";
-import { CircularProgress, Container } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Link,
+  ListItemIcon,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import OrdersTable from "../OrdersTable";
 import { useUserContext } from "@/app/contexts/UserContext";
+import { ShoppingCart, Inventory2 } from "@mui/icons-material";
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,13 +21,21 @@ const AdminDashboard = () => {
   const { user } = useUserContext();
 
   useEffect(() => {
-    if (user) {
-      adminCheck(user.phoneNumber as string).then((res) => {
-        !res && router.push("/");
-      });
-    }
+    const checkAdmin = async () => {
+      if (!user) {
+        setIsLoading(false);
+        router.push("/");
+        return;
+      }
 
-    setIsLoading(false);
+      const isAdmin = await adminCheck(user?.phoneNumber as string);
+      if (!isAdmin) {
+        router.push("/");
+      }
+      setIsLoading(false);
+    };
+
+    checkAdmin();
   }, [user]);
 
   if (isLoading) {
@@ -39,7 +55,33 @@ const AdminDashboard = () => {
 
   return (
     <>
-      <OrdersTable />
+      <Box display="flex" flexDirection="column" gap="20px" padding="30px">
+        <Box alignSelf="center" fontSize="30px" fontWeight="900">
+          Admins Panel
+        </Box>
+        <Box display="flex" flexDirection="column" gap="10px">
+          <Link href="/admin_dashboard/orders">
+            <MenuItem>
+              <ListItemIcon>
+                <ShoppingCart sx={{ color: "black" }} />
+              </ListItemIcon>
+              <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
+                Orders
+              </Typography>
+            </MenuItem>
+          </Link>
+          <Link href="/admin_dashboard/goods">
+            <MenuItem>
+              <ListItemIcon>
+                <Inventory2 sx={{ color: "black" }} />
+              </ListItemIcon>
+              <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
+                Goods
+              </Typography>
+            </MenuItem>
+          </Link>
+        </Box>
+      </Box>
     </>
   );
 };
