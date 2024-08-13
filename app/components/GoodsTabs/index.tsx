@@ -7,6 +7,7 @@ import { useState } from "react";
 import { GoodsAvailableTable } from "../GoodsAvailableTable";
 import { GoodsIncomingForm } from "../GoodsIncomingForm";
 import { GoodsInvoicesTable } from "../GoodsInvoicesTable";
+import { AddNewGoodForm } from "../AddNewGoodForm";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -25,7 +26,7 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box sx={{ p: 3 }}>{children} </Box>}
     </div>
   );
 }
@@ -67,28 +68,47 @@ export const GoodsTabs = () => {
           sx={{
             flex: 1,
             maxWidth: "100%",
+            borderRadius: "10px",
             transition: "all 0.3s",
+            background: value === 0 ? "#F1F1F1" : "",
             ":hover": {
               background: "#F1F1F1",
-              borderRadius: "10px",
             },
           }}
           label="Goods available at the warehouse"
           {...a11yProps(0)}
         />
+
         <Tab
           sx={{
             flex: 1,
             maxWidth: "100%",
             transition: "all 0.3s",
+            borderRadius: "10px",
+            background: value === 1 ? "#F1F1F1" : "",
             ":hover": {
               background: "#F1F1F1",
-              borderRadius: "10px",
             },
           }}
           label="Incoming Form"
           {...a11yProps(1)}
         />
+
+        <Tab
+          sx={{
+            flex: 1,
+            maxWidth: "100%",
+            transition: "all 0.3s",
+            borderRadius: "10px",
+            background: value === 2 ? "#F1F1F1" : "",
+            ":hover": {
+              background: "#F1F1F1",
+            },
+          }}
+          label="Goods Invoices List"
+          {...a11yProps(2)}
+        />
+
         <Tab
           sx={{
             flex: 1,
@@ -99,8 +119,8 @@ export const GoodsTabs = () => {
               borderRadius: "10px",
             },
           }}
-          label="Goods Invoices List"
-          {...a11yProps(2)}
+          label="Add New Good"
+          {...a11yProps(3)}
         />
       </Tabs>
 
@@ -112,6 +132,9 @@ export const GoodsTabs = () => {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         <GoodsInvoicesTable />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={3}>
+        <AddNewGoodForm />
       </CustomTabPanel>
     </Box>
   );

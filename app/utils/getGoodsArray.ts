@@ -1,26 +1,18 @@
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../lib/config";
 import dayjs from "dayjs";
-
-interface Goods {
-  id: string;
-  lastInvoiceDate: string;
-  lastInvoiceNumber: string;
-  name: string;
-  quantity: number;
-  unitPrice: string;
-}
+import { GoodsAvailable } from "../components/GoodsAvailableTable";
 
 export const getGoodsArray = async () => {
   const goodsRef = collection(db, "goodsInventory");
-  const goods: Goods[] = [];
+  const goods: GoodsAvailable[] = [];
 
   await getDocs(goodsRef).then((snapshot) => {
     snapshot.docs.forEach((doc) => {
       goods.push({
         id: doc.id,
         ...doc.data(),
-      } as Goods);
+      } as GoodsAvailable);
     });
   });
 
@@ -31,5 +23,5 @@ export const getGoodsArray = async () => {
       : dayjs().format("DD-MM-YYYY"),
     lastInvoiceNumber: good.lastInvoiceNumber || "NNNNNNN",
     unitPrice: good.unitPrice || 0,
-  })) as Goods[];
+  })) as GoodsAvailable[];
 };

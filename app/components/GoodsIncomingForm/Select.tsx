@@ -31,7 +31,7 @@ const SelectItem = ({
   };
 
   return (
-    <FormControl sx={{ minWidth: 177, flex: 2 }}>
+    <FormControl sx={{ minWidth: 177, flex: 1 }}>
       <InputLabel size={isSmallScreen ? "small" : "normal"}>
         {t(label)}
       </InputLabel>

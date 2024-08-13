@@ -137,7 +137,15 @@ export const GoodsInvoicesTable = () => {
                     borderRight: "1px solid #ddd",
                   }}
                 >
-                  {item.total}
+                  {item.netBuyWorth}
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{
+                    borderRight: "1px solid #ddd",
+                  }}
+                >
+                  {item.buyPriceVAT}
                 </TableCell>
                 <TableCell
                   align="center"

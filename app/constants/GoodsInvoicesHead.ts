@@ -5,6 +5,7 @@ export const GOODS_INVOICES_HEAD = [
   { value: "Item Code", key: "item.itemCode" },
   { value: "Item", key: "item.itemName" },
   { value: "Quantity", key: "item.quantity" },
-  { value: "Item Total", key: "item.total" },
+  { value: "Net Buy Worth", key: "item.netBuyWorth" },
+  { value: "Buy Price VAT", key: "item.buyPriceVAT" },
   { value: "Invoice Total", key: "total" },
 ];

@@ -10,13 +10,10 @@ export const addItemsQuantityToInventoryTable = async (
 
     const itemSnapshot = await getDoc(itemRef);
 
-    console.log(itemSnapshot?.data()?.quantity);
-
     await updateDoc(itemRef, {
       quantity: +itemSnapshot?.data()?.quantity + +item.quantity,
       lastInvoiceNumber: goodsValues.invoiceNumber,
       lastInvoiceDate: goodsValues.date,
-      unitPrice: +item.total / +item.quantity,
     });
   });
 };

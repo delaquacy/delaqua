@@ -14,15 +14,11 @@ import {
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/app/lib/config";
 import { addItemsQuantityToInventoryTable } from "@/app/utils/addItemsToInventoryTable";
-import {
-  Controller,
-  FieldError,
-  useFieldArray,
-  useForm,
-} from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { validationSchema } from "./validationSchema";
 import { t } from "i18next";
+import { GoodsIncomingFormInputItem } from "./GoodsIncomingFormInputItem";
 
 interface Goods {
   id: string;
@@ -43,7 +39,8 @@ export interface InventoryItem {
   itemName: string;
   itemCode?: string;
   quantity: string;
-  total: string;
+  netBuyWorth: string;
+  buyPriceVAT: string;
 }
 export interface GoodsValues {
   id?: string;
@@ -56,12 +53,7 @@ export interface GoodsValues {
 
 export interface FormValues {
   date: dayjs.Dayjs | null;
-  items?: {
-    id: string;
-    itemName: string;
-    quantity: string;
-    total: string;
-  }[];
+  items?: InventoryItem[];
   invoiceNumber: string;
   total: string;
 }
@@ -81,7 +73,15 @@ export const GoodsIncomingForm = () => {
     defaultValues: {
       date: dayjs(),
       invoiceNumber: "",
-      items: [{ id: "1", itemName: "", quantity: "", total: "" }],
+      items: [
+        {
+          id: "1",
+          itemName: "",
+          quantity: "",
+          netBuyWorth: "",
+          buyPriceVAT: "",
+        },
+      ],
       total: "",
     },
     resolver: yupResolver(validationSchema as any),
@@ -136,22 +136,31 @@ export const GoodsIncomingForm = () => {
         display="flex"
         flexDirection="column"
         gap="15px"
-        width={isSmallScreen ? "100%" : "50%"}
       >
         <Box
           display="flex"
           flexDirection={isSmallScreen ? "column" : "row"}
+          width="100%"
           gap="10px"
         >
           <Controller
             name="date"
             control={control}
             render={({ field }) => (
-              <Box display="flex" flexDirection="column">
+              <Box
+                display="flex"
+                flexDirection="column"
+                sx={{
+                  flex: 1,
+                }}
+              >
                 <DatePicker
                   {...field}
                   label="Invoice date"
                   format="DD-MM-YYYY"
+                  sx={{
+                    flex: 1,
+                  }}
                 />
                 <FormHelperText
                   sx={{
@@ -163,137 +172,122 @@ export const GoodsIncomingForm = () => {
               </Box>
             )}
           />
-          <Controller
-            name="invoiceNumber"
-            control={control}
-            render={({ field }) => (
-              <Box display="flex" flexDirection="column">
-                <TextField
-                  {...field}
-                  id="invoice-number"
-                  error={!!errors.invoiceNumber}
-                  helperText={errors.invoiceNumber?.message as string}
-                  color="info"
-                  label="Enter Invoice number"
-                  size={isSmallScreen ? "small" : "medium"}
-                  variant="outlined"
-                />
-                {!errors.invoiceNumber?.message && (
-                  <Box
-                    sx={{
-                      height: "23px",
-                    }}
-                  ></Box>
-                )}
-              </Box>
-            )}
-          />
+
+          <Box
+            sx={{
+              flex: 1,
+            }}
+          >
+            <GoodsIncomingFormInputItem
+              name={"invoiceNumber"}
+              control={control}
+              type="string"
+              label="Enter Invoice number"
+              error={!!errors.invoiceNumber}
+              helperText={errors.invoiceNumber?.message as string}
+            />
+          </Box>
         </Box>
 
         {fields.map((field, index) => (
-          <Box display="flex" alignItems="start" gap="10px" key={field.id}>
-            <Controller
-              name={`items.${index}.itemName`}
-              control={control}
-              render={({ field: controllerField }) => (
-                <SelectItem
-                  value={controllerField.value}
-                  id={field.id}
-                  onChange={(id, value, field) => {
-                    controllerField.onChange(value);
-                  }}
-                  label="Select item"
-                  values={goods.map((good) => ({
-                    value: good.name,
-                    label: good.name,
-                  }))}
-                />
-              )}
-            />
-            <Controller
-              name={`items.${index}.quantity`}
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  color="info"
-                  type="number"
-                  label="Enter quantity"
-                  size={isSmallScreen ? "small" : "medium"}
-                  variant="outlined"
-                  error={!!errors.items?.[index]?.quantity}
-                  helperText={errors.items?.[index]?.quantity?.message}
-                />
-              )}
-            />
-            <Box display="flex" flexDirection="column">
+          <Box
+            display="flex"
+            alignItems="start"
+            gap="10px"
+            key={field.id}
+            flexDirection={isSmallScreen ? "column" : "row"}
+          >
+            <Box display="flex" flexDirection="row" gap="15px" width="100%">
               <Controller
-                name={`items.${index}.total`}
+                name={`items.${index}.itemName`}
                 control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    color="info"
-                    type="number"
-                    label="Enter total"
-                    size={isSmallScreen ? "small" : "medium"}
-                    variant="outlined"
-                    error={!!errors.items?.[index]?.total}
-                    helperText={errors.items?.[index]?.total?.message as string}
+                render={({ field: controllerField }) => (
+                  <SelectItem
+                    value={controllerField.value}
+                    id={field.id}
+                    onChange={(id, value, field) => {
+                      controllerField.onChange(value);
+                    }}
+                    label="Select item"
+                    values={goods.map((good) => ({
+                      value: good.name,
+                      label: good.name,
+                    }))}
                   />
                 )}
               />
-              {!errors?.items?.[index]?.quantity?.message &&
-                !errors.items?.[index]?.total?.message && (
-                  <Box
-                    sx={{
-                      height: "23px",
-                    }}
-                  ></Box>
-                )}
+              <GoodsIncomingFormInputItem
+                name={`items.${index}.quantity` as any}
+                control={control}
+                type="number"
+                label="Enter quantity"
+                error={!!errors.items?.[index]?.quantity}
+                helperText={errors.items?.[index]?.quantity?.message as string}
+                sx={{ flex: 1 }}
+              />
             </Box>
 
-            <Tooltip
-              title={t("removeFilter")}
-              onClick={() => remove(index)}
-              sx={{
-                transform: "translateY(12px)",
-                width: isSmallScreen ? "20px" : "30px",
-                height: isSmallScreen ? "20px" : "30px",
-                cursor: "pointer",
-                color: "gray",
-              }}
-            >
-              <Delete fontSize={isSmallScreen ? "small" : "medium"} />
-            </Tooltip>
+            <Box display="flex" flexDirection="row" gap="15px" width="100%">
+              <GoodsIncomingFormInputItem
+                name={`items.${index}.netBuyWorth` as any}
+                control={control}
+                type="number"
+                label="Enter Net Buy Worth"
+                error={!!errors.items?.[index]?.netBuyWorth}
+                helperText={
+                  errors.items?.[index]?.netBuyWorth?.message as string
+                }
+                sx={{ flex: 1 }}
+              />
+
+              <GoodsIncomingFormInputItem
+                name={`items.${index}.buyPriceVAT` as any}
+                control={control}
+                type="number"
+                label="Enter Buy Price VAT"
+                error={!!errors.items?.[index]?.buyPriceVAT}
+                helperText={
+                  errors.items?.[index]?.buyPriceVAT?.message as string
+                }
+                sx={{ flex: 1 }}
+              />
+
+              <Box
+                sx={{
+                  width: "30px",
+                  height: "30px",
+                }}
+              >
+                {fields.length > 1 && (
+                  <Tooltip
+                    title={"Remove Item"}
+                    onClick={() => remove(index)}
+                    sx={{
+                      transform: isSmallScreen
+                        ? "translateY(5px)"
+                        : "translateY(12px)",
+                      width: "30px",
+                      height: "30px",
+                      cursor: "pointer",
+                      color: "gray",
+                    }}
+                  >
+                    <Delete fontSize={isSmallScreen ? "small" : "medium"} />
+                  </Tooltip>
+                )}
+              </Box>
+            </Box>
           </Box>
         ))}
 
-        <Box display="flex" flexDirection="column">
-          <Controller
-            name="total"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                id="total"
-                color="info"
-                label="Total invoice sum"
-                size="small"
-                variant="outlined"
-                error={!!errors.total}
-                helperText={errors.total?.message as string}
-              />
-            )}
-          />
-          {!errors.total?.message && (
-            <Box
-              sx={{
-                height: "23px",
-              }}
-            ></Box>
-          )}
-        </Box>
+        <GoodsIncomingFormInputItem
+          name={"total"}
+          control={control}
+          type="number"
+          label="Total invoice sum"
+          error={!!errors.total}
+          helperText={errors.total?.message as string}
+        />
 
         <Box display="flex" flexDirection="row" gap="20px">
           <Button
@@ -304,14 +298,14 @@ export const GoodsIncomingForm = () => {
                 id: `${fields.length + 1}`,
                 itemName: "",
                 quantity: "",
-                total: "",
+                netBuyWorth: "",
+                buyPriceVAT: "",
               });
             }}
             size={isSmallScreen ? "small" : "medium"}
             sx={{
               flex: 1,
               textTransform: "capitalize",
-              fontSize: isSmallScreen ? "10px" : "12px",
             }}
           >
             <AddCircleOutline fontSize="small" sx={{ marginRight: 1 }} />
@@ -325,7 +319,6 @@ export const GoodsIncomingForm = () => {
             sx={{
               flex: 1,
               textTransform: "capitalize",
-              fontSize: isSmallScreen ? "10px" : "12px",
               background: "#478547",
               ":hover": {
                 background: "#356435",

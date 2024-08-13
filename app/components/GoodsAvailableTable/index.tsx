@@ -1,7 +1,8 @@
 "use client";
 import { GOODS_AVAILABLE_HEAD } from "@/app/constants/GoodsAvaliableHead";
-import { useScreenSize } from "@/app/hooks";
+import { useScreenSize, useToast } from "@/app/hooks";
 import { getGoodsArray } from "@/app/utils/getGoodsArray";
+import { Delete } from "@mui/icons-material";
 import {
   Box,
   Card,
@@ -10,23 +11,36 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import dayjs from "dayjs";
+import { t } from "i18next";
 import { useEffect, useState } from "react";
+import RemoveItemModalWindow from "./RemoveItemModalWindow";
+import { deleteDoc, doc } from "firebase/firestore";
+import { db } from "@/app/lib/config";
 
-interface Goods {
+export interface GoodsAvailable {
   id: string;
   lastInvoiceDate: string;
   lastInvoiceNumber: string;
   name: string;
-  quantity: number;
+  quantity: string;
   unitPrice: string;
 }
 
 export const GoodsAvailableTable = () => {
   const { isSmallScreen } = useScreenSize();
-  const [goods, setGoods] = useState<Goods[]>([]);
+  const { showSuccessToast, showErrorToast } = useToast();
+
+  const [goods, setGoods] = useState<GoodsAvailable[]>([]);
+  const [openDeleteWindow, setOpenDeleteWindow] = useState(false);
+
+  const [itemDetails, setItemDetails] = useState({
+    details: "",
+    id: "",
+  });
+
   const getGoodsRows = async () => {
     try {
       const data = await getGoodsArray();
@@ -37,11 +51,19 @@ export const GoodsAvailableTable = () => {
     }
   };
 
+  const handleRemoveItem = async (documentId: string) => {
+    await deleteDoc(doc(db, "goods", documentId));
+    await deleteDoc(doc(db, "goodsInventory", documentId));
+    setOpenDeleteWindow(false);
+    showSuccessToast("Item successfully removed");
+    getGoodsRows();
+  };
+
   useEffect(() => {
     getGoodsRows();
   }, []);
   return (
-    <>
+    <Box>
       {isSmallScreen ? (
         <Box display="flex" flexDirection="column" gap="15px">
           {goods.map((good) => (
@@ -72,7 +94,9 @@ export const GoodsAvailableTable = () => {
                   >
                     {head.value}
                   </Typography>
-                  <Typography>{good[head.key as keyof Goods]}</Typography>
+                  <Typography>
+                    {good[head.key as keyof GoodsAvailable]}
+                  </Typography>
                 </Box>
               ))}
             </Card>
@@ -154,12 +178,40 @@ export const GoodsAvailableTable = () => {
                 >
                   {good.quantity}
                 </TableCell>
-                {/* <TableCell align="center">{good.unitPrice}</TableCell> */}
+                <TableCell align="center" sx={{}}>
+                  <Tooltip
+                    title={"Remove Item"}
+                    onClick={() => {
+                      setItemDetails({
+                        details: `${good.id} - ${good.name}`,
+                        id: good.id,
+                      });
+                      setOpenDeleteWindow(true);
+                    }}
+                    sx={{
+                      transform: "translateY(5px)",
+                      width: isSmallScreen ? "20px" : "30px",
+                      height: isSmallScreen ? "20px" : "30px",
+                      cursor: "pointer",
+                      color: "gray",
+                    }}
+                  >
+                    <Delete fontSize={isSmallScreen ? "small" : "medium"} />
+                  </Tooltip>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       )}
-    </>
+
+      <RemoveItemModalWindow
+        open={openDeleteWindow}
+        setOpen={setOpenDeleteWindow}
+        itemDetails={itemDetails.details}
+        itemId={itemDetails.id}
+        onRemove={handleRemoveItem}
+      />
+    </Box>
   );
 };
