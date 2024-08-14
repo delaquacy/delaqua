@@ -25,6 +25,7 @@ interface Goods {
   sellPriceVAT: string;
   taxRate: string;
   picture: string;
+  description: string;
 }
 
 export const AddNewGoodForm = () => {
@@ -224,6 +225,15 @@ export const AddNewGoodForm = () => {
           />
         </Box>
       </Box>
+      <GoodsIncomingFormInputItem
+        name={"description"}
+        control={control}
+        type="string"
+        label="Enter description"
+        error={!!errors.description}
+        helperText={errors.description?.message as string}
+        multiline
+      />
       <Button
         type="submit"
         variant="contained"

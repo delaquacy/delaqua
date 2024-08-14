@@ -13,6 +13,7 @@ export const validationSchema = yup.object().shape({
   sellPriceVAT: yup.string().required("sellPriceVAT is required"),
   taxRate: yup.string().required("taxRate is required"),
   picture: yup.string().required("Picture link is required"),
+  description: yup.string().required("Description link is required"),
 });
 
 // lastInvoiceDate: string;

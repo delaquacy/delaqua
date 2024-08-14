@@ -1,17 +1,14 @@
 "use client";
 import { GOODS_INVOICES_HEAD } from "@/app/constants/GoodsInvoicesHead";
 import { useScreenSize } from "@/app/hooks";
-import { getGoodsArray } from "@/app/utils/getGoodsArray";
 import { getGoodsIncomingInvoices } from "@/app/utils/getGoodsIncomingInvoices";
 import {
-  Box,
-  Card,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { GoodsValues } from "../GoodsIncomingForm";
@@ -43,13 +40,16 @@ export const GoodsInvoicesTable = () => {
     getGoodsRows();
   }, []);
   return (
-    <>
-      <Table
-        size="small"
-        sx={{
-          padding: "20px",
-        }}
-      >
+    <TableContainer
+      sx={{
+        height: isSmallScreen ? `calc(100dvh - 240px)` : `calc(100dvh - 205px)`,
+        width: "calc(100vw - 40px)",
+        paddingInline: "20px",
+        boxSizing: "border-box",
+        overflow: "scroll",
+      }}
+    >
+      <Table size="small" sx={{ width: "100%" }} stickyHeader>
         <TableHead>
           <TableRow>
             {GOODS_INVOICES_HEAD.map((good, index) => (
@@ -131,13 +131,14 @@ export const GoodsInvoicesTable = () => {
                 >
                   {item.quantity}
                 </TableCell>
+
                 <TableCell
                   align="center"
                   sx={{
                     borderRight: "1px solid #ddd",
                   }}
                 >
-                  {item.netBuyWorth}
+                  {good.buyPriceVAT}
                 </TableCell>
                 <TableCell
                   align="center"
@@ -145,21 +146,14 @@ export const GoodsInvoicesTable = () => {
                     borderRight: "1px solid #ddd",
                   }}
                 >
-                  {item.buyPriceVAT}
+                  {good.netBuyWorth}
                 </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    borderRight: "1px solid #ddd",
-                  }}
-                >
-                  {good.total}
-                </TableCell>
+                <TableCell align="center">{good.total}</TableCell>
               </TableRow>
             ))
           )}
         </TableBody>
       </Table>
-    </>
+    </TableContainer>
   );
 };

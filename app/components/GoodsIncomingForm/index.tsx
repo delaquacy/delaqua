@@ -1,4 +1,11 @@
-import { Box, Button, FormHelperText, TextField, Tooltip } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  FormHelperText,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import SelectItem from "./Select";
@@ -17,7 +24,6 @@ import { addItemsQuantityToInventoryTable } from "@/app/utils/addItemsToInventor
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { validationSchema } from "./validationSchema";
-import { t } from "i18next";
 import { GoodsIncomingFormInputItem } from "./GoodsIncomingFormInputItem";
 
 interface Goods {
@@ -39,8 +45,6 @@ export interface InventoryItem {
   itemName: string;
   itemCode?: string;
   quantity: string;
-  netBuyWorth: string;
-  buyPriceVAT: string;
 }
 export interface GoodsValues {
   id?: string;
@@ -49,6 +53,8 @@ export interface GoodsValues {
   items: InventoryItem[];
   invoiceNumber: string;
   total: string;
+  netBuyWorth: string;
+  buyPriceVAT: string;
 }
 
 export interface FormValues {
@@ -56,6 +62,8 @@ export interface FormValues {
   items?: InventoryItem[];
   invoiceNumber: string;
   total: string;
+  netBuyWorth: string;
+  buyPriceVAT: string;
 }
 
 export const GoodsIncomingForm = () => {
@@ -78,11 +86,11 @@ export const GoodsIncomingForm = () => {
           id: "1",
           itemName: "",
           quantity: "",
-          netBuyWorth: "",
-          buyPriceVAT: "",
         },
       ],
       total: "",
+      netBuyWorth: "",
+      buyPriceVAT: "",
     },
     resolver: yupResolver(validationSchema as any),
   });
@@ -140,8 +148,8 @@ export const GoodsIncomingForm = () => {
         <Box
           display="flex"
           flexDirection={isSmallScreen ? "column" : "row"}
-          width="100%"
-          gap="10px"
+          width="calc(100% - 40px)"
+          gap="15px"
         >
           <Controller
             name="date"
@@ -195,7 +203,7 @@ export const GoodsIncomingForm = () => {
             alignItems="start"
             gap="10px"
             key={field.id}
-            flexDirection={isSmallScreen ? "column" : "row"}
+            flexDirection={"row"}
           >
             <Box display="flex" flexDirection="row" gap="15px" width="100%">
               <Controller
@@ -227,69 +235,84 @@ export const GoodsIncomingForm = () => {
               />
             </Box>
 
-            <Box display="flex" flexDirection="row" gap="15px" width="100%">
-              <GoodsIncomingFormInputItem
-                name={`items.${index}.netBuyWorth` as any}
-                control={control}
-                type="number"
-                label="Enter Net Buy Worth"
-                error={!!errors.items?.[index]?.netBuyWorth}
-                helperText={
-                  errors.items?.[index]?.netBuyWorth?.message as string
-                }
-                sx={{ flex: 1 }}
-              />
-
-              <GoodsIncomingFormInputItem
-                name={`items.${index}.buyPriceVAT` as any}
-                control={control}
-                type="number"
-                label="Enter Buy Price VAT"
-                error={!!errors.items?.[index]?.buyPriceVAT}
-                helperText={
-                  errors.items?.[index]?.buyPriceVAT?.message as string
-                }
-                sx={{ flex: 1 }}
-              />
-
-              <Box
-                sx={{
-                  width: "30px",
-                  height: "30px",
-                }}
-              >
-                {fields.length > 1 && (
-                  <Tooltip
-                    title={"Remove Item"}
-                    onClick={() => remove(index)}
-                    sx={{
-                      transform: isSmallScreen
-                        ? "translateY(5px)"
-                        : "translateY(12px)",
-                      width: "30px",
-                      height: "30px",
-                      cursor: "pointer",
-                      color: "gray",
-                    }}
-                  >
-                    <Delete fontSize={isSmallScreen ? "small" : "medium"} />
-                  </Tooltip>
-                )}
-              </Box>
+            <Box
+              sx={{
+                width: "30px",
+                height: "30px",
+              }}
+            >
+              {fields.length > 1 && (
+                <Tooltip
+                  title={"Remove Item"}
+                  onClick={() => remove(index)}
+                  sx={{
+                    transform: isSmallScreen
+                      ? "translateY(5px)"
+                      : "translateY(12px)",
+                    width: "30px",
+                    height: "30px",
+                    cursor: "pointer",
+                    color: "gray",
+                  }}
+                >
+                  <Delete fontSize={isSmallScreen ? "small" : "medium"} />
+                </Tooltip>
+              )}
             </Box>
           </Box>
         ))}
 
-        <GoodsIncomingFormInputItem
-          name={"total"}
-          control={control}
-          type="number"
-          label="Total invoice sum"
-          error={!!errors.total}
-          helperText={errors.total?.message as string}
+        <Divider
+          sx={{
+            marginBottom: isSmallScreen ? "40px" : "20px",
+            width: "80%",
+            alignSelf: "center",
+            transform: "translateX(-20px)",
+          }}
         />
 
-        <Box display="flex" flexDirection="row" gap="20px">
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap="15px"
+          width="calc(100% - 40px)"
+        >
+          <GoodsIncomingFormInputItem
+            name={"total"}
+            control={control}
+            type="number"
+            label="Total invoice sum"
+            error={!!errors.total}
+            helperText={errors.total?.message as string}
+          />
+          <Box display="flex" flexDirection="row" gap="15px" width="100%">
+            <GoodsIncomingFormInputItem
+              name={"netBuyWorth"}
+              control={control}
+              type="number"
+              label="Enter Net Buy Worth"
+              error={!!errors.netBuyWorth}
+              helperText={errors?.netBuyWorth?.message as string}
+              sx={{ flex: 1 }}
+            />
+            <GoodsIncomingFormInputItem
+              name={"buyPriceVAT"}
+              control={control}
+              type="number"
+              label="Enter Buy Price VAT"
+              error={!!errors.buyPriceVAT}
+              helperText={errors?.buyPriceVAT?.message as string}
+              sx={{ flex: 1 }}
+            />
+          </Box>
+        </Box>
+
+        <Box
+          display="flex"
+          flexDirection="row"
+          gap="20px"
+          width="calc(100% - 40px)"
+        >
           <Button
             variant="contained"
             onClick={() => {
@@ -298,8 +321,6 @@ export const GoodsIncomingForm = () => {
                 id: `${fields.length + 1}`,
                 itemName: "",
                 quantity: "",
-                netBuyWorth: "",
-                buyPriceVAT: "",
               });
             }}
             size={isSmallScreen ? "small" : "medium"}

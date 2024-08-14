@@ -31,7 +31,7 @@ const SelectItem = ({
   };
 
   return (
-    <FormControl sx={{ minWidth: 177, flex: 1 }}>
+    <FormControl sx={{ minWidth: 136, flex: 1 }}>
       <InputLabel size={isSmallScreen ? "small" : "normal"}>
         {t(label)}
       </InputLabel>
@@ -64,7 +64,7 @@ const SelectItem = ({
 const selectStyle = (isSmallScreen: boolean) => ({
   fontSize: isSmallScreen ? "12px" : "",
   "& .MuiSelect-select": {
-    padding: isSmallScreen ? "13px 14px" : "18px 14px",
+    padding: isSmallScreen ? "11px 14px" : "18px 14px",
   },
 });
 

@@ -11,6 +11,7 @@ interface GoodsIncomingFormItemProps {
   error: boolean;
   helperText: string;
   sx?: any;
+  multiline?: boolean;
 }
 
 export const GoodsIncomingFormInputItem = ({
@@ -20,6 +21,7 @@ export const GoodsIncomingFormInputItem = ({
   label,
   error,
   helperText,
+  multiline,
   sx = {},
 }: GoodsIncomingFormItemProps) => {
   const { isSmallScreen } = useScreenSize();
@@ -32,6 +34,8 @@ export const GoodsIncomingFormInputItem = ({
         render={({ field }) => (
           <TextField
             {...field}
+            multiline={multiline}
+            maxRows={3}
             color="info"
             type={type}
             label={label}
@@ -45,7 +49,7 @@ export const GoodsIncomingFormInputItem = ({
       {!helperText && (
         <Box
           sx={{
-            height: "23px",
+            height: isSmallScreen ? "40px" : "23px",
           }}
         ></Box>
       )}
