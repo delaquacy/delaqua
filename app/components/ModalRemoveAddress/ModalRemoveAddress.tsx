@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (transfer: boolean) => void;
 }
 
 export const ModalRemoveAddress: React.FC<ModalProps> = ({
@@ -27,27 +27,16 @@ export const ModalRemoveAddress: React.FC<ModalProps> = ({
   };
 
   return (
-    <Modal
-      open={isOpen}
-      onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
+    <Modal open={isOpen} onClose={onClose}>
       <Box sx={style}>
-        <Typography
-          id="modal-modal-title"
-          variant="h6"
-          component="h2"
-        >
+        <Typography id="modal-modal-title" variant="h6" component="h2">
           {t("bottles_transfer")}
         </Typography>
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           {t("bottles_transfer_question")}
         </Typography>
-        <Box
-          sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}
-        >
-          <Button onClick={onConfirm} sx={{ mr: 1 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
+          <Button onClick={() => onConfirm(true)} sx={{ mr: 1 }}>
             Yes
           </Button>
           <Button onClick={onClose}>No</Button>

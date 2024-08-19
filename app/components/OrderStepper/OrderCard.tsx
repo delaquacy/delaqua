@@ -1,6 +1,7 @@
 import { Box, Card, Typography } from "@mui/material";
 import Image from "next/image";
 import { OrderCardCounter } from "./OrderCardCounter";
+import { useTranslation } from "react-i18next";
 
 interface OrderCardProps {
   imageSrc: string;
@@ -25,6 +26,8 @@ export const OrderCard = ({
   onAdd,
   onRemove,
 }: OrderCardProps) => {
+  const { t } = useTranslation("form");
+
   return (
     <Card
       sx={{
@@ -65,13 +68,11 @@ export const OrderCard = ({
           alignContent: "center",
         }}
       >
-        <Typography
-          textAlign="center"
-          fontSize="10px"
-          color="gray"
-        >{`Product code: ${code}`}</Typography>
+        <Typography textAlign="center" fontSize="10px" color="gray">
+          {`${t("productCode")}: ${code}`}
+        </Typography>
         <Typography textAlign="center" fontWeight="bold">
-          {title}
+          {t(`${code}`)}
         </Typography>
         <Typography textAlign="center">{description}</Typography>
         <Typography textAlign="center" color="gray">

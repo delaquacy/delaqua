@@ -6,6 +6,7 @@ import {
   UserOrderItem,
   useOrderDetailsContext,
 } from "@/app/contexts/OrderDetailsContext";
+import { useTranslation } from "react-i18next";
 
 interface FormValues {
   items: UserOrderItem[];
@@ -19,6 +20,8 @@ export const FirstStep = ({
   handleNext: () => void;
 }) => {
   const theme = useTheme();
+  const { t } = useTranslation("form");
+
   const { goods, userOrder, isFirstOrder, handleAddOrderDetails } =
     useOrderDetailsContext();
 
@@ -135,14 +138,10 @@ export const FirstStep = ({
             fontSize: "14px",
           }}
         >
-          {isFirstOrder
-            ? "** Minimum order for you is 1 bottle of 18.9 L"
-            : "** Minimum order for you is 2 bottles of 18.9 L"}
+          {isFirstOrder ? t("minimumOrderSmall") : t("minimumOrderBig")}
         </FormHelperText>
 
-        {renderButtonsGroup(
-          showTooltipMessage ? "Please make the minimum order to proceed" : ""
-        )}
+        {renderButtonsGroup(showTooltipMessage ? t("minimumOrder") : "")}
       </Card>
     </form>
   );

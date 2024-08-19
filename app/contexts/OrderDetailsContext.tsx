@@ -97,6 +97,7 @@ interface UserData {
   orders: any;
   numberOfBottlesInStock: string;
   userUniqId: string;
+  userId: string;
   pomp: string;
 }
 export const OrderDetailsContext = createContext<OrderDetailsContextType>({
@@ -110,6 +111,7 @@ export const OrderDetailsContext = createContext<OrderDetailsContextType>({
     numberOfBottlesInStock: "",
     userUniqId: "",
     pomp: "",
+    userId: "",
   },
   userOrder: {
     id: "",
@@ -195,6 +197,7 @@ export const OrderDetailsProvider = ({
     numberOfBottlesInStock: "0",
     userUniqId: "0",
     pomp: "0",
+    userId: "",
   });
 
   const fetchUserData = async (userId: string) => {
@@ -210,6 +213,7 @@ export const OrderDetailsProvider = ({
         addresses: addressesData,
         orders: ordersData,
         userUniqId: userNumber,
+        userId,
       }));
 
       setIsFirstOrder(ordersData.length === 0);

@@ -1,12 +1,9 @@
 import {
   Box,
+  Button,
   Card,
-  FormHelperText,
-  IconButton,
   ToggleButton,
   ToggleButtonGroup,
-  Tooltip,
-  useTheme,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
@@ -15,7 +12,6 @@ import { useTranslation } from "react-i18next";
 import { useScreenSize } from "@/app/hooks";
 
 import { GoodsIncomingFormInputItem } from "../GoodsIncomingForm/GoodsIncomingFormInputItem";
-import Link from "next/link";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { validationSchema } from "./validationSchema";
 import { AddressDetailCard } from "./AddressDetailCard";
@@ -23,10 +19,19 @@ import {
   AddLocationAltOutlined,
   WrongLocationOutlined,
 } from "@mui/icons-material";
-import { FieldValue, serverTimestamp } from "firebase/firestore";
+import {
+  FieldValue,
+  doc,
+  getDoc,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
+import { AddNewAddressForm } from "./AddNewAddressForm";
+import { ModalRemoveAddress } from "../ModalRemoveAddress/ModalRemoveAddress";
+import { db } from "@/app/lib/config";
 
 interface FormValues {
-  id: string;
+  id?: string;
   firstAndLast: string;
   addressDetails: string;
   deliveryAddress: string;
@@ -39,7 +44,6 @@ interface FormValues {
 }
 
 const DEFAULT_VALUES = {
-  id: "",
   firstAndLast: "",
   postalIndex: "",
   deliveryAddress: "",
@@ -60,7 +64,6 @@ export const ThirdStep = ({
 }) => {
   const { t } = useTranslation("form");
 
-  const theme = useTheme();
   const { userOrder, userData, handleAddOrderDetails } =
     useOrderDetailsContext();
   const { isSmallScreen } = useScreenSize();
@@ -70,23 +73,22 @@ export const ThirdStep = ({
   );
   const [showAddressForm, setShowAddressForm] = useState(true);
   const [addresses, setAddresses] = useState<any[]>([]);
-  const [selectedAddress, setSelectedAddress] = useState(
+  const [selectedAddress, setSelectedAddress] = useState<FormValues | null>(
     userOrder.deliveryAddress
   );
+
+  console.log(addresses);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
-    setValue,
   } = useForm<FormValues>({
     defaultValues: userOrder.deliveryAddress,
-    resolver: yupResolver(validationSchema as any),
   });
 
-  const handleSetNewValues = (newValues: FormValues) => {
+  const handleSetNewValues = (newValues: FormValues | null) => {
     if (!newValues) {
       reset({
         ...DEFAULT_VALUES,
@@ -101,9 +103,63 @@ export const ThirdStep = ({
     setShowTooltipMessage(false);
   };
 
+  const handleAddNewAddress = (newAddress: FormValues) => {
+    if (addresses.find(({ id }) => id === newAddress.id)) return;
+
+    setAddresses((prev) => [newAddress, ...prev]);
+    setSelectedAddress(newAddress);
+    setShowAddressForm(false);
+  };
+
+  const handleRemoveAddress = (address: FormValues) => {
+    if (selectedAddress?.id === address.id) {
+      setSelectedAddress(null);
+      handleSetNewValues(DEFAULT_VALUES);
+      setShowTooltipMessage(!null);
+    }
+    setAddresses((prev) => prev.filter(({ id }) => id !== address.id));
+  };
+
+  const handleTransferBottles = async (
+    addressId: string,
+    newAddressId: string,
+    newNumberOfBottles: string
+  ) => {
+    const addressRef = doc(
+      db,
+      `users/${userData.userId}/addresses/${addressId}`
+    );
+
+    const newAddressRef = doc(
+      db,
+      `users/${userData.userId}/addresses/${newAddressId}`
+    );
+
+    const newAddressDoc = await getDoc(newAddressRef);
+    const newAddressBottles = newAddressDoc.data()?.numberOfBottles || "0";
+
+    await updateDoc(addressRef, {
+      archived: true,
+      numberOfBottles: 0,
+    });
+
+    await updateDoc(newAddressRef, {
+      numberOfBottles: `${+newAddressBottles + +newNumberOfBottles}`,
+    });
+
+    setAddresses((prev) =>
+      prev.map(
+        (item) =>
+          item.id === newAddressId && {
+            ...item,
+            numberOfBottles: +item.numberOfBottles + +newNumberOfBottles,
+          }
+      )
+    );
+  };
+
   const onSubmit = (data: FormValues) => {
     if (showTooltipMessage) return;
-    console.log(data?.postalIndex, "data from form");
 
     handleAddOrderDetails({ deliveryAddress: data });
     handleNext();
@@ -124,193 +180,58 @@ export const ThirdStep = ({
     }
   }, [userData, userOrder]);
 
-  console.log(
-    "SELECTED",
-    userData?.addresses.find((ad) => ad.id === selectedAddress?.id)?.postalIndex
-  );
-  console.log(
-    "userOrder.deliveryAddress",
-    userOrder?.deliveryAddress?.postalIndex
-  );
-
-  console.log(showTooltipMessage, "showTooltipMessage");
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Card
-        sx={{
-          padding: "20px",
-          boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-        }}
-      >
-        {showAddressForm ? (
+    <Card
+      sx={{
+        padding: "20px",
+        boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+      }}
+    >
+      {showAddressForm ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+          }}
+        >
           <Box
             sx={{
               display: "flex",
-              flexDirection: "column",
-              gap: "20px",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              Enter delivery address
-              {addresses.length > 0 && (
-                <Tooltip title={"Return to addresses list"}>
-                  <IconButton onClick={() => setShowAddressForm(false)}>
-                    <WrongLocationOutlined />
-                  </IconButton>
-                </Tooltip>
-              )}
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: isSmallScreen ? "column" : "row",
-                gap: "20px",
-              }}
-            >
-              <GoodsIncomingFormInputItem
-                name={"firstAndLast"}
-                type="string"
-                control={control}
-                label={`${t("first_and_last")} *`}
-                error={!!errors.firstAndLast}
-                helperText={errors.firstAndLast?.message as string}
-                sx={{
-                  flex: 1,
-                }}
-              />
-
-              <GoodsIncomingFormInputItem
-                name={"postalIndex"}
-                type="string"
-                control={control}
-                label={`${t("post_index")} *`}
-                error={!!errors.postalIndex}
-                helperText={errors.postalIndex?.message as string}
-                sx={{
-                  flex: 1,
-                }}
-              />
-              <GoodsIncomingFormInputItem
-                name={"deliveryAddress"}
-                type="string"
-                control={control}
-                label={`${t("delivery_address")} *`}
-                error={!!errors.deliveryAddress}
-                helperText={errors.deliveryAddress?.message as string}
-                sx={{
-                  flex: 1,
-                }}
-              />
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: isSmallScreen ? "column" : "row",
-                gap: "20px",
-              }}
-            >
-              <Box
-                sx={{
-                  flex: 1,
-                }}
-              >
-                <GoodsIncomingFormInputItem
-                  name={"geolocation"}
-                  type="string"
-                  control={control}
-                  label={`${t("geolocation_link")} *`}
-                  error={!!errors.geolocation}
-                  helperText={
-                    <Box
-                      sx={{
-                        color: "rgba(0, 0, 0, 0.6)",
-                        fontSize: "12px",
-                        lineHeight: 1.66,
-                        marginInline: "14px",
-                        marginTop: "3px",
-                      }}
-                    >
-                      {errors.geolocation && (
-                        <FormHelperText
-                          sx={{
-                            color: "#d32f2f",
-                          }}
-                        >
-                          {errors.geolocation.message}
-                        </FormHelperText>
-                      )}
-                      {t("follow_the_link")}{" "}
-                      <Link
-                        style={{
-                          fontWeight: "bold",
-                          textDecoration: "underline",
-                        }}
-                        target="_blank"
-                        href="https://www.google.com/maps"
-                      >
-                        {t("google_maps")}
-                      </Link>
-                      {t("and_choose")}
-                    </Box>
-                  }
-                />
-              </Box>
-
-              <GoodsIncomingFormInputItem
-                name={"addressDetails"}
-                type="string"
-                control={control}
-                label={`${t("address_details")} *`}
-                error={!!errors.addressDetails}
-                sx={{
-                  flex: 1,
-                }}
-                helperText={
-                  <Box
-                    sx={{
-                      color: "rgba(0, 0, 0, 0.6)",
-                      fontSize: "12px",
-                      lineHeight: 1.66,
-                      marginInline: "14px",
-                      marginTop: "3px",
-                    }}
-                  >
-                    {errors.addressDetails && (
-                      <FormHelperText
-                        sx={{
-                          color: "#d32f2f",
-                        }}
-                      >
-                        {errors.addressDetails.message}
-                      </FormHelperText>
-                    )}
-                    {t("address_placeholder")}
-                  </Box>
-                }
-              />
-              <GoodsIncomingFormInputItem
-                name={"comments"}
-                type="string"
-                control={control}
-                label={`${t("comments")}`}
-                error={false}
-                helperText={t("comments_placeholder")}
-                multiline
-                sx={{
-                  flex: 1,
-                }}
-              />
-            </Box>
+            {addresses.length > 0 ? (
+              <>
+                {t("address")}
+                <Button
+                  onClick={() => setShowAddressForm(false)}
+                  sx={{
+                    textTransform: "none",
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: "5px",
+                  }}
+                >
+                  <WrongLocationOutlined />
+                  {t("returnToAddressList")}
+                </Button>
+              </>
+            ) : (
+              <>{t("address")}</>
+            )}
           </Box>
-        ) : (
+          <AddNewAddressForm
+            onAdd={handleAddNewAddress}
+            onBack={() => setShowAddressForm(false)}
+            userId={userData.userId}
+            disableBack={addresses.length === 0}
+          />
+        </Box>
+      ) : (
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Box display="flex" flexDirection="column" gap="20px">
             <Box
               sx={{
@@ -320,13 +241,21 @@ export const ThirdStep = ({
                 alignItems: "center",
               }}
             >
-              Select delivery address
-              <Tooltip title={"Add new address"}>
-                <IconButton onClick={() => setShowAddressForm(true)}>
-                  <AddLocationAltOutlined />
-                </IconButton>
-              </Tooltip>
+              {t("deliveryAddress")}
+              <Button
+                onClick={() => setShowAddressForm(true)}
+                sx={{
+                  textTransform: "none",
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: "5px",
+                }}
+              >
+                <AddLocationAltOutlined />
+                {t("add_new_address")}
+              </Button>
             </Box>
+
             <ToggleButtonGroup
               orientation="vertical"
               sx={{
@@ -349,14 +278,26 @@ export const ThirdStep = ({
             >
               {addresses.map((address, index) => (
                 <ToggleButton
-                  key={index}
+                  key={address.id}
                   value={address}
                   sx={{
                     width: "100%",
                     textTransform: "none",
                   }}
                 >
-                  <AddressDetailCard address={address} key={index} />
+                  <AddressDetailCard
+                    onRemove={handleRemoveAddress}
+                    onTransfer={() =>
+                      handleTransferBottles(
+                        address.id,
+                        addresses.filter(({ id }) => id !== address.id)[0].id,
+                        address.numberOfBottles
+                      )
+                    }
+                    canBeRemoved={addresses.length > 1}
+                    address={address}
+                    key={index}
+                  />
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>
@@ -373,11 +314,11 @@ export const ThirdStep = ({
               }}
             />
           </Box>
-        )}
-        {renderButtonsGroup(
-          showTooltipMessage ? "Please select delivery address" : ""
-        )}
-      </Card>
-    </form>
+          {renderButtonsGroup(
+            showTooltipMessage ? "Please select delivery address" : ""
+          )}
+        </form>
+      )}
+    </Card>
   );
 };

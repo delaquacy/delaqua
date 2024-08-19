@@ -31,7 +31,7 @@ interface FormValues {
 
 export const FirstStepModal = ({ open, setOpen, onConfirm }: any) => {
   const { handleAddOrderDetails } = useOrderDetailsContext();
-  const handleClose = () => setOpen(false);
+
   const { t } = useTranslation("form");
 
   const {
@@ -43,6 +43,8 @@ export const FirstStepModal = ({ open, setOpen, onConfirm }: any) => {
       bottlesNumberToReturn: "0",
     },
   });
+
+  const handleClose = () => setOpen(false);
 
   const onSubmit = (data: FormValues) => {
     handleAddOrderDetails(data);
@@ -76,7 +78,7 @@ export const FirstStepModal = ({ open, setOpen, onConfirm }: any) => {
             type="submit"
             sx={{ border: "1px solid lightgray" }}
           >
-            Confirm
+            {t("confirm")}
           </Button>
         </Box>
       </form>

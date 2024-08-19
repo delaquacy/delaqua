@@ -501,8 +501,9 @@ const MyForm = () => {
     }
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(true);
   const [currentAddressId, setCurrentAddressId] = useState<string | null>(null);
+
   const askUserAboutTransfer = (addressId: string) => {
     setCurrentAddressId(addressId);
     setIsModalOpen(true);
@@ -529,6 +530,7 @@ const MyForm = () => {
 
     setCurrentAddressId(null);
   };
+
   const deleteAddress = async (addressId: any) => {
     if (userData.addresses.length > 1) {
       askUserAboutTransfer(addressId);

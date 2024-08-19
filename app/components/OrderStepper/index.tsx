@@ -15,6 +15,7 @@ import { ThirdStep } from "./ThirdStep";
 import { FourthStep } from "./FourthStep";
 import { FifthStep } from "./FifthStep";
 import { useTranslation } from "react-i18next";
+import { ButtonsGroup } from "./ButtonsGroup";
 
 const STEP_KEYS = ["products", "dateAndTime", "address", "orderDetails"];
 
@@ -102,7 +103,6 @@ export default function OrderStepper() {
                 <ButtonsGroup
                   activeStep={activeStep}
                   handleBack={handleBack}
-                  handleNext={handleNext}
                   steps={STEP_KEYS}
                   errorMessage={errorMessage}
                 />
@@ -115,50 +115,3 @@ export default function OrderStepper() {
     </>
   );
 }
-
-interface ButtonsGroupProps {
-  activeStep: number;
-  handleBack: () => void;
-  handleNext: () => void;
-  steps: any[];
-  errorMessage?: string;
-}
-
-const ButtonsGroup = ({
-  activeStep,
-  handleBack,
-  handleNext,
-  steps,
-  errorMessage,
-}: ButtonsGroupProps) => {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        paddingTop: 2,
-        justifyContent: "space-between",
-      }}
-    >
-      <Button
-        color="inherit"
-        disabled={activeStep === 0}
-        onClick={handleBack}
-        sx={{ mr: 1, border: "1px solid lightgray" }}
-      >
-        Back
-      </Button>
-      <Box sx={{ flex: "1 1 auto" }} />
-
-      <Tooltip title={errorMessage}>
-        <Button
-          type="submit"
-          sx={{ border: "1px solid lightgray" }}
-          color="primary"
-        >
-          {activeStep === steps.length - 1 ? "Finish" : "Next"}
-        </Button>
-      </Tooltip>
-    </Box>
-  );
-};
