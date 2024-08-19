@@ -17,13 +17,20 @@ import { FifthStep } from "./FifthStep";
 import { useTranslation } from "react-i18next";
 import { ButtonsGroup } from "./ButtonsGroup";
 
-const STEP_KEYS = ["products", "dateAndTime", "address", "orderDetails"];
+const STEP_KEYS = [
+  "products",
+  "dateAndTime",
+  "address",
+  "orderDetails",
+  "done",
+];
 
 const STEPS_COMPONENTS = [
   (props: any) => <FirstStep {...props} />,
   (props: any) => <SecondStep {...props} />,
   (props: any) => <ThirdStep {...props} />,
   (props: any) => <FourthStep {...props} />,
+  (props: any) => <FifthStep {...props} />,
 ];
 
 export default function OrderStepper() {
@@ -80,16 +87,25 @@ export default function OrderStepper() {
           </Stepper>
         }
 
-        {activeStep === STEP_KEYS.length ? (
-          <Fragment>
-            <Typography sx={{ mt: 2, mb: 1 }}>
-              All steps completed - you&apos;re finished
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              <Box sx={{ flex: "1 1 auto" }} />
-              <Button onClick={handleReset}>Reset</Button>
-            </Box>
-          </Fragment>
+        {activeStep === STEP_KEYS.length - 1 ? (
+          <Box
+            sx={{
+              paddingBlock: 4,
+              minHeight: "calc(100vh - 200px)",
+            }}
+          >
+            {STEPS_COMPONENTS[activeStep]({
+              handleNext,
+              renderButtonsGroup: (errorMessage: string) => (
+                <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+                  <Box sx={{ flex: "1 1 auto" }} />
+
+                  <Button onClick={handleBack}>Back</Button>
+                  <Button onClick={handleReset}>Reset</Button>
+                </Box>
+              ),
+            })}
+          </Box>
         ) : (
           <Box
             sx={{

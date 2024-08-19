@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ModalRemoveAddress } from "../ModalRemoveAddress/ModalRemoveAddress";
+import Image from "next/image";
 
 interface AddressDetailCardProps {
   address: Address;
@@ -52,15 +53,16 @@ export const AddressDetailCard = ({
         width: "100%",
         display: "flex",
         flexDirection: isSmallScreen ? "column" : "row",
-        gap: "15px",
+        gap: "20px",
         padding: "20px",
       }}
     >
       <Box
         display="flex"
         flexDirection="column"
+        gap="10px"
         sx={{
-          flex: 1,
+          width: isSmallScreen ? "100%" : "45%",
         }}
       >
         <Box display="flex" flexDirection="row" gap="10px">
@@ -72,26 +74,43 @@ export const AddressDetailCard = ({
         <Box display="flex" flexDirection="row" gap="10px">
           {/* <Typography>{t("address")}</Typography> */}
           <HomeOutlined />
-          <Typography>{`${address.postalIndex}, ${address.deliveryAddress}, ${address.addressDetails}`}</Typography>
+          <Typography
+            textAlign={"left"}
+          >{`${address.postalIndex}, ${address.deliveryAddress}, ${address.addressDetails}`}</Typography>
         </Box>
       </Box>
 
       <Box
         display="flex"
         flexDirection="column"
+        gap="10px"
         sx={{
-          flex: 1,
+          width: isSmallScreen ? "100%" : "45%",
         }}
       >
         <Box display="flex" flexDirection="row" gap="10px">
-          {/* <Typography>{t("geolocation")}</Typography> */}
-          <PlaceOutlined />
-          <Typography>{address.geolocation}</Typography>
+          <Tooltip title={t("number_of_bottles")}>
+            <Image
+              src="/recycleWater.svg"
+              height={25}
+              width={25}
+              alt="recycleWater"
+            />
+          </Tooltip>
+          <Typography>{address.numberOfBottles || 0}</Typography>
         </Box>
         <Box display="flex" flexDirection="row" gap="10px">
-          <Typography>{t("number_of_bottles")}</Typography>
-          <Typography>{address.numberOfBottles || 0}</Typography>
-        </Box>{" "}
+          <PlaceOutlined />
+          <Typography
+            sx={{
+              textAlign: "left",
+              wordBreak: "break-word", // Переносить довгі слова
+              whiteSpace: "normal", // Дозволяє переноси тексту
+            }}
+          >
+            {address.geolocation}
+          </Typography>
+        </Box>
       </Box>
 
       {canBeRemoved ? (

@@ -677,6 +677,7 @@ const MyForm = () => {
           },
         }
       );
+
       const userId = getCurrentUserId();
       const orderRef = doc(db, `users/${userId}/orders/${orderIdFromDB}`);
       const allOrdersRef = doc(db, `allOrders/${currentAllOrderId}`);
@@ -837,14 +838,14 @@ const MyForm = () => {
         }}
         autoHideDuration={1500}
       >
-        {onlinePaymentTrigger && (
+        {false && (
           <Box className={styles.displayNone}>
             <BasicModal
               method="online"
               url={url}
               bottlesNumber={bottlesToBuy}
               deliveryDate={deliveryDate}
-              isOpen={onlinePaymentTrigger}
+              isOpen={false}
               onClose={() => setOnlinePaymentTrigger(false)}
             />
           </Box>

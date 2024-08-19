@@ -52,7 +52,7 @@ export interface UserOrderItem {
 export interface UserOrder {
   id: string;
   items: UserOrderItem[];
-  deliveryDate: Dayjs;
+  deliveryDate: Dayjs | string;
   deliveryTime: string;
   deliveryAddress: Address;
   phoneNumber: string;
@@ -75,6 +75,8 @@ interface OrderDetailsContextType {
   userOrder: UserOrder;
   userData: UserData;
   isFirstOrder: boolean;
+  paymentUrl: string;
+  setPaymentUrl: (url: string) => void;
   handleAddOrderDetails: (newDetails: any) => void;
 }
 
@@ -103,6 +105,8 @@ interface UserData {
 export const OrderDetailsContext = createContext<OrderDetailsContextType>({
   goods: [],
   isFirstOrder: true,
+  paymentUrl: "",
+  setPaymentUrl: () => {},
   userData: {
     formattedUserPhone: "",
     userPhone: "",
@@ -157,6 +161,7 @@ export const OrderDetailsProvider = ({
 
   const [goods, setGoods] = useState<Goods[]>([]);
   const [isFirstOrder, setIsFirstOrder] = useState(true);
+  const [paymentUrl, setPaymentUrl] = useState("");
   const [userOrder, setUserOrder] = useState<UserOrder>({
     id: `${uuidv4()}`,
     items: [] as UserOrderItem[],
@@ -275,6 +280,8 @@ export const OrderDetailsProvider = ({
         userOrder,
         userData,
         isFirstOrder,
+        paymentUrl,
+        setPaymentUrl,
         handleAddOrderDetails,
       }}
     >

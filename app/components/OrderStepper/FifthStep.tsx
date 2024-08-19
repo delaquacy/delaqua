@@ -64,7 +64,7 @@ export const FifthStep = ({
             gap: "20px",
           }}
         >
-          FIFTH
+          ** info after payment
         </Box>
         {renderButtonsGroup(showTooltipMessage ? "Done Requirement first" : "")}
       </Card>

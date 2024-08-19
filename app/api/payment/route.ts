@@ -5,7 +5,7 @@ const key = process.env.REVOLUT_KEY;
 export async function POST(req: any, res: any) {
   const body = await req.json();
   const { currency, amount, description } = body;
-
+  //  amount: amount * 100 - The total amount of the order in minor currency units. For example, 7034 represents €70.34.
   try {
     const response = await axios.post(
       "https://merchant.revolut.com/api/orders",

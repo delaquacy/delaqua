@@ -23,10 +23,13 @@ import { ORDER_DETAILS_HEAD } from "@/app/constants/OrderDetailsHead";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import {
   AccountCircleOutlined,
+  EventOutlined,
   HomeOutlined,
   PlaceOutlined,
 } from "@mui/icons-material";
 import Link from "next/link";
+import Image from "next/image";
+import { getAndSetPaymentLink } from "@/app/utils/getAndSetPaymentLink";
 
 const BIG_BOTTLE_ID = "119";
 const RENT_BOTTLE_ID = "120";
@@ -76,7 +79,8 @@ export const FourthStep = ({
   };
 
   const onSubmit = (data: FormValues) => {
-    // if (showTooltipMessage) return;
+    // const {total: amount, }
+    // const paymentUrl = getAndSetPaymentLink();
 
     console.log(data, "INSIDE");
 
@@ -288,20 +292,74 @@ export const FourthStep = ({
               padding: "20px",
             }}
           >
-            <Box display="flex" flexDirection="row" gap="10px">
-              {/* <Typography>{t("name")}</Typography> */}
-              <AccountCircleOutlined />
-              <Typography>{userOrder.deliveryAddress.firstAndLast}</Typography>
-            </Box>
-            <Box display="flex" flexDirection="row" gap="10px">
-              {/* <Typography>{t("address")}</Typography> */}
-              <HomeOutlined />
-              <Typography>{`${userOrder.deliveryAddress.postalIndex}, ${userOrder.deliveryAddress.deliveryAddress}, ${userOrder.deliveryAddress.addressDetails}`}</Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "15px",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "15px",
+                  flex: 1,
+                }}
+              >
+                <Box display="flex" flexDirection="row" gap="10px">
+                  <Tooltip title={t("delivery_date_and_time")}>
+                    <EventOutlined />
+                  </Tooltip>
+                  <Typography>{`${userOrder.deliveryDate as string}, ${
+                    userOrder.deliveryTime
+                  }`}</Typography>
+                </Box>
+
+                <Box display="flex" flexDirection="row" gap="10px">
+                  <Tooltip title={t("number_of_bottles_to_return")}>
+                    <Image
+                      src="/recycleWater.svg"
+                      height={25}
+                      width={25}
+                      alt="recycleWater"
+                    />
+                  </Tooltip>
+                  <Typography>{userOrder.bottlesNumberToReturn}</Typography>
+                </Box>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "15px",
+                  flex: 1,
+                }}
+              >
+                <Box display="flex" flexDirection="row" gap="10px">
+                  <Tooltip title={t("name")}>
+                    <AccountCircleOutlined />
+                  </Tooltip>
+                  <Typography>
+                    {userOrder.deliveryAddress.firstAndLast}
+                  </Typography>
+                </Box>
+                <Box display="flex" flexDirection="row" gap="10px">
+                  <Tooltip title={t("address")}>
+                    <HomeOutlined />
+                  </Tooltip>
+                  <Typography>
+                    {`${userOrder.deliveryAddress.postalIndex}, ${userOrder.deliveryAddress.deliveryAddress}, ${userOrder.deliveryAddress.addressDetails}, ${userOrder.deliveryAddress.comments}`}
+                  </Typography>
+                </Box>
+              </Box>
             </Box>
 
             <Box display="flex" flexDirection="row" gap="10px">
-              {/* <Typography>{t("geolocation")}</Typography> */}
-              <PlaceOutlined />
+              <Tooltip title={t("geolocation_link")}>
+                <PlaceOutlined />
+              </Tooltip>
               <Typography>
                 <Link href={userOrder.deliveryAddress.geolocation}>
                   {userOrder.deliveryAddress.geolocation}

@@ -19,9 +19,10 @@ import updateLocale from "dayjs/plugin/updateLocale";
 import { deliveryValidation } from "@/app/utils";
 import useDatesFromDB from "@/app/utils/getUnableDates";
 import { useTheme } from "@emotion/react";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
+dayjs.extend(customParseFormat);
 dayjs.extend(updateLocale);
-
 dayjs.updateLocale("en", {
   weekStart: 1,
 });
@@ -33,7 +34,7 @@ const dayOfWeekFormatter = (dayOfWeek: string, date: Dayjs) => {
 };
 
 interface FormValues {
-  deliveryDate: Dayjs;
+  deliveryDate: Dayjs | string;
   deliveryTime: string;
 }
 
@@ -63,7 +64,7 @@ export const SecondStep = ({
     setValue,
   } = useForm<FormValues>({
     defaultValues: {
-      deliveryDate: userOrder.deliveryDate,
+      deliveryDate: dayjs(userOrder.deliveryDate, "DD-MM-YYYY"),
       deliveryTime: userOrder.deliveryTime,
     },
   });
@@ -75,7 +76,7 @@ export const SecondStep = ({
     isCurrentDayAfterNoon,
     isCurrentDayPrevious,
     isCurrentDayIsSunday,
-  } = deliveryValidation(selectedDate);
+  } = deliveryValidation(selectedDate as Dayjs);
 
   if (isCurrentDayAfterTen) {
     setValue("deliveryTime", "9-17");
@@ -94,9 +95,18 @@ export const SecondStep = ({
 
   const onSubmit = (data: FormValues) => {
     if (showTooltipMessage) return;
-    console.log(data, "INSIDE");
+    console.log(
+      {
+        deliveryDate: (data.deliveryDate as Dayjs).format("DD-MM-YYYY"),
+        deliveryTime: data.deliveryTime,
+      },
+      "INSIDE"
+    );
 
-    handleAddOrderDetails(data);
+    handleAddOrderDetails({
+      deliveryDate: (data.deliveryDate as Dayjs).format("DD-MM-YYYY"),
+      deliveryTime: data.deliveryTime,
+    });
     handleNext();
   };
 
@@ -154,7 +164,7 @@ export const SecondStep = ({
                   <DatePicker
                     label={t("delivery_date_short")}
                     format="DD-MM-YYYY"
-                    value={field.value}
+                    value={field.value as Dayjs}
                     onChange={(newVal) => field.onChange(newVal)}
                     disablePast
                     dayOfWeekFormatter={dayOfWeekFormatter}
