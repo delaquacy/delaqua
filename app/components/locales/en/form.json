@@ -53,6 +53,10 @@
   "loading_paymentLink": "Please wait a few more seconds for the payment link, and do not interact with the page",
   "info_message_more_one_bottle": "Order of 1 bottle available for the first delivery only",
   "soonest_day": "The soonest delivery day is {{nextDay}}, please change the day",
-  "sunday": "Sunday is the only non-delivery day for us 🙌  You can place your order for Monday-Saturday"
+  "sunday": "Sunday is the only non-delivery day for us 🙌  You can place your order for Monday-Saturday",
+  "products": "Choose products",
+  "dateAndTime": "Choose the date and time of delivery",
+  "address": "Enter your address details",
+  "orderDetails": "Check the order details"
 
 }

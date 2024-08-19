@@ -19,8 +19,8 @@ export const FirstStep = ({
   handleNext: () => void;
 }) => {
   const theme = useTheme();
-  const { goods, userOrder, handleAddOrderDetails } = useOrderDetailsContext();
-  const isFirstOrder = true; //TODO: add real data from firebase
+  const { goods, userOrder, isFirstOrder, handleAddOrderDetails } =
+    useOrderDetailsContext();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(true);
 

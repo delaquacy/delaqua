@@ -14,13 +14,9 @@ import { FirstStepModal } from "./FirstStepModal";
 import { ThirdStep } from "./ThirdStep";
 import { FourthStep } from "./FourthStep";
 import { FifthStep } from "./FifthStep";
+import { useTranslation } from "react-i18next";
 
-const STEPS = [
-  "Choose products",
-  "Choose the date and time of delivery",
-  "Enter your address details",
-  "Check the order details",
-];
+const STEP_KEYS = ["products", "dateAndTime", "address", "orderDetails"];
 
 const STEPS_COMPONENTS = [
   (props: any) => <FirstStep {...props} />,
@@ -31,6 +27,7 @@ const STEPS_COMPONENTS = [
 
 export default function OrderStepper() {
   const { isSmallScreen } = useScreenSize();
+  const { t } = useTranslation("form");
 
   const [activeStep, setActiveStep] = useState(0);
   const [open, setOpen] = useState(false);
@@ -60,14 +57,14 @@ export default function OrderStepper() {
   return (
     <>
       <Box sx={{ width: "100%", marginTop: "20px", minHeight: "100%" }}>
-        {!isSmallScreen && (
+        {
           <Stepper
             activeStep={activeStep}
             sx={{
               overflow: "scroll",
             }}
           >
-            {STEPS.map((label, index) => {
+            {STEP_KEYS.map((label, index) => {
               const stepProps: { completed?: boolean } = {};
               const labelProps: {
                 optional?: React.ReactNode;
@@ -75,14 +72,14 @@ export default function OrderStepper() {
 
               return (
                 <Step key={label} {...stepProps}>
-                  <StepLabel {...labelProps}>{label}</StepLabel>
+                  <StepLabel {...labelProps}>{t(label)}</StepLabel>
                 </Step>
               );
             })}
           </Stepper>
-        )}
+        }
 
-        {activeStep === STEPS.length ? (
+        {activeStep === STEP_KEYS.length ? (
           <Fragment>
             <Typography sx={{ mt: 2, mb: 1 }}>
               All steps completed - you&apos;re finished
@@ -106,7 +103,7 @@ export default function OrderStepper() {
                   activeStep={activeStep}
                   handleBack={handleBack}
                   handleNext={handleNext}
-                  steps={STEPS}
+                  steps={STEP_KEYS}
                   errorMessage={errorMessage}
                 />
               ),

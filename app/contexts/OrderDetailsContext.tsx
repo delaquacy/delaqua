@@ -74,6 +74,7 @@ interface OrderDetailsContextType {
   goods: Goods[];
   userOrder: UserOrder;
   userData: UserData;
+  isFirstOrder: boolean;
   handleAddOrderDetails: (newDetails: any) => void;
 }
 
@@ -100,6 +101,7 @@ interface UserData {
 }
 export const OrderDetailsContext = createContext<OrderDetailsContextType>({
   goods: [],
+  isFirstOrder: true,
   userData: {
     formattedUserPhone: "",
     userPhone: "",
@@ -152,6 +154,7 @@ export const OrderDetailsProvider = ({
   const { user } = useUserContext();
 
   const [goods, setGoods] = useState<Goods[]>([]);
+  const [isFirstOrder, setIsFirstOrder] = useState(true);
   const [userOrder, setUserOrder] = useState<UserOrder>({
     id: `${uuidv4()}`,
     items: [] as UserOrderItem[],
@@ -209,6 +212,8 @@ export const OrderDetailsProvider = ({
         userUniqId: userNumber,
       }));
 
+      setIsFirstOrder(ordersData.length === 0);
+
       return [addressesData, ordersData, userNumber];
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -233,16 +238,6 @@ export const OrderDetailsProvider = ({
             sum: "0",
           })),
       }));
-      // setUserOrder(
-      //   data.map(({ id, itemCode, name, sellPrice }) => ({
-      //     id,
-      //     itemCode,
-      //     name,
-      //     sellPrice,
-      //     count: "0",
-      //     sum: "0",
-      //   }))
-      // );
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
@@ -275,6 +270,7 @@ export const OrderDetailsProvider = ({
         goods,
         userOrder,
         userData,
+        isFirstOrder,
         handleAddOrderDetails,
       }}
     >
