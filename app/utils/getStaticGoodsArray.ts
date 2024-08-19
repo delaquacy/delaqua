@@ -6,6 +6,7 @@ interface Goods {
   itemCode: string;
   name: string;
   picture: string;
+  description: string;
   netBuyWorth: string;
   netSaleWorth: string;
   sellPrice: string;
@@ -13,6 +14,7 @@ interface Goods {
   taxRate: string;
   buyPrice: string;
   buyPriceVAT: string;
+  category: "water" | "supplies";
 }
 
 export const getStaticGoodsArray = async () => {

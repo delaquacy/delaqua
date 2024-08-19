@@ -1,10 +1,4 @@
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-} from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import { db } from "../lib/config";
 
 export async function fetchAddresses(userId: string) {
@@ -16,9 +10,11 @@ export async function fetchAddresses(userId: string) {
       .map((doc) => ({
         id: doc.id,
         ...doc.data(),
+        comments: doc.data().comments || "",
       }))
       //@ts-ignore
-      .filter((address) => !address.archived);
+      .filter((address) => !address.archived)
+      .sort((a: any, b: any) => b.createdAt - a.createdAt);
 
     return addressesData;
   } catch (error) {
@@ -28,9 +24,7 @@ export async function fetchAddresses(userId: string) {
 }
 export async function fetchOrders(userId: string) {
   try {
-    const ordersQuery = query(
-      collection(db, `users/${userId}/orders`)
-    );
+    const ordersQuery = query(collection(db, `users/${userId}/orders`));
     const ordersQuerySnapshot = await getDocs(ordersQuery);
 
     const ordersData = ordersQuerySnapshot.docs.map((doc) => ({

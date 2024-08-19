@@ -2,6 +2,7 @@ import { Box, TextField } from "@mui/material";
 import { Control, Controller } from "react-hook-form";
 import { FormValues } from ".";
 import { useScreenSize } from "@/app/hooks";
+import { ReactNode } from "react";
 
 interface GoodsIncomingFormItemProps {
   name: any;
@@ -9,7 +10,7 @@ interface GoodsIncomingFormItemProps {
   type: string;
   label: string;
   error: boolean;
-  helperText: string;
+  helperText: string | ReactNode;
   sx?: any;
   multiline?: boolean;
 }
@@ -32,18 +33,21 @@ export const GoodsIncomingFormInputItem = ({
         name={name}
         control={control}
         render={({ field }) => (
-          <TextField
-            {...field}
-            multiline={multiline}
-            maxRows={3}
-            color="info"
-            type={type}
-            label={label}
-            size={isSmallScreen ? "small" : "medium"}
-            variant="outlined"
-            error={error}
-            helperText={helperText}
-          />
+          <>
+            <TextField
+              {...field}
+              multiline={multiline}
+              maxRows={3}
+              color="info"
+              type={type}
+              label={label}
+              size={isSmallScreen ? "small" : "medium"}
+              variant="outlined"
+              error={error}
+              helperText={typeof helperText === "string" ? helperText : ""}
+            />
+            {typeof helperText !== "string" && helperText}
+          </>
         )}
       />
       {!helperText && (

@@ -12,6 +12,7 @@ import WrapperHeader from "../components/WrapperHeader/WrapperHeader";
 import { UserProvider } from "../contexts/UserContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { OrderDetailsProvider } from "../contexts/OrderDetailsContext";
 
 export function generateStaticParams() {
   return i18nConfig.locales.map((locale) => ({ locale }));
@@ -71,10 +72,12 @@ export default async function RootLayout({
                 resources={resources}
               >
                 <UserProvider>
-                  <ToastContainer />
-                  <WrapperHeader />
+                  <OrderDetailsProvider>
+                    <ToastContainer />
+                    <WrapperHeader />
 
-                  {children}
+                    {children}
+                  </OrderDetailsProvider>
                 </UserProvider>
               </TranslationsProvider>
             </ToggleProvider>

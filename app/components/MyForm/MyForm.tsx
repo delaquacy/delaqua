@@ -79,6 +79,7 @@ import timezone from "dayjs/plugin/timezone";
 import { deliveryValidation } from "@/app/utils/deliveryDateValidation";
 import { validateDate } from "./validateDate";
 import { getSortedOrders } from "@/app/utils/getSortedOrders";
+import OrderStepper from "../OrderStepper";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -859,7 +860,9 @@ const MyForm = () => {
           </Box>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit, handleError)}>
+        <OrderStepper />
+
+        {/* <form onSubmit={handleSubmit(onSubmit, handleError)}>
           <h1 className={styles.phoneNumber}>
             {userData.userPhone === "+380639496331" && <RegisterButton />}
             {t("order_for")}{" "}
@@ -877,6 +880,7 @@ const MyForm = () => {
               userData.formattedUserPhone
             )}
           </h1>
+
           {usedBottlesMessage && (
             <Alert style={{ marginTop: "15px" }} severity="info">
               {t("check_bottles_to_condition")}
@@ -1311,20 +1315,6 @@ const MyForm = () => {
                     />
                   )}
                 />
-                <div>
-                  {t("follow_the_link")}{" "}
-                  <Link
-                    style={{
-                      fontWeight: "bold",
-                      textDecoration: "underline",
-                    }}
-                    target="_blank"
-                    href="https://www.google.com/maps"
-                  >
-                    {t("google_maps")}
-                  </Link>
-                  {t("and_choose")}
-                </div>
               </Grid>
               <Grid xs={12} md={4} item>
                 <span className={styles.inputName}>
@@ -1539,7 +1529,7 @@ const MyForm = () => {
               setShowWindow={setShowOrderHistory}
             />
           )}
-        </form>
+        </form> */}
       </SnackbarProvider>
     </>
   );

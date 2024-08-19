@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { validationSchema } from "./validationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Button } from "@mui/material";
@@ -8,9 +8,9 @@ import { useScreenSize, useToast } from "@/app/hooks";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/app/lib/config";
 import dayjs from "dayjs";
+import SelectItem from "../GoodsIncomingForm/Select";
 
 interface Goods {
-  id: string;
   itemCode: string;
   lastInvoiceDate: string;
   lastInvoiceNumber: string;
@@ -26,6 +26,7 @@ interface Goods {
   taxRate: string;
   picture: string;
   description: string;
+  category: "water" | "supplies";
 }
 
 export const AddNewGoodForm = () => {
@@ -38,7 +39,6 @@ export const AddNewGoodForm = () => {
     reset,
   } = useForm<Goods>({
     defaultValues: {
-      id: "",
       lastInvoiceDate: "",
       lastInvoiceNumber: "",
       name: "",
@@ -53,6 +53,7 @@ export const AddNewGoodForm = () => {
       sellPriceVAT: "",
       taxRate: "",
       picture: "",
+      category: "water",
     },
     resolver: yupResolver(validationSchema as any),
   });
@@ -225,6 +226,26 @@ export const AddNewGoodForm = () => {
           />
         </Box>
       </Box>
+
+      <Controller
+        name={`category`}
+        control={control}
+        render={({ field: controllerField }) => (
+          <SelectItem
+            value={controllerField.value}
+            id="category"
+            onChange={(value) => {
+              controllerField.onChange(value);
+            }}
+            label="Select category"
+            values={["water", "supplies"].map((good) => ({
+              value: good,
+              label: good,
+            }))}
+          />
+        )}
+      />
+
       <GoodsIncomingFormInputItem
         name={"description"}
         control={control}
