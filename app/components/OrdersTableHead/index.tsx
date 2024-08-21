@@ -69,6 +69,7 @@ export function OrdersTableHead(props: OrdersTableHeadProps) {
           }}
         />
       </TableCell>
+      <TableCell />
       {TableHeadCells.map((headCell) =>
         headCell.sortable ? (
           <TableCell

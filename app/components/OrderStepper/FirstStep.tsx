@@ -98,9 +98,6 @@ export const FirstStep = ({
       >
         {/* TODO: ADD ACCORDION FOR TWO CATEGORIES */}
         <Box sx={gridStyle(theme)}>
-          {/* {errors.items && (
-            <Box color={"black"}>{errors?.items?.root?.message}</Box> //TODO way to show error
-          )} */}
           {goods
             .filter((good) => good.id !== "120")
             .reverse()

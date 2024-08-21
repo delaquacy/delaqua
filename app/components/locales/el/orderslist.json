@@ -11,5 +11,7 @@
   "table_payment_method": "Μέθοδος πληρωμής",
   "table_status": "Κατάσταση",
   "table_total": "Σύνολο",
-  "table_no_orders_yet": "Καμία παραγγελία ακόμα"
+  "table_no_orders_yet": "Καμία παραγγελία ακόμα",
+  "open": "Επέκταση για προβολή λεπτομερειών",
+  "close": "Σύμπτυξη"
 }

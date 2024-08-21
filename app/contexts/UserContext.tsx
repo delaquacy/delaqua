@@ -9,12 +9,14 @@ import dayjs from "dayjs";
 import { fetchOrdersWithSpecificDate } from "../utils/fetchOrdersWithSpecificDate";
 import { checkAndAddAllOrder } from "../utils/checkAndAddAllOrder";
 import { OrdersData } from "../types";
+import { getAllUserOrders } from "../utils/getAllUserOrders";
 
 const auth = getAuth();
 
 interface UserContextType {
   user: User | null;
   isAdmin: boolean;
+  orders: OrdersData[];
   unpaidOrders: OrdersData[];
   setUser: (user: User) => void;
 }
@@ -22,6 +24,7 @@ interface UserContextType {
 export const UserContext = React.createContext<UserContextType>({
   user: null,
   isAdmin: false,
+  orders: [],
   unpaidOrders: [],
   setUser: () => {},
 });
@@ -33,7 +36,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [unpaidOrders, setUnpaidOrders] = useState<OrdersData[]>([]);
-  let order: any = [];
+  const [orders, setOrders] = useState<OrdersData[]>([]);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -43,6 +46,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         );
 
         getUnpaidOrders(currentUser?.uid as string).then(setUnpaidOrders);
+        getAllUserOrders(currentUser?.uid as string).then(setOrders);
         setUser(currentUser);
       }
     });
@@ -83,6 +87,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         user,
         isAdmin,
         unpaidOrders,
+        orders,
         setUser,
       }}
     >

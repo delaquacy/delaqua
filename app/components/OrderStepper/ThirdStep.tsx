@@ -12,8 +12,6 @@ import { useTranslation } from "react-i18next";
 import { useScreenSize } from "@/app/hooks";
 
 import { GoodsIncomingFormInputItem } from "../GoodsIncomingForm/GoodsIncomingFormInputItem";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { validationSchema } from "./validationSchema";
 import { AddressDetailCard } from "./AddressDetailCard";
 import {
   AddLocationAltOutlined,
@@ -27,7 +25,6 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { AddNewAddressForm } from "./AddNewAddressForm";
-import { ModalRemoveAddress } from "../ModalRemoveAddress/ModalRemoveAddress";
 import { db } from "@/app/lib/config";
 
 interface FormValues {
@@ -76,8 +73,6 @@ export const ThirdStep = ({
   const [selectedAddress, setSelectedAddress] = useState<FormValues | null>(
     userOrder.deliveryAddress
   );
-
-  console.log(addresses);
 
   const {
     control,

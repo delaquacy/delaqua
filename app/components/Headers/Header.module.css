@@ -19,6 +19,7 @@
 .buttonsContainer {
   display: flex;
   text-align: right;
+  gap: 10px;
 }
 
 .languageContainer {
@@ -44,9 +45,13 @@
 .container button {
   text-transform: capitalize;
 }
-.loginMyaccountButtons a {
-  margin: 0 5px;
+
+.loginMyaccountButtons {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
+
 .mobileScreen {
   display: none;
 }
@@ -59,7 +64,10 @@
     justify-content: center;
     gap: 10px;
   }
-
+.buttonsContainer{
+  align-items: center;
+  gap: 10px;
+}
   .loginMyaccountButtons {
     display: none;
   }

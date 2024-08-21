@@ -2,6 +2,7 @@ import { Box, Card, Typography } from "@mui/material";
 import Image from "next/image";
 import { OrderCardCounter } from "./OrderCardCounter";
 import { useTranslation } from "react-i18next";
+import { useScreenSize } from "@/app/hooks";
 
 interface OrderCardProps {
   imageSrc: string;
@@ -27,6 +28,7 @@ export const OrderCard = ({
   onRemove,
 }: OrderCardProps) => {
   const { t } = useTranslation("form");
+  const { isSmallScreen } = useScreenSize();
 
   return (
     <Card
@@ -41,7 +43,7 @@ export const OrderCard = ({
         padding: "10px",
         transition: "all 0.2s",
         ":hover": {
-          transform: "scale(1.1)",
+          transform: isSmallScreen ? "" : "scale(1.1)",
         },
       }}
     >

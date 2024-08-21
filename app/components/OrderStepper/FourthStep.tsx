@@ -17,7 +17,6 @@ import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { useTranslation } from "react-i18next";
-import { useScreenSize } from "@/app/hooks";
 
 import { ORDER_DETAILS_HEAD } from "@/app/constants/OrderDetailsHead";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
@@ -30,9 +29,11 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { getAndSetPaymentLink } from "@/app/utils/getAndSetPaymentLink";
-
-const BIG_BOTTLE_ID = "119";
-const RENT_BOTTLE_ID = "120";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "@/app/lib/config";
+import axios from "axios";
+import { BIG_BOTTLE_ID, RENT_BOTTLE_ID } from "@/app/constants/OrderItemsIds";
+import { OrderItemsTable } from "../OrderItemsTable";
 
 interface FormValues {
   paymentMethod: string;
@@ -48,8 +49,8 @@ export const FourthStep = ({
   const { t } = useTranslation("form");
   const { trackAmplitudeEvent } = useAmplitudeContext();
 
-  const { userOrder, goods, handleAddOrderDetails } = useOrderDetailsContext();
-  const { isSmallScreen } = useScreenSize();
+  const { userOrder, goods, handleAddOrderDetails, setPaymentUrl } =
+    useOrderDetailsContext();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(false);
 
@@ -78,13 +79,52 @@ export const FourthStep = ({
     }
   };
 
-  const onSubmit = (data: FormValues) => {
-    // const {total: amount, }
-    // const paymentUrl = getAndSetPaymentLink();
+  const onSubmit = async (data: FormValues) => {
+    // trackAmplitudeEvent("submitOrder", {
+    //   text: "On submit click",
+    // });
+
+    handleAddOrderDetails(data);
+
+    // const orderData = { ...userOrder, data };
+
+    // if (data.paymentMethod === "Cash") {
+    //   orderData.paymentStatus = "CASH";
+    // }
+
+    // const orderRef = await addDoc(
+    //   collection(db, `users/${userOrder.userId}/orders`),
+    //   orderData
+    // );
+    // const allOrderRef = await addDoc(collection(db, `allOrders`), orderData);
+
+    // const currentOrderId = orderRef.id;
+    // const currentAllOrderId = allOrderRef.id;
+
+    // const response = await axios.post(
+    //   process.env.NEXT_PUBLIC_ORDERS_SHEET_LINK as string,
+    //   orderData,
+    //   {
+    //     headers: {
+    //       "Content-Type": "text/plain",
+    //     },
+    //   }
+    // );
+
+    // if (data.paymentMethod === "Online") {
+    //   await getAndSetPaymentLink(
+    //     +userOrder.totalPayments,
+    //     userOrder.phoneNumber,
+    //     `${userOrder.deliveryDate}, ${userOrder.deliveryTime}`,
+    //     currentOrderId,
+    //     currentAllOrderId,
+    //     userOrder.userId,
+    //     setPaymentUrl
+    //   );
+    // }
 
     console.log(data, "INSIDE");
 
-    // handleAddOrderDetails(data);
     handleNext();
   };
 
@@ -144,9 +184,7 @@ export const FourthStep = ({
             gap: "20px",
           }}
         >
-          <Typography>
-            Please check your order details and select payment method
-          </Typography>
+          <Typography>{t("checkAndPay")}</Typography>
 
           <Controller
             control={control}
@@ -157,6 +195,7 @@ export const FourthStep = ({
                 value={field.value}
                 onChange={(e) => {
                   field.onChange(e);
+                  handleChangePayment(e);
                 }}
               >
                 <FormControlLabel
@@ -173,116 +212,11 @@ export const FourthStep = ({
             )}
           />
 
-          <Box>Order Details</Box>
-          <Table
-            size="small"
-            sx={{
-              padding: "20px",
-            }}
-          >
-            <TableHead>
-              <TableRow>
-                {ORDER_DETAILS_HEAD.map((order, index) => (
-                  <TableCell
-                    key={index}
-                    scope="row"
-                    padding="none"
-                    variant="head"
-                    align="center"
-                    sx={{
-                      fontWeight: "bold",
-                      borderRight:
-                        index < ORDER_DETAILS_HEAD.length - 1
-                          ? "1px solid #ddd"
-                          : "none",
-                    }}
-                  >
-                    {order.value}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {userOrder.items
-                .filter(({ count }) => !!+count)
-                .map((order, index) => (
-                  <Tooltip
-                    key={index}
-                    title={
-                      order.itemCode === RENT_BOTTLE_ID
-                        ? "Deposit for additional bottles"
-                        : ""
-                    }
-                  >
-                    <TableRow>
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        padding="none"
-                        align="center"
-                        sx={{
-                          borderRight: "1px solid #ddd",
-                        }}
-                      >
-                        {order.id}
-                      </TableCell>
-                      <TableCell
-                        scope="row"
-                        sx={{
-                          borderRight: "1px solid #ddd",
-                        }}
-                      >
-                        {order.name}
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        sx={{
-                          borderRight: "1px solid #ddd",
-                        }}
-                      >
-                        {order.count}
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        sx={{
-                          borderRight: "1px solid #ddd",
-                        }}
-                      >
-                        {order.sellPrice}
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        sx={{
-                          borderRight: "1px solid #ddd",
-                        }}
-                      >
-                        {order.sum}
-                      </TableCell>
-                    </TableRow>
-                  </Tooltip>
-                ))}
-              <TableRow>
-                <TableCell colSpan={3} />
-                <TableCell
-                  colSpan={1}
-                  align="center"
-                  sx={{
-                    fontWeight: 600,
-                  }}
-                >
-                  Total
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    fontWeight: 600,
-                  }}
-                >
-                  {userOrder.totalPayments} €
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <Box>{t("orderDetails")}</Box>
+          <OrderItemsTable
+            orderItems={userOrder.items}
+            totalPayments={userOrder.totalPayments}
+          />
 
           <Card
             sx={{
@@ -338,7 +272,7 @@ export const FourthStep = ({
                 }}
               >
                 <Box display="flex" flexDirection="row" gap="10px">
-                  <Tooltip title={t("name")}>
+                  <Tooltip title={t("first_and_last")}>
                     <AccountCircleOutlined />
                   </Tooltip>
                   <Typography>

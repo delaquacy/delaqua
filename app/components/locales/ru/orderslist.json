@@ -11,5 +11,7 @@
   "table_payment_method": "Способ оплаты",
   "table_status": "Статус",
   "table_total": "Сумма",
-  "table_no_orders_yet": "Пока нет заказов"
+  "table_no_orders_yet": "Пока нет заказов",
+  "open": "Развернуть для просмотра деталей",
+  "close": "Свернуть"
 }

@@ -32,6 +32,7 @@ import { SnackbarProvider } from "notistack";
 import WrapperLogin from "../WrapperLogin/WrapperLogin";
 import { useUserContext } from "@/app/contexts/UserContext";
 import { useEffect, useState } from "react";
+import { MyAccountMenu } from "./MyAccountMenu";
 
 export default function Headers({
   setShowWindow,
@@ -194,7 +195,7 @@ export default function Headers({
 
             {showLogin && <WrapperLogin {...loginProps} />}
             <div className={styles.buttonsContainer}>
-              <Box style={{ marginRight: "5px" }}>
+              <Box>
                 <Select
                   className={styles.language}
                   value={currentLocale}
@@ -224,14 +225,7 @@ export default function Headers({
                   {user && (
                     <>
                       <Box className={styles.loginMyaccountButtons}>
-                        <Link href="/my_account">
-                          <Button
-                            variant="contained"
-                            endIcon={<AccountCircle fontSize="small" />}
-                          >
-                            {t("my_account")}
-                          </Button>
-                        </Link>
+                        <MyAccountMenu />
                         {isAdmin && (
                           <Link href="/admin_dashboard">
                             <Button
@@ -252,10 +246,10 @@ export default function Headers({
                           </Button>
                         </Link>
                       </Box>
+
+                      {/* mobile buttons */}
                       <Box className={styles.mobileScreen}>
-                        <Link href="/my_account">
-                          <AccountCircle color="primary" fontSize="small" />
-                        </Link>
+                        <MyAccountMenu />
                         {isAdmin && (
                           <Link href="/admin_dashboard">
                             <ManageAccountsSharp

@@ -66,7 +66,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { ModalRemoveAddress } from "../ModalRemoveAddress/ModalRemoveAddress";
 import { RegisterButton } from "../registerComponent/RegisterButton";
-import BasicModal from "../OrderCreated/OrderCreated";
+// import BasicModal from "../OrderCreated/OrderCreated";
 import "dayjs/locale/uk";
 import "dayjs/locale/el";
 import "dayjs/locale/ru";
@@ -838,7 +838,7 @@ const MyForm = () => {
         }}
         autoHideDuration={1500}
       >
-        {false && (
+        {/* {false && (
           <Box className={styles.displayNone}>
             <BasicModal
               method="online"
@@ -861,7 +861,7 @@ const MyForm = () => {
               onClose={() => setCashPaymentTrigger(false)}
             />
           </Box>
-        )}
+        )} */}
 
         <OrderStepper />
 

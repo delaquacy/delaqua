@@ -18,7 +18,6 @@ import { datePickerStyle } from "../OrdersTableFilter/DateRangePicker";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { deliveryValidation } from "@/app/utils";
 import useDatesFromDB from "@/app/utils/getUnableDates";
-import { useTheme } from "@emotion/react";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
 dayjs.extend(customParseFormat);
@@ -47,7 +46,6 @@ export const SecondStep = ({
 }) => {
   const { t } = useTranslation("form");
 
-  const theme = useTheme();
   const { userOrder, handleAddOrderDetails } = useOrderDetailsContext();
   const { isSmallScreen } = useScreenSize();
   const disabledDates: any = useDatesFromDB();
@@ -59,7 +57,6 @@ export const SecondStep = ({
     control,
     handleSubmit,
     formState: { errors },
-    reset,
     watch,
     setValue,
   } = useForm<FormValues>({
@@ -95,13 +92,6 @@ export const SecondStep = ({
 
   const onSubmit = (data: FormValues) => {
     if (showTooltipMessage) return;
-    console.log(
-      {
-        deliveryDate: (data.deliveryDate as Dayjs).format("DD-MM-YYYY"),
-        deliveryTime: data.deliveryTime,
-      },
-      "INSIDE"
-    );
 
     handleAddOrderDetails({
       deliveryDate: (data.deliveryDate as Dayjs).format("DD-MM-YYYY"),

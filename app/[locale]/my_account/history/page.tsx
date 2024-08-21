@@ -1,7 +1,10 @@
-import initTranslations from "../../i18n";
-import TranslationsProvider from "../../components/TranslationsProvider/TranslationsProvider";
-import Account from "../../components/Account/Account";
+"use client";
+import initTranslations from "../../../i18n";
+import TranslationsProvider from "../../../components/TranslationsProvider/TranslationsProvider";
+import Account from "../../../components/Account/Account";
 import WrapperFooter from "@/app/components/WrapperFooter/WrapperFooter";
+import OrdersList from "@/app/components/ordersList/OrdersList";
+import { History } from "@/app/components/History";
 
 const i18nNamespaces = [
   "finishModal",
@@ -24,8 +27,7 @@ export default async function MyAccount({
       locale={locale}
       resources={resources}
     >
-      <Account />
-      <WrapperFooter />
+      <History />
     </TranslationsProvider>
   );
 }

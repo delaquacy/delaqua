@@ -3,7 +3,8 @@
   "click_to_pay_online": "Πατήστε εδώ για online πληρωμή",
   "prepare_for_payment": "Προετοιμάστε {{amount}} € για πληρωμή",
   "thanks_for_order": "Σας ευχαριστούμε για την παραγγελία σας!",
-  "we_will_deliver_to_you": "Θα παραδώσουμε σε εσάς",
-  "we_will_deliver_to_you_pay": "Μόλις λάβουμε την πληρωμή σας, θα οργανώσουμε την παράδοση των",
-  "numbers_of_deliver_water": " νερού στο"
+  "we_will_deliver_to_you": "Θα παραδώσουμε σε εσάς στις {{date}} και ώρα {{time}}",
+  "we_will_deliver_to_you_pay": "Μόλις λάβουμε την πληρωμή σας, θα οργανώσουμε την παράδοση στις {{date}} και ώρα {{time}}",
+  "numbers_of_deliver_water": " νερού στο",
+  "delivery": "Θα παραδώσουμε την παραγγελία σας στις {{date}} στις {{time}}"
 }

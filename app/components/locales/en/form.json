@@ -57,8 +57,9 @@
   "products": "Choose products",
   "dateAndTime": "Choose the date and time of delivery",
   "address": "Enter your address details",
-  "orderDetails": "Check the order details",
+  "orderDetails": "Order details",
 
+  "done": "Done!",
   "next": "Next",
   "back": "Back",
   "finish": "Finish",
@@ -88,6 +89,7 @@
   "returnToAddressList": "Return to addresses list",
   "add": "Add",
   "cancel": "Cancel",
+  "checkAndPay": "Please check your order details and select payment method",
 
   "": ""
 

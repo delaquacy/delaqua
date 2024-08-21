@@ -163,7 +163,7 @@ export const OrderDetailsProvider = ({
   const [isFirstOrder, setIsFirstOrder] = useState(true);
   const [paymentUrl, setPaymentUrl] = useState("");
   const [userOrder, setUserOrder] = useState<UserOrder>({
-    id: `${uuidv4()}`,
+    id: uuidv4(),
     items: [] as UserOrderItem[],
     deliveryDate: dayjs(),
     deliveryTime: "9-12",
@@ -188,9 +188,9 @@ export const OrderDetailsProvider = ({
     depositForBottles: "",
     totalPayments: "",
     numberOfBottlesAtThisAddress: "",
-    completed: false,
     paymentStatus: "",
     paymentMethod: "",
+    completed: false,
     canceled: false,
   });
 
@@ -266,6 +266,11 @@ export const OrderDetailsProvider = ({
         ...prevData,
         formattedUserPhone: formatPhoneNumber(user.phoneNumber!),
         userPhone: user.phoneNumber,
+      }));
+
+      setUserOrder((prev) => ({
+        ...prev,
+        phoneNumber: user?.phoneNumber || "",
       }));
 
       user?.uid && fetchUserData(user?.uid);

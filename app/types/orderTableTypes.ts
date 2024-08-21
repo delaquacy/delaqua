@@ -1,5 +1,6 @@
 export interface OrdersData {
   index?: number;
+  items?: any[];
   addressDetails: string;
   bottlesNumberToBuy: number;
   bottlesNumberToReturn: number;

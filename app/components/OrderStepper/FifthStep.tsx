@@ -1,14 +1,15 @@
-import { Box, Card } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { Box, Button, Card, Typography } from "@mui/material";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-import { useState } from "react";
-import dayjs from "dayjs";
+
+import styles from "./../OrderCreated/OrderCreated.module.css";
 
 import { useTranslation } from "react-i18next";
 import { useScreenSize } from "@/app/hooks";
 
-import useDatesFromDB from "@/app/utils/getUnableDates";
-import { useTheme } from "@emotion/react";
+import useAmplitudeContext from "@/app/utils/amplitudeHook";
+import "../../i18n";
+import { CheckBox } from "@mui/icons-material";
+import { getDayOfWeek } from "@/app/utils";
 
 interface FormValues {}
 
@@ -19,30 +20,49 @@ export const FifthStep = ({
   renderButtonsGroup: (errorMessage?: string) => React.ReactNode;
   handleNext: () => void;
 }) => {
-  const { t } = useTranslation("form");
+  const { t, i18n } = useTranslation("finishModal");
 
-  const theme = useTheme();
-  const { userOrder, handleAddOrderDetails } = useOrderDetailsContext();
+  const { trackAmplitudeEvent } = useAmplitudeContext();
+
+  const { userOrder, paymentUrl } = useOrderDetailsContext();
   const { isSmallScreen } = useScreenSize();
-  const disabledDates: any = useDatesFromDB();
 
-  const [showTooltipMessage, setShowTooltipMessage] = useState(true);
-  const [nextDay, setNextDay] = useState(dayjs());
+  const currentLocale = i18n.language;
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-    setValue,
-  } = useForm<FormValues>({
-    defaultValues: {},
-  });
+  const clickToPay = () => {
+    trackAmplitudeEvent("clickToPay", {
+      text: "Click ot payment link",
+    });
+  };
+  const closePayment = () => {
+    trackAmplitudeEvent("closePayment", {
+      text: "Close payment",
+    });
+  };
+
+  const paymentText =
+    userOrder.paymentMethod === "Online" ? (
+      <>
+        <div> {t("proceed_online_payment")}</div>
+        <div>
+          <Button
+            onClick={clickToPay}
+            style={{ marginTop: "10px" }}
+            variant="contained"
+          >
+            <a href={paymentUrl} target="_blank">
+              {t("click_to_pay_online")}
+            </a>
+          </Button>
+        </div>
+      </>
+    ) : (
+      <span style={{ fontWeight: "bold" }}>
+        {t("prepare_for_payment", { amount: userOrder.totalPayments })}
+      </span>
+    );
 
   const onSubmit = (data: FormValues) => {
-    if (showTooltipMessage) return;
-
     console.log(data, "INSIDE");
 
     // handleAddOrderDetails(data);
@@ -50,24 +70,41 @@ export const FifthStep = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Card
-        sx={{
-          padding: "20px",
-          boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-        }}
+    <Card
+      sx={{
+        padding: "20px",
+        boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+      }}
+    >
+      <Box className={styles.center}>
+        <CheckBox fontSize="large" className={styles.icon} />
+      </Box>
+
+      <Typography
+        className={styles.center}
+        id="modal-modal-title"
+        variant="h6"
+        component="h2"
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-          }}
-        >
-          ** info after payment
-        </Box>
-        {renderButtonsGroup(showTooltipMessage ? "Done Requirement first" : "")}
-      </Card>
-    </form>
+        <span className={styles.bold}> {t("thanks_for_order")}</span>
+      </Typography>
+
+      <Typography className={styles.center} id="modal-modal-description">
+        {userOrder.paymentMethod === "Cash"
+          ? t("we_will_deliver_to_you", {
+              date: userOrder.deliveryDate,
+              time: userOrder.deliveryTime,
+            })
+          : t("we_will_deliver_to_you_pay", {
+              date: userOrder.deliveryDate,
+              time: userOrder.deliveryTime,
+            })}
+      </Typography>
+
+      <Box className={styles.center} id="modal-modal-description">
+        {paymentText}
+      </Box>
+      {renderButtonsGroup("")}
+    </Card>
   );
 };
