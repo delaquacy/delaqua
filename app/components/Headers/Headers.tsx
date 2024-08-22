@@ -12,6 +12,9 @@ import {
   Box,
   Toolbar,
   Button,
+  Typography,
+  Modal,
+  IconButton,
 } from "@mui/material";
 import { getAuth, onAuthStateChanged, signOut, User } from "firebase/auth";
 import { app } from "@/app/lib/config";
@@ -24,6 +27,7 @@ import {
   ManageAccounts,
   ManageAccountsSharp,
   ExitToApp,
+  Close,
 } from "@mui/icons-material";
 import { useToggle } from "@/app/lib/ToggleContext";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
@@ -31,7 +35,10 @@ import i18nConfig from "@/i18nConfig";
 import { SnackbarProvider } from "notistack";
 import WrapperLogin from "../WrapperLogin/WrapperLogin";
 import { useUserContext } from "@/app/contexts/UserContext";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import dayjs from "dayjs";
+
+const END_INFO_BANNER = "26.08.2024";
 
 export default function Headers({
   setShowWindow,
@@ -40,17 +47,19 @@ export default function Headers({
 }) {
   const { i18n, t } = useTranslation("main");
   const { trackAmplitudeEvent } = useAmplitudeContext();
-
-  const [showLogin, setShowLogin] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
-  const { isToggled, setToggle } = useToggle();
-  const currentLocale = i18n.language;
-
   const { user, isAdmin, unpaidOrders, setUser } = useUserContext();
-
+  const currentLocale = i18n.language;
+  const { isToggled, setToggle } = useToggle();
   const router = useRouter();
   const auth = getAuth(app);
   const pathname = usePathname();
+
+  const [showLogin, setShowLogin] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [showInfoModal, setShowInfoModal] = useState(true);
+  const [open, setOpen] = useState(true);
+
+  const handleClose = () => setOpen(false);
 
   useEffect(() => {
     if (isToggled && !user) {
@@ -105,6 +114,17 @@ export default function Headers({
     }
   };
 
+  useLayoutEffect(() => {
+    const today = dayjs();
+    const endDate = dayjs(END_INFO_BANNER, "DD.MM.YYYY");
+
+    if (today.isAfter(endDate)) {
+      console.log("here");
+      setShowInfoModal(false);
+      setOpen(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (pathname == "/my_account") {
       setShowLogin(false);
@@ -127,6 +147,66 @@ export default function Headers({
 
   return (
     <SnackbarProvider>
+      {!pathname.endsWith("/admin_dashboard") && showInfoModal && (
+        <>
+          <Box
+            sx={{
+              background: "#428bca",
+              color: "white",
+              padding: 2,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "22px",
+              fontWeight: "bold",
+            }}
+          >
+            <Typography
+              width="80%"
+              fontSize={18}
+              fontWeight={"bold"}
+              textAlign="center"
+            >
+              {t("info")}
+            </Typography>
+          </Box>
+
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <IconButton
+                onClick={handleClose}
+                sx={{
+                  position: "absolute",
+                  right: 5,
+                  top: 5,
+                }}
+              >
+                <Close />
+              </IconButton>
+              <Typography
+                variant="h6"
+                component="h2"
+                fontWeight="bold"
+                fontSize={30}
+              >
+                {t("customers")}
+              </Typography>
+              <Typography
+                id="modal-modal-description"
+                textAlign="center"
+                sx={{ mt: 2 }}
+              >
+                {t("info")}
+              </Typography>
+            </Box>
+          </Modal>
+        </>
+      )}
       {user &&
         unpaidOrders.length !== 0 &&
         !pathname.endsWith("/admin_dashboard") && (
@@ -283,3 +363,19 @@ export default function Headers({
     </SnackbarProvider>
   );
 }
+
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 350,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: "10px",
+};
