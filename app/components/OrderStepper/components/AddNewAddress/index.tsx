@@ -10,12 +10,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { validationSchema } from "./validationSchema";
 import { Box, Button, FormHelperText } from "@mui/material";
 import { useScreenSize, useToast } from "@/app/hooks";
-import { GoodsIncomingFormInputItem } from "../GoodsIncomingForm/GoodsIncomingFormInputItem";
 import { useTranslation } from "react-i18next";
-import { v4 as uuidv4 } from "uuid";
 
 import Link from "next/link";
 import { db } from "@/app/lib/config";
+import { ControllerInputField } from "@/app/components/shared";
+import { ButtonsWrapper, FieldWrapper, FormWrapper } from "./styled";
 
 interface FormValues {
   id?: string;
@@ -42,7 +42,7 @@ const DEFAULT_VALUES = {
   numberOfBottles: "0",
 };
 
-export const AddNewAddressForm = ({
+export const AddNewAddress = ({
   onBack,
   onAdd,
   userId,
@@ -87,23 +87,9 @@ export const AddNewAddressForm = ({
     }
   };
   return (
-    <Box
-      component={"form"}
-      onSubmit={handleSubmit(onSubmit)}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "20px",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: isSmallScreen ? "column" : "row",
-          gap: "20px",
-        }}
-      >
-        <GoodsIncomingFormInputItem
+    <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
+      <FieldWrapper isSmallScreen={isSmallScreen}>
+        <ControllerInputField
           name={"firstAndLast"}
           type="string"
           control={control}
@@ -115,7 +101,7 @@ export const AddNewAddressForm = ({
           }}
         />
 
-        <GoodsIncomingFormInputItem
+        <ControllerInputField
           name={"postalIndex"}
           type="number"
           control={control}
@@ -126,7 +112,7 @@ export const AddNewAddressForm = ({
             flex: 1,
           }}
         />
-        <GoodsIncomingFormInputItem
+        <ControllerInputField
           name={"deliveryAddress"}
           type="string"
           control={control}
@@ -137,20 +123,15 @@ export const AddNewAddressForm = ({
             flex: 1,
           }}
         />
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: isSmallScreen ? "column" : "row",
-          gap: "20px",
-        }}
-      >
+      </FieldWrapper>
+
+      <FieldWrapper isSmallScreen={isSmallScreen}>
         <Box
           sx={{
             flex: 1,
           }}
         >
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             name={"geolocation"}
             type="string"
             control={control}
@@ -192,7 +173,7 @@ export const AddNewAddressForm = ({
           />
         </Box>
 
-        <GoodsIncomingFormInputItem
+        <ControllerInputField
           name={"addressDetails"}
           type="string"
           control={control}
@@ -224,7 +205,7 @@ export const AddNewAddressForm = ({
             </Box>
           }
         />
-        <GoodsIncomingFormInputItem
+        <ControllerInputField
           name={"comments"}
           type="string"
           control={control}
@@ -236,16 +217,9 @@ export const AddNewAddressForm = ({
             flex: 1,
           }}
         />
-      </Box>
+      </FieldWrapper>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          paddingTop: 2,
-          justifyContent: "space-between",
-        }}
-      >
+      <ButtonsWrapper>
         <Button
           color="inherit"
           sx={{ mr: 1, border: "1px solid lightgray" }}
@@ -263,7 +237,7 @@ export const AddNewAddressForm = ({
         >
           {t("add")}
         </Button>
-      </Box>
-    </Box>
+      </ButtonsWrapper>
+    </FormWrapper>
   );
 };

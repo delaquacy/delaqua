@@ -1,6 +1,7 @@
 import { useScreenSize } from "@/app/hooks";
 import { Box, Button, FormHelperText, Tooltip } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { HelperText, Wrapper } from "./styled";
 
 interface ButtonsGroupProps {
   activeStep: number;
@@ -19,14 +20,7 @@ export const ButtonsGroup = ({
   const { isSmallScreen } = useScreenSize();
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        paddingTop: 2,
-        justifyContent: "space-between",
-      }}
-    >
+    <Wrapper>
       <Button
         color="inherit"
         disabled={activeStep === 0}
@@ -38,16 +32,7 @@ export const ButtonsGroup = ({
 
       {isSmallScreen ? (
         <Box>
-          <FormHelperText
-            sx={{
-              color: "#d32f2f",
-              textAlign: "center",
-              fontWeight: 600,
-              fontSize: "14px",
-            }}
-          >
-            {errorMessage}
-          </FormHelperText>
+          <HelperText>{errorMessage}</HelperText>
         </Box>
       ) : (
         <Box sx={{ flex: "1 1 auto" }} />
@@ -62,6 +47,6 @@ export const ButtonsGroup = ({
           {activeStep === steps.length - 1 ? t("finish") : t("next")}
         </Button>
       </Tooltip>
-    </Box>
+    </Wrapper>
   );
 };

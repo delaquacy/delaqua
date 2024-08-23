@@ -13,6 +13,7 @@ import { TableExpandRow } from "./TableExpandRow";
 import { useTranslation } from "react-i18next";
 import { useUserContext } from "@/app/contexts/UserContext";
 import { useScreenSize } from "@/app/hooks";
+import { MainContentWrapper } from "../shared/styled";
 // import OrdersList from "../ordersList/OrdersList";
 
 export const History = () => {
@@ -21,12 +22,7 @@ export const History = () => {
   const { isSmallScreen } = useScreenSize();
 
   return (
-    <Box
-      sx={{
-        height: "calc(100dvh - 84px - 129px)",
-        padding: "20px",
-      }}
-    >
+    <MainContentWrapper>
       <TableContainer
         component={Paper}
         sx={{
@@ -131,6 +127,6 @@ export const History = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </Box>
+    </MainContentWrapper>
   );
 };

@@ -1,41 +1,19 @@
 "use client";
 
 import { useScreenSize } from "@/app/hooks";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Tabs } from "@mui/material";
 
 import { useState } from "react";
 import { GoodsAvailableTable } from "../GoodsAvailableTable";
 import { GoodsIncomingForm } from "../GoodsIncomingForm";
 import { GoodsInvoicesTable } from "../GoodsInvoicesTable";
 import { AddNewGoodForm } from "../AddNewGoodForm";
+import { GoodTab } from "./styled";
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
-}
-
-function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children} </Box>}
-    </div>
-  );
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
 }
 
 export const GoodsTabs = () => {
@@ -55,7 +33,7 @@ export const GoodsTabs = () => {
         indicatorColor="primary"
         aria-label="secondary tabs example"
         sx={{
-          width: "100vw",
+          width: "100%",
           display: "flex",
 
           "& .MuiTabs-flexContainer": {
@@ -64,61 +42,26 @@ export const GoodsTabs = () => {
           },
         }}
       >
-        <Tab
-          sx={{
-            flex: 1,
-            maxWidth: "100%",
-            borderRadius: "10px",
-            transition: "all 0.3s",
-            background: value === 0 ? "#F1F1F1" : "",
-            ":hover": {
-              background: "#F1F1F1",
-            },
-          }}
+        <GoodTab
+          isCurrentTab={value === 0}
           label="Goods available at the warehouse"
           {...a11yProps(0)}
         />
 
-        <Tab
-          sx={{
-            flex: 1,
-            maxWidth: "100%",
-            transition: "all 0.3s",
-            borderRadius: "10px",
-            background: value === 1 ? "#F1F1F1" : "",
-            ":hover": {
-              background: "#F1F1F1",
-            },
-          }}
+        <GoodTab
+          isCurrentTab={value === 1}
           label="Incoming Form"
           {...a11yProps(1)}
         />
 
-        <Tab
-          sx={{
-            flex: 1,
-            maxWidth: "100%",
-            transition: "all 0.3s",
-            borderRadius: "10px",
-            background: value === 2 ? "#F1F1F1" : "",
-            ":hover": {
-              background: "#F1F1F1",
-            },
-          }}
+        <GoodTab
+          isCurrentTab={value === 2}
           label="Goods Invoices List"
           {...a11yProps(2)}
         />
 
-        <Tab
-          sx={{
-            flex: 1,
-            maxWidth: "100%",
-            transition: "all 0.3s",
-            ":hover": {
-              background: "#F1F1F1",
-              borderRadius: "10px",
-            },
-          }}
+        <GoodTab
+          isCurrentTab={value === 3}
           label="Add New Good"
           {...a11yProps(3)}
         />
@@ -139,3 +82,30 @@ export const GoodsTabs = () => {
     </Box>
   );
 };
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
+
+function CustomTabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Box
+      sx={{
+        height: "100%",
+        overflow: "scroll",
+      }}
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children} </Box>}
+    </Box>
+  );
+}

@@ -24,7 +24,7 @@ import { addItemsQuantityToInventoryTable } from "@/app/utils/addItemsToInventor
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { validationSchema } from "./validationSchema";
-import { GoodsIncomingFormInputItem } from "./GoodsIncomingFormInputItem";
+import { ControllerInputField } from "../shared";
 
 interface Goods {
   id: string;
@@ -186,7 +186,7 @@ export const GoodsIncomingForm = () => {
               flex: 1,
             }}
           >
-            <GoodsIncomingFormInputItem
+            <ControllerInputField
               name={"invoiceNumber"}
               control={control}
               type="string"
@@ -224,7 +224,7 @@ export const GoodsIncomingForm = () => {
                   />
                 )}
               />
-              <GoodsIncomingFormInputItem
+              <ControllerInputField
                 name={`items.${index}.quantity` as any}
                 control={control}
                 type="number"
@@ -277,7 +277,7 @@ export const GoodsIncomingForm = () => {
           gap="15px"
           width="calc(100% - 40px)"
         >
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             name={"total"}
             control={control}
             type="number"
@@ -286,7 +286,7 @@ export const GoodsIncomingForm = () => {
             helperText={errors.total?.message as string}
           />
           <Box display="flex" flexDirection="row" gap="15px" width="100%">
-            <GoodsIncomingFormInputItem
+            <ControllerInputField
               name={"netBuyWorth"}
               control={control}
               type="number"
@@ -295,7 +295,7 @@ export const GoodsIncomingForm = () => {
               helperText={errors?.netBuyWorth?.message as string}
               sx={{ flex: 1 }}
             />
-            <GoodsIncomingFormInputItem
+            <ControllerInputField
               name={"buyPriceVAT"}
               control={control}
               type="number"

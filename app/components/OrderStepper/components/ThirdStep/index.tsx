@@ -11,8 +11,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useScreenSize } from "@/app/hooks";
 
-import { GoodsIncomingFormInputItem } from "../GoodsIncomingForm/GoodsIncomingFormInputItem";
-import { AddressDetailCard } from "./AddressDetailCard";
 import {
   AddLocationAltOutlined,
   WrongLocationOutlined,
@@ -24,8 +22,17 @@ import {
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
-import { AddNewAddressForm } from "./AddNewAddressForm";
 import { db } from "@/app/lib/config";
+
+import { CardShadow, ControllerInputField } from "@/app/components/shared";
+import {
+  FormHeaderButton,
+  FormHeaderWrapper,
+  FormWrapper,
+  ToggleButtonGroupWrap,
+} from "./styled";
+import { AddNewAddress } from "../AddNewAddress";
+import { AddressDetailCard } from "../AddressDetailCard";
 
 interface FormValues {
   id?: string;
@@ -176,91 +183,44 @@ export const ThirdStep = ({
   }, [userData, userOrder]);
 
   return (
-    <Card
-      sx={{
-        padding: "20px",
-        boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-      }}
-    >
+    <CardShadow>
       {showAddressForm ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+        <FormWrapper>
+          <FormHeaderWrapper>
             {addresses.length > 0 ? (
               <>
                 {t("address")}
-                <Button
-                  onClick={() => setShowAddressForm(false)}
-                  sx={{
-                    textTransform: "none",
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "5px",
-                  }}
-                >
+
+                <FormHeaderButton onClick={() => setShowAddressForm(false)}>
                   <WrongLocationOutlined />
                   {t("returnToAddressList")}
-                </Button>
+                </FormHeaderButton>
               </>
             ) : (
               <>{t("address")}</>
             )}
-          </Box>
-          <AddNewAddressForm
+          </FormHeaderWrapper>
+
+          <AddNewAddress
             onAdd={handleAddNewAddress}
             onBack={() => setShowAddressForm(false)}
             userId={userData.userId}
             disableBack={addresses.length === 0}
           />
-        </Box>
+        </FormWrapper>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Box display="flex" flexDirection="column" gap="20px">
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
+        <>
+          <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
+            <FormHeaderWrapper>
               {t("deliveryAddress")}
-              <Button
-                onClick={() => setShowAddressForm(true)}
-                sx={{
-                  textTransform: "none",
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: "5px",
-                }}
-              >
+              <FormHeaderButton onClick={() => setShowAddressForm(true)}>
                 <AddLocationAltOutlined />
                 {t("add_new_address")}
-              </Button>
-            </Box>
+              </FormHeaderButton>
+            </FormHeaderWrapper>
 
-            <ToggleButtonGroup
+            <ToggleButtonGroupWrap
               orientation="vertical"
-              sx={{
-                "& .Mui-selected": {
-                  backgroundColor: "rgba(25,118,210, 0.2) !important",
-                  ":hover": {
-                    backgroundColor: "rgba(25,118,210, 0.2) !important",
-                  },
-                },
-              }}
               value={
                 addresses.find(({ id }) => id === selectedAddress?.id) || null
               }
@@ -296,8 +256,9 @@ export const ThirdStep = ({
                   />
                 </ToggleButton>
               ))}
-            </ToggleButtonGroup>
-            <GoodsIncomingFormInputItem
+            </ToggleButtonGroupWrap>
+
+            <ControllerInputField
               name={"comments"}
               type="string"
               control={control}
@@ -309,12 +270,12 @@ export const ThirdStep = ({
                 flex: 1,
               }}
             />
-          </Box>
+          </FormWrapper>
           {renderButtonsGroup(
             showTooltipMessage ? "Please select delivery address" : ""
           )}
-        </form>
+        </>
       )}
-    </Card>
+    </CardShadow>
   );
 };

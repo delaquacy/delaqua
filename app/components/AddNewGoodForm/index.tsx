@@ -2,13 +2,13 @@ import { Controller, useForm } from "react-hook-form";
 import { validationSchema } from "./validationSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Button } from "@mui/material";
-import { GoodsIncomingFormInputItem } from "../GoodsIncomingForm/GoodsIncomingFormInputItem";
 import { CheckCircleOutline } from "@mui/icons-material";
 import { useScreenSize, useToast } from "@/app/hooks";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/app/lib/config";
 import dayjs from "dayjs";
 import SelectItem from "../GoodsIncomingForm/Select";
+import { ControllerInputField } from "../shared";
 
 interface Goods {
   itemCode: string;
@@ -92,7 +92,7 @@ export const AddNewGoodForm = () => {
         flexWrap="wrap"
       >
         <Box display="flex" flexDirection="row" gap="10px" sx={{ flex: 1 }}>
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             sx={{ flex: 1 }}
             name={"itemCode"}
             control={control}
@@ -101,7 +101,7 @@ export const AddNewGoodForm = () => {
             error={!!errors.itemCode}
             helperText={errors.itemCode?.message as string}
           />
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             sx={{ flex: 1 }}
             name={"name"}
             control={control}
@@ -112,7 +112,7 @@ export const AddNewGoodForm = () => {
           />
         </Box>
         <Box display="flex" flexDirection="row" gap="10px" sx={{ flex: 1 }}>
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             sx={{ flex: 1 }}
             name={"quantity"}
             control={control}
@@ -121,7 +121,7 @@ export const AddNewGoodForm = () => {
             error={!!errors.quantity}
             helperText={errors.quantity?.message as string}
           />
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             sx={{ flex: 1 }}
             name={"unitPrice"}
             control={control}
@@ -139,7 +139,7 @@ export const AddNewGoodForm = () => {
         flexWrap="wrap"
       >
         <Box display="flex" flexDirection="row" gap="10px" sx={{ flex: 1 }}>
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             sx={{ flex: 1 }}
             name={"buyPrice"}
             control={control}
@@ -148,7 +148,7 @@ export const AddNewGoodForm = () => {
             error={!!errors.buyPrice}
             helperText={errors.buyPrice?.message as string}
           />
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             sx={{ flex: 1 }}
             name={"buyPriceVAT"}
             control={control}
@@ -159,7 +159,7 @@ export const AddNewGoodForm = () => {
           />
         </Box>
         <Box display="flex" flexDirection="row" gap="10px" sx={{ flex: 1 }}>
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             sx={{ flex: 1 }}
             name={"netBuyWorth"}
             control={control}
@@ -168,7 +168,7 @@ export const AddNewGoodForm = () => {
             error={!!errors.netBuyWorth}
             helperText={errors.netBuyWorth?.message as string}
           />
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             sx={{ flex: 1 }}
             name={"netSaleWorth"}
             control={control}
@@ -186,7 +186,7 @@ export const AddNewGoodForm = () => {
         flexWrap="wrap"
       >
         <Box display="flex" flexDirection="row" gap="10px" sx={{ flex: 1 }}>
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             sx={{ flex: 1 }}
             name={"sellPrice"}
             control={control}
@@ -195,7 +195,7 @@ export const AddNewGoodForm = () => {
             error={!!errors.sellPrice}
             helperText={errors.sellPrice?.message as string}
           />
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             sx={{ flex: 1 }}
             name={"sellPriceVAT"}
             control={control}
@@ -206,7 +206,7 @@ export const AddNewGoodForm = () => {
           />
         </Box>
         <Box display="flex" flexDirection="row" gap="10px" sx={{ flex: 1 }}>
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             sx={{ flex: 1 }}
             name={"taxRate"}
             control={control}
@@ -215,7 +215,7 @@ export const AddNewGoodForm = () => {
             error={!!errors.taxRate}
             helperText={errors.taxRate?.message as string}
           />
-          <GoodsIncomingFormInputItem
+          <ControllerInputField
             sx={{ flex: 1 }}
             name={"picture"}
             control={control}
@@ -246,7 +246,7 @@ export const AddNewGoodForm = () => {
         )}
       />
 
-      <GoodsIncomingFormInputItem
+      <ControllerInputField
         name={"description"}
         control={control}
         type="string"

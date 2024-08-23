@@ -1,10 +1,9 @@
 import { Box, TextField } from "@mui/material";
 import { Control, Controller } from "react-hook-form";
-import { FormValues } from ".";
 import { useScreenSize } from "@/app/hooks";
 import { ReactNode } from "react";
 
-interface GoodsIncomingFormItemProps {
+interface ControllerInputFieldProps {
   name: any;
   control: Control<any>;
   type: string;
@@ -15,7 +14,7 @@ interface GoodsIncomingFormItemProps {
   multiline?: boolean;
 }
 
-export const GoodsIncomingFormInputItem = ({
+export const ControllerInputField = ({
   name,
   control,
   type,
@@ -24,7 +23,7 @@ export const GoodsIncomingFormInputItem = ({
   helperText,
   multiline,
   sx = {},
-}: GoodsIncomingFormItemProps) => {
+}: ControllerInputFieldProps) => {
   const { isSmallScreen } = useScreenSize();
 
   return (

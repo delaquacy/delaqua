@@ -14,11 +14,11 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useTranslation } from "react-i18next";
 import { useScreenSize } from "@/app/hooks";
-import { datePickerStyle } from "../OrdersTableFilter/DateRangePicker";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { deliveryValidation } from "@/app/utils";
 import useDatesFromDB from "@/app/utils/getUnableDates";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { datePickerStyle } from "@/app/components/OrdersTableFilter/DateRangePicker";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(updateLocale);
@@ -133,7 +133,7 @@ export const SecondStep = ({
           sx={{
             padding: "20px",
             boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-            minHeight: "calc(100vh - 200px)",
+            // minHeight: "calc(100vh - 200px)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",

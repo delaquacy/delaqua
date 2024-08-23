@@ -50,8 +50,6 @@ export const getAllUserOrders = async (
         });
       }
 
-      console.log({ ...order, items });
-
       return { ...order, items };
     }) as OrdersData[];
   } catch (error) {

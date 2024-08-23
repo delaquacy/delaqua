@@ -1,15 +1,16 @@
 import { Box, Button, Card, Typography } from "@mui/material";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 
-import styles from "./../OrderCreated/OrderCreated.module.css";
+import styles from "../../../OrderCreated/OrderCreated.module.css";
 
 import { useTranslation } from "react-i18next";
 import { useScreenSize } from "@/app/hooks";
 
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
-import "../../i18n";
+import "../../../../i18n";
 import { CheckBox } from "@mui/icons-material";
 import { getDayOfWeek } from "@/app/utils";
+import { CardShadow } from "@/app/components/shared";
 
 interface FormValues {}
 
@@ -64,18 +65,10 @@ export const FifthStep = ({
 
   const onSubmit = (data: FormValues) => {
     console.log(data, "INSIDE");
-
-    // handleAddOrderDetails(data);
-    // handleNext();
   };
 
   return (
-    <Card
-      sx={{
-        padding: "20px",
-        boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-      }}
-    >
+    <CardShadow>
       <Box className={styles.center}>
         <CheckBox fontSize="large" className={styles.icon} />
       </Box>
@@ -105,6 +98,6 @@ export const FifthStep = ({
         {paymentText}
       </Box>
       {renderButtonsGroup("")}
-    </Card>
+    </CardShadow>
   );
 };

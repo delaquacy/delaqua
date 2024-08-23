@@ -4,26 +4,10 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useTranslation } from "react-i18next";
-import { OrderCardCounter } from "./OrderCardCounter";
 import { Controller, useForm } from "react-hook-form";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-  gap: "20px",
-};
+import { OrderCardCounter } from "../OrderCardCounter";
+import { Wrapper } from "./styled";
 
 interface FormValues {
   bottlesNumberToReturn: string;
@@ -54,7 +38,7 @@ export const FirstStepModal = ({ open, setOpen, onConfirm }: any) => {
   return (
     <Modal open={open} onClose={handleClose}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Box sx={style}>
+        <Wrapper>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             {t("number_of_bottles_to_return")}
           </Typography>
@@ -80,7 +64,7 @@ export const FirstStepModal = ({ open, setOpen, onConfirm }: any) => {
           >
             {t("confirm")}
           </Button>
-        </Box>
+        </Wrapper>
       </form>
     </Modal>
   );

@@ -1,14 +1,8 @@
 import {
   Box,
-  Card,
   FormControlLabel,
   Radio,
   RadioGroup,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -18,7 +12,6 @@ import { ChangeEvent, useEffect, useState } from "react";
 
 import { useTranslation } from "react-i18next";
 
-import { ORDER_DETAILS_HEAD } from "@/app/constants/OrderDetailsHead";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import {
   AccountCircleOutlined,
@@ -33,7 +26,15 @@ import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/app/lib/config";
 import axios from "axios";
 import { BIG_BOTTLE_ID, RENT_BOTTLE_ID } from "@/app/constants/OrderItemsIds";
-import { OrderItemsTable } from "../OrderItemsTable";
+import { CardShadow } from "@/app/components/shared";
+import {
+  DetailsCard,
+  DetailsCardItem,
+  DetailsCardItemColumn,
+  DetailsCardItemRow,
+  FormWrapper,
+} from "./styled";
+import { OrderItemsTable } from "@/app/components/OrderItemsTable";
 
 interface FormValues {
   paymentMethod: string;
@@ -170,140 +171,102 @@ export const FourthStep = ({
   }, []);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Card
-        sx={{
-          padding: "20px",
-          boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-          }}
-        >
-          <Typography>{t("checkAndPay")}</Typography>
+    <CardShadow>
+      <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
+        <Typography>{t("checkAndPay")}</Typography>
 
-          <Controller
-            control={control}
-            name="paymentMethod"
-            render={({ field }) => (
-              <RadioGroup
-                row
-                value={field.value}
-                onChange={(e) => {
-                  field.onChange(e);
-                  handleChangePayment(e);
-                }}
-              >
-                <FormControlLabel
-                  value="Cash"
-                  control={<Radio />}
-                  label={t("cash")}
-                />
-                <FormControlLabel
-                  value="Online"
-                  control={<Radio />}
-                  label={t("online")}
-                />
-              </RadioGroup>
-            )}
-          />
-
-          <Box>{t("orderDetails")}</Box>
-          <OrderItemsTable
-            orderItems={userOrder.items}
-            totalPayments={userOrder.totalPayments}
-          />
-
-          <Card
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "15px",
-              padding: "20px",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "15px",
+        <Controller
+          control={control}
+          name="paymentMethod"
+          render={({ field }) => (
+            <RadioGroup
+              row
+              value={field.value}
+              onChange={(e) => {
+                field.onChange(e);
+                handleChangePayment(e);
               }}
             >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "15px",
-                  flex: 1,
-                }}
-              >
-                <Box display="flex" flexDirection="row" gap="10px">
-                  <Tooltip title={t("delivery_date_and_time")}>
-                    <EventOutlined />
-                  </Tooltip>
-                  <Typography>{`${userOrder.deliveryDate as string}, ${
-                    userOrder.deliveryTime
-                  }`}</Typography>
-                </Box>
+              <FormControlLabel
+                value="Cash"
+                control={<Radio />}
+                label={t("cash")}
+              />
+              <FormControlLabel
+                value="Online"
+                control={<Radio />}
+                label={t("online")}
+              />
+            </RadioGroup>
+          )}
+        />
 
-                <Box display="flex" flexDirection="row" gap="10px">
-                  <Tooltip title={t("number_of_bottles_to_return")}>
-                    <Image
-                      src="/recycleWater.svg"
-                      height={25}
-                      width={25}
-                      alt="recycleWater"
-                    />
-                  </Tooltip>
-                  <Typography>{userOrder.bottlesNumberToReturn}</Typography>
-                </Box>
-              </Box>
+        <Box>{t("orderDetails")}</Box>
 
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "15px",
-                  flex: 1,
-                }}
-              >
-                <Box display="flex" flexDirection="row" gap="10px">
-                  <Tooltip title={t("first_and_last")}>
-                    <AccountCircleOutlined />
-                  </Tooltip>
-                  <Typography>
-                    {userOrder.deliveryAddress.firstAndLast}
-                  </Typography>
-                </Box>
-                <Box display="flex" flexDirection="row" gap="10px">
-                  <Tooltip title={t("address")}>
-                    <HomeOutlined />
-                  </Tooltip>
-                  <Typography>
-                    {`${userOrder.deliveryAddress.postalIndex}, ${userOrder.deliveryAddress.deliveryAddress}, ${userOrder.deliveryAddress.addressDetails}, ${userOrder.deliveryAddress.comments}`}
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
+        <OrderItemsTable
+          orderItems={userOrder.items}
+          totalPayments={userOrder.totalPayments}
+        />
 
-            <Box display="flex" flexDirection="row" gap="10px">
-              <Tooltip title={t("geolocation_link")}>
-                <PlaceOutlined />
-              </Tooltip>
-              <Typography>
-                <Link href={userOrder.deliveryAddress.geolocation}>
-                  {userOrder.deliveryAddress.geolocation}
-                </Link>
-              </Typography>
-            </Box>
-          </Card>
-        </Box>
+        <DetailsCard>
+          <DetailsCardItem>
+            <DetailsCardItemColumn>
+              <DetailsCardItemRow>
+                <Tooltip title={t("delivery_date_and_time")}>
+                  <EventOutlined />
+                </Tooltip>
+                <Typography>{`${userOrder.deliveryDate as string}, ${
+                  userOrder.deliveryTime
+                }`}</Typography>
+              </DetailsCardItemRow>
+
+              <DetailsCardItemRow>
+                <Tooltip title={t("number_of_bottles_to_return")}>
+                  <Image
+                    src="/recycleWater.svg"
+                    height={25}
+                    width={25}
+                    alt="recycleWater"
+                  />
+                </Tooltip>
+                <Typography>{userOrder.bottlesNumberToReturn}</Typography>
+              </DetailsCardItemRow>
+            </DetailsCardItemColumn>
+
+            <DetailsCardItemColumn>
+              <DetailsCardItemRow>
+                <Tooltip title={t("first_and_last")}>
+                  <AccountCircleOutlined />
+                </Tooltip>
+                <Typography>
+                  {userOrder.deliveryAddress.firstAndLast}
+                </Typography>
+              </DetailsCardItemRow>
+
+              <DetailsCardItemRow>
+                <Tooltip title={t("address")}>
+                  <HomeOutlined />
+                </Tooltip>
+                <Typography>
+                  {`${userOrder.deliveryAddress.postalIndex}, ${userOrder.deliveryAddress.deliveryAddress}, ${userOrder.deliveryAddress.addressDetails}, ${userOrder.deliveryAddress.comments}`}
+                </Typography>
+              </DetailsCardItemRow>
+            </DetailsCardItemColumn>
+          </DetailsCardItem>
+
+          <DetailsCardItem>
+            <Tooltip title={t("geolocation_link")}>
+              <PlaceOutlined />
+            </Tooltip>
+            <Typography>
+              <Link href={userOrder.deliveryAddress.geolocation}>
+                {userOrder.deliveryAddress.geolocation}
+              </Link>
+            </Typography>
+          </DetailsCardItem>
+        </DetailsCard>
         {renderButtonsGroup(showTooltipMessage ? "Done Requirement first" : "")}
-      </Card>
-    </form>
+      </FormWrapper>
+    </CardShadow>
   );
 };

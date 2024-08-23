@@ -13,15 +13,6 @@ import {
 import { useEffect, useState } from "react";
 import { GoodsValues } from "../GoodsIncomingForm";
 
-interface Goods {
-  id: string;
-  lastInvoiceDate: string;
-  lastInvoiceNumber: string;
-  name: string;
-  quantity: number;
-  unitPrice: string;
-}
-
 export const GoodsInvoicesTable = () => {
   const { isSmallScreen } = useScreenSize();
 
@@ -42,7 +33,7 @@ export const GoodsInvoicesTable = () => {
   return (
     <TableContainer
       sx={{
-        height: isSmallScreen ? `calc(100dvh - 240px)` : `calc(100dvh - 205px)`,
+        height: isSmallScreen ? `calc(100dvh - 260px)` : `calc(100dvh - 205px)`,
         width: "calc(100vw - 40px)",
         paddingInline: "20px",
         boxSizing: "border-box",
@@ -78,7 +69,6 @@ export const GoodsInvoicesTable = () => {
             good.items.map((item) => (
               <TableRow key={`${good.id}-${item.id}`}>
                 <TableCell
-                  component="th"
                   scope="row"
                   padding="none"
                   align="center"

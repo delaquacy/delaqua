@@ -17,12 +17,23 @@ import { useUserContext } from "@/app/contexts/UserContext";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { OrdersData } from "@/app/types";
+import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function WrapperHeader() {
   const [showWindow, setShowWindow] = useState<boolean>(false);
 
   const { unpaidOrders } = useUserContext();
   const { t } = useTranslation("orderTable");
+
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (pathname.includes("/my_account")) {
+      router.push("/new_order");
+    }
+  }, [pathname]);
 
   return (
     <>

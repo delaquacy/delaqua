@@ -1,21 +1,16 @@
-import Box from "@mui/material/Box";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import { Fragment, useState } from "react";
-import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-import { FirstStep } from "./FirstStep";
-import { useScreenSize } from "@/app/hooks";
-import { Tooltip, useTheme } from "@mui/material";
-import { SecondStep } from "./SecondStep";
-import { FirstStepModal } from "./FirstStepModal";
-import { ThirdStep } from "./ThirdStep";
-import { FourthStep } from "./FourthStep";
-import { FifthStep } from "./FifthStep";
+import { useState } from "react";
+
 import { useTranslation } from "react-i18next";
-import { ButtonsGroup } from "./ButtonsGroup";
+import {
+  ButtonsGroup,
+  FifthStep,
+  FirstStep,
+  FourthStep,
+  SecondStep,
+  ThirdStep,
+} from "./components";
+import { Box, Button, Step, StepLabel, Stepper } from "@mui/material";
+import { FirstStepModal } from "./components/FirstStepModal";
 
 const STEP_KEYS = [
   "products",
@@ -34,7 +29,6 @@ const STEPS_COMPONENTS = [
 ];
 
 export default function OrderStepper() {
-  const { isSmallScreen } = useScreenSize();
   const { t } = useTranslation("form");
 
   const [activeStep, setActiveStep] = useState(0);
@@ -110,7 +104,8 @@ export default function OrderStepper() {
           <Box
             sx={{
               paddingBlock: 4,
-              minHeight: "calc(100vh - 200px)",
+              height: "calc(100dvh - 200px)",
+              overflow: "scroll",
             }}
           >
             {STEPS_COMPONENTS[activeStep]({

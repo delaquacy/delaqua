@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Card,
-  FormHelperText,
-  Skeleton,
-  Theme,
-  useTheme,
-} from "@mui/material";
-import { OrderCard } from "./OrderCard";
+import { Skeleton } from "@mui/material";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import {
   UserOrderItem,
   useOrderDetailsContext,
 } from "@/app/contexts/OrderDetailsContext";
 import { useTranslation } from "react-i18next";
+import { CardShadow } from "@/app/components/shared";
+import { CustomGrid, HelperText } from "./styled";
+import { OrderCard } from "../OrderCard";
 
 interface FormValues {
   items: UserOrderItem[];
@@ -26,7 +21,6 @@ export const FirstStep = ({
   renderButtonsGroup: (errorMessage?: string) => React.ReactNode;
   handleNext: () => void;
 }) => {
-  const theme = useTheme();
   const { t } = useTranslation("form");
 
   const { goods, userOrder, isFirstOrder, handleAddOrderDetails } =
@@ -97,14 +91,9 @@ export const FirstStep = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Card
-        sx={{
-          padding: "20px",
-          boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-        }}
-      >
+      <CardShadow>
         {/* TODO: ADD ACCORDION FOR TWO CATEGORIES */}
-        <Box sx={gridStyle(theme)}>
+        <CustomGrid>
           {goods.length
             ? goods
                 .filter((good) => good.id !== "120")
@@ -135,42 +124,22 @@ export const FirstStep = ({
                     />
                   );
                 })
-            : Array.from({ length: 7 }, (_, i) => i + 1).map(() => (
-                <Skeleton variant="rounded" width={"100%"} height={240} />
+            : Array.from({ length: 7 }, (_, i) => i + 1).map((_, index) => (
+                <Skeleton
+                  key={index}
+                  variant="rounded"
+                  width={"100%"}
+                  height={240}
+                />
               ))}
-        </Box>
+        </CustomGrid>
 
-        <FormHelperText
-          sx={{
-            marginTop: "30px",
-            fontSize: "14px",
-          }}
-        >
+        <HelperText>
           {isFirstOrder ? t("minimumOrderSmall") : t("minimumOrderBig")}
-        </FormHelperText>
+        </HelperText>
 
         {renderButtonsGroup(showTooltipMessage ? t("minimumOrder") : "")}
-      </Card>
+      </CardShadow>
     </form>
   );
 };
-
-const gridStyle = (theme: Theme) => ({
-  display: "grid",
-  [theme.breakpoints.down(350)]: {
-    gridTemplateColumns: "repeat(1, 1fr)",
-  },
-  [theme.breakpoints.between("xs", "sm")]: {
-    gridTemplateColumns: "repeat(2, 1fr)",
-  },
-  [theme.breakpoints.up("sm")]: {
-    gridTemplateColumns: "repeat(3, 1fr)",
-  },
-  [theme.breakpoints.up("md")]: {
-    gridTemplateColumns: "repeat(4, 1fr)",
-  },
-  [theme.breakpoints.up("lg")]: {
-    gridTemplateColumns: "repeat(5, 1fr)",
-  },
-  gap: "25px",
-});

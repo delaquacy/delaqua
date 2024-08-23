@@ -1,8 +1,9 @@
 import { Box, Card, Typography } from "@mui/material";
 import Image from "next/image";
-import { OrderCardCounter } from "./OrderCardCounter";
 import { useTranslation } from "react-i18next";
 import { useScreenSize } from "@/app/hooks";
+import { CardWrapper, DescriptionBox, Marker } from "./styled";
+import { OrderCardCounter } from "../OrderCardCounter";
 
 interface OrderCardProps {
   imageSrc: string;
@@ -31,44 +32,8 @@ export const OrderCard = ({
   const { isSmallScreen } = useScreenSize();
 
   return (
-    <Card
-      sx={{
-        position: "relative",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        alignContent: "center",
-        cursor: "pointer",
-        border: "1px solid lightgray",
-        boxShadow:
-          `${code}` === "119" ? "rgba(145,188,233, 10) 0px 5px 15px" : "",
-        padding: "10px",
-        transition: "all 0.2s",
-        ":hover": {
-          transform: isSmallScreen ? "" : "scale(1.1)",
-        },
-      }}
-    >
-      {`${code}` === "119" && (
-        <Box
-          sx={{
-            position: "absolute",
-            fontSize: "10px",
-            background: "#5195DC",
-            paddingBlock: "5px",
-            paddingInline: "10px",
-            borderRadius: "0px 14px 14px 0px",
-            color: "#fff",
-            fontWeight: 700,
-            left: -1,
-            top: 0,
-            boxShadow: "rgba(145,188,233, 10) 0px 5px 10px",
-          }}
-        >
-          Main product
-        </Box>
-      )}
+    <CardWrapper special_card={(`${code}` === "119").toString()}>
+      {`${code}` === "119" && <Marker>Main product</Marker>}
 
       <Image
         src={
@@ -78,21 +43,14 @@ export const OrderCard = ({
         alt={imageAlt}
         priority
         width="100"
-        height="100"
+        height="80"
         style={{
           alignSelf: "center",
           objectFit: "contain",
         }}
       />
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignContent: "center",
-        }}
-      >
+      <DescriptionBox>
         <Typography textAlign="center" fontSize="10px" color="gray">
           {`${t("productCode")}: ${code}`}
         </Typography>
@@ -104,7 +62,7 @@ export const OrderCard = ({
           {`${price} €`}
         </Typography>
         <OrderCardCounter count={count} onAdd={onAdd} onRemove={onRemove} />
-      </Box>
-    </Card>
+      </DescriptionBox>
+    </CardWrapper>
   );
 };
