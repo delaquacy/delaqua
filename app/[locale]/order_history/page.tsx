@@ -1,7 +1,7 @@
 "use client";
-import initTranslations from "../../../i18n";
-import TranslationsProvider from "../../../components/TranslationsProvider/TranslationsProvider";
-import Account from "../../../components/Account/Account";
+import initTranslations from "../../i18n";
+import TranslationsProvider from "../../components/TranslationsProvider/TranslationsProvider";
+import Account from "../../components/Account/Account";
 import WrapperFooter from "@/app/components/WrapperFooter/WrapperFooter";
 import OrdersList from "@/app/components/ordersList/OrdersList";
 import { History } from "@/app/components/History";

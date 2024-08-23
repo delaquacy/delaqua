@@ -62,7 +62,7 @@ export default function Headers({
     }
     if (user && isToggled) {
       setToggle(false);
-      router.push("my_account");
+      router.push("new_order");
     }
   }, [isToggled]);
 
@@ -107,7 +107,7 @@ export default function Headers({
   };
 
   useEffect(() => {
-    if (pathname == "/my_account") {
+    if (pathname == "/new_order" || pathname === "/order_history") {
       setShowLogin(false);
     }
   }, [pathname, router]);
@@ -232,7 +232,7 @@ export default function Headers({
                               variant="contained"
                               endIcon={<ManageAccounts fontSize="small" />}
                             >
-                              Admin
+                              {t("admin")}
                             </Button>
                           </Link>
                         )}

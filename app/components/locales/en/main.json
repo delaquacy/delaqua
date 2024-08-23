@@ -34,5 +34,7 @@
   "paymentWarning": "Your payment for delivery is awaiting to be paid. Pay via the link.",
   "pay": "Pay",
   "viewOrderHistory": "View order history",
-  "newOrder": "Place a new order"
+  "newOrder": "Place a new order",
+  "admin": "Admin",
+  "order": "Orders"
 }

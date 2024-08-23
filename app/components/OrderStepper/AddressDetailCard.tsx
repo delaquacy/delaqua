@@ -18,6 +18,7 @@ interface AddressDetailCardProps {
   onRemove: (address: Address) => void;
   onTransfer: () => Promise<void>;
   canBeRemoved: boolean;
+  selected: boolean;
 }
 
 export const AddressDetailCard = ({
@@ -25,6 +26,7 @@ export const AddressDetailCard = ({
   onRemove,
   onTransfer,
   canBeRemoved,
+  selected,
 }: AddressDetailCardProps) => {
   const { t } = useTranslation("savedAddresses");
   const { isSmallScreen } = useScreenSize();
@@ -91,7 +93,7 @@ export const AddressDetailCard = ({
         <Box display="flex" flexDirection="row" gap="10px">
           <Tooltip title={t("number_of_bottles")}>
             <Image
-              src="/recycleWater.svg"
+              src={selected ? "/recycleWater.svg" : "/recycleWaterGray.svg"}
               height={25}
               width={25}
               alt="recycleWater"

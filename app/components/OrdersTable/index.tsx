@@ -205,42 +205,49 @@ export default function OrdersTable() {
                 />
               </TableHead>
 
-              {
-                <TableBody>
-                  {visibleRows.map((row, index) => {
-                    const isItemSelected = isSelected(row.id as string);
-                    const labelId = `enhanced-table-checkbox-${index}`;
+              <TableBody>
+                {visibleRows.length ? (
+                  <>
+                    {visibleRows.map((row, index) => {
+                      const isItemSelected = isSelected(row.id as string);
+                      const labelId = `enhanced-table-checkbox-${index}`;
 
-                    const onCopy = (event: any) => {
-                      event.stopPropagation();
+                      const onCopy = (event: any) => {
+                        event.stopPropagation();
 
-                      navigator.clipboard
-                        .writeText(getClipboardOrderRowData(row as any))
-                        .then(() => showSuccessToast("Copied!"));
-                    };
-                    return (
-                      <>
+                        navigator.clipboard
+                          .writeText(getClipboardOrderRowData(row as any))
+                          .then(() => showSuccessToast("Copied!"));
+                      };
+                      return (
                         <OrderExpandRow
+                          key={`${row.id}-${index}`}
                           row={row}
                           handleClick={handleClick}
                           isItemSelected={isItemSelected}
                           labelId={labelId}
                           onCopy={onCopy}
                         />
-                      </>
-                    );
-                  })}
-                  {emptyRows > 0 && (
-                    <TableRow
-                      style={{
-                        height: 33 * emptyRows,
-                      }}
-                    >
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-              }
+                      );
+                    })}
+                    {emptyRows > 0 && (
+                      <TableRow
+                        style={{
+                          height: 33 * emptyRows,
+                        }}
+                      >
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </>
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={12} align="center">
+                      {t("table_no_orders_yet")}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
             </Table>
           </TableContainer>
 

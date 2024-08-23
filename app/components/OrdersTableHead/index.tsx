@@ -69,7 +69,13 @@ export function OrdersTableHead(props: OrdersTableHeadProps) {
           }}
         />
       </TableCell>
-      <TableCell />
+      <TableCell
+        sx={{
+          position: isSmallScreen ? "" : "sticky",
+          left: isSmallScreen ? "" : "74px",
+          zIndex: 2,
+        }}
+      />
       {TableHeadCells.map((headCell) =>
         headCell.sortable ? (
           <TableCell
@@ -138,11 +144,11 @@ const tableCellStyle = (isSmallScreen: boolean, headCell: any) => ({
   left: isSmallScreen
     ? ""
     : headCell.id === "index"
-    ? "74px"
+    ? "calc(74px + 64px)"
     : headCell.id === "phoneNumber"
-    ? "155.45px"
+    ? "calc(155.45px + 64px)"
     : headCell.id === "firstAndLast"
-    ? "290.9px"
+    ? "calc(290.9px + 64px)"
     : "",
   zIndex: isSmallScreen
     ? ""

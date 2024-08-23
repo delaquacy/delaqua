@@ -25,7 +25,6 @@ export default async function MyAccount({
       resources={resources}
     >
       <Account />
-      <WrapperFooter />
     </TranslationsProvider>
   );
 }

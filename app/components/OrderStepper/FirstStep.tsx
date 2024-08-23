@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Box, Card, FormHelperText, Theme, useTheme } from "@mui/material";
+import {
+  Box,
+  Card,
+  FormHelperText,
+  Skeleton,
+  Theme,
+  useTheme,
+} from "@mui/material";
 import { OrderCard } from "./OrderCard";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import {
@@ -98,35 +105,39 @@ export const FirstStep = ({
       >
         {/* TODO: ADD ACCORDION FOR TWO CATEGORIES */}
         <Box sx={gridStyle(theme)}>
-          {goods
-            .filter((good) => good.id !== "120")
-            .reverse()
-            .map((good, index) => {
-              return (
-                <Controller
-                  key={good.id}
-                  control={control}
-                  name={`items.${index}.count`}
-                  render={({ field }) => (
-                    <OrderCard
-                      imageSrc={good!.picture}
-                      imageAlt={good!.name}
-                      title={good!.name}
-                      description={good!.description}
-                      price={good!.sellPrice}
-                      code={good!.itemCode}
-                      count={field.value}
-                      onAdd={() => {
-                        field.onChange(+field.value + 1);
-                      }}
-                      onRemove={() => {
-                        field.onChange(Math.max(+field.value - 1, 0));
-                      }}
+          {goods.length
+            ? goods
+                .filter((good) => good.id !== "120")
+                .reverse()
+                .map((good, index) => {
+                  return (
+                    <Controller
+                      key={good.id}
+                      control={control}
+                      name={`items.${index}.count`}
+                      render={({ field }) => (
+                        <OrderCard
+                          imageSrc={good!.picture}
+                          imageAlt={good!.name}
+                          title={good!.name}
+                          description={good!.description}
+                          price={good!.sellPrice}
+                          code={good!.itemCode}
+                          count={field.value}
+                          onAdd={() => {
+                            field.onChange(+field.value + 1);
+                          }}
+                          onRemove={() => {
+                            field.onChange(Math.max(+field.value - 1, 0));
+                          }}
+                        />
+                      )}
                     />
-                  )}
-                />
-              );
-            })}
+                  );
+                })
+            : Array.from({ length: 7 }, (_, i) => i + 1).map(() => (
+                <Skeleton variant="rounded" width={"100%"} height={240} />
+              ))}
         </Box>
 
         <FormHelperText

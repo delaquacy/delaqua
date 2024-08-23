@@ -282,6 +282,7 @@ export const ThirdStep = ({
                 >
                   <AddressDetailCard
                     onRemove={handleRemoveAddress}
+                    selected={selectedAddress?.id === address.id}
                     onTransfer={() =>
                       handleTransferBottles(
                         address.id,

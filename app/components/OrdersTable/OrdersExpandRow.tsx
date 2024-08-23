@@ -89,7 +89,14 @@ export const OrderExpandRow = ({
           />
         </TableCell>
 
-        <TableCell>
+        <TableCell
+          sx={{
+            position: isSmallScreen ? "static" : "sticky",
+            left: "74px",
+            zIndex: 2,
+            background: "inherit",
+          }}
+        >
           <Tooltip title={open ? t("close") : t("open")}>
             <IconButton
               aria-label="expand row"
@@ -111,7 +118,7 @@ export const OrderExpandRow = ({
           align="center"
           sx={{
             position: isSmallScreen ? "static" : "sticky",
-            left: "74px",
+            left: "calc(74px + 64px)",
             zIndex: 2,
             background: "inherit",
           }}
@@ -126,7 +133,7 @@ export const OrderExpandRow = ({
           align="center"
           sx={{
             position: isSmallScreen ? "static" : "sticky",
-            left: "155.45px",
+            left: "calc(155.45px + 64px)",
             zIndex: 2,
             background: "inherit",
           }}
@@ -141,7 +148,7 @@ export const OrderExpandRow = ({
           align="center"
           sx={{
             position: isSmallScreen ? "static" : "sticky",
-            left: "290.9px",
+            left: "calc(290.9px + 64px)",
             zIndex: 2,
             background: "inherit",
             borderRight: "solid 1px rgba(38, 40, 82, 0.1)",
@@ -221,12 +228,37 @@ export const OrderExpandRow = ({
       <TableRow
         sx={{
           transition: "all 0.3s",
-          background: open ? "rgba(209, 227, 246, 0.2)" : "",
+
+          left: 0,
         }}
       >
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9.7}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
+        <TableCell
+          colSpan={9}
+          sx={{
+            // width: "90vw",
+            padding: 0,
+            position: isSmallScreen ? "static" : "sticky",
+            left: 0,
+            zIndex: 2,
+            background: "inherit",
+          }}
+        >
+          <Collapse
+            in={open}
+            timeout="auto"
+            unmountOnExit
+            sx={{
+              paddingBlock: "5px",
+              paddingInline: "10px",
+              width: isSmallScreen ? "100%" : "100vw",
+              background: open ? "rgba(209, 227, 246, 0.2)" : "",
+            }}
+          >
+            <Box
+              sx={{
+                margin: 1,
+              }}
+            >
               <Typography gutterBottom component="div">
                 Order Details
               </Typography>

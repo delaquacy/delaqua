@@ -115,10 +115,19 @@ export const History = () => {
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
-            {orders.map((order, index) => (
-              <TableExpandRow key={order.id + index} order={order} />
-            ))}
+            {orders.length ? (
+              orders.map((order, index) => (
+                <TableExpandRow key={order.id + index} order={order} />
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={12} align="center">
+                  {t("table_no_orders_yet")}
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>

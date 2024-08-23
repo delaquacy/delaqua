@@ -1,6 +1,11 @@
 import { useScreenSize } from "@/app/hooks";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
-import { AccountCircle } from "@mui/icons-material";
+import {
+  AccountCircle,
+  Shop,
+  ShoppingBag,
+  ShoppingBagOutlined,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -41,19 +46,19 @@ export const MyAccountMenu = () => {
               height: "50px",
             }}
           >
-            <AccountCircle color="primary" fontSize="small" />
+            <ShoppingBagOutlined color="primary" fontSize="small" />
           </IconButton>
         ) : (
           <Button
             variant="contained"
-            endIcon={<AccountCircle fontSize="small" />}
+            endIcon={<ShoppingBagOutlined fontSize="small" />}
             id="basic-button"
             aria-controls={open ? "basic-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
             onClick={handleClick}
           >
-            {t("my_account")}
+            {t("order")}
           </Button>
         )}
       </Box>
@@ -74,10 +79,10 @@ export const MyAccountMenu = () => {
             });
           }}
         >
-          <Link href="/my_account/history">{t("viewOrderHistory")}</Link>
+          <Link href="/order_history">{t("viewOrderHistory")}</Link>
         </MenuItem>
         <MenuItem onClick={handleClose}>
-          <Link href="/my_account/new_order">{t("newOrder")}</Link>
+          <Link href="/new_order">{t("newOrder")}</Link>
         </MenuItem>
       </Menu>
     </Box>

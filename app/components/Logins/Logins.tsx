@@ -163,7 +163,7 @@ export default function Logins({ params }: LogInProps) {
       });
       setOtp("");
       // User is an administrator, access to admin section allowed
-      isAdmin ? router.push("/admin_dashboard") : router.push("/my_account");
+      isAdmin ? router.push("/admin_dashboard") : router.push("/new_order");
       setToggle(false);
       trackAmplitudeEvent("myAccount", {
         text: "Redirect to my_account",
