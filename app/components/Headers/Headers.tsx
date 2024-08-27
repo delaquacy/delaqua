@@ -38,7 +38,7 @@ import { useUserContext } from "@/app/contexts/UserContext";
 import { useEffect, useLayoutEffect, useState } from "react";
 import dayjs from "dayjs";
 
-const END_INFO_BANNER = "26.08.2024";
+const END_INFO_BANNER = "28.08.2024";
 
 export default function Headers({
   setShowWindow,

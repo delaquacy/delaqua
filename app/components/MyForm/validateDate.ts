@@ -12,12 +12,17 @@ export const validateDate = (
     return false;
   }
 
-  const { isCurrentDayAfterNoon, isCurrentDayPrevious, isCurrentDayIsSunday } =
-    deliveryValidation(date);
+  const {
+    isCurrentDayAfterNoon,
+    isCurrentDayPrevious,
+    isCurrentDayIsSunday,
+    infoDay,
+  } = deliveryValidation(date);
 
   if (
     (isCurrentDayAfterNoon && !isCurrentDayIsSunday && !isCurrentDayPrevious) ||
-    isCurrentDayPrevious
+    isCurrentDayPrevious ||
+    infoDay
   ) {
     setError("deliveryDate", {
       type: "manual",

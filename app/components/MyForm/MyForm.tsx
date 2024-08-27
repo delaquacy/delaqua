@@ -709,11 +709,13 @@ const MyForm = () => {
 
   // datepicker settings (hide saturday, week starts from monday)
   const selectedDate = watch("deliveryDate");
+
   const {
     isCurrentDayAfterTen,
     isCurrentDayAfterNoon,
     isCurrentDayPrevious,
     isCurrentDayIsSunday,
+    infoDay,
   } = deliveryValidation(selectedDate);
 
   // Calculate the next delivery day.
@@ -733,10 +735,13 @@ const MyForm = () => {
       return day === 0;
     };
 
+    const infoDay = dayjs(selectedDate).format("DD/MM/YYYY") === "27/08/2024";
+
     return (
       isWeekend(date) ||
       //@ts-ignore
-      disabledDates.includes(date.format("DD-MM-YYYY"))
+      disabledDates.includes(date.format("DD-MM-YYYY")) ||
+      infoDay
     );
   };
 
@@ -766,6 +771,7 @@ const MyForm = () => {
   };
 
   const disableFieldsCondition =
+    infoDay ||
     (isCurrentDayAfterNoon && !!selectedDate) ||
     isCurrentDayIsSunday ||
     isCurrentDayPrevious;
@@ -1091,7 +1097,7 @@ const MyForm = () => {
                     name="deliveryDate"
                     control={control}
                     defaultValue={
-                      (isCurrentDayAfterNoon && !selectedDate
+                      ((isCurrentDayAfterNoon && !selectedDate) || infoDay
                         ? dayjs().add(1, "day")
                         : dayjs()) as any
                     }
@@ -1168,6 +1174,7 @@ const MyForm = () => {
                         control={<Radio />}
                         label={t("delivery_time_9_17")}
                         disabled={
+                          infoDay ||
                           isCurrentDayAfterNoon ||
                           isCurrentDayIsSunday ||
                           isCurrentDayPrevious
@@ -1178,6 +1185,7 @@ const MyForm = () => {
                         control={<Radio />}
                         label={t("delivery_time_9_12")}
                         disabled={
+                          infoDay ||
                           isCurrentDayAfterTen ||
                           isCurrentDayAfterNoon ||
                           isCurrentDayIsSunday ||
