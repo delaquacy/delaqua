@@ -37,8 +37,11 @@ import WrapperLogin from "../WrapperLogin/WrapperLogin";
 import { useUserContext } from "@/app/contexts/UserContext";
 import { useEffect, useLayoutEffect, useState } from "react";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
-const END_INFO_BANNER = "26.08.2024";
+dayjs.extend(customParseFormat);
+
+const END_INFO_BANNER = "27.08.2024 12:00";
 
 export default function Headers({
   setShowWindow,
@@ -116,7 +119,7 @@ export default function Headers({
 
   useLayoutEffect(() => {
     const today = dayjs();
-    const endDate = dayjs(END_INFO_BANNER, "DD.MM.YYYY");
+    const endDate = dayjs(END_INFO_BANNER, "DD.MM.YYYY HH:mm");
 
     if (today.isAfter(endDate)) {
       console.log("here");
