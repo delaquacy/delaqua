@@ -1,11 +1,17 @@
 import { Box, FormHelperText, Tooltip, Typography } from "@mui/material";
-import { ExternalCountWrapper, InternalCountWrapper, Wrapper } from "./styled";
+import {
+  ExternalCountWrapper,
+  InternalCountWrapper,
+  Title,
+  Wrapper,
+} from "./styled";
 import Image from "next/image";
 import { OrderCardCounter } from "../OrderCardCounter";
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
 import { HelpOutlineOutlined } from "@mui/icons-material";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
+import { useScreenSize } from "@/app/hooks";
 interface BigOrderCardProps {
   imageSrc: string;
   imageAlt: string;
@@ -39,6 +45,7 @@ export const BigOrderCard = ({
   watch,
 }: BigOrderCardProps) => {
   const { t } = useTranslation("form");
+  const { isSmallScreen } = useScreenSize();
   const { userOrder } = useOrderDetailsContext();
 
   const currentBottlesNum = watch(nameBottle);
@@ -62,8 +69,8 @@ export const BigOrderCard = ({
           }
           alt={imageAlt}
           priority
-          width={200}
-          height={300}
+          width={isSmallScreen ? 70 : 200}
+          height={isSmallScreen ? 200 : 300}
           style={{
             flex: 1,
             alignSelf: "center",
@@ -81,13 +88,12 @@ export const BigOrderCard = ({
           name={nameBottle}
           render={({ field }) => (
             <InternalCountWrapper>
-              <Typography textAlign="center" fontWeight="bold">
-                {t(`${codeBottle}`)}
-              </Typography>
+              <Title>{t(`${codeBottle}`)}</Title>
 
               <Typography textAlign="center">{description}</Typography>
               <Tooltip
                 title={t(`${isFirstOrder ? "119CostFirst" : "119Cost"}`)}
+                enterTouchDelay={1}
               >
                 <Typography textAlign="center" color="gray">
                   {`${
@@ -109,15 +115,14 @@ export const BigOrderCard = ({
             </InternalCountWrapper>
           )}
         />
+
         {!isFirstOrder && (
           <Controller
             control={control}
             name={nameReturn}
             render={({ field }) => (
               <InternalCountWrapper>
-                <Typography textAlign="center" fontWeight="bold">
-                  {t("number_of_bottles_to_return")}
-                </Typography>
+                <Title>{t("number_of_bottles_to_return")}</Title>
 
                 <Box width={"50%"} alignSelf="center">
                   <OrderCardCounter
@@ -151,10 +156,8 @@ export const BigOrderCard = ({
                 justifyContent={"center"}
                 gap="5px"
               >
-                <Typography textAlign="center" fontWeight="bold">
-                  {t(`${codeRent}`)}
-                </Typography>
-                <Tooltip title={t("120Tooltip")}>
+                <Title>{t(`${codeRent}`)}</Title>
+                <Tooltip title={t("120Tooltip")} enterTouchDelay={1}>
                   <HelpOutlineOutlined
                     color="primary"
                     sx={{
@@ -165,7 +168,7 @@ export const BigOrderCard = ({
               </Box>
 
               <Typography textAlign="center">{description}</Typography>
-              <Tooltip title={t("120Cost")}>
+              <Tooltip title={t("120Cost")} enterTouchDelay={1}>
                 <Typography textAlign="center" color="gray">
                   {`${Math.max(
                     +priceRent * (+currentBottlesNum - +currentBottlesReturn),

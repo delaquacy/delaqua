@@ -6,12 +6,14 @@ import {
   useOrderDetailsContext,
 } from "@/app/contexts/OrderDetailsContext";
 import { useTranslation } from "react-i18next";
-import { CardShadow } from "@/app/components/shared";
+import { CardShadow, FormWrapper } from "@/app/components/shared";
 import {
   BigCardWrapper,
   CustomGrid,
   HelperText,
+  OrderCardWrapper,
   SmallWaterWrapper,
+  TextWrapper,
   WaterWrapper,
 } from "./styled";
 import { OrderCard } from "../OrderCard";
@@ -111,16 +113,7 @@ export const StoreStep = ({
   }, [bigBottle, mediumBottle, smallBottle, isFirstOrder]);
 
   return (
-    <Box
-      component={"form"}
-      onSubmit={handleSubmit(onSubmit)}
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-      }}
-    >
+    <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
       <WaterWrapper>
         {bigBottle && (
           <BigOrderCard
@@ -193,16 +186,11 @@ export const StoreStep = ({
         </SmallWaterWrapper>
       </WaterWrapper>
 
-      <Box
-        sx={{
-          marginTop: "20px",
-          marginLeft: "50px",
-        }}
-      >
+      <TextWrapper>
         <Typography fontWeight="bold" fontSize="18px">
           {t(`${isFirstOrder ? "addToOrderFirst" : "addToOrder"}`)}:
         </Typography>
-      </Box>
+      </TextWrapper>
 
       <CustomGrid>
         {goods
@@ -219,7 +207,7 @@ export const StoreStep = ({
                   control={control}
                   name={`items.${itemIndex}.count`}
                   render={({ field }) => (
-                    <Box width={"23%"}>
+                    <OrderCardWrapper>
                       <OrderCard
                         imageSrc={good!.picture}
                         imageAlt={good!.name}
@@ -235,7 +223,7 @@ export const StoreStep = ({
                           field.onChange(Math.max(+field.value - 1, 0));
                         }}
                       />
-                    </Box>
+                    </OrderCardWrapper>
                   )}
                 />
               )
@@ -243,6 +231,6 @@ export const StoreStep = ({
           })}
       </CustomGrid>
       {renderButtonsGroup(showTooltipMessage ? t("minimumOrder") : "")}
-    </Box>
+    </FormWrapper>
   );
 };

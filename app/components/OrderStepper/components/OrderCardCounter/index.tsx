@@ -27,7 +27,7 @@ export const OrderCardCounter = ({
       </Typography>
     </Count>
 
-    <Tooltip title={tooltipMessage || ""}>
+    <Tooltip title={tooltipMessage || ""} enterTouchDelay={1}>
       <IconButton onClick={onAdd} disabled={disabled}>
         <AddIcon disabled={disabled} />
       </IconButton>

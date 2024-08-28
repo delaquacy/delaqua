@@ -1,18 +1,21 @@
 import { theme } from "@/app/ui/themeMui";
-import { Box, Card, styled } from "@mui/material";
+import { Box, Card, Typography, styled } from "@mui/material";
 
 export const Wrapper = styled(Card)({
   display: "flex",
-  flexDirection: "row",
   gap: "10px",
+  flexDirection: "column",
   alignContent: "center",
   border: "1px solid lightgray",
+  width: "100%",
+  height: "100%",
 
   padding: "10px",
   transition: "all 0.2s",
 
   [theme.breakpoints.up("sm")]: {
     width: "65%",
+    flexDirection: "row",
   },
   ":hover": {
     [theme.breakpoints.up("sm")]: {
@@ -26,10 +29,24 @@ export const ExternalCountWrapper = styled(Box)({
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
-  gap: "40px",
+  gap: "10px",
+
+  [theme.breakpoints.up("sm")]: {
+    gap: "40px",
+  },
 });
 
 export const InternalCountWrapper = styled(Box)({
   display: "flex",
   flexDirection: "column",
+});
+
+export const Title = styled(Typography)({
+  textAlign: "center",
+  fontWeight: "bold",
+  fontSize: "14px",
+
+  [theme.breakpoints.up("sm")]: {
+    fontSize: "16px",
+  },
 });

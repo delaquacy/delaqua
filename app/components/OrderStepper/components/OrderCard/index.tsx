@@ -2,7 +2,7 @@ import { Box, Card, FormHelperText, Tooltip, Typography } from "@mui/material";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import { useScreenSize } from "@/app/hooks";
-import { CardWrapper, DescriptionBox, Marker } from "./styled";
+import { CardWrapper, DescriptionBox, MinOrderBox } from "./styled";
 import { OrderCardCounter } from "../OrderCardCounter";
 
 interface OrderCardProps {
@@ -45,7 +45,7 @@ export const OrderCard = ({
           justifyContent={"center"}
           gap="5px"
         >
-          {minOrder && <FormHelperText>{t(minOrder)}</FormHelperText>}
+          {minOrder && <MinOrderBox>{t(minOrder)}</MinOrderBox>}
           <Image
             src={
               `/${imageSrc}` ||
