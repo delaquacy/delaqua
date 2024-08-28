@@ -715,7 +715,6 @@ const MyForm = () => {
     isCurrentDayAfterNoon,
     isCurrentDayPrevious,
     isCurrentDayIsSunday,
-    infoDay,
   } = deliveryValidation(selectedDate);
 
   // Calculate the next delivery day.
@@ -734,14 +733,10 @@ const MyForm = () => {
       const day = date.day();
       return day === 0;
     };
-
-    const infoDay = dayjs(selectedDate).format("DD/MM/YYYY") === "27/08/2024";
-
     return (
       isWeekend(date) ||
       //@ts-ignore
-      disabledDates.includes(date.format("DD-MM-YYYY")) ||
-      infoDay
+      disabledDates.includes(date.format("DD-MM-YYYY"))
     );
   };
 
@@ -771,7 +766,6 @@ const MyForm = () => {
   };
 
   const disableFieldsCondition =
-    infoDay ||
     (isCurrentDayAfterNoon && !!selectedDate) ||
     isCurrentDayIsSunday ||
     isCurrentDayPrevious;
@@ -1097,7 +1091,7 @@ const MyForm = () => {
                     name="deliveryDate"
                     control={control}
                     defaultValue={
-                      ((isCurrentDayAfterNoon && !selectedDate) || infoDay
+                      (isCurrentDayAfterNoon && !selectedDate
                         ? dayjs().add(1, "day")
                         : dayjs()) as any
                     }
@@ -1174,7 +1168,6 @@ const MyForm = () => {
                         control={<Radio />}
                         label={t("delivery_time_9_17")}
                         disabled={
-                          infoDay ||
                           isCurrentDayAfterNoon ||
                           isCurrentDayIsSunday ||
                           isCurrentDayPrevious
@@ -1185,7 +1178,6 @@ const MyForm = () => {
                         control={<Radio />}
                         label={t("delivery_time_9_12")}
                         disabled={
-                          infoDay ||
                           isCurrentDayAfterTen ||
                           isCurrentDayAfterNoon ||
                           isCurrentDayIsSunday ||
