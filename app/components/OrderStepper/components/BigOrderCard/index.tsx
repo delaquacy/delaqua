@@ -5,7 +5,6 @@ import {
   Title,
   Wrapper,
 } from "./styled";
-import Image from "next/image";
 import { OrderCardCounter } from "../OrderCardCounter";
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
@@ -61,22 +60,23 @@ export const BigOrderCard = ({
         alignItems="center"
         justifyContent={"center"}
         gap="5px"
+        position={"relative"}
       >
-        <Image
+        <img
+          alt={imageAlt}
           src={
             `/${imageSrc}` ||
             "https://storage.googleapis.com/image_del_aq/Remove-background-project.png"
           }
-          alt={imageAlt}
-          priority
-          width={isSmallScreen ? 70 : 200}
-          height={isSmallScreen ? 200 : 300}
           style={{
-            flex: 1,
             alignSelf: "center",
             objectFit: "contain",
+            width: "80%",
+            maxWidth: "200px",
+            aspectRatio: 7 / 11,
           }}
         />
+
         <FormHelperText>
           {isFirstOrder ? t("minimumOrderSmall") : t("minimumOrderBig")}
         </FormHelperText>
@@ -103,7 +103,7 @@ export const BigOrderCard = ({
                 </Typography>
               </Tooltip>
 
-              <Box width={"50%"} alignSelf="center">
+              <Box width={"131px"} alignSelf="center">
                 <OrderCardCounter
                   count={field.value}
                   onAdd={() => field.onChange(+field.value + 1)}
@@ -124,7 +124,7 @@ export const BigOrderCard = ({
               <InternalCountWrapper>
                 <Title>{t("number_of_bottles_to_return")}</Title>
 
-                <Box width={"50%"} alignSelf="center">
+                <Box width={"131px"} alignSelf="center">
                   <OrderCardCounter
                     count={field.value}
                     tooltipMessage={

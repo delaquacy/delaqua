@@ -24,7 +24,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/app/lib/config";
 
-import { CardShadow, ControllerInputField } from "@/app/components/shared";
+import { ControllerInputField } from "@/app/components/shared";
 import {
   FormHeaderButton,
   FormHeaderWrapper,
@@ -75,7 +75,7 @@ export const AddressStep = ({
   const [showTooltipMessage, setShowTooltipMessage] = useState(
     !userOrder.deliveryAddress.id
   );
-  const [showAddressForm, setShowAddressForm] = useState(true);
+  const [showAddressForm, setShowAddressForm] = useState(false);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<FormValues | null>(
     userOrder.deliveryAddress
@@ -180,6 +180,10 @@ export const AddressStep = ({
       handleSetNewValues(lastAddress);
       setShowAddressForm(false);
     }
+
+    if (userData && !lastAddress) {
+      setShowAddressForm(true);
+    }
   }, [userData, userOrder]);
 
   return (
@@ -208,7 +212,7 @@ export const AddressStep = ({
             disableBack={addresses.length === 0}
           />
         </FormWrapper>
-      ) : (
+      ) : userData?.addresses?.at(-1) ? (
         <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
           <FormHeaderWrapper>
             {t("deliveryAddress")}
@@ -271,6 +275,8 @@ export const AddressStep = ({
             showTooltipMessage ? "Please select delivery address" : ""
           )}
         </FormWrapper>
+      ) : (
+        <Box></Box>
       )}
     </>
   );

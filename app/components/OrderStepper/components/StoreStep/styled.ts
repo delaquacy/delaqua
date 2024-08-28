@@ -57,7 +57,7 @@ export const CustomGrid = styled(Box)({
   gap: "20px",
   marginBottom: "20px",
 
-  [theme.breakpoints.up("sm")]: {
+  [theme.breakpoints.up("md")]: {
     justifyContent: "space-between",
     display: "flex",
     paddingLeft: "50px",

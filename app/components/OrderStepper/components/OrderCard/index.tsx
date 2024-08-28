@@ -19,6 +19,8 @@ interface OrderCardProps {
   sx?: any;
 }
 
+const DISPENSER_DELIVERY_CODE = 104;
+
 export const OrderCard = ({
   imageSrc,
   imageAlt,
@@ -36,7 +38,12 @@ export const OrderCard = ({
   const { isSmallScreen } = useScreenSize();
 
   return (
-    <Tooltip title={+code === 104 ? "Contact to us in Telegram" : ""}>
+    <Tooltip
+      title={
+        +code === DISPENSER_DELIVERY_CODE ? "Contact to us in Telegram" : ""
+      }
+      enterTouchDelay={1}
+    >
       <CardWrapper sx={sx}>
         <Box
           display="flex"
