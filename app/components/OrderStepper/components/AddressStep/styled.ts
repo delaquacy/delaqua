@@ -3,7 +3,9 @@ import { Box, Button, ToggleButtonGroup, styled } from "@mui/material";
 export const FormWrapper = styled(Box)({
   display: "flex",
   flexDirection: "column",
+  justifyContent: "space-between",
   gap: "20px",
+  height: "100%",
 });
 
 export const FormHeaderWrapper = styled(Box)({

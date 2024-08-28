@@ -37,7 +37,7 @@ interface FormValues {
   deliveryTime: string;
 }
 
-export const SecondStep = ({
+export const DateStep = ({
   renderButtonsGroup,
   handleNext,
 }: {
@@ -127,100 +127,98 @@ export const SecondStep = ({
   }, [isCurrentDayAfterNoon, isCurrentDayPrevious, isCurrentDayIsSunday]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Card
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box
+        onSubmit={handleSubmit(onSubmit)}
+        component={"form"}
+        sx={{
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box
           sx={{
-            padding: "20px",
-            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-            // minHeight: "calc(100vh - 200px)",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between",
+            gap: "20px",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "20px",
-            }}
-          >
-            <Controller
-              name="deliveryDate"
-              control={control}
-              render={({ field }) => (
-                <Box>
-                  <DatePicker
-                    label={t("delivery_date_short")}
-                    format="DD-MM-YYYY"
-                    value={field.value as Dayjs}
-                    onChange={(newVal) => field.onChange(newVal)}
-                    disablePast
-                    dayOfWeekFormatter={dayOfWeekFormatter}
-                    shouldDisableDate={(date: Dayjs) => shouldDisableDate(date)}
-                    sx={datePickerStyle(isSmallScreen)}
-                  />
-                  {
-                    <FormHelperText
-                      sx={{
-                        color: showTooltipMessage ? "#d32f2f" : "gray",
-                      }}
-                    >
-                      {!isCurrentDayPrevious && isCurrentDayIsSunday
-                        ? t("sunday")
-                        : isCurrentDayPrevious || isCurrentDayAfterNoon
-                        ? t("change_day")
-                        : `* ${t("delivery_date")}`}
-                    </FormHelperText>
-                  }
+          <Controller
+            name="deliveryDate"
+            control={control}
+            render={({ field }) => (
+              <Box>
+                <DatePicker
+                  label={t("delivery_date_short")}
+                  format="DD-MM-YYYY"
+                  value={field.value as Dayjs}
+                  onChange={(newVal) => field.onChange(newVal)}
+                  disablePast
+                  dayOfWeekFormatter={dayOfWeekFormatter}
+                  shouldDisableDate={(date: Dayjs) => shouldDisableDate(date)}
+                  sx={datePickerStyle(isSmallScreen)}
+                />
+                {
                   <FormHelperText
                     sx={{
-                      color: "#d32f2f",
+                      color: showTooltipMessage ? "#d32f2f" : "gray",
                     }}
                   >
-                    {showTooltipMessage &&
-                      t("soonest_day", {
-                        nextDay: `${nextDay.format("dddd")} - ${nextDay.format(
-                          "DD MMMM"
-                        )}`,
-                      })}
+                    {!isCurrentDayPrevious && isCurrentDayIsSunday
+                      ? t("sunday")
+                      : isCurrentDayPrevious || isCurrentDayAfterNoon
+                      ? t("change_day")
+                      : `* ${t("delivery_date")}`}
                   </FormHelperText>
-                </Box>
-              )}
-            />
-
-            <Controller
-              name="deliveryTime"
-              control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  value={field.value}
-                  onChange={(e) => {
-                    field.onChange(e);
+                }
+                <FormHelperText
+                  sx={{
+                    color: "#d32f2f",
                   }}
                 >
-                  <FormControlLabel
-                    value="9-12"
-                    control={<Radio />}
-                    label={t("delivery_time_9_12")}
-                    disabled={showTooltipMessage || isCurrentDayAfterTen}
-                  />
-                  <FormControlLabel
-                    value="9-17"
-                    control={<Radio />}
-                    label={t("delivery_time_9_17")}
-                    disabled={showTooltipMessage}
-                  />
-                </RadioGroup>
-              )}
-            />
-          </Box>
-          {renderButtonsGroup(
-            showTooltipMessage ? "Please select correct delivery date" : ""
-          )}
-        </Card>
-      </LocalizationProvider>
-    </form>
+                  {showTooltipMessage &&
+                    t("soonest_day", {
+                      nextDay: `${nextDay.format("dddd")} - ${nextDay.format(
+                        "DD MMMM"
+                      )}`,
+                    })}
+                </FormHelperText>
+              </Box>
+            )}
+          />
+
+          <Controller
+            name="deliveryTime"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e);
+                }}
+              >
+                <FormControlLabel
+                  value="9-12"
+                  control={<Radio />}
+                  label={t("delivery_time_9_12")}
+                  disabled={showTooltipMessage || isCurrentDayAfterTen}
+                />
+                <FormControlLabel
+                  value="9-17"
+                  control={<Radio />}
+                  label={t("delivery_time_9_17")}
+                  disabled={showTooltipMessage}
+                />
+              </RadioGroup>
+            )}
+          />
+        </Box>
+        {renderButtonsGroup(
+          showTooltipMessage ? "Please select correct delivery date" : ""
+        )}
+      </Box>
+    </LocalizationProvider>
   );
 };

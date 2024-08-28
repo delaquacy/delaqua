@@ -40,7 +40,7 @@ interface FormValues {
   paymentMethod: string;
 }
 
-export const FourthStep = ({
+export const OrderDetailsStep = ({
   renderButtonsGroup,
   handleNext,
 }: {
@@ -171,8 +171,8 @@ export const FourthStep = ({
   }, []);
 
   return (
-    <CardShadow>
-      <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
+    <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
+      <Box>
         <Typography>{t("checkAndPay")}</Typography>
 
         <Controller
@@ -265,8 +265,9 @@ export const FourthStep = ({
             </Typography>
           </DetailsCardItem>
         </DetailsCard>
-        {renderButtonsGroup(showTooltipMessage ? "Done Requirement first" : "")}
-      </FormWrapper>
-    </CardShadow>
+      </Box>
+
+      {renderButtonsGroup(showTooltipMessage ? "Done Requirement first" : "")}
+    </FormWrapper>
   );
 };

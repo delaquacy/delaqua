@@ -14,7 +14,7 @@ import { CardShadow } from "@/app/components/shared";
 
 interface FormValues {}
 
-export const FifthStep = ({
+export const FinishStep = ({
   renderButtonsGroup,
   handleNext,
 }: {

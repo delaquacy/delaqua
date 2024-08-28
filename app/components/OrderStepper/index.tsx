@@ -3,29 +3,30 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ButtonsGroup,
-  FifthStep,
-  FirstStep,
-  FourthStep,
-  SecondStep,
-  ThirdStep,
+  FinishStep,
+  StoreStep,
+  OrderDetailsStep,
+  DateStep,
+  AddressStep,
 } from "./components";
 import { Box, Button, Step, StepLabel, Stepper } from "@mui/material";
 import { FirstStepModal } from "./components/FirstStepModal";
+import { CardShadow } from "../shared";
 
 const STEP_KEYS = [
+  "address",
   "products",
   "dateAndTime",
-  "address",
   "orderDetails",
   "done",
 ];
 
 const STEPS_COMPONENTS = [
-  (props: any) => <FirstStep {...props} />,
-  (props: any) => <SecondStep {...props} />,
-  (props: any) => <ThirdStep {...props} />,
-  (props: any) => <FourthStep {...props} />,
-  (props: any) => <FifthStep {...props} />,
+  (props: any) => <AddressStep {...props} />,
+  (props: any) => <StoreStep {...props} />,
+  (props: any) => <DateStep {...props} />,
+  (props: any) => <OrderDetailsStep {...props} />,
+  (props: any) => <FinishStep {...props} />,
 ];
 
 export default function OrderStepper() {
@@ -35,11 +36,6 @@ export default function OrderStepper() {
   const [open, setOpen] = useState(false);
 
   const handleNext = () => {
-    if (activeStep === 0) {
-      setOpen(true);
-      return;
-    }
-
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -58,7 +54,7 @@ export default function OrderStepper() {
 
   return (
     <>
-      <Box sx={{ width: "100%", marginTop: "20px", minHeight: "100%" }}>
+      <CardShadow>
         {
           <Stepper
             activeStep={activeStep}
@@ -103,7 +99,7 @@ export default function OrderStepper() {
         ) : (
           <Box
             sx={{
-              paddingBlock: 4,
+              paddingTop: 4,
               height: "calc(100dvh - 200px)",
               overflow: "scroll",
             }}
@@ -121,7 +117,7 @@ export default function OrderStepper() {
             })}
           </Box>
         )}
-      </Box>
+      </CardShadow>
       <FirstStepModal open={open} setOpen={setOpen} onConfirm={onConfirm} />
     </>
   );

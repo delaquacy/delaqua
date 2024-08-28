@@ -3,7 +3,9 @@ import { Box, Card, styled } from "@mui/material";
 export const FormWrapper = styled(Box)({
   display: "flex",
   flexDirection: "column",
+  justifyContent: "space-between",
   gap: "20px",
+  height: "100%",
 });
 
 export const DetailsCard = styled(Card)({

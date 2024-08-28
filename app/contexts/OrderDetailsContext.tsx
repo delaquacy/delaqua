@@ -235,17 +235,14 @@ export const OrderDetailsProvider = ({
       setGoods(data.map((item) => ({ ...item, picture: `${item.id}.webp` }))); // TODO: remove this when we will have correct picture link
       setUserOrder((prev) => ({
         ...prev,
-        items: data
-          .filter((good) => good.id !== "120")
-          .reverse()
-          .map((good) => ({
-            id: good.id,
-            itemCode: good.itemCode,
-            name: good.name,
-            sellPrice: good.sellPrice,
-            count: "0",
-            sum: "0",
-          })),
+        items: data.reverse().map((good) => ({
+          id: good.id,
+          itemCode: good.itemCode,
+          name: good.name,
+          sellPrice: good.sellPrice,
+          count: "0",
+          sum: "0",
+        })),
       }));
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -277,6 +274,8 @@ export const OrderDetailsProvider = ({
       getGoods();
     }
   }, [user]);
+
+  console.log(userOrder, "ORDER");
 
   return (
     <OrderDetailsContext.Provider
