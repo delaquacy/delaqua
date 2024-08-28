@@ -11,7 +11,6 @@ import {
   BigCardWrapper,
   CustomGrid,
   HelperText,
-  OrderCardWrapper,
   SmallWaterWrapper,
   TextWrapper,
   WaterWrapper,
@@ -134,7 +133,11 @@ export const StoreStep = ({
         )}
 
         <SmallWaterWrapper>
-          <Box>
+          <Box
+            sx={{
+              flex: 1,
+            }}
+          >
             {mediumBottle && (
               <Controller
                 control={control}
@@ -159,7 +162,11 @@ export const StoreStep = ({
             )}
           </Box>
 
-          <Box>
+          <Box
+            sx={{
+              flex: 1,
+            }}
+          >
             {smallBottle && (
               <Controller
                 control={control}
@@ -207,23 +214,24 @@ export const StoreStep = ({
                   control={control}
                   name={`items.${itemIndex}.count`}
                   render={({ field }) => (
-                    <OrderCardWrapper>
-                      <OrderCard
-                        imageSrc={good!.picture}
-                        imageAlt={good!.name}
-                        size="40"
-                        description={good!.description}
-                        price={good!.sellPrice}
-                        code={good!.itemCode}
-                        count={field.value}
-                        onAdd={() => {
-                          field.onChange(+field.value + 1);
-                        }}
-                        onRemove={() => {
-                          field.onChange(Math.max(+field.value - 1, 0));
-                        }}
-                      />
-                    </OrderCardWrapper>
+                    <OrderCard
+                      imageSrc={good!.picture}
+                      imageAlt={good!.name}
+                      size="40"
+                      description={good!.description}
+                      price={good!.sellPrice}
+                      code={good!.itemCode}
+                      count={field.value}
+                      onAdd={() => {
+                        field.onChange(+field.value + 1);
+                      }}
+                      onRemove={() => {
+                        field.onChange(Math.max(+field.value - 1, 0));
+                      }}
+                      sx={{
+                        flex: 1,
+                      }}
+                    />
                   )}
                 />
               )

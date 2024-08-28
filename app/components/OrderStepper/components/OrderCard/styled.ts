@@ -31,6 +31,7 @@ export const DescriptionBox = styled(Box)({
   flexDirection: "column",
   justifyContent: "center",
   alignContent: "center",
+  paddingInline: "3px",
 });
 
 export const MinOrderBox = styled(FormHelperText)({

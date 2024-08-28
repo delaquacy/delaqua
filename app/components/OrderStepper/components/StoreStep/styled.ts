@@ -37,12 +37,6 @@ export const SmallWaterWrapper = styled(Box)({
   },
 });
 
-export const OrderCardWrapper = styled(Box)({
-  [theme.breakpoints.up("sm")]: {
-    // width: "23%",
-  },
-});
-
 export const TextWrapper = styled(Box)({
   marginBlock: "20px",
   [theme.breakpoints.up("sm")]: {
@@ -60,10 +54,13 @@ export const CustomGrid = styled(Box)({
   [theme.breakpoints.up("md")]: {
     justifyContent: "space-between",
     display: "flex",
-    paddingLeft: "50px",
+
     flexDirection: "row",
-    width: "63.5%",
     marginBlock: "20px",
+  },
+
+  [theme.breakpoints.up("sm")]: {
+    paddingInline: "50px",
   },
 });
 

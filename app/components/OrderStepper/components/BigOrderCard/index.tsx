@@ -103,15 +103,13 @@ export const BigOrderCard = ({
                 </Typography>
               </Tooltip>
 
-              <Box width={"131px"} alignSelf="center">
-                <OrderCardCounter
-                  count={field.value}
-                  onAdd={() => field.onChange(+field.value + 1)}
-                  onRemove={() => {
-                    field.onChange(Math.max(+field.value - 1, 0));
-                  }}
-                />
-              </Box>
+              <OrderCardCounter
+                count={field.value}
+                onAdd={() => field.onChange(+field.value + 1)}
+                onRemove={() => {
+                  field.onChange(Math.max(+field.value - 1, 0));
+                }}
+              />
             </InternalCountWrapper>
           )}
         />
@@ -124,22 +122,20 @@ export const BigOrderCard = ({
               <InternalCountWrapper>
                 <Title>{t("number_of_bottles_to_return")}</Title>
 
-                <Box width={"131px"} alignSelf="center">
-                  <OrderCardCounter
-                    count={field.value}
-                    tooltipMessage={
-                      +field.value === +maxNumBottlesReturn ? t("maxVal") : ""
-                    }
-                    onAdd={() =>
-                      field.onChange(
-                        Math.min(+field.value + 1, +maxNumBottlesReturn)
-                      )
-                    }
-                    onRemove={() => {
-                      field.onChange(Math.max(+field.value - 1, 0));
-                    }}
-                  />
-                </Box>
+                <OrderCardCounter
+                  count={field.value}
+                  tooltipMessage={
+                    +field.value === +maxNumBottlesReturn ? t("maxVal") : ""
+                  }
+                  onAdd={() =>
+                    field.onChange(
+                      Math.min(+field.value + 1, +maxNumBottlesReturn)
+                    )
+                  }
+                  onRemove={() => {
+                    field.onChange(Math.max(+field.value - 1, 0));
+                  }}
+                />
               </InternalCountWrapper>
             )}
           />

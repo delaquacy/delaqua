@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useTranslation } from "react-i18next";
 import {
@@ -51,6 +51,10 @@ export default function OrderStepper() {
   const handleReset = () => {
     setActiveStep(0);
   };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeStep]);
 
   return (
     <>
