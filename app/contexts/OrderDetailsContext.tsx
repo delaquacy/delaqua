@@ -47,6 +47,8 @@ export interface UserOrderItem {
   sellPrice: string;
   count: string;
   sum: string;
+  net?: string;
+  vat?: string;
 }
 
 export interface UserOrder {
@@ -221,6 +223,11 @@ export const OrderDetailsProvider = ({
         userId,
       }));
 
+      setUserOrder((prev) => ({
+        ...prev,
+        userId: userNumber,
+      }));
+
       setIsFirstOrder(ordersData.length === 0);
 
       return [addressesData, ordersData, userNumber];
@@ -228,6 +235,8 @@ export const OrderDetailsProvider = ({
       console.error("Error fetching user data:", error);
     }
   };
+
+  console.log(userOrder, "userData");
 
   const getGoods = async () => {
     try {
@@ -240,6 +249,8 @@ export const OrderDetailsProvider = ({
           itemCode: good.itemCode,
           name: good.name,
           sellPrice: good.sellPrice,
+          net: good.netSaleWorth,
+          vat: good.sellPriceVAT,
           count: "0",
           sum: "0",
         })),
@@ -274,8 +285,6 @@ export const OrderDetailsProvider = ({
       getGoods();
     }
   }, [user]);
-
-  console.log(userOrder, "ORDER");
 
   return (
     <OrderDetailsContext.Provider

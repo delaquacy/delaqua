@@ -108,8 +108,6 @@ export const getOrdersArray = async () => {
       });
     }
 
-    console.log({ ...order, items });
-
     return { ...order, items };
   });
 };

@@ -29,18 +29,18 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
     const good = goods.find((good) => +good.itemCode === +item.itemCode);
 
     if (good && +good.taxRate === 5) {
-      calculation.net5Sum += +good?.netBuyWorth;
-      calculation.vat5 += +item.sellPrice - +good?.netBuyWorth;
-      calculation.vatVal += +item.sellPrice - +good?.netBuyWorth;
+      calculation.net5Sum += +item.count * +good?.netSaleWorth;
+      calculation.vat5 += +item.count * +good.sellPriceVAT;
+      calculation.vatVal += +item.count * +good.sellPriceVAT;
     }
 
     if (good && +good.taxRate === 19) {
-      calculation.net19Sum += +good?.netBuyWorth;
-      calculation.vat19 += +item.sellPrice - +good?.netBuyWorth;
-      calculation.vatVal += +item.sellPrice - +good?.netBuyWorth;
+      calculation.net19Sum += +item.count * +good?.netSaleWorth;
+      calculation.vat19 += +item.count * +good.sellPriceVAT;
+      calculation.vatVal += +item.count * +good.sellPriceVAT;
     }
 
-    calculation.netVal += (good && +good?.netBuyWorth) || 0;
+    calculation.netVal += (good && +item.count * +good?.netSaleWorth) || 0;
 
     return (
       good && [
@@ -49,7 +49,7 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
         `${item.count}`,
         `€${(+item.sellPrice).toFixed(2)}`,
         `${good?.taxRate}%`,
-        `€${(+good?.netBuyWorth).toFixed(2)}`,
+        `€${(+good?.netSaleWorth).toFixed(2)}`,
         `€${(+item?.sum).toFixed(2)}`,
       ]
     );

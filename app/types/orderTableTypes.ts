@@ -61,4 +61,7 @@ export interface Invoices {
   phoneNumber: string;
   totalPayments: string;
   vatVal: string;
+  paymentId?: string;
+  orderId?: string;
+  allOrderId: string;
 }

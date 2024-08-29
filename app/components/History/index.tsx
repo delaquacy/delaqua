@@ -15,6 +15,10 @@ import { useUserContext } from "@/app/contexts/UserContext";
 import { useScreenSize } from "@/app/hooks";
 import { MainContentWrapper } from "../shared/styled";
 import dynamic from "next/dynamic";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "@/app/lib/config";
+import { useEffect } from "react";
+import { postInvoicesData } from "@/app/utils/postInvoiceData";
 // import OrdersList from "../ordersList/OrdersList";
 
 export const History = () => {

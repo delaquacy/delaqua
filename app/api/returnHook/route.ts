@@ -85,13 +85,26 @@ export async function POST(req: NextRequest, res: NextApiResponse<string>) {
           where("orderId", "==", eventData.order_id)
         );
 
+        const invoicesQuery = query(
+          collection(db, "userInvoices"),
+          where("orderId", "==", eventData.order_id)
+        );
+
         // Get the query snapshot containing documents that match the query
         const userOrdersSnapshot = await getDocs(userOrdersQuery);
+        const querySnapshotInvoice = await getDocs(invoicesQuery);
 
         // Iterate over each document in the query snapshot and update its 'paymentStatus'
         userOrdersSnapshot.forEach(async (userOrderDoc) => {
           const userOrderRef = userOrderDoc.ref; // Reference to the Firestore document
           await updateDoc(userOrderRef, {
+            paymentStatus: arrayUnion(eventData.event),
+          });
+        });
+
+        querySnapshotInvoice.forEach(async (invoiceDoc) => {
+          const invoiceRef = invoiceDoc.ref; // Reference to the Firestore document
+          await updateDoc(invoiceRef, {
             paymentStatus: arrayUnion(eventData.event),
           });
         });

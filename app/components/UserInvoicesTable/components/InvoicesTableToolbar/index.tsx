@@ -111,16 +111,18 @@ export function InvoicesTableToolbar(props: InvoicesTableToolbarProps) {
         </Typography>
 
         <Box display="flex" flexDirection="row">
-          <CSVLink
-            data={dataForCVS}
-            filename={`Invoices_${dayjs().format("DD-MM-YYYY")}.csv`}
-          >
-            <Tooltip title="Download CSV">
-              <IconButton id="download-button" size="large">
-                <FileDownloadOutlined fontSize="large" />
-              </IconButton>
-            </Tooltip>
-          </CSVLink>
+          {dataForCVS.length > 0 && (
+            <CSVLink
+              data={dataForCVS}
+              filename={`Invoices_${dayjs().format("DD-MM-YYYY")}.csv`}
+            >
+              <Tooltip title="Download CSV">
+                <IconButton id="download-button" size="large">
+                  <FileDownloadOutlined fontSize="large" />
+                </IconButton>
+              </Tooltip>
+            </CSVLink>
+          )}
           <Tooltip title="Filter list">
             <IconButton
               size="large"

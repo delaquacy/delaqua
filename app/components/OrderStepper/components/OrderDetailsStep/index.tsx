@@ -35,6 +35,8 @@ import {
   FormWrapper,
 } from "./styled";
 import { OrderItemsTable } from "@/app/components/OrderItemsTable";
+import { postInvoicesData } from "@/app/utils/postInvoiceData";
+import dayjs from "dayjs";
 
 interface FormValues {
   paymentMethod: string;
@@ -89,7 +91,15 @@ export const OrderDetailsStep = ({
 
     handleAddOrderDetails(data);
 
-    // const orderData = { ...userOrder, data };
+    const orderData = {
+      ...userOrder,
+      data,
+      createdAt: dayjs().format("DD-MM-YYYY HH:mm"),
+    };
+
+    const invoiceNumber = await postInvoicesData(orderData, "1"); // TODO: add correct payment definition
+    console.log(invoiceNumber, "INVOICE NUM");
+    console.log(orderData, "ORDER_DATA");
 
     // if (data.paymentMethod === "Cash") {
     //   orderData.paymentStatus = "CASH";

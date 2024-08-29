@@ -55,7 +55,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <MainContentWrapper admin>
+    <MainContentWrapper admin={"true"}>
       <Box alignSelf="center" fontSize="30px" fontWeight="900">
         Admins Panel
       </Box>
