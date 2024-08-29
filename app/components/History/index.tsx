@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { useUserContext } from "@/app/contexts/UserContext";
 import { useScreenSize } from "@/app/hooks";
 import { MainContentWrapper } from "../shared/styled";
+import dynamic from "next/dynamic";
 // import OrdersList from "../ordersList/OrdersList";
 
 export const History = () => {
@@ -108,6 +109,14 @@ export const History = () => {
                 }}
               >
                 {t("table_status")}
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{
+                  fontWeight: 600,
+                }}
+              >
+                Invoice
               </TableCell>
             </TableRow>
           </TableHead>

@@ -1,6 +1,7 @@
 export interface OrdersData {
   index?: number;
-  items?: any[];
+  items?: UserOrderItem[];
+  invoiceNumber?: string;
   addressDetails: string;
   bottlesNumberToBuy: number;
   bottlesNumberToReturn: number;
@@ -31,10 +32,33 @@ export interface OrdersData {
   canceled: boolean;
 }
 
+export interface UserOrderItem {
+  id: string;
+  itemCode: string;
+  name: string;
+  sellPrice: string;
+  count: string;
+  sum: string;
+}
+
 export interface FilterItem {
   id: string;
   column: string;
   operator?: string;
   value1: string;
   value2?: string;
+}
+
+export interface Invoices {
+  id: string;
+  clientId: string;
+  clientName: string;
+  createdAt: string;
+  deliveryDate: string;
+  invoiceNumber: string;
+  netVal: string;
+  paymentStatus: string;
+  phoneNumber: string;
+  totalPayments: string;
+  vatVal: string;
 }

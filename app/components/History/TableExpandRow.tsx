@@ -15,11 +15,17 @@ import { OrderItemsTable } from "../OrderItemsTable";
 import { useTranslation } from "react-i18next";
 
 import { Tooltip } from "@mui/material";
+import dynamic from "next/dynamic";
+import { OrdersData } from "@/app/types";
 
-export function TableExpandRow(props: { order: any }) {
+export function TableExpandRow(props: { order: OrdersData }) {
   const { order } = props;
   const [open, setOpen] = useState(false);
   const { t } = useTranslation("orderslist");
+
+  const GeneratePdf = dynamic(() => import("../InvoiceGenerator"), {
+    ssr: false,
+  });
 
   return (
     <Fragment>
@@ -81,6 +87,9 @@ export function TableExpandRow(props: { order: any }) {
         <TableCell align="center">{order.totalPayments}</TableCell>
 
         <TableCell align="center">{order.paymentStatus}</TableCell>
+        <TableCell align="center">
+          {order.invoiceNumber ? <GeneratePdf order={order} /> : "-"}
+        </TableCell>
       </TableRow>
 
       <TableRow
@@ -96,8 +105,8 @@ export function TableExpandRow(props: { order: any }) {
                 Order Details
               </Typography>
               <OrderItemsTable
-                orderItems={order.items}
-                totalPayments={order.totalPayments}
+                orderItems={order?.items || []}
+                totalPayments={`${order.totalPayments}`}
               />
             </Box>
           </Collapse>

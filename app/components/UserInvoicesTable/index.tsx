@@ -1,65 +1,59 @@
 "use client";
-import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from "react";
-import Link from "next/link.js";
-import { useTranslation } from "react-i18next";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat.js";
-import { useToast, useScreenSize } from "@/app/hooks";
-import { FilterItem, OrdersData } from "@/app/types";
+
+import { useScreenSize, useToast } from "@/app/hooks";
+import { FilterItem, Invoices } from "@/app/types";
 import {
-  getComparator,
-  getFilteredOrders,
-  stableSort,
-  getOrdersArray,
   getClipboardOrderRowData,
+  getComparator,
+  stableSort,
 } from "@/app/utils";
-import { OrdersTableHead } from "@/app/components/OrdersTableHead";
+import { getUserInvoices } from "@/app/utils/getUserInvoices";
 import {
   Box,
+  Card,
   Paper,
-  TableContainer,
   Table,
   TableBody,
-  TableRow,
   TableCell,
-  Checkbox,
-  TablePagination,
+  TableContainer,
   TableHead,
-  Button,
+  TablePagination,
+  TableRow,
+  Tooltip,
 } from "@mui/material";
-import { OrdersTableToolbar } from "../OrdersTableToolbar.tsx";
-import {
-  CancelOutlined,
-  ContentCopy,
-  CheckCircle,
-  HourglassBottom,
-} from "@mui/icons-material";
-import { OrderRow } from "./OrdersRow";
+import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { InvoiceTableRow } from "./components";
+import { InvoicesTableHead } from "./components/InvoicesTableHead";
+import { InvoicesTableToolbar } from "./components/InvoicesTableToolbar";
+import { getFilteredInvoices } from "@/app/utils/getFilteredInvoices";
+import { getClipboardInvoiceRowData } from "@/app/utils/getClipboardInvoiceRowData";
 
-dayjs.extend(customParseFormat);
+interface OrderItemsTableProps {
+  orderItems: any[];
+  totalPayments: string;
+}
 
-type Order = "asc" | "desc";
+export const UserInvoicesTable = () => {
+  const { isSmallScreen } = useScreenSize();
+  const { showSuccessToast } = useToast();
+  const { t } = useTranslation("orderTable");
 
-export default function OrdersTable() {
-  const [order, setOrder] = useState<Order>("asc");
-  const [orderBy, setOrderBy] = useState<keyof OrdersData>("deliveryDate");
+  const [rows, setRows] = useState<Invoices[]>([]);
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
+  const [orderBy, setOrderBy] = useState<keyof Invoices>("deliveryDate");
   const [selected, setSelected] = useState<string[]>([]);
   const [page, setPage] = useState(0);
-  const [rows, setRows] = useState<OrdersData[]>([]);
-  const [filteredRows, setFilteredRows] = useState<OrdersData[]>([]);
+  const [filteredRows, setFilteredRows] = useState<Invoices[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [filters, setFilters] = useState<FilterItem[]>([]);
   const [applyFilters, setApplyFilters] = useState<boolean>(false);
 
-  const { t } = useTranslation("orderTable");
-
-  const { showSuccessToast } = useToast();
-  const { isSmallScreen } = useScreenSize();
-
-  const getOrdersRows = async () => {
+  const getInvoicesRows = async () => {
     try {
-      const data = await getOrdersArray();
+      const data = await getUserInvoices();
       const sorted = stableSort(data as any, getComparator(order, orderBy));
+
       setRows(sorted as any);
       setFilteredRows(sorted as any);
     } catch (error) {
@@ -67,17 +61,15 @@ export default function OrdersTable() {
     }
   };
 
+  const isSelected = (id: string) => selected.indexOf(id) !== -1;
+
   const handleApplyFilters = () => {
     setApplyFilters(true);
   };
 
-  const handleRequestSort = (
-    event: MouseEvent<unknown>,
-    property: keyof OrdersData
-  ) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
+  const handleClearFilters = () => {
+    setFilteredRows(rows);
+    setFilters([]);
   };
 
   const handleClick = (event: MouseEvent<unknown>, id: string) => {
@@ -99,9 +91,13 @@ export default function OrdersTable() {
     setSelected(newSelected);
   };
 
-  const handleUpdateStatus = () => {
-    setSelected([]);
-    getOrdersRows();
+  const handleRequestSort = (
+    event: MouseEvent<unknown>,
+    property: keyof Invoices
+  ) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -113,8 +109,6 @@ export default function OrdersTable() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -129,29 +123,17 @@ export default function OrdersTable() {
     [order, orderBy, page, rowsPerPage, filteredRows]
   );
 
-  const handleSelectAllClick = () => {
-    if (selected.length < visibleRows.length) {
-      const newSelected = visibleRows.map((n) => n.id) as string[];
-      setSelected((prev) => [...prev, ...newSelected]);
-      return;
-    }
-
-    setSelected([]);
-  };
-
-  const handleClearFilters = () => {
-    setFilteredRows(rows);
-    setFilters([]);
-  };
+  console.log(visibleRows);
 
   useEffect(() => {
-    getOrdersRows();
+    getInvoicesRows();
   }, []);
 
   useEffect(() => {
     if (applyFilters) {
-      const filteredOrders = getFilteredOrders(filters, rows);
-      setFilteredRows(filteredOrders);
+      const filteredInvoices = getFilteredInvoices(filters, rows);
+      console.log(filteredInvoices, "FILTERED");
+      setFilteredRows(filteredInvoices);
       setApplyFilters(false);
     }
   }, [filters, applyFilters]);
@@ -166,12 +148,11 @@ export default function OrdersTable() {
             : `calc(100dvh - 85px)`,
         }}
       >
-        <Paper sx={{ width: "100%", mb: 2 }}>
-          <OrdersTableToolbar
+        <Paper sx={{ width: "100%" }}>
+          <InvoicesTableToolbar
             selected={selected}
-            onStatusUpdate={handleUpdateStatus}
             filters={filters}
-            filteredRows={filteredRows}
+            filteredRows={filteredRows as any}
             onFilterChange={setFilters}
             onFiltersApply={handleApplyFilters}
             onFiltersClear={handleClearFilters}
@@ -183,11 +164,13 @@ export default function OrdersTable() {
                 ? `calc(100dvh - 240px)`
                 : `calc(100dvh - 205px)`,
               width: "100vw",
+              margin: "10px",
             }}
           >
             <Table
               stickyHeader
               sx={{
+                paddingInline: "10px",
                 paddingBottom: "10px",
                 overflowY: "scroll",
                 width: "100vw",
@@ -195,11 +178,10 @@ export default function OrdersTable() {
               size="small"
             >
               <TableHead>
-                <OrdersTableHead
+                <InvoicesTableHead
                   numSelected={selected.length}
                   order={order}
                   orderBy={orderBy}
-                  onSelectAllClick={handleSelectAllClick}
                   onRequestSort={handleRequestSort}
                   rowCount={rows.length}
                 />
@@ -216,15 +198,15 @@ export default function OrdersTable() {
                         event.stopPropagation();
 
                         navigator.clipboard
-                          .writeText(getClipboardOrderRowData(row as any))
+                          .writeText(getClipboardInvoiceRowData(row as any))
                           .then(() => showSuccessToast("Copied!"));
                       };
                       return (
-                        <OrderRow
-                          key={`${row.id}-${index}`}
+                        <InvoiceTableRow
+                          key={row.id as string}
                           row={row}
-                          handleClick={handleClick}
                           isItemSelected={isItemSelected}
+                          handleClick={handleClick}
                           labelId={labelId}
                           onCopy={onCopy}
                         />
@@ -264,4 +246,4 @@ export default function OrdersTable() {
       </Box>
     </>
   );
-}
+};

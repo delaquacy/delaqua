@@ -30,7 +30,6 @@ export default function OrdersList() {
       }}
     >
       <Table
-        aria-label="simple table"
         stickyHeader
         sx={{
           paddingBottom: "10px",

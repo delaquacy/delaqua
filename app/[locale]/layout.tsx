@@ -14,7 +14,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { OrderDetailsProvider } from "../contexts/OrderDetailsContext";
 import WrapperFooter from "../components/WrapperFooter/WrapperFooter";
-import { Box } from "@mui/material";
+import LayoutContent from "../components/LayoutContent";
 
 export function generateStaticParams() {
   return i18nConfig.locales.map((locale) => ({ locale }));
@@ -76,17 +76,7 @@ export default async function RootLayout({
                 <UserProvider>
                   <OrderDetailsProvider>
                     <ToastContainer />
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      justifyContent="space-between"
-                      minHeight="100dvh"
-                    >
-                      <WrapperHeader />
-
-                      {children}
-                      <WrapperFooter />
-                    </Box>
+                    <LayoutContent>{children}</LayoutContent>
                   </OrderDetailsProvider>
                 </UserProvider>
               </TranslationsProvider>
