@@ -26,6 +26,7 @@ interface Order {
   geolocation: string;
   id: string;
   items?: any[];
+  invoiceNumber?: string;
   numberOfBottlesAtThisAddress: number;
   paymentMethod: string;
   paymentStatus: string;

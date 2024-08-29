@@ -38,7 +38,13 @@
       "bottles": "Bottles to buy / to return / pump",
       "dateAndTime": "Delivery date and time",
       "status": "Status",
-      "paymentLink": "Payment link"
+      "paymentLink": "Payment link",
+      "invoiceNumber": "Invoice number",
+      "netVal": "Net value €",
+      "vatVal": "Amount of VAT €",
+      "": ""
+
   },
-  "removeFilter": "Remove filter"
+  "removeFilter": "Remove filter",
+  "table_no_orders_yet": "No orders yet"
 }

@@ -24,7 +24,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { OrderItemsTable } from "../OrderItemsTable";
 
-interface OrderExpandRowProps {
+interface OrderRowProps {
   handleClick: (event: any, id: string) => void;
   row: any;
   isItemSelected: boolean;
@@ -32,13 +32,13 @@ interface OrderExpandRowProps {
   onCopy: (event: any) => void;
 }
 
-export const OrderExpandRow = ({
+export const OrderRow = ({
   handleClick,
   row,
   isItemSelected,
   labelId,
   onCopy,
-}: OrderExpandRowProps) => {
+}: OrderRowProps) => {
   const { isSmallScreen } = useScreenSize();
   const [open, setOpen] = useState(false);
   const { t } = useTranslation("orderslist");
@@ -225,6 +225,8 @@ export const OrderExpandRow = ({
         </TableCell>
       </TableRow>
 
+      {/* 
+      collapsible table row
       <TableRow
         sx={{
           transition: "all 0.3s",
@@ -269,7 +271,7 @@ export const OrderExpandRow = ({
             </Box>
           </Collapse>
         </TableCell>
-      </TableRow>
+      </TableRow> */}
     </>
   );
 };

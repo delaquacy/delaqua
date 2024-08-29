@@ -80,6 +80,16 @@ const AdminDashboard = () => {
             </Typography>
           </MenuItem>
         </Link>
+        <Link href="/admin_dashboard/user_invoices">
+          <MenuItem>
+            <ListItemIcon>
+              <Inventory2 sx={{ color: "black" }} />
+            </ListItemIcon>
+            <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
+              User Invoices
+            </Typography>
+          </MenuItem>
+        </Link>
       </Box>
     </MainContentWrapper>
   );

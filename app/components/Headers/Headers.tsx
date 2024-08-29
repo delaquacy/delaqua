@@ -130,7 +130,7 @@ export default function Headers({
     <SnackbarProvider>
       {user &&
         unpaidOrders.length !== 0 &&
-        !pathname.endsWith("/admin_dashboard") && (
+        !pathname.includes("/admin_dashboard") && (
           <Box
             sx={{
               background: "#D34942",
@@ -172,7 +172,7 @@ export default function Headers({
             <Box className={styles.name_container} sx={{ flexGrow: 1 }}>
               <Link href="/">
                 <Image
-                  src="/water.png"
+                  src="/water.svg"
                   alt="DelAqua logo"
                   width={50}
                   height={50}
