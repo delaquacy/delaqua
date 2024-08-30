@@ -39,7 +39,7 @@ export const postInvoicesData = async (
 
     const preparedData = {
       clientId: data.userId,
-      clientName: data.deliveryAddress.firstAndLast,
+      clientName: data.deliveryAddressObj.firstAndLast,
       createdAt: data.createdAt,
       deliveryDate: data.deliveryDate,
       invoiceNumber: invoiceNumber,
@@ -49,7 +49,7 @@ export const postInvoicesData = async (
       netVal,
       vatVal,
       orderId: orderId,
-      allOrderId: orderId,
+      allOrderId: allOrderId,
     };
 
     console.log(data.userId, "IDDD");

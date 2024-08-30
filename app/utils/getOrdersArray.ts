@@ -1,9 +1,8 @@
+import { default as customParseFormat, default as dayjs } from "dayjs";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../lib/config";
-import { getDateFromTimestamp } from "./getDateFromTimestamp";
-import dayjs, { Dayjs } from "dayjs";
-import customParseFormat from "dayjs";
 import { getDateDifference } from "./getDateDifference";
+import { getDateFromTimestamp } from "./getDateFromTimestamp";
 dayjs.extend(customParseFormat);
 
 interface Timestamp {
@@ -16,7 +15,7 @@ interface Order {
   bottlesNumberToBuy: number;
   bottlesNumberToReturn: number;
   comments: string;
-  createdAt: Timestamp;
+  createdAt: Timestamp | string;
   completed: boolean;
   deliveryAddress: string;
   deliveryDate: string;
@@ -62,7 +61,10 @@ export const getOrdersArray = async () => {
 
     return {
       ...order,
-      createdAt: getDateFromTimestamp(order.createdAt),
+      createdAt:
+        typeof order.createdAt === "string"
+          ? order.createdAt
+          : getDateFromTimestamp(order.createdAt),
       deliveryDate,
       expire:
         getDateDifference(

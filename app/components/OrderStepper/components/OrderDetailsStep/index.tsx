@@ -8,6 +8,9 @@ import Link from "next/link";
 
 import { OrderItemsTable } from "@/app/components/OrderItemsTable";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
+import { db } from "@/app/lib/config";
+import { getAndSetPaymentLink } from "@/app/utils/getAndSetPaymentLink";
+import { postInvoicesData } from "@/app/utils/postInvoiceData";
 import {
   AccountCircleOutlined,
   EventOutlined,
@@ -22,7 +25,9 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 import dayjs from "dayjs";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import {
   DetailsCard,
   DetailsCardItem,
@@ -35,6 +40,8 @@ interface FormValues {
   paymentMethod: string;
 }
 
+const RENT_CODE = 120;
+
 export const OrderDetailsStep = ({
   renderButtonsGroup,
   handleNext,
@@ -45,7 +52,7 @@ export const OrderDetailsStep = ({
   const { t } = useTranslation("form");
   const { trackAmplitudeEvent } = useAmplitudeContext();
 
-  const { userOrder, goods, handleAddOrderDetails, setPaymentUrl } =
+  const { userOrder, userData, handleAddOrderDetails, setPaymentUrl } =
     useOrderDetailsContext();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(false);
@@ -85,67 +92,81 @@ export const OrderDetailsStep = ({
     const orderData = {
       ...userOrder,
       ...data,
-      createdAt: dayjs().format("DD-MM-YYYY HH:mm"),
+      createdAt: dayjs().format("DD.MM.YYYY HH:mm"),
       items: userOrder.items.filter(({ count }) => !!+count),
     };
 
-    console.log(orderData);
+    const rentCount = orderData.items.find(
+      ({ itemCode }) => +itemCode === RENT_CODE
+    )?.count;
 
-    // if (data.paymentMethod === "Cash") {
-    //   orderData.paymentStatus = "CASH";
-    // }
+    if (data.paymentMethod === "Cash") {
+      orderData.paymentStatus = "CASH";
+    }
 
-    // const orderRef = await addDoc(
-    //   collection(db, `users/${userOrder.userId}/orders`),
-    //   orderData
-    // );
+    const orderRef = await addDoc(
+      collection(db, `users/${userData.userId}/orders`),
+      orderData
+    );
+    const allOrderRef = await addDoc(collection(db, `allOrders`), orderData);
 
-    // const allOrderRef = await addDoc(collection(db, `allOrders`), orderData);
+    const addressRef = doc(
+      db,
+      `users/${userData.userId}/addresses/${userOrder.deliveryAddressObj.id}`
+    );
 
-    // const currentOrderId = orderRef.id;
-    // const currentAllOrderId = allOrderRef.id;
+    if (rentCount)
+      await updateDoc(addressRef, {
+        numberOfBottles:
+          +orderData.deliveryAddressObj.numberOfBottles + +rentCount,
+      });
 
-    // console.log(orderRef);
+    const currentOrderId = orderRef.id;
+    const currentAllOrderId = allOrderRef.id;
 
-    // const response = await axios.post(
-    //   process.env.NEXT_PUBLIC_ORDERS_SHEET_LINK as string,
-    //   orderData,
-    //   {
-    //     headers: {
-    //       "Content-Type": "text/plain",
-    //     },
-    //   }
-    // );
+    console.log(orderRef);
 
-    // const invoiceNumber = await postInvoicesData(
-    //   orderData,
-    //   currentOrderId,
-    //   currentAllOrderId
-    // );
+    const response = await axios.post(
+      process.env.NEXT_PUBLIC_ORDERS_SHEET_LINK as string,
+      orderData,
+      {
+        headers: {
+          "Content-Type": "text/plain",
+        },
+      }
+    );
 
-    // await updateDoc(orderRef, {
-    //   invoiceNumber,
-    // });
-    // await updateDoc(allOrderRef, {
-    //   invoiceNumber,
-    // });
+    console.log(response, "RESPONSE");
 
-    // console.log(invoiceNumber, "INVOICE NUM");
-    // console.log(orderData, "ORDER_DATA");
+    const invoiceNumber = await postInvoicesData(
+      orderData,
+      currentOrderId,
+      currentAllOrderId
+    );
 
-    // if (data.paymentMethod === "Online") {
-    //   await getAndSetPaymentLink(
-    //     +userOrder.totalPayments,
-    //     userOrder.phoneNumber,
-    //     `${userOrder.deliveryDate}, ${userOrder.deliveryTime}`,
-    //     currentOrderId,
-    //     currentAllOrderId,
-    //     userOrder.userId,
-    //     setPaymentUrl
-    //   );
-    // }
+    await updateDoc(orderRef, {
+      invoiceNumber,
+    });
+    await updateDoc(allOrderRef, {
+      invoiceNumber,
+    });
 
-    // handleNext();
+    console.log(invoiceNumber, "INVOICE NUM");
+    console.log(orderData, "ORDER_DATA");
+
+    if (data.paymentMethod === "Online") {
+      await getAndSetPaymentLink(
+        +userOrder.totalPayments,
+        userOrder.phoneNumber,
+        `${userOrder.deliveryDate}, ${userOrder.deliveryTime}`,
+        currentOrderId,
+        currentAllOrderId,
+        userData.userId,
+        setPaymentUrl
+      );
+    }
+
+    handleNext();
   };
 
   return (

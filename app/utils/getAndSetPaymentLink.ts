@@ -49,11 +49,13 @@ export const getAndSetPaymentLink = async (
     await updateDoc(orderRef, {
       paymentId: data.id,
       paymentLink: data.checkout_url,
+      paymentMethod: "Online",
     });
 
     await updateDoc(allOrdersRef, {
       paymentId: data.id,
       paymentLink: data.checkout_url,
+      paymentMethod: "Online",
     });
 
     const paymentRef = doc(db, `payments/${data.id}`);

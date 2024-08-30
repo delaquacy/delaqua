@@ -187,7 +187,7 @@ export const OrderDetailsProvider = ({
     depositForBottles: "",
     totalPayments: "",
     numberOfBottlesAtThisAddress: "",
-    paymentStatus: "",
+    paymentStatus: "Unpaid",
     paymentMethod: "",
     completed: false,
     canceled: false,
@@ -233,7 +233,7 @@ export const OrderDetailsProvider = ({
     }
   };
 
-  console.log(userOrder, "userData");
+  console.log(userOrder, "ORDER");
 
   const getGoods = async () => {
     try {

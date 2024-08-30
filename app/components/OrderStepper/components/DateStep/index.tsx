@@ -1,24 +1,23 @@
+import { datePickerStyle } from "@/app/components/OrdersTableFilter/DateRangePicker";
+import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
+import { useScreenSize } from "@/app/hooks";
+import { deliveryValidation } from "@/app/utils";
+import useDatesFromDB from "@/app/utils/getUnableDates";
 import {
   Box,
-  Card,
   FormControlLabel,
   FormHelperText,
   Radio,
   RadioGroup,
 } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
-import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-import { useEffect, useState } from "react";
-import dayjs, { Dayjs } from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useTranslation } from "react-i18next";
-import { useScreenSize } from "@/app/hooks";
-import updateLocale from "dayjs/plugin/updateLocale";
-import { deliveryValidation } from "@/app/utils";
-import useDatesFromDB from "@/app/utils/getUnableDates";
+import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { datePickerStyle } from "@/app/components/OrdersTableFilter/DateRangePicker";
+import updateLocale from "dayjs/plugin/updateLocale";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(updateLocale);
@@ -61,7 +60,7 @@ export const DateStep = ({
     setValue,
   } = useForm<FormValues>({
     defaultValues: {
-      deliveryDate: dayjs(userOrder.deliveryDate, "DD-MM-YYYY"),
+      deliveryDate: dayjs(userOrder.deliveryDate, "DD.MM.YYYY"),
       deliveryTime: userOrder.deliveryTime,
     },
   });
@@ -85,7 +84,7 @@ export const DateStep = ({
 
     return (
       isCurrentDayIsSunday ||
-      disabledDates.includes(date.format("DD-MM-YYYY")) ||
+      disabledDates.includes(date.format("DD.MM.YYYY")) ||
       isCurrentDayAfterNoon
     );
   };
@@ -94,7 +93,7 @@ export const DateStep = ({
     if (showTooltipMessage) return;
 
     handleAddOrderDetails({
-      deliveryDate: (data.deliveryDate as Dayjs).format("DD-MM-YYYY"),
+      deliveryDate: (data.deliveryDate as Dayjs).format("DD.MM.YYYY"),
       deliveryTime: data.deliveryTime,
     });
     handleNext();

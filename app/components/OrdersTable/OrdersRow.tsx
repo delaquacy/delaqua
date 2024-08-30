@@ -1,4 +1,5 @@
 import { useScreenSize } from "@/app/hooks";
+import { OrdersData } from "@/app/types";
 import {
   CancelOutlined,
   CheckCircle,
@@ -12,11 +13,17 @@ import { useTranslation } from "react-i18next";
 
 interface OrderRowProps {
   handleClick: (event: any, id: string) => void;
-  row: any;
+  row: OrdersData;
   isItemSelected: boolean;
   labelId: string;
   onCopy: (event: any) => void;
 }
+
+const BIG_BOTTLE_CODE_RENT = 120;
+const BIG_BOTTLE_CODE = 119;
+const MIDDLE_BOTTLE_CODE = 115;
+const SMALL_BOTTLE_CODE = 110;
+const POMP_CODES_MAX = 104;
 
 export const OrderRow = ({
   handleClick,
@@ -28,6 +35,29 @@ export const OrderRow = ({
   const { isSmallScreen } = useScreenSize();
   const [open, setOpen] = useState(false);
   const { t } = useTranslation("orderslist");
+
+  const bigBottle =
+    row?.items &&
+    row?.items.find(({ itemCode }) => +itemCode === BIG_BOTTLE_CODE);
+
+  const bigBottleRent =
+    row?.items &&
+    row?.items.find(({ itemCode }) => +itemCode === BIG_BOTTLE_CODE_RENT);
+  const middleBottle =
+    row?.items &&
+    row?.items.find(({ itemCode }) => +itemCode === MIDDLE_BOTTLE_CODE);
+
+  const smallBottle =
+    row?.items &&
+    row?.items.find(({ itemCode }) => +itemCode === SMALL_BOTTLE_CODE);
+
+  const pomps =
+    row?.items &&
+    row?.items.reduce(
+      (acc: string, item) =>
+        +item.itemCode < +POMP_CODES_MAX ? `${acc}, ${item.itemCode}` : acc,
+      ""
+    );
 
   return (
     <>
@@ -119,9 +149,16 @@ export const OrderRow = ({
         >
           {row.firstAndLast}
         </TableCell>
-        <TableCell align="center">{row.bottlesNumberToBuy}</TableCell>
-        <TableCell align="center">{row.bottlesNumberToReturn}</TableCell>
-        <TableCell align="center">{row.pump}</TableCell>
+        <TableCell align="center">
+          {bigBottle?.count || row.bottlesNumberToBuy}
+        </TableCell>
+        <TableCell align="center">
+          {bigBottleRent?.count || row.bottlesNumberToReturn || 0}
+        </TableCell>
+        <TableCell align="center">{middleBottle?.count || "-"}</TableCell>
+        <TableCell align="center">{smallBottle?.count || "-"}</TableCell>
+
+        <TableCell align="center">{pomps || row.pump || "no"}</TableCell>
         <TableCell align="center" padding="none">
           <Link
             href={row.geolocation as string}

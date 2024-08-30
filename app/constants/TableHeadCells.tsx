@@ -1,4 +1,6 @@
 import Image from "next/image";
+import TenL from "../../public/10l.svg";
+import FifteenL from "../../public/15L.svg";
 import Address from "../../public/address.png";
 import AddressDetail from "../../public/addressDetail.png";
 import Bage from "../../public/bage.png";
@@ -17,7 +19,7 @@ import { OrdersData } from "../types";
 
 interface HeadCell {
   disablePadding: boolean;
-  id: keyof OrdersData;
+  id: keyof OrdersData | "15LbottlesNumberToBuy" | "10LbottlesNumberToBuy";
   label: string;
   numeric: boolean;
   sortable: boolean;
@@ -67,6 +69,22 @@ export const TableHeadCells: readonly HeadCell[] = [
     image: (
       <Image src={EmptyBottle} alt="Bottles Number To Return" width={30} />
     ),
+  },
+  {
+    id: "15LbottlesNumberToBuy",
+    numeric: true,
+    disablePadding: false,
+    label: "tableHeadCells.buy",
+    sortable: false,
+    image: <Image src={FifteenL} alt="FifteenL" width={22} />,
+  },
+  {
+    id: "10LbottlesNumberToBuy",
+    numeric: true,
+    disablePadding: false,
+    label: "tableHeadCells.buy",
+    sortable: false,
+    image: <Image src={TenL} alt="TenL" width={22} />,
   },
   {
     id: "pump",

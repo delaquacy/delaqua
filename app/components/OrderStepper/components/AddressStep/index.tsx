@@ -157,7 +157,9 @@ export const AddressStep = ({
   const onSubmit = (data: FormValues) => {
     if (showTooltipMessage) return;
 
-    handleAddOrderDetails({ deliveryAddressObj: data, ...data });
+    const { id, ...restData } = data;
+
+    handleAddOrderDetails({ deliveryAddressObj: data, ...restData });
     handleNext();
   };
 
