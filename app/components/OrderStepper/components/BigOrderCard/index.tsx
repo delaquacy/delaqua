@@ -1,16 +1,17 @@
+import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
+import { useScreenSize } from "@/app/hooks";
+import { HelpOutlineOutlined } from "@mui/icons-material";
 import { Box, FormHelperText, Tooltip, Typography } from "@mui/material";
+import { useEffect } from "react";
+import { Controller } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { OrderCardCounter } from "../OrderCardCounter";
 import {
   ExternalCountWrapper,
   InternalCountWrapper,
   Title,
   Wrapper,
 } from "./styled";
-import { OrderCardCounter } from "../OrderCardCounter";
-import { useTranslation } from "react-i18next";
-import { Controller } from "react-hook-form";
-import { HelpOutlineOutlined } from "@mui/icons-material";
-import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-import { useScreenSize } from "@/app/hooks";
 interface BigOrderCardProps {
   imageSrc: string;
   imageAlt: string;
@@ -26,6 +27,7 @@ interface BigOrderCardProps {
   nameBottle: string;
   nameRent: string;
   watch: any;
+  setValue: any;
 }
 
 export const BigOrderCard = ({
@@ -42,6 +44,7 @@ export const BigOrderCard = ({
   nameBottle,
   nameRent,
   watch,
+  setValue,
 }: BigOrderCardProps) => {
   const { t } = useTranslation("form");
   const { isSmallScreen } = useScreenSize();
@@ -49,7 +52,16 @@ export const BigOrderCard = ({
 
   const currentBottlesNum = watch(nameBottle);
   const currentBottlesReturn = watch(`${nameReturn}`) || 0;
-  const maxNumBottlesReturn = userOrder.deliveryAddress.numberOfBottles;
+  const maxNumBottlesReturn = userOrder.deliveryAddressObj.numberOfBottles;
+
+  const rentPrice = Math.max(
+    +priceRent * (+currentBottlesNum - +currentBottlesReturn),
+    0
+  );
+
+  useEffect(() => {
+    setValue(nameRent, `${+currentBottlesNum - +currentBottlesReturn}`);
+  }, [currentBottlesNum, currentBottlesReturn]);
 
   return (
     <Wrapper>
@@ -166,10 +178,7 @@ export const BigOrderCard = ({
               <Typography textAlign="center">{description}</Typography>
               <Tooltip title={t("120Cost")} enterTouchDelay={1}>
                 <Typography textAlign="center" color="gray">
-                  {`${Math.max(
-                    +priceRent * (+currentBottlesNum - +currentBottlesReturn),
-                    0
-                  )} €`}
+                  {`${rentPrice} €`}
                 </Typography>
               </Tooltip>
             </InternalCountWrapper>

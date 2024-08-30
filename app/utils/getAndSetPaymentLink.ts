@@ -23,6 +23,7 @@ export const getAndSetPaymentLink = async (
         description: `Delaqua Water delivery for ${phoneNumber}, ordered on ${dataAndTime}`,
       }),
     });
+
     const data = await response.json();
 
     const formatPhoneNumber = phoneNumber?.replace(/\+/g, "");

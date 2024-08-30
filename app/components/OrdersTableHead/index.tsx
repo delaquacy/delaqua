@@ -1,3 +1,5 @@
+import { useScreenSize } from "@/app/hooks";
+import { OrdersData } from "@/app/types";
 import {
   Box,
   Checkbox,
@@ -5,11 +7,9 @@ import {
   TableRow,
   TableSortLabel,
 } from "@mui/material";
-import { TableHeadCells } from "../../constants/TableHeadCells";
 import { visuallyHidden } from "@mui/utils";
 import { useTranslation } from "react-i18next";
-import { OrdersData } from "@/app/types";
-import { useScreenSize } from "@/app/hooks";
+import { TableHeadCells } from "../../constants/TableHeadCells";
 
 interface OrdersTableHeadProps {
   numSelected: number;
@@ -69,13 +69,6 @@ export function OrdersTableHead(props: OrdersTableHeadProps) {
           }}
         />
       </TableCell>
-      <TableCell
-        sx={{
-          position: isSmallScreen ? "" : "sticky",
-          left: isSmallScreen ? "" : "74px",
-          zIndex: 2,
-        }}
-      />
       {TableHeadCells.map((headCell) =>
         headCell.sortable ? (
           <TableCell
@@ -144,11 +137,11 @@ const tableCellStyle = (isSmallScreen: boolean, headCell: any) => ({
   left: isSmallScreen
     ? ""
     : headCell.id === "index"
-    ? "calc(74px + 64px)"
+    ? "74px"
     : headCell.id === "phoneNumber"
-    ? "calc(155.45px + 64px)"
+    ? "155.45px"
     : headCell.id === "firstAndLast"
-    ? "calc(290.9px + 64px)"
+    ? "290.9px"
     : "",
   zIndex: isSmallScreen
     ? ""

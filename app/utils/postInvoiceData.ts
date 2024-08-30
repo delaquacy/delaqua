@@ -1,16 +1,13 @@
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { db } from "../lib/config";
-import { UserOrder } from "../contexts/OrderDetailsContext";
 import dayjs from "dayjs";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { UserOrder } from "../contexts/OrderDetailsContext";
+import { db } from "../lib/config";
 
-export const postInvoicesData = async (data: UserOrder, orderId: string) => {
+export const postInvoicesData = async (
+  data: UserOrder,
+  orderId: string,
+  allOrderId: string
+) => {
   const currentYear = dayjs().format("YY");
   const lastInvoiceNumRef = doc(db, "counter/1");
 

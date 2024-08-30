@@ -10,19 +10,16 @@ import {
 
 import { v4 as uuidv4 } from "uuid";
 
-import { getStaticGoodsArray } from "../utils/getStaticGoodsArray";
-import { yupResolver } from "@hookform/resolvers/yup";
 import dayjs, { Dayjs } from "dayjs";
+import { FieldValue, serverTimestamp } from "firebase/firestore";
 import {
-  deliveryValidation,
   fetchAddresses,
   fetchOrders,
   fetchUserNumber,
   formatPhoneNumber,
-  getSortedOrders,
 } from "../utils";
+import { getStaticGoodsArray } from "../utils/getStaticGoodsArray";
 import { useUserContext } from "./UserContext";
-import { FieldValue, serverTimestamp } from "firebase/firestore";
 
 export interface Goods {
   id: string;
@@ -56,7 +53,7 @@ export interface UserOrder {
   items: UserOrderItem[];
   deliveryDate: Dayjs | string;
   deliveryTime: string;
-  deliveryAddress: Address;
+  deliveryAddressObj: Address;
   phoneNumber: string;
   bottlesNumberToReturn: string;
   pump: string;
@@ -124,7 +121,7 @@ export const OrderDetailsContext = createContext<OrderDetailsContextType>({
     items: [],
     deliveryDate: dayjs(),
     deliveryTime: "",
-    deliveryAddress: {
+    deliveryAddressObj: {
       id: "",
       firstAndLast: "",
       postalIndex: "",
@@ -169,7 +166,7 @@ export const OrderDetailsProvider = ({
     items: [] as UserOrderItem[],
     deliveryDate: dayjs(),
     deliveryTime: "9-12",
-    deliveryAddress: {
+    deliveryAddressObj: {
       id: "",
       firstAndLast: "",
       postalIndex: "",

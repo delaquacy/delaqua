@@ -1,29 +1,25 @@
-import { useEffect, useState } from "react";
-import { Box, Skeleton, Tooltip, Typography } from "@mui/material";
-import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
+import { FormWrapper } from "@/app/components/shared";
 import {
   UserOrderItem,
   useOrderDetailsContext,
 } from "@/app/contexts/OrderDetailsContext";
+import { Box, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { CardShadow, FormWrapper } from "@/app/components/shared";
+import { BigOrderCard } from "../BigOrderCard";
+import { OrderCard } from "../OrderCard";
 import {
-  BigCardWrapper,
   CustomGrid,
-  HelperText,
   SmallWaterWrapper,
   TextWrapper,
   WaterWrapper,
 } from "./styled";
-import { OrderCard } from "../OrderCard";
-import { BigOrderCard } from "../BigOrderCard";
 
 interface FormValues {
   items: UserOrderItem[];
   bottlesNumberToReturn: string;
 }
-
-const DISPENSER_DELIVERY_CODE = 104;
 
 export const StoreStep = ({
   renderButtonsGroup,
@@ -45,6 +41,7 @@ export const StoreStep = ({
     formState: { errors },
     reset,
     watch,
+    setValue,
   } = useForm<FormValues>({
     defaultValues: {
       items: [],
@@ -78,6 +75,8 @@ export const StoreStep = ({
   const onSubmit = (data: FormValues) => {
     if (showTooltipMessage) return;
 
+    console.log(data, "DATA");
+
     const formattedData = data.items.map((order) => ({
       ...order,
       sum: getOrderItemSum(order),
@@ -97,7 +96,7 @@ export const StoreStep = ({
     if (userOrder.items.length > 0) {
       reset({
         items: userOrder.items,
-        bottlesNumberToReturn: userOrder.deliveryAddress.numberOfBottles,
+        bottlesNumberToReturn: userOrder.deliveryAddressObj.numberOfBottles,
       });
     }
   }, [userOrder.items]);
@@ -129,6 +128,7 @@ export const StoreStep = ({
             nameReturn={"bottlesNumberToReturn"}
             watch={watch}
             control={control}
+            setValue={setValue}
           />
         )}
 

@@ -50,7 +50,11 @@ export const OrderItemsTable = ({
       </TableHead>
 
       <TableBody>
-        {(orderItems || [])
+        {(
+          [...orderItems].sort(
+            (itemA, itemB) => +itemA.itemCode - +itemB.itemCode
+          ) || []
+        )
           .filter(({ count }) => !!+count)
           .map((order, index) => (
             <Tooltip

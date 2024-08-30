@@ -1,39 +1,33 @@
 "use client";
 import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from "react";
-import Link from "next/link.js";
 import { useTranslation } from "react-i18next";
+
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
-import { useToast, useScreenSize } from "@/app/hooks";
+
+import { OrdersTableHead } from "@/app/components/OrdersTableHead";
+import { useScreenSize, useToast } from "@/app/hooks";
 import { FilterItem, OrdersData } from "@/app/types";
 import {
+  getClipboardOrderRowData,
   getComparator,
   getFilteredOrders,
-  stableSort,
   getOrdersArray,
-  getClipboardOrderRowData,
+  stableSort,
 } from "@/app/utils";
-import { OrdersTableHead } from "@/app/components/OrdersTableHead";
 import {
   Box,
   Paper,
-  TableContainer,
   Table,
   TableBody,
-  TableRow,
   TableCell,
-  Checkbox,
-  TablePagination,
+  TableContainer,
   TableHead,
-  Button,
+  TablePagination,
+  TableRow,
 } from "@mui/material";
+
 import { OrdersTableToolbar } from "../OrdersTableToolbar.tsx";
-import {
-  CancelOutlined,
-  ContentCopy,
-  CheckCircle,
-  HourglassBottom,
-} from "@mui/icons-material";
 import { OrderRow } from "./OrdersRow";
 
 dayjs.extend(customParseFormat);

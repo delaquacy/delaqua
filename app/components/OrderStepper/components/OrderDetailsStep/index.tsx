@@ -1,3 +1,19 @@
+import { ChangeEvent, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+
+import useAmplitudeContext from "@/app/utils/amplitudeHook";
+import Image from "next/image";
+import Link from "next/link";
+
+import { OrderItemsTable } from "@/app/components/OrderItemsTable";
+import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
+import {
+  AccountCircleOutlined,
+  EventOutlined,
+  HomeOutlined,
+  PlaceOutlined,
+} from "@mui/icons-material";
 import {
   Box,
   FormControlLabel,
@@ -6,27 +22,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
-import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-import { ChangeEvent, useEffect, useState } from "react";
-
-import { useTranslation } from "react-i18next";
-
-import useAmplitudeContext from "@/app/utils/amplitudeHook";
-import {
-  AccountCircleOutlined,
-  EventOutlined,
-  HomeOutlined,
-  PlaceOutlined,
-} from "@mui/icons-material";
-import Link from "next/link";
-import Image from "next/image";
-import { getAndSetPaymentLink } from "@/app/utils/getAndSetPaymentLink";
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "@/app/lib/config";
-import axios from "axios";
-import { BIG_BOTTLE_ID, RENT_BOTTLE_ID } from "@/app/constants/OrderItemsIds";
-import { CardShadow } from "@/app/components/shared";
+import dayjs from "dayjs";
 import {
   DetailsCard,
   DetailsCardItem,
@@ -34,9 +30,6 @@ import {
   DetailsCardItemRow,
   FormWrapper,
 } from "./styled";
-import { OrderItemsTable } from "@/app/components/OrderItemsTable";
-import { postInvoicesData } from "@/app/utils/postInvoiceData";
-import dayjs from "dayjs";
 
 interface FormValues {
   paymentMethod: string;
@@ -82,8 +75,6 @@ export const OrderDetailsStep = ({
     }
   };
 
-  // ADD INVOICE NUM LOGIC
-
   const onSubmit = async (data: FormValues) => {
     // trackAmplitudeEvent("submitOrder", {
     //   text: "On submit click",
@@ -93,13 +84,12 @@ export const OrderDetailsStep = ({
 
     const orderData = {
       ...userOrder,
-      data,
+      ...data,
       createdAt: dayjs().format("DD-MM-YYYY HH:mm"),
+      items: userOrder.items.filter(({ count }) => !!+count),
     };
 
-    const invoiceNumber = await postInvoicesData(orderData, "1"); // TODO: add correct payment definition
-    console.log(invoiceNumber, "INVOICE NUM");
-    console.log(orderData, "ORDER_DATA");
+    console.log(orderData);
 
     // if (data.paymentMethod === "Cash") {
     //   orderData.paymentStatus = "CASH";
@@ -109,10 +99,13 @@ export const OrderDetailsStep = ({
     //   collection(db, `users/${userOrder.userId}/orders`),
     //   orderData
     // );
+
     // const allOrderRef = await addDoc(collection(db, `allOrders`), orderData);
 
     // const currentOrderId = orderRef.id;
     // const currentAllOrderId = allOrderRef.id;
+
+    // console.log(orderRef);
 
     // const response = await axios.post(
     //   process.env.NEXT_PUBLIC_ORDERS_SHEET_LINK as string,
@@ -123,6 +116,22 @@ export const OrderDetailsStep = ({
     //     },
     //   }
     // );
+
+    // const invoiceNumber = await postInvoicesData(
+    //   orderData,
+    //   currentOrderId,
+    //   currentAllOrderId
+    // );
+
+    // await updateDoc(orderRef, {
+    //   invoiceNumber,
+    // });
+    // await updateDoc(allOrderRef, {
+    //   invoiceNumber,
+    // });
+
+    // console.log(invoiceNumber, "INVOICE NUM");
+    // console.log(orderData, "ORDER_DATA");
 
     // if (data.paymentMethod === "Online") {
     //   await getAndSetPaymentLink(
@@ -136,51 +145,8 @@ export const OrderDetailsStep = ({
     //   );
     // }
 
-    console.log(data, "INSIDE");
-
-    handleNext();
+    // handleNext();
   };
-
-  useEffect(() => {
-    if (userOrder.items.find(({ id }) => `${id}` === RENT_BOTTLE_ID)) {
-      return;
-    }
-    const returnBottles = userOrder.bottlesNumberToReturn;
-
-    const currentOrderBottles =
-      userOrder.items.find(({ id }) => +id === +BIG_BOTTLE_ID)?.count || 0;
-
-    if (+currentOrderBottles > +returnBottles) {
-      const rentCount = +currentOrderBottles - +returnBottles;
-      const rentGood = goods.find(({ id }) => `${id}` === RENT_BOTTLE_ID);
-      const rentItem = {
-        id: rentGood?.id,
-        itemCode: rentGood?.id,
-        name: rentGood?.name,
-        sellPrice: rentGood?.sellPrice,
-        count: rentCount,
-        sum: `${+rentCount * +(rentGood?.sellPrice || 0)}`,
-      };
-
-      handleAddOrderDetails({
-        items: [...userOrder.items, rentItem],
-        totalPayments: `${+userOrder.totalPayments + +rentItem.sum}`,
-        totalBottlesAtCurrentAddress: `${
-          +userOrder.deliveryAddress.numberOfBottles + +rentCount
-        }`,
-      });
-    }
-
-    if (+currentOrderBottles < +returnBottles) {
-      const returnCount = +returnBottles - +currentOrderBottles;
-
-      handleAddOrderDetails({
-        totalBottlesAtCurrentAddress: `${
-          +userOrder.deliveryAddress.numberOfBottles - returnCount
-        }`,
-      });
-    }
-  }, []);
 
   return (
     <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
@@ -213,7 +179,13 @@ export const OrderDetailsStep = ({
           )}
         />
 
-        <Box>{t("orderDetails")}</Box>
+        <Box
+          sx={{
+            marginBlock: "15px",
+          }}
+        >
+          {t("orderDetails")}
+        </Box>
 
         <OrderItemsTable
           orderItems={userOrder.items}
@@ -251,7 +223,7 @@ export const OrderDetailsStep = ({
                   <AccountCircleOutlined />
                 </Tooltip>
                 <Typography>
-                  {userOrder.deliveryAddress.firstAndLast}
+                  {userOrder.deliveryAddressObj.firstAndLast}
                 </Typography>
               </DetailsCardItemRow>
 
@@ -260,7 +232,7 @@ export const OrderDetailsStep = ({
                   <HomeOutlined />
                 </Tooltip>
                 <Typography>
-                  {`${userOrder.deliveryAddress.postalIndex}, ${userOrder.deliveryAddress.deliveryAddress}, ${userOrder.deliveryAddress.addressDetails}, ${userOrder.deliveryAddress.comments}`}
+                  {`${userOrder.deliveryAddressObj.postalIndex}, ${userOrder.deliveryAddressObj.deliveryAddress}, ${userOrder.deliveryAddressObj.addressDetails}, ${userOrder.deliveryAddressObj.comments}`}
                 </Typography>
               </DetailsCardItemRow>
             </DetailsCardItemColumn>
@@ -271,8 +243,8 @@ export const OrderDetailsStep = ({
               <PlaceOutlined />
             </Tooltip>
             <Typography>
-              <Link href={userOrder.deliveryAddress.geolocation}>
-                {userOrder.deliveryAddress.geolocation}
+              <Link href={userOrder.deliveryAddressObj.geolocation}>
+                {userOrder.deliveryAddressObj.geolocation}
               </Link>
             </Typography>
           </DetailsCardItem>

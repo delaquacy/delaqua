@@ -1,18 +1,18 @@
 import Image from "next/image";
-import EmptyBottle from "../../public/emptyBottle.png";
-import FullBottle from "../../public/fullBottle.png";
-import Phone from "../../public/phoneNumber.png";
-import Pump from "../../public/pump.png";
 import Address from "../../public/address.png";
 import AddressDetail from "../../public/addressDetail.png";
+import Bage from "../../public/bage.png";
+import PaymentsTotal from "../../public/billEuro.png";
+import CreatedAt from "../../public/calendar.png";
+import Comments from "../../public/comments.png";
+import CompletedStatus from "../../public/completedStatus.png";
 import DeliveryDate from "../../public/deliveryDate.png";
 import DeliveryTime from "../../public/deliveryTime.png";
-import PaymentsTotal from "../../public/billEuro.png";
+import EmptyBottle from "../../public/emptyBottle.png";
+import FullBottle from "../../public/fullBottle.png";
 import PaymentsStatus from "../../public/paymentStatus.png";
-import Bage from "../../public/bage.png";
-import Comments from "../../public/comments.png";
-import CreatedAt from "../../public/calendar.png";
-import CompletedStatus from "../../public/completedStatus.png";
+import Phone from "../../public/phoneNumber.png";
+import Pump from "../../public/pump.png";
 import { OrdersData } from "../types";
 
 interface HeadCell {
@@ -50,32 +50,32 @@ export const TableHeadCells: readonly HeadCell[] = [
     sortable: false,
     image: <Image src={Bage} alt="Bage" width={30} />,
   },
-  // {
-  //   id: "bottlesNumberToBuy",
-  //   numeric: true,
-  //   disablePadding: false,
-  //   label: "tableHeadCells.buy",
-  //   sortable: false,
-  //   image: <Image src={FullBottle} alt="Bottles Number To Buy" width={30} />,
-  // },
-  // {
-  //   id: "bottlesNumberToReturn",
-  //   numeric: true,
-  //   disablePadding: false,
-  //   label: "tableHeadCells.return",
-  //   sortable: false,
-  //   image: (
-  //     <Image src={EmptyBottle} alt="Bottles Number To Return" width={30} />
-  //   ),
-  // },
-  // {
-  //   id: "pump",
-  //   numeric: true,
-  //   disablePadding: false,
-  //   label: "tableHeadCells.pump",
-  //   sortable: false,
-  //   image: <Image src={Pump} alt="Pump To Buy" width={23} />,
-  // },
+  {
+    id: "bottlesNumberToBuy",
+    numeric: true,
+    disablePadding: false,
+    label: "tableHeadCells.buy",
+    sortable: false,
+    image: <Image src={FullBottle} alt="Bottles Number To Buy" width={30} />,
+  },
+  {
+    id: "bottlesNumberToReturn",
+    numeric: true,
+    disablePadding: false,
+    label: "tableHeadCells.return",
+    sortable: false,
+    image: (
+      <Image src={EmptyBottle} alt="Bottles Number To Return" width={30} />
+    ),
+  },
+  {
+    id: "pump",
+    numeric: true,
+    disablePadding: false,
+    label: "tableHeadCells.pump",
+    sortable: false,
+    image: <Image src={Pump} alt="Pump To Buy" width={23} />,
+  },
   {
     id: "deliveryAddress",
     numeric: false,

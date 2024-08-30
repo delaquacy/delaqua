@@ -1,28 +1,14 @@
 import { useScreenSize } from "@/app/hooks";
-import { OrdersData } from "@/app/types";
 import {
   CancelOutlined,
   CheckCircle,
   ContentCopy,
   HourglassBottom,
 } from "@mui/icons-material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import {
-  Box,
-  Button,
-  Checkbox,
-  Collapse,
-  IconButton,
-  TableCell,
-  TableRow,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Checkbox, TableCell, TableRow } from "@mui/material";
 import Link from "next/link";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { OrderItemsTable } from "../OrderItemsTable";
 
 interface OrderRowProps {
   handleClick: (event: any, id: string) => void;
@@ -88,29 +74,6 @@ export const OrderRow = ({
             }}
           />
         </TableCell>
-
-        <TableCell
-          sx={{
-            position: isSmallScreen ? "static" : "sticky",
-            left: "74px",
-            zIndex: 2,
-            background: "inherit",
-          }}
-        >
-          <Tooltip title={open ? t("close") : t("open")}>
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={(event) => {
-                event.stopPropagation();
-                setOpen(!open);
-              }}
-            >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </Tooltip>
-        </TableCell>
-
         <TableCell
           component="th"
           scope="row"
@@ -118,7 +81,7 @@ export const OrderRow = ({
           align="center"
           sx={{
             position: isSmallScreen ? "static" : "sticky",
-            left: "calc(74px + 64px)",
+            left: "74px",
             zIndex: 2,
             background: "inherit",
           }}
@@ -133,7 +96,7 @@ export const OrderRow = ({
           align="center"
           sx={{
             position: isSmallScreen ? "static" : "sticky",
-            left: "calc(155.45px + 64px)",
+            left: "155.45px",
             zIndex: 2,
             background: "inherit",
           }}
@@ -148,7 +111,7 @@ export const OrderRow = ({
           align="center"
           sx={{
             position: isSmallScreen ? "static" : "sticky",
-            left: "calc(290.9px + 64px)",
+            left: "290.9px",
             zIndex: 2,
             background: "inherit",
             borderRight: "solid 1px rgba(38, 40, 82, 0.1)",
@@ -156,9 +119,9 @@ export const OrderRow = ({
         >
           {row.firstAndLast}
         </TableCell>
-        {/* <TableCell align="center">{row.bottlesNumberToBuy}</TableCell>
+        <TableCell align="center">{row.bottlesNumberToBuy}</TableCell>
         <TableCell align="center">{row.bottlesNumberToReturn}</TableCell>
-        <TableCell align="center">{row.pump}</TableCell> */}
+        <TableCell align="center">{row.pump}</TableCell>
         <TableCell align="center" padding="none">
           <Link
             href={row.geolocation as string}

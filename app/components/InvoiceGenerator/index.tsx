@@ -285,7 +285,7 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
     doc.text("IBAN: LT04 3250 0151 0995 4807", leftPadding + 2, yBank + 17);
     doc.text("BIC: REVOLT21", leftPadding + 2, yBank + 23);
 
-    doc.save("invoice_mock.pdf");
+    doc.save(`${order.invoiceNumber}.pdf`);
   };
 
   return (

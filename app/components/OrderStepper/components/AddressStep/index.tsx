@@ -1,16 +1,11 @@
-import {
-  Box,
-  Button,
-  Card,
-  ToggleButton,
-  ToggleButtonGroup,
-} from "@mui/material";
-import { useForm } from "react-hook-form";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useScreenSize } from "@/app/hooks";
+import { Box, ToggleButton } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
+import { db } from "@/app/lib/config";
 import {
   AddLocationAltOutlined,
   WrongLocationOutlined,
@@ -22,17 +17,16 @@ import {
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "@/app/lib/config";
 
 import { ControllerInputField } from "@/app/components/shared";
+import { AddNewAddress } from "../AddNewAddress";
+import { AddressDetailCard } from "../AddressDetailCard";
 import {
   FormHeaderButton,
   FormHeaderWrapper,
   FormWrapper,
   ToggleButtonGroupWrap,
 } from "./styled";
-import { AddNewAddress } from "../AddNewAddress";
-import { AddressDetailCard } from "../AddressDetailCard";
 
 interface FormValues {
   id?: string;
@@ -73,12 +67,12 @@ export const AddressStep = ({
   const { isSmallScreen } = useScreenSize();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(
-    !userOrder.deliveryAddress.id
+    !userOrder.deliveryAddressObj.id
   );
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<FormValues | null>(
-    userOrder.deliveryAddress
+    userOrder.deliveryAddressObj
   );
 
   const {
@@ -87,7 +81,7 @@ export const AddressStep = ({
     formState: { errors },
     reset,
   } = useForm<FormValues>({
-    defaultValues: userOrder.deliveryAddress,
+    defaultValues: userOrder.deliveryAddressObj,
   });
 
   const handleSetNewValues = (newValues: FormValues | null) => {
@@ -163,7 +157,7 @@ export const AddressStep = ({
   const onSubmit = (data: FormValues) => {
     if (showTooltipMessage) return;
 
-    handleAddOrderDetails({ deliveryAddress: data });
+    handleAddOrderDetails({ deliveryAddressObj: data, ...data });
     handleNext();
   };
 
@@ -175,7 +169,7 @@ export const AddressStep = ({
       setShowAddressForm(false);
     }
 
-    if (!userOrder.deliveryAddress.id && lastAddress) {
+    if (!userOrder.deliveryAddressObj.id && lastAddress) {
       setSelectedAddress(lastAddress);
       handleSetNewValues(lastAddress);
       setShowAddressForm(false);
