@@ -1,5 +1,5 @@
+import { UserOrderItem } from "@/app/contexts/OrderDetailsContext";
 import { useScreenSize } from "@/app/hooks";
-import { OrdersData } from "@/app/types";
 import {
   CancelOutlined,
   CheckCircle,
@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 
 interface OrderRowProps {
   handleClick: (event: any, id: string) => void;
-  row: OrdersData;
+  row: any;
   isItemSelected: boolean;
   labelId: string;
   onCopy: (event: any) => void;
@@ -36,26 +36,36 @@ export const OrderRow = ({
   const [open, setOpen] = useState(false);
   const { t } = useTranslation("orderslist");
 
+  console.log(row);
+
   const bigBottle =
     row?.items &&
-    row?.items.find(({ itemCode }) => +itemCode === BIG_BOTTLE_CODE);
+    (row?.items as UserOrderItem[]).find(
+      ({ itemCode }) => +itemCode === BIG_BOTTLE_CODE
+    );
 
   const bigBottleRent =
     row?.items &&
-    row?.items.find(({ itemCode }) => +itemCode === BIG_BOTTLE_CODE_RENT);
+    (row?.items as UserOrderItem[]).find(
+      ({ itemCode }) => +itemCode === BIG_BOTTLE_CODE_RENT
+    );
   const middleBottle =
     row?.items &&
-    row?.items.find(({ itemCode }) => +itemCode === MIDDLE_BOTTLE_CODE);
+    (row?.items as UserOrderItem[]).find(
+      ({ itemCode }) => +itemCode === MIDDLE_BOTTLE_CODE
+    );
 
   const smallBottle =
     row?.items &&
-    row?.items.find(({ itemCode }) => +itemCode === SMALL_BOTTLE_CODE);
+    (row?.items as UserOrderItem[]).find(
+      ({ itemCode }) => +itemCode === SMALL_BOTTLE_CODE
+    );
 
   const pomps =
     row?.items &&
     row?.items.reduce(
-      (acc: string, item) =>
-        +item.itemCode < +POMP_CODES_MAX ? `${acc}, ${item.itemCode}` : acc,
+      (acc: string, item: UserOrderItem) =>
+        +item.itemCode < +POMP_CODES_MAX ? `${acc} ${item.itemCode}` : acc,
       ""
     );
 

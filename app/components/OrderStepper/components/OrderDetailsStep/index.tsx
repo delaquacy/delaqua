@@ -19,6 +19,7 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
+  CircularProgress,
   FormControlLabel,
   Radio,
   RadioGroup,
@@ -56,6 +57,7 @@ export const OrderDetailsStep = ({
     useOrderDetailsContext();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const {
     control,
@@ -83,6 +85,7 @@ export const OrderDetailsStep = ({
   };
 
   const onSubmit = async (data: FormValues) => {
+    setLoading(true);
     // trackAmplitudeEvent("submitOrder", {
     //   text: "On submit click",
     // });
@@ -165,9 +168,20 @@ export const OrderDetailsStep = ({
         setPaymentUrl
       );
     }
+    setLoading(false);
 
     handleNext();
   };
+
+  console.log(loading, "LOADING");
+
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex" }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>

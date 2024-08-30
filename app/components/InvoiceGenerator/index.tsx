@@ -2,11 +2,9 @@ import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { OrdersData } from "@/app/types";
 import { getDateFromTimestamp } from "@/app/utils";
 import { Download } from "@mui/icons-material";
-import { Box, Button, IconButton } from "@mui/material";
-import { Timestamp } from "firebase/firestore";
+import { Box, IconButton } from "@mui/material";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import { applyPlugin } from "jspdf-autotable";
+import autoTable, { applyPlugin } from "jspdf-autotable";
 applyPlugin(jsPDF);
 
 interface InvoiceGeneratorProps {
@@ -86,12 +84,16 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
     doc.text("Sales Invoice", titlePaddingLeft, 15);
     doc.setFontSize(14);
 
-    doc.text("INV-24-1", titlePaddingLeft, 22);
+    doc.text(order.invoiceNumber || "INV-24-1", titlePaddingLeft, 22);
     doc.setFont("Helvetica", "normal");
     doc.setTextColor(128, 128, 128);
     doc.setFontSize(11);
     doc.text(
-      `Issued on: ${getDateFromTimestamp(order.createdAt as any)}`,
+      `Issued on: ${
+        typeof order.createdAt === "string"
+          ? order.createdAt
+          : getDateFromTimestamp(order.createdAt as any)
+      }`,
       titlePaddingLeft,
       28
     );
@@ -286,6 +288,11 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
     doc.text("BIC: REVOLT21", leftPadding + 2, yBank + 23);
 
     doc.save(`${order.invoiceNumber}.pdf`);
+
+    const pdfBlob = doc.output("blob");
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+    window.open(pdfUrl, "_blank");
   };
 
   return (

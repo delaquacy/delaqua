@@ -28,14 +28,12 @@ export const postInvoicesData = async (
     const newCount = currentCount + 1;
     const invoiceNumber = `INV-${currentYear}-${currentCount}`;
 
-    const netVal = data.items.reduce(
-      (acc, item) => acc + (item.net ? +item.count * +item.net : 0),
-      0
-    );
-    const vatVal = data.items.reduce(
-      (acc, item) => acc + (item.vat ? +item.count * +item.vat : 0),
-      0
-    );
+    const netVal = data.items
+      .reduce((acc, item) => acc + (item.net ? +item.count * +item.net : 0), 0)
+      .toFixed(2);
+    const vatVal = data.items
+      .reduce((acc, item) => acc + (item.vat ? +item.count * +item.vat : 0), 0)
+      .toFixed(2);
 
     const preparedData = {
       clientId: data.userId,
@@ -45,7 +43,7 @@ export const postInvoicesData = async (
       invoiceNumber: invoiceNumber,
       paymentStatus: data.paymentStatus,
       phoneNumber: data.phoneNumber,
-      totalPayments: data.totalPayments,
+      totalPayments: (+data.totalPayments).toFixed(2),
       netVal,
       vatVal,
       orderId: orderId,
