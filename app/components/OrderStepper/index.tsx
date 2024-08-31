@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 
-import { useTranslation } from "react-i18next";
-import {
-  ButtonsGroup,
-  FinishStep,
-  StoreStep,
-  OrderDetailsStep,
-  DateStep,
-  AddressStep,
-} from "./components";
 import { Box, Button, Step, StepLabel, Stepper } from "@mui/material";
-import { FirstStepModal } from "./components/FirstStepModal";
+import { useTranslation } from "react-i18next";
 import { CardShadow } from "../shared";
+import {
+  AddressStep,
+  ButtonsGroup,
+  DateStep,
+  FinishStep,
+  OrderDetailsStep,
+  StoreStep,
+} from "./components";
+import { FirstStepModal } from "./components/FirstStepModal";
 
 const STEP_KEYS = [
   "address",

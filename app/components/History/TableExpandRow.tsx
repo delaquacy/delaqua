@@ -5,18 +5,18 @@ import IconButton from "@mui/material/IconButton";
 
 import TableCell from "@mui/material/TableCell";
 
-import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
+import { getDateFromTimestamp } from "@/app/utils";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
 import { Fragment, useState } from "react";
-import { getDateFromTimestamp } from "@/app/utils";
-import { OrderItemsTable } from "../OrderItemsTable";
 import { useTranslation } from "react-i18next";
+import { OrderItemsTable } from "../OrderItemsTable";
 
+import { OrdersData } from "@/app/types";
 import { Tooltip } from "@mui/material";
 import dynamic from "next/dynamic";
-import { OrdersData } from "@/app/types";
 
 export function TableExpandRow(props: { order: OrdersData }) {
   const { order } = props;
@@ -81,7 +81,9 @@ export function TableExpandRow(props: { order: OrdersData }) {
             paddingInline: "5px",
           }}
         >
-          {getDateFromTimestamp(order.createdAt as any)}
+          {typeof order.createdAt === "string"
+            ? order.createdAt
+            : getDateFromTimestamp(order.createdAt as any)}
         </TableCell>
         <TableCell align="center">{order.paymentMethod}</TableCell>
         <TableCell align="center">{order.totalPayments}</TableCell>

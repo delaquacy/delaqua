@@ -1,16 +1,15 @@
-import { Box, Button, Card, Typography } from "@mui/material";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
+import { Box, Button, Card, Typography } from "@mui/material";
 
 import styles from "../../../OrderCreated/OrderCreated.module.css";
 
-import { useTranslation } from "react-i18next";
 import { useScreenSize } from "@/app/hooks";
+import { useTranslation } from "react-i18next";
 
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
-import "../../../../i18n";
 import { CheckBox } from "@mui/icons-material";
-import { getDayOfWeek } from "@/app/utils";
-import { CardShadow } from "@/app/components/shared";
+import { useRouter } from "next/navigation";
+import "../../../../i18n";
 
 interface FormValues {}
 
@@ -22,6 +21,7 @@ export const FinishStep = ({
   handleNext: () => void;
 }) => {
   const { t, i18n } = useTranslation("finishModal");
+  const router = useRouter();
 
   const { trackAmplitudeEvent } = useAmplitudeContext();
 
@@ -68,36 +68,58 @@ export const FinishStep = ({
   };
 
   return (
-    <CardShadow>
-      <Box className={styles.center}>
-        <CheckBox fontSize="large" className={styles.icon} />
-      </Box>
+    <Card
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        minHeight: "60vh",
+        padding: "20px",
+        boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+        width: "100%",
+        marginBottom: "15px",
+      }}
+    >
+      <Box>
+        <Box className={styles.center}>
+          <CheckBox fontSize="large" className={styles.icon} />
+        </Box>
 
-      <Typography
-        className={styles.center}
-        id="modal-modal-title"
-        variant="h6"
-        component="h2"
+        <Typography
+          className={styles.center}
+          id="modal-modal-title"
+          variant="h6"
+          component="h2"
+        >
+          <span className={styles.bold}> {t("thanks_for_order")}</span>
+        </Typography>
+
+        <Typography className={styles.center} id="modal-modal-description">
+          {userOrder.paymentMethod === "Cash"
+            ? t("we_will_deliver_to_you", {
+                date: userOrder.deliveryDate,
+                time: userOrder.deliveryTime,
+              })
+            : t("we_will_deliver_to_you_pay", {
+                date: userOrder.deliveryDate,
+                time: userOrder.deliveryTime,
+              })}
+        </Typography>
+
+        <Box className={styles.center} id="modal-modal-description">
+          {paymentText}
+        </Box>
+      </Box>
+      <Button
+        variant="contained"
+        sx={{
+          alignSelf: "center",
+          width: "200px",
+        }}
+        onClick={() => router.push("/order_history")}
       >
-        <span className={styles.bold}> {t("thanks_for_order")}</span>
-      </Typography>
-
-      <Typography className={styles.center} id="modal-modal-description">
-        {userOrder.paymentMethod === "Cash"
-          ? t("we_will_deliver_to_you", {
-              date: userOrder.deliveryDate,
-              time: userOrder.deliveryTime,
-            })
-          : t("we_will_deliver_to_you_pay", {
-              date: userOrder.deliveryDate,
-              time: userOrder.deliveryTime,
-            })}
-      </Typography>
-
-      <Box className={styles.center} id="modal-modal-description">
-        {paymentText}
-      </Box>
-      {renderButtonsGroup("")}
-    </CardShadow>
+        {t("done")}
+      </Button>
+    </Card>
   );
 };

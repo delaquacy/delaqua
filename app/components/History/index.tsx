@@ -1,6 +1,9 @@
 "use client";
+import { useUserContext } from "@/app/contexts/UserContext";
+import { useScreenSize } from "@/app/hooks";
 import {
   Box,
+  CircularProgress,
   Paper,
   Table,
   TableBody,
@@ -9,25 +12,37 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { TableExpandRow } from "./TableExpandRow";
 import { useTranslation } from "react-i18next";
-import { useUserContext } from "@/app/contexts/UserContext";
-import { useScreenSize } from "@/app/hooks";
 import { MainContentWrapper } from "../shared/styled";
-import dynamic from "next/dynamic";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "@/app/lib/config";
-import { useEffect } from "react";
-import { postInvoicesData } from "@/app/utils/postInvoiceData";
-// import OrdersList from "../ordersList/OrdersList";
+import { TableExpandRow } from "./TableExpandRow";
 
 export const History = () => {
   const { t } = useTranslation("orderslist");
-  const { orders } = useUserContext();
+  const { orders, loading } = useUserContext();
   const { isSmallScreen } = useScreenSize();
+
+  console.log(orders.map(({ createdAt }) => createdAt));
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <CircularProgress size={100} thickness={2} />
+      </Box>
+    );
+  }
 
   return (
     <MainContentWrapper>
+      {t("history")}
       <TableContainer
         component={Paper}
         sx={{

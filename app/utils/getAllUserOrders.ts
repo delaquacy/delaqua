@@ -1,6 +1,10 @@
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../lib/config";
 import { OrdersData } from "../types";
+
+dayjs.extend(customParseFormat);
 
 export const getAllUserOrders = async (
   userId: string
@@ -14,7 +18,7 @@ export const getAllUserOrders = async (
       ...doc.data(),
     }));
 
-    return (orders as OrdersData[]).map((order) => {
+    const processedOrders = (orders as OrdersData[]).map((order) => {
       if (order?.items) return order;
 
       const items = [
@@ -52,6 +56,22 @@ export const getAllUserOrders = async (
 
       return { ...order, items };
     }) as OrdersData[];
+
+    processedOrders.sort((a, b) => {
+      const dateA =
+        typeof a.createdAt === "string"
+          ? dayjs(a.createdAt, "DD.MM.YYYY HH:mm").toDate()
+          : new Date(a.createdAt);
+
+      const dateB =
+        typeof b.createdAt === "string"
+          ? dayjs(b.createdAt, "DD.MM.YYYY HH:mm").toDate()
+          : new Date(b.createdAt);
+
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    return processedOrders;
   } catch (error) {
     console.error("Error fetching user orders:", error);
     return [];
