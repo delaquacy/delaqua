@@ -13,6 +13,7 @@ export const DetailsCard = styled(Card)({
   flexDirection: "column",
   gap: "15px",
   padding: "20px",
+  marginTop: "20px",
 });
 
 export const DetailsCardItem = styled(Box)({

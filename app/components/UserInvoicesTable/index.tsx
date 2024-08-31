@@ -2,15 +2,13 @@
 
 import { useScreenSize, useToast } from "@/app/hooks";
 import { FilterItem, Invoices } from "@/app/types";
-import {
-  getClipboardOrderRowData,
-  getComparator,
-  stableSort,
-} from "@/app/utils";
+import { getComparator, stableSort } from "@/app/utils";
+import { getClipboardInvoiceRowData } from "@/app/utils/getClipboardInvoiceRowData";
+import { getFilteredInvoices } from "@/app/utils/getFilteredInvoices";
 import { getUserInvoices } from "@/app/utils/getUserInvoices";
 import {
   Box,
-  Card,
+  CircularProgress,
   Paper,
   Table,
   TableBody,
@@ -19,15 +17,12 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Tooltip,
 } from "@mui/material";
 import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InvoiceTableRow } from "./components";
 import { InvoicesTableHead } from "./components/InvoicesTableHead";
 import { InvoicesTableToolbar } from "./components/InvoicesTableToolbar";
-import { getFilteredInvoices } from "@/app/utils/getFilteredInvoices";
-import { getClipboardInvoiceRowData } from "@/app/utils/getClipboardInvoiceRowData";
 
 interface OrderItemsTableProps {
   orderItems: any[];
@@ -39,6 +34,7 @@ export const UserInvoicesTable = () => {
   const { showSuccessToast } = useToast();
   const { t } = useTranslation("orderTable");
 
+  const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<Invoices[]>([]);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<keyof Invoices>("deliveryDate");
@@ -51,13 +47,16 @@ export const UserInvoicesTable = () => {
 
   const getInvoicesRows = async () => {
     try {
+      setLoading(true);
       const data = await getUserInvoices();
       const sorted = stableSort(data as any, getComparator(order, orderBy));
 
       setRows(sorted as any);
       setFilteredRows(sorted as any);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching orders:", error);
+      setLoading(false);
     }
   };
 
@@ -137,6 +136,22 @@ export const UserInvoicesTable = () => {
       setApplyFilters(false);
     }
   }, [filters, applyFilters]);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <CircularProgress size={100} thickness={2} />
+      </Box>
+    );
+  }
 
   return (
     <>

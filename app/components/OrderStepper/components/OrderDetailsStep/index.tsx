@@ -177,8 +177,16 @@ export const OrderDetailsStep = ({
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex" }}>
-        <CircularProgress />
+      <Box
+        sx={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <CircularProgress size={100} thickness={2} />
       </Box>
     );
   }
@@ -186,7 +194,13 @@ export const OrderDetailsStep = ({
   return (
     <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
       <Box>
-        <Typography>{t("checkAndPay")}</Typography>
+        <Typography
+          sx={{
+            marginBottom: "15px",
+          }}
+        >
+          {t("checkAndPay")}:
+        </Typography>
 
         <Controller
           control={control}
@@ -198,6 +212,13 @@ export const OrderDetailsStep = ({
               onChange={(e) => {
                 field.onChange(e);
                 handleChangePayment(e);
+              }}
+              sx={{
+                gap: "10px",
+                paddingInline: "5px",
+                borderBlock: "1px solid lightgray",
+                width: "fit-content",
+                marginBottom: "30px",
               }}
             >
               <FormControlLabel
@@ -214,13 +235,16 @@ export const OrderDetailsStep = ({
           )}
         />
 
-        <Box
+        <Typography
           sx={{
-            marginBlock: "15px",
+            marginBottom: "20px",
+            fontWeight: 700,
+            textDecoration: "underline",
+            textUnderlineOffset: "5px",
           }}
         >
-          {t("orderDetails")}
-        </Box>
+          {t("orderDetails")}:
+        </Typography>
 
         <OrderItemsTable
           orderItems={userOrder.items}

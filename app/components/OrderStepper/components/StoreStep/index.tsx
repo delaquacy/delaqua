@@ -86,6 +86,7 @@ export const StoreStep = ({
 
     handleAddOrderDetails({
       items: formattedData,
+      bottlesNumberToReturn: data.bottlesNumberToReturn,
       totalPayments: formattedData.reduce((acc, item) => acc + +item.sum, 0),
     });
 

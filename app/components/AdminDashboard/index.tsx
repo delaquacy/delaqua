@@ -1,18 +1,17 @@
 "use client";
+import { useUserContext } from "@/app/contexts/UserContext";
 import { adminCheck } from "@/app/utils/adminCheck";
+import { Inventory2, ShoppingCart } from "@mui/icons-material";
 import {
   Box,
   CircularProgress,
   Container,
-  Link,
   ListItemIcon,
   MenuItem,
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useUserContext } from "@/app/contexts/UserContext";
-import { ShoppingCart, Inventory2 } from "@mui/icons-material";
 import { MainContentWrapper } from "../shared/styled";
 
 const AdminDashboard = () => {
@@ -60,36 +59,32 @@ const AdminDashboard = () => {
         Admins Panel
       </Box>
       <Box display="flex" flexDirection="column" gap="10px">
-        <Link href="/admin_dashboard/orders">
-          <MenuItem>
-            <ListItemIcon>
-              <ShoppingCart sx={{ color: "black" }} />
-            </ListItemIcon>
-            <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
-              Orders
-            </Typography>
-          </MenuItem>
-        </Link>
-        <Link href="/admin_dashboard/goods">
-          <MenuItem>
-            <ListItemIcon>
-              <Inventory2 sx={{ color: "black" }} />
-            </ListItemIcon>
-            <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
-              Goods
-            </Typography>
-          </MenuItem>
-        </Link>
-        <Link href="/admin_dashboard/user_invoices">
-          <MenuItem>
-            <ListItemIcon>
-              <Inventory2 sx={{ color: "black" }} />
-            </ListItemIcon>
-            <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
-              User Invoices
-            </Typography>
-          </MenuItem>
-        </Link>
+        <MenuItem onClick={() => router.push("/admin_dashboard/orders")}>
+          <ListItemIcon>
+            <ShoppingCart sx={{ color: "black" }} />
+          </ListItemIcon>
+          <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
+            Orders
+          </Typography>
+        </MenuItem>
+
+        <MenuItem onClick={() => router.push("/admin_dashboard/goods")}>
+          <ListItemIcon>
+            <Inventory2 sx={{ color: "black" }} />
+          </ListItemIcon>
+          <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
+            Goods
+          </Typography>
+        </MenuItem>
+
+        <MenuItem onClick={() => router.push("/admin_dashboard/user_invoices")}>
+          <ListItemIcon>
+            <Inventory2 sx={{ color: "black" }} />
+          </ListItemIcon>
+          <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
+            User Invoices
+          </Typography>
+        </MenuItem>
       </Box>
     </MainContentWrapper>
   );

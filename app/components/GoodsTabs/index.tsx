@@ -4,10 +4,10 @@ import { useScreenSize } from "@/app/hooks";
 import { Box, Tabs } from "@mui/material";
 
 import { useState } from "react";
+import { AddNewGoodForm } from "../AddNewGoodForm";
 import { GoodsAvailableTable } from "../GoodsAvailableTable";
 import { GoodsIncomingForm } from "../GoodsIncomingForm";
 import { GoodsInvoicesTable } from "../GoodsInvoicesTable";
-import { AddNewGoodForm } from "../AddNewGoodForm";
 import { GoodTab } from "./styled";
 
 interface TabPanelProps {
@@ -43,25 +43,25 @@ export const GoodsTabs = () => {
         }}
       >
         <GoodTab
-          isCurrentTab={value === 0}
+          is_current_tab={(value === 0).toString()}
           label="Goods available at the warehouse"
           {...a11yProps(0)}
         />
 
         <GoodTab
-          isCurrentTab={value === 1}
+          is_current_tab={(value === 1).toString()}
           label="Incoming Form"
           {...a11yProps(1)}
         />
 
         <GoodTab
-          isCurrentTab={value === 2}
+          is_current_tab={(value === 2).toString()}
           label="Goods Invoices List"
           {...a11yProps(2)}
         />
 
         <GoodTab
-          isCurrentTab={value === 3}
+          is_current_tab={(value === 3).toString()}
           label="Add New Good"
           {...a11yProps(3)}
         />

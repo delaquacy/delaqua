@@ -1,37 +1,37 @@
 "use client";
 
-import styles from "./Header.module.css";
-import Image from "next/image";
-import Link from "next/link";
+import { useUserContext } from "@/app/contexts/UserContext";
+import { useToggle } from "@/app/lib/ToggleContext";
+import { app } from "@/app/lib/config";
+import useAmplitudeContext from "@/app/utils/amplitudeHook";
+import i18nConfig from "@/i18nConfig";
+import {
+  ExitToApp,
+  ManageAccounts,
+  ManageAccountsSharp,
+} from "@mui/icons-material";
 import LoginIcon from "@mui/icons-material/Login";
 import {
-  CircularProgress,
-  MenuItem,
-  Select,
   AppBar,
   Box,
-  Toolbar,
   Button,
+  CircularProgress,
+  IconButton,
+  MenuItem,
+  Select,
+  Toolbar,
 } from "@mui/material";
-import { getAuth, onAuthStateChanged, signOut, User } from "firebase/auth";
-import { app } from "@/app/lib/config";
+import { User, getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { SnackbarProvider } from "notistack";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 import { LogInProps } from "../Logins/Logins";
-import {
-  AccountCircle,
-  ManageAccounts,
-  ManageAccountsSharp,
-  ExitToApp,
-} from "@mui/icons-material";
-import { useToggle } from "@/app/lib/ToggleContext";
-import useAmplitudeContext from "@/app/utils/amplitudeHook";
-import i18nConfig from "@/i18nConfig";
-import { SnackbarProvider } from "notistack";
 import WrapperLogin from "../WrapperLogin/WrapperLogin";
-import { useUserContext } from "@/app/contexts/UserContext";
-import { useEffect, useState } from "react";
+import styles from "./Header.module.css";
 import { MyAccountMenu } from "./MyAccountMenu";
 
 export default function Headers({
@@ -62,7 +62,7 @@ export default function Headers({
     }
     if (user && isToggled) {
       setToggle(false);
-      router.push("new_order");
+      router.push("/new_order");
     }
   }, [isToggled]);
 
@@ -227,14 +227,15 @@ export default function Headers({
                       <Box className={styles.loginMyaccountButtons}>
                         <MyAccountMenu />
                         {isAdmin && (
-                          <Link href="/admin_dashboard">
-                            <Button
-                              variant="contained"
-                              endIcon={<ManageAccounts fontSize="small" />}
-                            >
-                              {t("admin")}
-                            </Button>
-                          </Link>
+                          <Button
+                            onClick={() => {
+                              router.push("/admin_dashboard");
+                            }}
+                            variant="contained"
+                            endIcon={<ManageAccounts fontSize="small" />}
+                          >
+                            {t("admin")}
+                          </Button>
                         )}
                         <Link href="/">
                           <Button
@@ -251,12 +252,18 @@ export default function Headers({
                       <Box className={styles.mobileScreen}>
                         <MyAccountMenu />
                         {isAdmin && (
-                          <Link href="/admin_dashboard">
+                          <IconButton
+                            onClick={() => router.push("/admin_dashboard")}
+                            sx={{
+                              width: "50px",
+                              height: "50px",
+                            }}
+                          >
                             <ManageAccountsSharp
                               color="primary"
                               fontSize="small"
                             />
-                          </Link>
+                          </IconButton>
                         )}
                         <Link href="/">
                           <ExitToApp

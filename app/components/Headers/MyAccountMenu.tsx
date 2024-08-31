@@ -1,11 +1,6 @@
-import { useScreenSize } from "@/app/hooks";
+"use client";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
-import {
-  AccountCircle,
-  Shop,
-  ShoppingBag,
-  ShoppingBagOutlined,
-} from "@mui/icons-material";
+import { ShoppingBagOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -15,12 +10,13 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export const MyAccountMenu = () => {
   const { trackAmplitudeEvent } = useAmplitudeContext();
+  const router = useRouter();
 
   const { i18n, t } = useTranslation("main");
   const theme = useTheme();
@@ -73,16 +69,22 @@ export const MyAccountMenu = () => {
       >
         <MenuItem
           onClick={() => {
+            router.push("/order_history");
             handleClose();
             trackAmplitudeEvent("myHistory", {
               text: "My history",
             });
           }}
         >
-          <Link href="/order_history">{t("viewOrderHistory")}</Link>
+          <Box>{t("viewOrderHistory")}</Box>
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Link href="/new_order">{t("newOrder")}</Link>
+        <MenuItem
+          onClick={() => {
+            router.push("/new_order");
+            handleClose();
+          }}
+        >
+          <Box>{t("newOrder")}</Box>
         </MenuItem>
       </Menu>
     </Box>
