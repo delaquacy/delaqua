@@ -1,8 +1,8 @@
-"use client"; // Цей компонент рендериться на клієнті
+"use client";
 import { Box } from "@mui/material";
 import { usePathname } from "next/navigation";
-import WrapperHeader from "../WrapperHeader/WrapperHeader";
 import WrapperFooter from "../WrapperFooter/WrapperFooter";
+import WrapperHeader from "../WrapperHeader/WrapperHeader";
 
 const LayoutContent = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();

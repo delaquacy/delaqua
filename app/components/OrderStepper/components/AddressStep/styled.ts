@@ -1,3 +1,4 @@
+import { theme } from "@/app/ui/themeMui";
 import { Box, Button, ToggleButtonGroup, styled } from "@mui/material";
 
 export const FormWrapper = styled(Box)({
@@ -20,6 +21,13 @@ export const FormHeaderButton = styled(Button)({
   display: "flex",
   flexDirection: "row",
   gap: "5px",
+  width: "100%",
+  alignSelf: "left",
+
+  [theme.breakpoints.up("sm")]: {
+    width: "fit-content",
+    justifyContent: "left",
+  },
 });
 
 export const ToggleButtonGroupWrap = styled(ToggleButtonGroup)({

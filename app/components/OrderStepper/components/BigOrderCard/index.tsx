@@ -60,17 +60,19 @@ export const BigOrderCard = ({
   );
 
   useEffect(() => {
-    setValue(nameRent, `${+currentBottlesNum - +currentBottlesReturn}`);
+    setValue(
+      nameRent,
+      `${Math.max(+currentBottlesNum - +currentBottlesReturn, 0)}`
+    );
   }, [currentBottlesNum, currentBottlesReturn]);
 
   return (
     <Wrapper>
       <Box
-        flex={1}
         display="flex"
         flexDirection="column"
         alignItems="center"
-        justifyContent={"center"}
+        justifyContent={"space-between"}
         gap="5px"
         position={"relative"}
       >
@@ -83,8 +85,8 @@ export const BigOrderCard = ({
           style={{
             alignSelf: "center",
             objectFit: "contain",
-            width: "80%",
-            maxWidth: "200px",
+            width: "120px",
+            // maxWidth: "200px",
             aspectRatio: 7 / 11,
           }}
         />
@@ -101,8 +103,14 @@ export const BigOrderCard = ({
           render={({ field }) => (
             <InternalCountWrapper>
               <Title>{t(`${codeBottle}`)}</Title>
-
               <Typography textAlign="center">{description}</Typography>
+              <OrderCardCounter
+                count={field.value}
+                onAdd={() => field.onChange(+field.value + 1)}
+                onRemove={() => {
+                  field.onChange(Math.max(+field.value - 1, 0));
+                }}
+              />{" "}
               <Tooltip
                 title={t(`${isFirstOrder ? "119CostFirst" : "119Cost"}`)}
                 enterTouchDelay={1}
@@ -114,14 +122,6 @@ export const BigOrderCard = ({
                   } €`}
                 </Typography>
               </Tooltip>
-
-              <OrderCardCounter
-                count={field.value}
-                onAdd={() => field.onChange(+field.value + 1)}
-                onRemove={() => {
-                  field.onChange(Math.max(+field.value - 1, 0));
-                }}
-              />
             </InternalCountWrapper>
           )}
         />

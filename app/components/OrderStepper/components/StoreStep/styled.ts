@@ -1,5 +1,5 @@
 import { theme } from "@/app/ui/themeMui";
-import { Box, FormHelperText, Typography, styled } from "@mui/material";
+import { Box, FormHelperText, styled } from "@mui/material";
 
 export const WaterWrapper = styled(Box)({
   display: "flex",
@@ -39,8 +39,9 @@ export const SmallWaterWrapper = styled(Box)({
 
 export const TextWrapper = styled(Box)({
   marginBlock: "20px",
+
   [theme.breakpoints.up("sm")]: {
-    marginTop: "20px",
+    marginTop: "10px",
     marginLeft: "50px",
   },
 });
@@ -56,7 +57,6 @@ export const CustomGrid = styled(Box)({
     display: "flex",
 
     flexDirection: "row",
-    marginBlock: "20px",
   },
 
   [theme.breakpoints.up("sm")]: {

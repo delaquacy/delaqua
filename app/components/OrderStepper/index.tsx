@@ -104,7 +104,7 @@ export default function OrderStepper() {
           <Box
             sx={{
               paddingTop: 4,
-              height: "calc(100dvh - 200px)",
+              height: "calc(100dvh - 300px)",
               overflow: "scroll",
             }}
           >

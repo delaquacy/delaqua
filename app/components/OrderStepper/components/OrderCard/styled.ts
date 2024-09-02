@@ -2,7 +2,7 @@ import { theme } from "@/app/ui/themeMui";
 import { Box, Card, FormHelperText, styled } from "@mui/material";
 
 export const CardWrapper = styled(Card)(() => ({
-  height: "100%",
+  // height: "100%",
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-end",
@@ -15,7 +15,7 @@ export const CardWrapper = styled(Card)(() => ({
   transition: "all 0.2s",
 
   [theme.breakpoints.up("sm")]: {
-    paddingBottom: "10px",
+    paddingBottom: "5px",
   },
 
   ":hover": {
@@ -37,6 +37,8 @@ export const DescriptionBox = styled(Box)({
 export const MinOrderBox = styled(FormHelperText)({
   paddingInline: "10px",
   fontSize: "10px",
+  alignSelf: "center",
+  textAlign: "center",
 
   [theme.breakpoints.up("sm")]: {
     fontSize: "11px",

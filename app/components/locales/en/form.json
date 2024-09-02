@@ -71,6 +71,8 @@
   "102": "Electric pump",
   "103": "Electric pump",
   "104": "Water dispenser (cooler) delivery",
+  "104Tooltip": "Select a cooler at Superhome, message us on Telegram, and we'll deliver it to you.",
+
   "119": "Mersini Spring Water 18.9 lt",
   "119CostFirst": "Cost per bottle 7€",
   "119Cost": "Cost per bottle 6€",

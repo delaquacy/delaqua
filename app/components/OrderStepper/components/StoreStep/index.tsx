@@ -3,6 +3,7 @@ import {
   UserOrderItem,
   useOrderDetailsContext,
 } from "@/app/contexts/OrderDetailsContext";
+import { useScreenSize } from "@/app/hooks";
 import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -29,6 +30,7 @@ export const StoreStep = ({
   handleNext: () => void;
 }) => {
   const { t } = useTranslation("form");
+  const { isSmallScreen } = useScreenSize();
 
   const { goods, userOrder, isFirstOrder, handleAddOrderDetails } =
     useOrderDetailsContext();
@@ -145,7 +147,6 @@ export const StoreStep = ({
                 name={`items.2.count`}
                 render={({ field }) => (
                   <OrderCard
-                    imageSrc={mediumBottle.picture || ""}
                     imageAlt={mediumBottle.name}
                     size="50"
                     description={mediumBottle.description || ""}
@@ -153,7 +154,10 @@ export const StoreStep = ({
                     code={mediumBottle!.itemCode}
                     count={field.value}
                     minOrder={"115Min"}
-                    onAdd={() => field.onChange(+field.value + 1)}
+                    onAdd={() => {
+                      field.onChange(+field.value + 1);
+                      setValue("bottlesNumberToReturn", "0");
+                    }}
                     onRemove={() => {
                       field.onChange(Math.max(+field.value - 1, 0));
                     }}
@@ -174,7 +178,6 @@ export const StoreStep = ({
                 name={`items.3.count`}
                 render={({ field }) => (
                   <OrderCard
-                    imageSrc={smallBottle.picture || ""}
                     imageAlt={smallBottle.name}
                     size="50"
                     description={smallBottle.description || ""}
@@ -182,7 +185,10 @@ export const StoreStep = ({
                     code={smallBottle.itemCode}
                     count={field.value}
                     minOrder={"110Min"}
-                    onAdd={() => field.onChange(+field.value + 1)}
+                    onAdd={() => {
+                      field.onChange(+field.value + 1);
+                      setValue("bottlesNumberToReturn", "0");
+                    }}
                     onRemove={() => {
                       field.onChange(Math.max(+field.value - 1, 0));
                     }}
@@ -216,7 +222,13 @@ export const StoreStep = ({
                   name={`items.${itemIndex}.count`}
                   render={({ field }) => (
                     <OrderCard
-                      imageSrc={good!.picture}
+                      imageSrc={
+                        isSmallScreen
+                          ? good!.picture
+                          : +good.itemCode === 104
+                          ? ""
+                          : good!.picture
+                      }
                       imageAlt={good!.name}
                       size="40"
                       description={good!.description}

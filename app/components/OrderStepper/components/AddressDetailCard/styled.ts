@@ -7,9 +7,10 @@ export const CardWrapper = styled(Box)({
   display: "flex",
   flexDirection: "column",
   gap: "20px",
-  padding: "20px",
+
   [theme.breakpoints.up("sm")]: {
     flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
 
@@ -18,6 +19,7 @@ export const CardBlock = styled(Box)({
   display: "flex",
   flexDirection: "column",
   gap: "10px",
+
   [theme.breakpoints.up("sm")]: {
     width: "45%",
   },

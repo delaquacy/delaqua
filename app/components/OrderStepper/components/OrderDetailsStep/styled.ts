@@ -4,15 +4,21 @@ export const FormWrapper = styled(Box)({
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
-  gap: "20px",
+  gap: "10px",
+});
+
+export const FormInternalWrapper = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  gap: "30px",
   height: "100%",
 });
 
 export const DetailsCard = styled(Card)({
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "row",
   gap: "15px",
-  padding: "20px",
+  padding: "5px",
   marginTop: "20px",
 });
 

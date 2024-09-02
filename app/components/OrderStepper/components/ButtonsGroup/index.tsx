@@ -1,5 +1,5 @@
 import { useScreenSize } from "@/app/hooks";
-import { Box, Button, FormHelperText, Tooltip } from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { HelperText, Wrapper } from "./styled";
 
@@ -30,13 +30,9 @@ export const ButtonsGroup = ({
         {t("back")}
       </Button>
 
-      {isSmallScreen ? (
-        <Box>
-          <HelperText>{errorMessage}</HelperText>
-        </Box>
-      ) : (
-        <Box sx={{ flex: "1 1 auto" }} />
-      )}
+      <Box>
+        <HelperText>{errorMessage}</HelperText>
+      </Box>
 
       <Tooltip title={errorMessage}>
         <Button

@@ -1,3 +1,4 @@
+import { ModalRemoveAddress } from "@/app/components/ModalRemoveAddress/ModalRemoveAddress";
 import { Address } from "@/app/contexts/OrderDetailsContext";
 import { useToast } from "@/app/hooks";
 import {
@@ -7,16 +8,10 @@ import {
   PlaceOutlined,
 } from "@mui/icons-material";
 import { Box, Tooltip, Typography } from "@mui/material";
+import Image from "next/image";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import Image from "next/image";
-import { ModalRemoveAddress } from "@/app/components/ModalRemoveAddress/ModalRemoveAddress";
-import {
-  CardBlock,
-  CardBlockRow,
-  CardWrapper,
-  RemoveButtonWrapper,
-} from "./styled";
+import { CardBlockRow, CardWrapper, RemoveButtonWrapper } from "./styled";
 
 interface AddressDetailCardProps {
   address: Address;
@@ -55,46 +50,58 @@ export const AddressDetailCard = ({
 
   return (
     <CardWrapper>
-      <CardBlock>
-        <CardBlockRow>
-          <AccountCircleOutlined />
-          <Typography>{address.firstAndLast}</Typography>
-        </CardBlockRow>
+      <CardBlockRow
+        sx={{
+          flex: 2,
+        }}
+      >
+        <AccountCircleOutlined />
+        <Typography>{address.firstAndLast}</Typography>
+      </CardBlockRow>
 
-        <CardBlockRow>
-          <HomeOutlined />
-          <Typography
-            textAlign={"left"}
-          >{`${address.postalIndex}, ${address.deliveryAddress}, ${address.addressDetails}`}</Typography>
-        </CardBlockRow>
-      </CardBlock>
+      <CardBlockRow
+        sx={{
+          flex: 3,
+        }}
+      >
+        <HomeOutlined />
+        <Typography
+          textAlign={"left"}
+        >{`${address.postalIndex}, ${address.deliveryAddress}, ${address.addressDetails}`}</Typography>
+      </CardBlockRow>
 
-      <CardBlock>
-        <CardBlockRow>
-          <Tooltip title={t("number_of_bottles")}>
-            <Image
-              src={selected ? "/recycleWater.svg" : "/recycleWaterGray.svg"}
-              height={25}
-              width={25}
-              alt="recycleWater"
-            />
-          </Tooltip>
-          <Typography>{address.numberOfBottles || 0}</Typography>
-        </CardBlockRow>
+      <CardBlockRow
+        sx={{
+          flex: 1,
+        }}
+      >
+        <Tooltip title={t("number_of_bottles")}>
+          <Image
+            src={selected ? "/recycleWater.svg" : "/recycleWaterGray.svg"}
+            height={25}
+            width={25}
+            alt="recycleWater"
+          />
+        </Tooltip>
+        <Typography>{address.numberOfBottles || 0}</Typography>
+      </CardBlockRow>
 
-        <CardBlockRow>
-          <PlaceOutlined />
-          <Typography
-            sx={{
-              textAlign: "left",
-              wordBreak: "break-word",
-              whiteSpace: "normal",
-            }}
-          >
-            {address.geolocation}
-          </Typography>
-        </CardBlockRow>
-      </CardBlock>
+      <CardBlockRow
+        sx={{
+          flex: 2,
+        }}
+      >
+        <PlaceOutlined />
+        <Typography
+          sx={{
+            textAlign: "left",
+            wordBreak: "break-word",
+            whiteSpace: "normal",
+          }}
+        >
+          {address.geolocation}
+        </Typography>
+      </CardBlockRow>
 
       {canBeRemoved ? (
         <Tooltip

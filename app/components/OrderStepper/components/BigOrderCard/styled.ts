@@ -8,7 +8,6 @@ export const Wrapper = styled(Card)({
   alignContent: "center",
   border: "1px solid lightgray",
   width: "100%",
-  height: "100%",
 
   padding: "10px",
   transition: "all 0.2s",
@@ -32,7 +31,7 @@ export const ExternalCountWrapper = styled(Box)({
   gap: "10px",
 
   [theme.breakpoints.up("sm")]: {
-    gap: "40px",
+    justifyContent: "space-between",
   },
 });
 

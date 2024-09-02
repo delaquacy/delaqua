@@ -28,8 +28,7 @@ export const RemoveIcon = styled(RemoveCircle)(
 export const Count = styled(Box)({
   border: "1px solid lightgray",
   borderRadius: "10px",
-  paddingBlock: "5px",
-  paddingInline: "20px",
+  paddingInline: "10px",
 });
 
 export const AddIcon = styled(AddCircle)(
