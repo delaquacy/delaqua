@@ -298,26 +298,33 @@ const MyForm = () => {
     trackAmplitudeEvent("submitOrder", {
       text: "On submit click",
     });
+    const { isCurrentDayAfterTen, isCurrentDayAfterNoon } = deliveryValidation(
+      data.deliveryDate
+    );
+
+    if (isCurrentDayAfterTen && data.deliveryTime === "9-12") {
+      setError("deliveryTime", {
+        type: "manual",
+        message: t("change_time"),
+      });
+      setLoadingForm(false);
+      setCanSubmitData(false);
+
+      return;
+    }
+
+    if (isCurrentDayAfterNoon) {
+      setError("deliveryDate", {
+        type: "manual",
+        message: t("change_day"),
+      });
+      setLoadingForm(false);
+      setCanSubmitData(false);
+
+      return;
+    }
+
     try {
-      const { isCurrentDayAfterTen, isCurrentDayAfterNoon } =
-        deliveryValidation(data.deliveryDate);
-
-      if (isCurrentDayAfterTen && data.deliveryTime === "9-12") {
-        setError("deliveryTime", {
-          type: "manual",
-          message: t("error_time_not_valid"),
-        });
-        return;
-      }
-
-      if (isCurrentDayAfterNoon) {
-        setError("deliveryDate", {
-          type: "manual",
-          message: t("error_date_not_valid"),
-        });
-        return;
-      }
-
       setCanSubmitData(true);
       const formatDataBeforeSubmit = (data: IForm) => {
         const deliveryDate = dayjs(data.deliveryDate).format("DD.MM.YYYY");
