@@ -1,20 +1,14 @@
-import { useForm } from "react-hook-form";
-import {
-  DocumentReference,
-  FieldValue,
-  addDoc,
-  collection,
-  serverTimestamp,
-} from "firebase/firestore";
+import { useScreenSize } from "@/app/hooks";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { validationSchema } from "./validationSchema";
-import { Box, Button, FormHelperText } from "@mui/material";
-import { useScreenSize, useToast } from "@/app/hooks";
+import { Box, Button } from "@mui/material";
+import { FieldValue } from "firebase/firestore";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import Link from "next/link";
-import { db } from "@/app/lib/config";
 import { ControllerInputField } from "@/app/components/shared";
+import { AddAddressHelperText } from "../AddAddressHelperText";
+import { ADDRESS_DEFAULT_VALUES } from "../AddressStep";
+import { addAddressValidationSchema } from "./addAddressValidationSchema";
 import { ButtonsWrapper, FieldWrapper, FormWrapper } from "./styled";
 
 interface FormValues {
@@ -30,64 +24,29 @@ interface FormValues {
   numberOfBottles: string;
 }
 
-const DEFAULT_VALUES = {
-  firstAndLast: "",
-  postalIndex: "",
-  deliveryAddress: "",
-  geolocation: "",
-  addressDetails: "",
-  comments: "",
-  createdAt: serverTimestamp(),
-  archived: false,
-  numberOfBottles: "0",
-};
-
 export const AddNewAddress = ({
   onBack,
   onAdd,
-  userId,
   disableBack,
 }: {
   onBack: () => void;
   onAdd: (address: FormValues) => void;
-  userId: string;
   disableBack: boolean;
 }) => {
   const { isSmallScreen } = useScreenSize();
   const { t } = useTranslation("form");
-  const { showSuccessToast, showErrorToast } = useToast();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
-    defaultValues: DEFAULT_VALUES,
-    resolver: yupResolver(validationSchema as any),
+    defaultValues: ADDRESS_DEFAULT_VALUES,
+    resolver: yupResolver(addAddressValidationSchema as any),
   });
 
-  const createNewUserAddress = async (
-    addressObject: FormValues,
-    userId: string
-  ): Promise<string> => {
-    const docRef: DocumentReference = await addDoc(
-      collection(db, `users/${userId}/addresses`),
-      addressObject
-    );
-    return docRef.id;
-  };
-
-  const onSubmit = async (data: FormValues) => {
-    try {
-      const id = await createNewUserAddress(data, userId);
-      showSuccessToast(`Add new address successfully`);
-      onAdd({ ...data, id });
-    } catch (error) {
-      showErrorToast("Something went wrong");
-    }
-  };
   return (
-    <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
+    <FormWrapper component={"form"} onSubmit={handleSubmit(onAdd)}>
       <Box>
         <FieldWrapper is_small_screen={isSmallScreen.toString()}>
           <ControllerInputField
@@ -139,37 +98,13 @@ export const AddNewAddress = ({
               label={`${t("geolocation_link")} *`}
               error={!!errors.geolocation}
               helperText={
-                <Box
-                  sx={{
-                    color: "rgba(0, 0, 0, 0.6)",
-                    fontSize: "12px",
-                    lineHeight: 1.66,
-                    marginInline: "14px",
-                    marginTop: "3px",
-                  }}
-                >
-                  {errors.geolocation && (
-                    <FormHelperText
-                      sx={{
-                        color: "#d32f2f",
-                      }}
-                    >
-                      {errors.geolocation.message}
-                    </FormHelperText>
-                  )}
-                  {t("follow_the_link")}{" "}
-                  <Link
-                    style={{
-                      fontWeight: "bold",
-                      textDecoration: "underline",
-                    }}
-                    target="_blank"
-                    href="https://www.google.com/maps"
-                  >
-                    {t("google_maps")}
-                  </Link>
-                  {t("and_choose")}
-                </Box>
+                <AddAddressHelperText
+                  error={errors.geolocation}
+                  errorPlaceholder={t("follow_the_link")}
+                  errorLink="https://www.google.com/maps"
+                  errorLinkText={t("google_maps")}
+                  errorAfterLinkText={t("and_choose")}
+                />
               }
             />
           </Box>
@@ -184,26 +119,10 @@ export const AddNewAddress = ({
               flex: 1,
             }}
             helperText={
-              <Box
-                sx={{
-                  color: "rgba(0, 0, 0, 0.6)",
-                  fontSize: "12px",
-                  lineHeight: 1.66,
-                  marginInline: "14px",
-                  marginTop: "3px",
-                }}
-              >
-                {errors.addressDetails && (
-                  <FormHelperText
-                    sx={{
-                      color: "#d32f2f",
-                    }}
-                  >
-                    {errors.addressDetails.message}
-                  </FormHelperText>
-                )}
-                {t("address_placeholder")}
-              </Box>
+              <AddAddressHelperText
+                error={errors.addressDetails}
+                errorPlaceholder={t("address_placeholder")}
+              />
             }
           />
           <ControllerInputField

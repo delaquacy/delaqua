@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  Dispatch,
   ReactNode,
+  SetStateAction,
   createContext,
   useContext,
   useEffect,
@@ -75,7 +77,9 @@ interface OrderDetailsContextType {
   userData: UserData;
   isFirstOrder: boolean;
   paymentUrl: string;
+  loading: boolean;
   setPaymentUrl: (url: string) => void;
+  setUserData: Dispatch<SetStateAction<UserData>>;
   handleAddOrderDetails: (newDetails: any) => void;
 }
 
@@ -105,7 +109,9 @@ export const OrderDetailsContext = createContext<OrderDetailsContextType>({
   goods: [],
   isFirstOrder: true,
   paymentUrl: "",
+  loading: false,
   setPaymentUrl: () => {},
+  setUserData: () => {},
   userData: {
     formattedUserPhone: "",
     userPhone: "",
@@ -161,6 +167,7 @@ export const OrderDetailsProvider = ({
   const [goods, setGoods] = useState<Goods[]>([]);
   const [isFirstOrder, setIsFirstOrder] = useState(true);
   const [paymentUrl, setPaymentUrl] = useState("");
+  const [loading, setLoading] = useState(true);
   const [userOrder, setUserOrder] = useState<UserOrder>({
     id: uuidv4(),
     items: [] as UserOrderItem[],
@@ -206,6 +213,8 @@ export const OrderDetailsProvider = ({
 
   const fetchUserData = async (userId: string) => {
     try {
+      setLoading(true);
+
       const [addressesData, ordersData, userNumber] = await Promise.all([
         fetchAddresses(userId),
         fetchOrders(userId),
@@ -226,6 +235,7 @@ export const OrderDetailsProvider = ({
       }));
 
       setIsFirstOrder(ordersData.length === 0);
+      setLoading(false);
 
       return [addressesData, ordersData, userNumber];
     } catch (error) {
@@ -233,12 +243,10 @@ export const OrderDetailsProvider = ({
     }
   };
 
-  console.log(userOrder, "ORDER");
-
   const getGoods = async () => {
     try {
       const data = await getStaticGoodsArray();
-      setGoods(data.map((item) => ({ ...item, picture: `${item.id}.webp` }))); // TODO: remove this when we will have correct picture link
+      setGoods(data.map((item) => ({ ...item, picture: `${item.id}.webp` }))); // TODO: remove this when we will have correct picture link from storage
       setUserOrder((prev) => ({
         ...prev,
         items: data.reverse().map((good) => ({
@@ -291,7 +299,9 @@ export const OrderDetailsProvider = ({
         userData,
         isFirstOrder,
         paymentUrl,
+        loading,
         setPaymentUrl,
+        setUserData,
         handleAddOrderDetails,
       }}
     >

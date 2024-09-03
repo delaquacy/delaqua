@@ -1,24 +1,18 @@
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-import { useScreenSize } from "@/app/hooks";
-import { Box, ToggleButton } from "@mui/material";
+import { useScreenSize, useToast } from "@/app/hooks";
+import { Box, Skeleton, ToggleButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { db } from "@/app/lib/config";
 import {
   AddLocationAltOutlined,
   WrongLocationOutlined,
 } from "@mui/icons-material";
-import {
-  FieldValue,
-  doc,
-  getDoc,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { FieldValue, serverTimestamp } from "firebase/firestore";
 
 import { ControllerInputField } from "@/app/components/shared";
+import { AddressesService } from "@/app/lib/AddressesService";
 import { AddNewAddress } from "../AddNewAddress";
 import { AddressDetailCard } from "../AddressDetailCard";
 import {
@@ -41,7 +35,7 @@ interface FormValues {
   numberOfBottles: string;
 }
 
-const DEFAULT_VALUES = {
+export const ADDRESS_DEFAULT_VALUES = {
   firstAndLast: "",
   postalIndex: "",
   deliveryAddress: "",
@@ -62,9 +56,10 @@ export const AddressStep = ({
 }) => {
   const { t } = useTranslation("form");
 
-  const { userOrder, userData, handleAddOrderDetails } =
+  const { userOrder, userData, loading, handleAddOrderDetails, setUserData } =
     useOrderDetailsContext();
   const { isSmallScreen } = useScreenSize();
+  const { showSuccessToast } = useToast();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(
     !userOrder.deliveryAddressObj.id
@@ -86,62 +81,60 @@ export const AddressStep = ({
 
   const handleSetNewValues = (newValues: FormValues | null) => {
     if (!newValues) {
-      reset({
-        ...DEFAULT_VALUES,
-      });
+      reset(ADDRESS_DEFAULT_VALUES);
       setShowTooltipMessage(true);
       return;
     }
 
-    reset({
-      ...newValues,
-    });
+    reset(newValues);
     setShowTooltipMessage(false);
   };
 
-  const handleAddNewAddress = (newAddress: FormValues) => {
-    if (addresses.find(({ id }) => id === newAddress.id)) return;
+  const handleAddNewAddress = async (newAddress: FormValues) => {
+    await AddressesService.addNewAddress(userData.userId, newAddress);
 
     setAddresses((prev) => [newAddress, ...prev]);
+    setUserData((prev) => ({
+      ...prev,
+      addresses: [newAddress, ...prev.addresses],
+    }));
+
+    showSuccessToast(`Add new address successfully`);
     setSelectedAddress(newAddress);
     setShowAddressForm(false);
   };
 
-  const handleRemoveAddress = (address: FormValues) => {
+  const handleRemoveAddress = async (address: FormValues) => {
+    if (!address?.id) return;
+
     if (selectedAddress?.id === address.id) {
       setSelectedAddress(null);
-      handleSetNewValues(DEFAULT_VALUES);
+      handleSetNewValues(ADDRESS_DEFAULT_VALUES);
       setShowTooltipMessage(!null);
     }
+
     setAddresses((prev) => prev.filter(({ id }) => id !== address.id));
-  };
 
-  const handleTransferBottles = async (
-    addressId: string,
-    newAddressId: string,
-    newNumberOfBottles: string
-  ) => {
-    const addressRef = doc(
-      db,
-      `users/${userData.userId}/addresses/${addressId}`
-    );
+    setUserData((prev) => ({
+      ...prev,
+      addresses: prev.addresses.filter(({ id }) => id !== address.id),
+    }));
 
-    const newAddressRef = doc(
-      db,
-      `users/${userData.userId}/addresses/${newAddressId}`
-    );
-
-    const newAddressDoc = await getDoc(newAddressRef);
-    const newAddressBottles = newAddressDoc.data()?.numberOfBottles || "0";
-
-    await updateDoc(addressRef, {
+    await AddressesService.updateAddress(userData.userId, address?.id, {
       archived: true,
       numberOfBottles: 0,
     });
+  };
 
-    await updateDoc(newAddressRef, {
-      numberOfBottles: `${+newAddressBottles + +newNumberOfBottles}`,
-    });
+  const handleTransferBottles = async (
+    newAddressId: string,
+    newNumberOfBottles: string
+  ) => {
+    AddressesService.transferBottles(
+      userData.userId,
+      newAddressId,
+      newNumberOfBottles
+    );
 
     setAddresses((prev) =>
       prev.map(
@@ -177,10 +170,18 @@ export const AddressStep = ({
       setShowAddressForm(false);
     }
 
-    if (userData && !lastAddress) {
+    if (!!userData && !lastAddress) {
       setShowAddressForm(true);
     }
   }, [userData, userOrder]);
+
+  if (loading) {
+    return (
+      <Box>
+        <Skeleton height="250px" />
+      </Box>
+    );
+  }
 
   return (
     <>
@@ -204,11 +205,10 @@ export const AddressStep = ({
           <AddNewAddress
             onAdd={handleAddNewAddress}
             onBack={() => setShowAddressForm(false)}
-            userId={userData.userId}
             disableBack={addresses.length === 0}
           />
         </FormWrapper>
-      ) : userData?.addresses?.at(-1) ? (
+      ) : (
         <>
           <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
             <FormHeaderWrapper>{t("deliveryAddress")}</FormHeaderWrapper>
@@ -239,7 +239,6 @@ export const AddressStep = ({
                     selected={selectedAddress?.id === address.id}
                     onTransfer={() =>
                       handleTransferBottles(
-                        address.id,
                         addresses.filter(({ id }) => id !== address.id)[0].id,
                         address.numberOfBottles
                       )
@@ -251,6 +250,7 @@ export const AddressStep = ({
                 </ToggleButton>
               ))}
             </ToggleButtonGroupWrap>
+
             <ControllerInputField
               name={"comments"}
               type="string"
@@ -272,8 +272,6 @@ export const AddressStep = ({
             )}
           </FormWrapper>
         </>
-      ) : (
-        <Box></Box>
       )}
     </>
   );

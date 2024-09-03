@@ -1,6 +1,7 @@
+import { Box, Button, Modal, Typography } from "@mui/material";
 import React from "react";
-import { Modal, Box, Typography, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { Wrapper } from "./styled";
 
 interface ModalProps {
   isOpen: boolean;
@@ -14,21 +15,10 @@ export const ModalRemoveAddress: React.FC<ModalProps> = ({
   onConfirm,
 }) => {
   const { t } = useTranslation("form");
-  const style = {
-    position: "absolute" as "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    minWidth: 350,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
-  };
 
   return (
     <Modal open={isOpen} onClose={onClose}>
-      <Box sx={style}>
+      <Wrapper>
         <Typography id="modal-modal-title" variant="h6" component="h2">
           {t("bottles_transfer")}
         </Typography>
@@ -41,7 +31,7 @@ export const ModalRemoveAddress: React.FC<ModalProps> = ({
           </Button>
           <Button onClick={onClose}>No</Button>
         </Box>
-      </Box>
+      </Wrapper>
     </Modal>
   );
 };

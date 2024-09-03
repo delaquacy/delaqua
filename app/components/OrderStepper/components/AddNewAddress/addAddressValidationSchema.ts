@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const validationSchema = yup.object().shape({
+export const addAddressValidationSchema = yup.object().shape({
   firstAndLast: yup.string().required("First and Last is required"),
   postalIndex: yup
     .string()

@@ -1,36 +1,28 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import RestoreTwoToneIcon from "@mui/icons-material/RestoreTwoTone";
-import {
-  TextField,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Button,
-  Grid,
-  Box,
-  Switch,
-  Typography,
-  CircularProgress,
-  ButtonBase,
-  Skeleton,
-  Tooltip,
-  Alert,
-} from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { schema } from "./schema";
-import Link from "next/link";
-import styles from "./page.module.css";
-import AlertDialog from "../alert/AlertDialog";
+import { db, getCurrentUserId } from "@/app/lib/config";
 import { AddressKey, IForm } from "@/app/lib/definitions";
+import {
+  fetchAddresses,
+  fetchOrders,
+  fetchUserNumber,
+} from "@/app/utils/addressApi";
+import {
+  bottlesCalculate,
+  calculatePrice,
+  formatPhoneNumber,
+  formattedDateTime,
+} from "@/app/utils/formUtils";
+import {
+  getNumberOfBottlesFromDBAddresses,
+  updateNumberOfBottlesInDB,
+} from "@/app/utils/getBottlesNumber";
+import { requestGeneral } from "@/app/utils/webhoooks";
+import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
-import { useTranslation } from "react-i18next";
-import "../../i18n";
+import dayjs, { Dayjs } from "dayjs";
+import updateLocale from "dayjs/plugin/updateLocale";
 import {
   addDoc,
   collection,
@@ -41,44 +33,24 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { db, getCurrentUserId } from "@/app/lib/config";
-import {
-  bottlesCalculate,
-  calculatePrice,
-  formatPhoneNumber,
-  formattedDateTime,
-} from "@/app/utils/formUtils";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { v4 as uuidv4 } from "uuid";
-import SavedData from "../savedData/SavedData";
-import { enqueueSnackbar, SnackbarProvider } from "notistack";
-import {
-  getNumberOfBottlesFromDBAddresses,
-  updateNumberOfBottlesInDB,
-} from "@/app/utils/getBottlesNumber";
-import { requestGeneral } from "@/app/utils/webhoooks";
-import dayjs, { Dayjs } from "dayjs";
-import updateLocale from "dayjs/plugin/updateLocale";
-import {
-  fetchAddresses,
-  fetchOrders,
-  fetchUserNumber,
-} from "@/app/utils/addressApi";
-import CloseIcon from "@mui/icons-material/Close";
-import { ModalRemoveAddress } from "../ModalRemoveAddress/ModalRemoveAddress";
-import { RegisterButton } from "../registerComponent/RegisterButton";
+import "../../i18n";
+import { schema } from "./schema";
 // import BasicModal from "../OrderCreated/OrderCreated";
-import "dayjs/locale/uk";
-import "dayjs/locale/el";
-import "dayjs/locale/ru";
+import { useUserContext } from "@/app/contexts/UserContext";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import useDatesFromDB from "@/app/utils/getUnableDates";
-import { useUserContext } from "@/app/contexts/UserContext";
+import "dayjs/locale/el";
+import "dayjs/locale/ru";
+import "dayjs/locale/uk";
 
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
 import { deliveryValidation } from "@/app/utils/deliveryDateValidation";
-import { validateDate } from "./validateDate";
 import { getSortedOrders } from "@/app/utils/getSortedOrders";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import OrderStepper from "../OrderStepper";
 
 dayjs.extend(utc);

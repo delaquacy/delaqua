@@ -1,4 +1,3 @@
-import { ModalRemoveAddress } from "@/app/components/ModalRemoveAddress/ModalRemoveAddress";
 import { Address } from "@/app/contexts/OrderDetailsContext";
 import { useToast } from "@/app/hooks";
 import {
@@ -11,6 +10,7 @@ import { Box, Tooltip, Typography } from "@mui/material";
 import Image from "next/image";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ModalRemoveAddress } from "../ModalRemoveAddress";
 import { CardBlockRow, CardWrapper, RemoveButtonWrapper } from "./styled";
 
 interface AddressDetailCardProps {
