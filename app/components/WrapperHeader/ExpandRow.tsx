@@ -59,7 +59,7 @@ export function ExpandRow(props: { order: OrdersData }) {
             },
           }}
         >
-          <Link href={(order.paymentLink as string) || "/"}>
+          <Link href={(order.paymentLink as string) || "/"} target="_blank">
             {order.paymentLink}
           </Link>
         </TableCell>

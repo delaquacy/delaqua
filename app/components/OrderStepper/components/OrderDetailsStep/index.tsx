@@ -7,6 +7,7 @@ import Image from "next/image";
 
 import { OrderItemsTable } from "@/app/components/OrderItemsTable";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
+import { useUserContext } from "@/app/contexts/UserContext";
 import { db } from "@/app/lib/config";
 import { getAndSetPaymentLink } from "@/app/utils/getAndSetPaymentLink";
 import { postInvoicesData } from "@/app/utils/postInvoiceData";
@@ -51,7 +52,7 @@ export const OrderDetailsStep = ({
 }) => {
   const { t } = useTranslation("form");
   const { trackAmplitudeEvent } = useAmplitudeContext();
-
+  const { setShowWindow } = useUserContext();
   const { userOrder, userData, handleAddOrderDetails, setPaymentUrl } =
     useOrderDetailsContext();
 
@@ -138,8 +139,6 @@ export const OrderDetailsStep = ({
       }
     );
 
-    console.log(response, "RESPONSE");
-
     const invoiceNumber = await postInvoicesData(
       orderData,
       currentOrderId,
@@ -152,9 +151,6 @@ export const OrderDetailsStep = ({
     await updateDoc(allOrderRef, {
       invoiceNumber,
     });
-
-    console.log(invoiceNumber, "INVOICE NUM");
-    console.log(orderData, "ORDER_DATA");
 
     if (data.paymentMethod === "Online") {
       await getAndSetPaymentLink(

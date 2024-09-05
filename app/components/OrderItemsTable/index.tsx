@@ -8,6 +8,7 @@ import {
   TableRow,
   Tooltip,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface OrderItemsTableProps {
   orderItems: any[];
@@ -18,7 +19,8 @@ export const OrderItemsTable = ({
   orderItems,
   totalPayments,
 }: OrderItemsTableProps) => {
-  console.log(orderItems);
+  const { t } = useTranslation("form");
+
   return (
     <Table
       size="small"
@@ -43,7 +45,7 @@ export const OrderItemsTable = ({
                     : "none",
               }}
             >
-              {order.value}
+              {t(`${order.key}`)}
             </TableCell>
           ))}
         </TableRow>
@@ -121,7 +123,7 @@ export const OrderItemsTable = ({
               fontWeight: 600,
             }}
           >
-            Total
+            {t("total")}
           </TableCell>
           <TableCell
             align="center"

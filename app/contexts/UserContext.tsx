@@ -18,8 +18,10 @@ interface UserContextType {
   isAdmin: boolean;
   orders: OrdersData[];
   loading: boolean;
+  showWindow: boolean;
   unpaidOrders: OrdersData[];
   setUser: (user: User) => void;
+  setShowWindow: (show: boolean) => void;
 }
 
 export const UserContext = React.createContext<UserContextType>({
@@ -28,7 +30,9 @@ export const UserContext = React.createContext<UserContextType>({
   orders: [],
   unpaidOrders: [],
   loading: true,
+  showWindow: true,
   setUser: () => {},
+  setShowWindow: () => {},
 });
 
 type UserProviderProps = {
@@ -40,6 +44,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [unpaidOrders, setUnpaidOrders] = useState<OrdersData[]>([]);
   const [orders, setOrders] = useState<OrdersData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showWindow, setShowWindow] = useState<boolean>(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -95,6 +100,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         unpaidOrders,
         orders,
         loading,
+        showWindow,
+        setShowWindow,
         setUser,
       }}
     >

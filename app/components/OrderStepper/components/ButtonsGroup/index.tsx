@@ -1,4 +1,3 @@
-import { useScreenSize } from "@/app/hooks";
 import { Box, Button, Tooltip } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { HelperText, Wrapper } from "./styled";
@@ -17,7 +16,6 @@ export const ButtonsGroup = ({
   errorMessage,
 }: ButtonsGroupProps) => {
   const { t } = useTranslation("form");
-  const { isSmallScreen } = useScreenSize();
 
   return (
     <Wrapper>

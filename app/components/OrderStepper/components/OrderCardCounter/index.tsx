@@ -23,7 +23,7 @@ export const OrderCardCounter = ({
 
     <Count>
       <Typography fontWeight={+count > 0 ? "bold" : "medium"}>
-        {count}
+        {count || 0}
       </Typography>
     </Count>
 

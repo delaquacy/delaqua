@@ -1,20 +1,18 @@
 import { inter } from "@/app/ui/fonts";
-import { ThemeProvider } from "@mui/material/styles";
-import { theme } from "../ui/themeMui";
-import Script from "next/script";
-import { AmplitudeContextProvider } from "../lib/amplitudeConfig";
-import { ToggleProvider } from "../lib/ToggleContext";
-import initTranslations from "../i18n";
 import i18nConfig from "@/i18nConfig";
-import "../globals.css";
-import TranslationsProvider from "../components/TranslationsProvider/TranslationsProvider";
-import WrapperHeader from "../components/WrapperHeader/WrapperHeader";
-import { UserProvider } from "../contexts/UserContext";
+import { ThemeProvider } from "@mui/material/styles";
+import Script from "next/script";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { OrderDetailsProvider } from "../contexts/OrderDetailsContext";
-import WrapperFooter from "../components/WrapperFooter/WrapperFooter";
 import LayoutContent from "../components/LayoutContent";
+import TranslationsProvider from "../components/TranslationsProvider/TranslationsProvider";
+import { OrderDetailsProvider } from "../contexts/OrderDetailsContext";
+import { UserProvider } from "../contexts/UserContext";
+import "../globals.css";
+import initTranslations from "../i18n";
+import { ToggleProvider } from "../lib/ToggleContext";
+import { AmplitudeContextProvider } from "../lib/amplitudeConfig";
+import { theme } from "../ui/themeMui";
 
 export function generateStaticParams() {
   return i18nConfig.locales.map((locale) => ({ locale }));
@@ -36,12 +34,12 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { t, resources } = await initTranslations(locale, ["main"]);
+  const { t, resources } = await initTranslations(locale, i18nNamespaces);
 
   return (
     <html lang={locale}>
       <head>
-        <title>{t("title_tag")}</title>
+        <title>{t("title_tag", { ns: "main" })}</title>
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-Y4KS00EC7H"
