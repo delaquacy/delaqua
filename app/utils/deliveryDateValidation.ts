@@ -1,6 +1,12 @@
 import dayjs, { Dayjs } from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 
-export const deliveryValidation = (selectedDate: Date | Dayjs) => {
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault("Europe/Nicosia");
+
+export const deliveryValidation = (selectedDate: Date | Dayjs | string) => {
   const now = dayjs();
   const watchedDate = dayjs(selectedDate);
 

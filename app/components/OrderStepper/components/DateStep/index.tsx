@@ -1,3 +1,7 @@
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+
 import { datePickerStyle } from "@/app/components/OrdersTableFilter/DateRangePicker";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { useScreenSize } from "@/app/hooks";
@@ -12,18 +16,22 @@ import {
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import timezone from "dayjs/plugin/timezone";
 import updateLocale from "dayjs/plugin/updateLocale";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import utc from "dayjs/plugin/utc";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(updateLocale);
 dayjs.updateLocale("en", {
   weekStart: 1,
 });
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault("Europe/Nicosia");
 
 // Formats the day of the week from a Date object into a two-letter abbreviation in uppercase - DataPicker.
 const dayOfWeekFormatter = (dayOfWeek: string, date: Dayjs) => {

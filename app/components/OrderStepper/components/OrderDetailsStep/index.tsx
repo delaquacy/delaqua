@@ -8,7 +8,9 @@ import Image from "next/image";
 import { OrderItemsTable } from "@/app/components/OrderItemsTable";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { useUserContext } from "@/app/contexts/UserContext";
+import { useToast } from "@/app/hooks";
 import { db } from "@/app/lib/config";
+import { deliveryValidation } from "@/app/utils";
 import { getAndSetPaymentLink } from "@/app/utils/getAndSetPaymentLink";
 import { postInvoicesData } from "@/app/utils/postInvoiceData";
 import {
@@ -52,9 +54,10 @@ export const OrderDetailsStep = ({
 }) => {
   const { t } = useTranslation("form");
   const { trackAmplitudeEvent } = useAmplitudeContext();
-  const { setShowWindow } = useUserContext();
+  const { setShowWindow, unpaidOrders } = useUserContext();
   const { userOrder, userData, handleAddOrderDetails, setPaymentUrl } =
     useOrderDetailsContext();
+  const { showErrorToast } = useToast();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -99,6 +102,28 @@ export const OrderDetailsStep = ({
       items: userOrder.items.filter(({ count }) => !!+count),
     };
 
+    const { isCurrentDayAfterTen, isCurrentDayAfterNoon } = deliveryValidation(
+      dayjs()
+    );
+
+    if (
+      isCurrentDayAfterTen &&
+      orderData.deliveryDate === dayjs().format("DD.MM.YYYY") &&
+      orderData.deliveryTime === "9-12"
+    ) {
+      showErrorToast("Please, change the delivery time");
+      return;
+    }
+
+    if (
+      isCurrentDayAfterNoon &&
+      orderData.deliveryDate === dayjs().format("DD.MM.YYYY") &&
+      orderData.deliveryTime === "9-17"
+    ) {
+      showErrorToast("Please, change the delivery date");
+      return;
+    }
+
     const rentCount = orderData.items.find(
       ({ itemCode }) => +itemCode === RENT_CODE
     )?.count;
@@ -126,8 +151,6 @@ export const OrderDetailsStep = ({
 
     const currentOrderId = orderRef.id;
     const currentAllOrderId = allOrderRef.id;
-
-    console.log(orderRef);
 
     const response = await axios.post(
       process.env.NEXT_PUBLIC_ORDERS_SHEET_LINK as string,
@@ -167,8 +190,6 @@ export const OrderDetailsStep = ({
 
     handleNext();
   };
-
-  console.log(loading, "LOADING");
 
   if (loading) {
     return (

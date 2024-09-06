@@ -21,8 +21,6 @@ export const History = () => {
   const { orders, loading } = useUserContext();
   const { isSmallScreen } = useScreenSize();
 
-  console.log(orders.map(({ createdAt }) => createdAt));
-
   if (loading) {
     return (
       <Box
@@ -64,7 +62,7 @@ export const History = () => {
         >
           <TableHead>
             <TableRow>
-              <TableCell />
+              {/* <TableCell /> */}
 
               <TableCell
                 align="center"

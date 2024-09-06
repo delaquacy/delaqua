@@ -1,18 +1,11 @@
 "use client";
-import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
 
 import TableCell from "@mui/material/TableCell";
 
 import { getDateFromTimestamp } from "@/app/utils";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { OrderItemsTable } from "../OrderItemsTable";
 
 import { OrdersData } from "@/app/types";
 import { Tooltip } from "@mui/material";
@@ -20,7 +13,7 @@ import dynamic from "next/dynamic";
 
 export function TableExpandRow(props: { order: OrdersData }) {
   const { order } = props;
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const { t } = useTranslation("orderslist");
 
   const GeneratePdf = dynamic(() => import("../InvoiceGenerator"), {
@@ -33,10 +26,10 @@ export function TableExpandRow(props: { order: OrdersData }) {
         sx={{
           "& > *": { borderBottom: "unset" },
           transition: "all 0.3s",
-          background: open ? "#D1E3F6" : "",
+          // background: open ? "#D1E3F6" : "",
         }}
       >
-        <TableCell>
+        {/* <TableCell>
           <Tooltip title={open ? t("close") : t("open")}>
             <IconButton
               aria-label="expand row"
@@ -46,7 +39,7 @@ export function TableExpandRow(props: { order: OrdersData }) {
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
           </Tooltip>
-        </TableCell>
+        </TableCell> */}
 
         <TableCell component="th" scope="row">
           {order.phoneNumber}
@@ -85,16 +78,23 @@ export function TableExpandRow(props: { order: OrdersData }) {
             ? order.createdAt
             : getDateFromTimestamp(order.createdAt as any)}
         </TableCell>
-        <TableCell align="center">{order.paymentMethod}</TableCell>
-        <TableCell align="center">{order.totalPayments}</TableCell>
 
-        <TableCell align="center">{order.paymentStatus}</TableCell>
-        <TableCell align="center">
+        <TableCell align="center" padding="none">
+          {order.paymentMethod}
+        </TableCell>
+        <TableCell align="center" padding="none">
+          {order.totalPayments}
+        </TableCell>
+
+        <TableCell align="center" padding="none">
+          {order.paymentStatus}
+        </TableCell>
+        <TableCell align="center" padding="none">
           {order.invoiceNumber ? <GeneratePdf order={order} /> : "-"}
         </TableCell>
       </TableRow>
 
-      <TableRow
+      {/* <TableRow
         sx={{
           transition: "all 0.3s",
           background: open ? "rgba(209, 227, 246, 0.2)" : "",
@@ -113,7 +113,7 @@ export function TableExpandRow(props: { order: OrdersData }) {
             </Box>
           </Collapse>
         </TableCell>
-      </TableRow>
+      </TableRow> */}
     </Fragment>
   );
 }

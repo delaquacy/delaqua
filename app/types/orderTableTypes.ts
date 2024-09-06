@@ -9,6 +9,8 @@ export interface OrdersData {
   createdAt: string;
   completed: boolean;
   deliveryAddress: string;
+
+  deliveryAddressObj: Address;
   deliveryDate: string;
   deliveryTime: string;
   depositForBottles: string;
@@ -64,4 +66,17 @@ export interface Invoices {
   paymentId?: string;
   orderId?: string;
   allOrderId: string;
+}
+
+export interface Address {
+  id: string;
+  firstAndLast: string;
+  addressDetails: string;
+  archived: boolean;
+  createdAt: string | any;
+  deliveryAddress: string;
+  geolocation: string;
+  numberOfBottles: string;
+  postalIndex: string;
+  comments: string;
 }
