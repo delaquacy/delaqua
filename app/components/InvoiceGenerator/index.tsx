@@ -2,7 +2,7 @@ import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { OrdersData } from "@/app/types";
 import { getDateFromTimestamp } from "@/app/utils";
 import { Download } from "@mui/icons-material";
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, Tooltip } from "@mui/material";
 import jsPDF from "jspdf";
 
 import autoTable, { applyPlugin } from "jspdf-autotable";
@@ -18,11 +18,14 @@ interface InvoiceGeneratorProps {
 const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
   const { goods } = useOrderDetailsContext();
 
-  console.log(order.deliveryAddressObj.deliveryAddress);
+  const hasInvoiceNumber = !!order?.invoiceNumber;
+
+  console.log(hasInvoiceNumber, "hasInvoiceNumber");
+
   const address =
-    order.deliveryAddressObj.postalIndex +
-    `, ${order.deliveryAddressObj.addressDetails}` +
-    `, ${order.deliveryAddressObj.deliveryAddress}`;
+    (order.deliveryAddressObj?.postalIndex || order.postalIndex) +
+    `, ${order.deliveryAddressObj?.addressDetails || order.addressDetails}` +
+    `, ${order.deliveryAddressObj?.deliveryAddress || order.deliveryAddress}`;
 
   const calculation = {
     net5Sum: 0,
@@ -100,6 +103,7 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
 
     doc.text(order.invoiceNumber || "INV-24-1", titlePaddingLeft, 22);
     regularFont();
+
     doc.setTextColor(128, 128, 128);
     doc.setFontSize(11);
     doc.text(
@@ -121,6 +125,7 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
     const height = 32;
     const borderColor = [0, 0, 0];
     const borderWidth = 0.1;
+
     doc.setDrawColor(borderColor[0], borderColor[1], borderColor[2]);
     doc.setLineWidth(borderWidth);
     doc.rect(x, y, width, height);
@@ -325,9 +330,11 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
 
   return (
     <Box>
-      <IconButton onClick={generatePDF}>
-        <Download />
-      </IconButton>
+      <Tooltip title="open and save invoice">
+        <IconButton onClick={generatePDF}>
+          <Download />
+        </IconButton>
+      </Tooltip>
     </Box>
   );
 };

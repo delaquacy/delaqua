@@ -11,6 +11,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { MainContentWrapper } from "../shared/styled";
@@ -40,7 +41,7 @@ export const History = () => {
 
   return (
     <MainContentWrapper>
-      {t("history")}
+      <Typography variant="h4">{t("history")}</Typography>
       <TableContainer
         component={Paper}
         sx={{

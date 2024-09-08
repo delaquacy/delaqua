@@ -90,7 +90,7 @@ export function TableExpandRow(props: { order: OrdersData }) {
           {order.paymentStatus}
         </TableCell>
         <TableCell align="center" padding="none">
-          {order.invoiceNumber ? <GeneratePdf order={order} /> : "-"}
+          <GeneratePdf order={order} />
         </TableCell>
       </TableRow>
 

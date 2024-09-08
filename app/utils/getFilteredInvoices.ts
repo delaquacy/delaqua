@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import { getFormattedDateString } from "./getFormattedDateString";
 import { FilterItem, Invoices } from "../types";
+import { getFormattedDateString } from "./getFormattedDateString";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -34,7 +34,7 @@ export const getFilteredInvoices = (
         createdDate.isSameOrBefore(endDate)
       );
     },
-    "Client ID": (invoice, filter) => invoice.clientId === filter.value1,
+    "Client ID": (invoice, filter) => +invoice.clientId === +filter.value1,
     "Client name": (invoice, filter) => invoice.clientName === filter.value1,
     "Phone Number": (invoice, filter) => invoice.phoneNumber === filter.value1,
     "Payment Status": (invoice, filter) =>
