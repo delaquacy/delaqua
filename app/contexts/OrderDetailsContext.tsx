@@ -60,7 +60,9 @@ export interface UserOrder {
   bottlesNumberToReturn: string;
   pump: string;
   createdAt: string;
-  userId: string;
+  userId?: string;
+  useId?: string;
+  firstAndLast?: string;
   priceOfWater: string;
   depositForBottles: string;
   totalPayments: string;

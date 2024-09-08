@@ -9,7 +9,7 @@ export const postInvoicesData = async (
   allOrderId: string
 ) => {
   const currentYear = dayjs().format("YY");
-  const lastInvoiceNumRef = doc(db, "counter/1");
+  const lastInvoiceNumRef = doc(db, "invoiceCounter/1");
 
   try {
     const lastInvoiceNumDoc = await getDoc(lastInvoiceNumRef);
@@ -50,19 +50,12 @@ export const postInvoicesData = async (
       allOrderId: allOrderId,
     };
 
-    console.log(data.userId, "IDDD");
-    console.log(preparedData, "prep");
-
     const invoiceRef = doc(db, `userInvoices`, invoiceNumber);
     await setDoc(invoiceRef, preparedData);
-
-    console.log(`Invoice added with ID: ${newCount}`);
 
     await updateDoc(lastInvoiceNumRef, {
       currentCount: newCount,
     });
-
-    console.log(`Counter update: ${newCount}`);
 
     return invoiceNumber;
   } catch (error) {

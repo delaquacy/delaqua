@@ -2,7 +2,13 @@
 
 import dayjs from "dayjs";
 import { User, getAuth } from "firebase/auth";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { adminCheck } from "../utils";
 import { getUnpaidOrders } from "../utils/getUnpaidOrders";
 
@@ -21,6 +27,7 @@ interface UserContextType {
   showWindow: boolean;
   unpaidOrders: OrdersData[];
   setUser: (user: User) => void;
+  setOrders: Dispatch<SetStateAction<OrdersData[]>>;
   setShowWindow: (show: boolean) => void;
 }
 
@@ -32,6 +39,7 @@ export const UserContext = React.createContext<UserContextType>({
   loading: true,
   showWindow: true,
   setUser: () => {},
+  setOrders: () => {},
   setShowWindow: () => {},
 });
 
@@ -103,6 +111,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         showWindow,
         setShowWindow,
         setUser,
+        setOrders,
       }}
     >
       {children}

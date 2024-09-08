@@ -14,7 +14,7 @@ export const getAllUserOrders = async (
     const querySnapshot = await getDocs(ordersRef);
 
     const orders = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
+      idDb: doc.id,
       ...doc.data(),
     }));
 
@@ -57,21 +57,14 @@ export const getAllUserOrders = async (
       return { ...order, items };
     }) as OrdersData[];
 
-    processedOrders.sort((a, b) => {
-      const dateA =
-        typeof a.createdAt === "string"
-          ? dayjs(a.createdAt, "DD.MM.YYYY HH:mm").toDate()
-          : new Date(a.createdAt);
+    const formatString = "DD.MM.YYYY";
 
-      const dateB =
-        typeof b.createdAt === "string"
-          ? dayjs(b.createdAt, "DD.MM.YYYY HH:mm").toDate()
-          : new Date(b.createdAt);
+    return processedOrders.sort((a, b) => {
+      const dateA = dayjs(a.deliveryDate, formatString);
+      const dateB = dayjs(b.deliveryDate, formatString);
 
-      return dateB.getTime() - dateA.getTime();
+      return dateB.isAfter(dateA) ? 1 : -1;
     });
-
-    return processedOrders;
   } catch (error) {
     console.error("Error fetching user orders:", error);
     return [];

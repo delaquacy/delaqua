@@ -1,10 +1,12 @@
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { OrdersData } from "@/app/types";
-import { getDateFromTimestamp } from "@/app/utils";
+import { addInvoiceNumberToOldOrder, getDateFromTimestamp } from "@/app/utils";
 import { Download } from "@mui/icons-material";
 import { Box, IconButton, Tooltip } from "@mui/material";
 import jsPDF from "jspdf";
 
+import { useUserContext } from "@/app/contexts/UserContext";
+import { generateInvoiceTableRows } from "@/app/utils/generateInvoiceTableRows";
 import autoTable, { applyPlugin } from "jspdf-autotable";
 import "./jsPDF_fonts/OpenSans-Bold-normal";
 import "./jsPDF_fonts/OpenSans-Medium-normal";
@@ -16,96 +18,93 @@ interface InvoiceGeneratorProps {
 }
 
 const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
-  const { goods } = useOrderDetailsContext();
-
-  const hasInvoiceNumber = !!order?.invoiceNumber;
-
-  console.log(hasInvoiceNumber, "hasInvoiceNumber");
+  const { goods, userData } = useOrderDetailsContext();
+  const { setOrders } = useUserContext();
 
   const address =
     (order.deliveryAddressObj?.postalIndex || order.postalIndex) +
     `, ${order.deliveryAddressObj?.addressDetails || order.addressDetails}` +
     `, ${order.deliveryAddressObj?.deliveryAddress || order.deliveryAddress}`;
 
-  const calculation = {
-    net5Sum: 0,
-    net19Sum: 0,
-    vat5: 0,
-    vat19: 0,
-    netVal: 0,
-    vatVal: 0,
-  };
+  const { bodyRows, calculation } = generateInvoiceTableRows(order, goods);
 
-  const bodyRows = order.items?.map((item) => {
-    const good = goods.find((good) => +good.itemCode === +item.itemCode);
+  const generatePDF = async () => {
+    let invoiceNumber = order.invoiceNumber;
+    if (!invoiceNumber) {
+      invoiceNumber = await addInvoiceNumberToOldOrder(
+        order,
+        order.idDb,
+        userData.userId
+      );
 
-    if (good && +good.taxRate === 5) {
-      calculation.net5Sum += +item.count * +good?.netSaleWorth;
-      calculation.vat5 += +item.count * +good.sellPriceVAT;
-      calculation.vatVal += +item.count * +good.sellPriceVAT;
+      setOrders((prev) =>
+        prev.map((settledOrder) =>
+          settledOrder.id === order.id
+            ? { ...settledOrder, invoiceNumber }
+            : settledOrder
+        )
+      );
     }
 
-    if (good && +good.taxRate === 19) {
-      calculation.net19Sum += +item.count * +good?.netSaleWorth;
-      calculation.vat19 += +item.count * +good.sellPriceVAT;
-      calculation.vatVal += +item.count * +good.sellPriceVAT;
-    }
-
-    calculation.netVal += (good && +item.count * +good?.netSaleWorth) || 0;
-
-    return (
-      good && [
-        item.itemCode,
-        item.name,
-        `${item.count}`,
-        `€${(+item.sellPrice).toFixed(2)}`,
-        `${good?.taxRate}%`,
-        `€${(+good?.netSaleWorth).toFixed(2)}`,
-        `€${(+item?.sum).toFixed(2)}`,
-      ]
-    );
-  });
-
-  const generatePDF = () => {
     const doc = new jsPDF();
     const wrappedAddress = doc.splitTextToSize(address, 165);
 
-    const regularFont = () => doc.setFont("OpenSans-Medium");
-    const boldFont = () => doc.setFont("OpenSans-Bold");
+    const setFont = (
+      font: string,
+      size: number,
+      color: number[] = [0, 0, 0]
+    ) => {
+      doc.setFont(font);
+      doc.setFontSize(size);
+      doc.setTextColor(color[0], color[1], color[2]);
+    };
+
+    const drawRectangle = (
+      leftPosition: number,
+      topPosition: number,
+      height: number,
+      borderColors: number[] = [0, 0, 0]
+    ) => {
+      const width = 180;
+      const borderWidth = 0.1;
+
+      doc.setDrawColor(borderColors[0], borderColors[1], borderColors[2]);
+      doc.setLineWidth(borderWidth);
+      doc.rect(leftPosition, topPosition, width, height);
+    };
 
     const leftPadding = 15;
+    const topLogoPadding = 28;
+    const titlePaddingLeft = 130;
 
     // logo
     const logoText = "Online order at ";
     const logoTextLink = "delaqua.cy";
     const imgUrl = "/logo.png";
+    const logoTextLeftPadding = doc.getTextWidth(logoText) + 5;
+
+    setFont("OpenSans-Medium", 10);
 
     doc.addImage(imgUrl, "PNG", leftPadding, 10, 66, 15);
-    regularFont();
-    doc.setFontSize(10);
-    doc.text(logoText, leftPadding, 28);
+    doc.text(logoText, leftPadding, topLogoPadding);
 
-    const textX = doc.getTextWidth(logoText) + leftPadding;
-    const textY = 28;
     doc.setTextColor(0, 0, 255);
-    doc.textWithLink(logoTextLink, textX, textY, {
+    doc.textWithLink(logoTextLink, logoTextLeftPadding, topLogoPadding, {
       url: "https://delaqua.cy",
     });
 
     // Title
-    const titlePaddingLeft = 130;
 
-    doc.setTextColor(0, 0, 0);
-    boldFont();
-    doc.setFontSize(16);
+    setFont("OpenSans-Bold", 16);
+
     doc.text("Sales Invoice", titlePaddingLeft, 15);
-    doc.setFontSize(14);
 
-    doc.text(order.invoiceNumber || "INV-24-1", titlePaddingLeft, 22);
-    regularFont();
+    setFont("OpenSans-Bold", 14);
 
-    doc.setTextColor(128, 128, 128);
-    doc.setFontSize(11);
+    doc.text(invoiceNumber || "INV-1", titlePaddingLeft, 22);
+
+    setFont("OpenSans-Medium", 11, [128, 128, 128]);
+
     doc.text(
       `Issued on: ${
         typeof order.createdAt === "string"
@@ -118,28 +117,16 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
 
     // billed border
     doc.setTextColor(0, 0, 0);
-
-    const x = leftPadding;
     const y = 40;
-    const width = 180;
-    const height = 32;
-    const borderColor = [0, 0, 0];
-    const borderWidth = 0.1;
 
-    doc.setDrawColor(borderColor[0], borderColor[1], borderColor[2]);
-    doc.setLineWidth(borderWidth);
-    doc.rect(x, y, width, height);
+    drawRectangle(leftPadding, 40, 32, [0, 0, 0]);
 
     // info
-    doc.setTextColor(0, 0, 0);
-
-    boldFont();
-    doc.setFontSize(12);
+    setFont("OpenSans-Bold", 12);
 
     doc.text("Billed to", leftPadding + 2, y + 6);
 
-    regularFont();
-    doc.setFontSize(10);
+    setFont("OpenSans-Medium", 10);
 
     doc.text(order.firstAndLast, leftPadding + 2, y + 12);
     doc.text(order.phoneNumber, leftPadding + 2, y + 18);
@@ -147,11 +134,11 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
       lineHeightFactor: 1.7,
     });
 
-    boldFont();
-    doc.setFontSize(12);
+    setFont("OpenSans-Bold", 12);
+
     doc.text("From", titlePaddingLeft, y + 6);
-    regularFont();
-    doc.setFontSize(10);
+
+    setFont("OpenSans-Medium", 10);
 
     doc.text("Aquadel LTD", titlePaddingLeft, y + 12);
     doc.text("Amathountos, 106, SUN SEA COURT 1", titlePaddingLeft, y + 18);
@@ -160,11 +147,11 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
 
     doc.text(`Date of supply: ${order.deliveryDate}`, leftPadding, 77);
 
-    boldFont();
-    doc.setFontSize(12);
+    setFont("OpenSans-Bold", 12);
 
     doc.text("Order details:", leftPadding, 90);
-    regularFont();
+
+    setFont("OpenSans-Medium", 12);
 
     // Order Table
     autoTable(doc, {
@@ -231,12 +218,9 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
 
     const xAnalysis = leftPadding;
     const yAnalysis = finalY + 10;
-    const widthAnalysis = 180;
     const heightAnalysis = 28;
 
-    doc.setDrawColor(borderColor[0], borderColor[1], borderColor[2]);
-    doc.setLineWidth(borderWidth);
-    doc.rect(xAnalysis, yAnalysis, widthAnalysis, heightAnalysis);
+    drawRectangle(leftPadding, finalY + 10, 28, [0, 0, 0]);
 
     const middleX = 120;
 
@@ -244,9 +228,7 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
     doc.setLineWidth(0.1);
     doc.line(middleX, yAnalysis, middleX, yAnalysis + heightAnalysis);
 
-    boldFont();
-    doc.setFontSize(11);
-    doc.setTextColor(128, 128, 128);
+    setFont("OpenSans-Bold", 11, [128, 128, 128]);
 
     doc.text("VAT analysis", xAnalysis + 2, yAnalysis + 5);
     doc.text("Invoice summary", middleX + 2, yAnalysis + 5);
@@ -257,8 +239,7 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
     doc.text(" Net worth €", leftPadding + 25, yAnalysis + 12);
     doc.text("Amount of VAT €", leftPadding + 62, yAnalysis + 12);
 
-    regularFont();
-    doc.setTextColor(128, 128, 128);
+    setFont("OpenSans-Medium", 11, [128, 128, 128]);
 
     doc.text("5", leftPadding + 7, yAnalysis + 20);
     doc.text("19", leftPadding + 7, yAnalysis + 26);
@@ -299,28 +280,21 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
     doc.text(`${calculation.vatVal.toFixed(2)}`, middleX + 40, yAnalysis + 19);
     doc.text(`${order.totalPayments.toFixed(2)}`, middleX + 40, yAnalysis + 26);
 
-    const xBank = leftPadding;
     const yBank = yAnalysis + 35;
-    const widthBank = 180;
-    const heightBank = 25;
 
-    doc.setDrawColor(borderColor[0], borderColor[1], borderColor[2]);
-    doc.setLineWidth(borderWidth);
-    doc.rect(xBank, yBank, widthBank, heightBank);
+    drawRectangle(leftPadding, yBank, 25, [0, 0, 0]);
 
     // Bank details
-    boldFont();
-    doc.setFontSize(11);
-    doc.setTextColor(128, 128, 128);
+    setFont("OpenSans-Bold", 11, [128, 128, 128]);
 
     doc.text("Bank details", leftPadding + 2, yBank + 5);
-    regularFont();
+    setFont("OpenSans-Medium", 11, [128, 128, 128]);
 
     doc.text("Recipient: Aquadel LTD", leftPadding + 2, yBank + 11);
     doc.text("IBAN: LT04 3250 0151 0995 4807", leftPadding + 2, yBank + 17);
     doc.text("BIC: REVOLT21", leftPadding + 2, yBank + 23);
 
-    doc.save(`${order.invoiceNumber}.pdf`);
+    doc.save(`${invoiceNumber}.pdf`);
 
     const pdfBlob = doc.output("blob");
     const pdfUrl = URL.createObjectURL(pdfBlob);

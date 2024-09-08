@@ -17,6 +17,7 @@ export interface OrdersData {
   firstAndLast: string;
   geolocation: string;
   id: string;
+  idDb: string;
   numberOfBottlesAtThisAddress: number;
   paymentMethod: string;
   paymentId: string;
