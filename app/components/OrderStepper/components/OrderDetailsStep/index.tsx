@@ -138,7 +138,8 @@ export const OrderDetailsStep = ({
             }}
           >
             {t("checkAndPay")}:
-          </Typography>{" "}
+          </Typography>
+
           <DetailsCard>
             <DetailsCardItemRow
               sx={{
@@ -166,7 +167,7 @@ export const OrderDetailsStep = ({
                   alt="recycleWater"
                 />
               </Tooltip>
-              <Typography>{userOrder.bottlesNumberToReturn}</Typography>
+              <Typography>{userOrder.bottlesNumberToReturn || "0"}</Typography>
             </DetailsCardItemRow>
 
             <DetailsCardItemRow
@@ -209,6 +210,7 @@ export const OrderDetailsStep = ({
             </DetailsCardItemRow>
           </DetailsCard>
         </Box>
+
         <Box>
           <Typography
             sx={{

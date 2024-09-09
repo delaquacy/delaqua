@@ -1,9 +1,9 @@
-import { DatePicker } from "@mui/x-date-pickers";
-import { useTranslation } from "react-i18next";
-import { FilterItem } from "@/app/types";
 import { useScreenSize } from "@/app/hooks";
+import { FilterItem } from "@/app/types";
 import { SelectChangeEvent } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
 import { ChangeEvent } from "react";
+import { useTranslation } from "react-i18next";
 
 interface DateRangePickerProps {
   filter: FilterItem;
@@ -47,8 +47,11 @@ export const DateRangePicker = ({ filter, onChange }: DateRangePickerProps) => {
   );
 };
 
-export const datePickerStyle = (isSmallScreen: boolean) => ({
-  width: isSmallScreen ? "112px !important" : "231px",
+export const datePickerStyle = (
+  isSmallScreen: boolean,
+  widthFull?: boolean
+) => ({
+  width: isSmallScreen ? (widthFull ? "100%" : "112px !important") : "231px",
   minWidth: isSmallScreen ? "90px !important" : "231px",
   "& .MuiFormLabel-root": {
     fontSize: isSmallScreen ? "10px" : "",

@@ -170,7 +170,7 @@ export const DateStep = ({
                   disablePast
                   dayOfWeekFormatter={dayOfWeekFormatter}
                   shouldDisableDate={(date: Dayjs) => shouldDisableDate(date)}
-                  sx={datePickerStyle(isSmallScreen)}
+                  sx={datePickerStyle(isSmallScreen, true)}
                 />
                 {
                   <FormHelperText

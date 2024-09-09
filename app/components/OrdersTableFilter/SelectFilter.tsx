@@ -1,14 +1,14 @@
-import { ChangeEvent } from "react";
+import { useScreenSize } from "@/app/hooks";
+import { FilterItem } from "@/app/types";
 import {
   FormControl,
   InputLabel,
-  Select,
   MenuItem,
+  Select,
   SelectChangeEvent,
 } from "@mui/material";
+import { ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { FilterItem } from "@/app/types";
-import { useScreenSize } from "@/app/hooks";
 
 interface SelectFilterProps {
   filter: FilterItem;

@@ -1,5 +1,6 @@
 import { ORDER_DETAILS_HEAD } from "@/app/constants/OrderDetailsHead";
 import { RENT_BOTTLE_ID } from "@/app/constants/OrderItemsIds";
+import { useScreenSize } from "@/app/hooks";
 import {
   Table,
   TableBody,
@@ -20,6 +21,7 @@ export const OrderItemsTable = ({
   totalPayments,
 }: OrderItemsTableProps) => {
   const { t } = useTranslation("form");
+  const { isSmallScreen } = useScreenSize();
 
   return (
     <Table
@@ -29,7 +31,7 @@ export const OrderItemsTable = ({
       }}
     >
       <TableHead>
-        <TableRow>
+        <TableRow sx={{}}>
           {ORDER_DETAILS_HEAD.map((order, index) => (
             <TableCell
               key={index}
@@ -89,6 +91,7 @@ export const OrderItemsTable = ({
                 </TableCell>
                 <TableCell
                   align="center"
+                  padding="none"
                   sx={{
                     borderRight: "1px solid #ddd",
                   }}
@@ -97,6 +100,7 @@ export const OrderItemsTable = ({
                 </TableCell>
                 <TableCell
                   align="center"
+                  padding="none"
                   sx={{
                     borderRight: "1px solid #ddd",
                   }}
@@ -105,6 +109,7 @@ export const OrderItemsTable = ({
                 </TableCell>
                 <TableCell
                   align="center"
+                  padding="none"
                   sx={{
                     borderRight: "1px solid #ddd",
                   }}
@@ -114,19 +119,24 @@ export const OrderItemsTable = ({
               </TableRow>
             </Tooltip>
           ))}
+
         <TableRow>
-          <TableCell colSpan={3} />
+          <TableCell colSpan={isSmallScreen ? 1 : 3} padding="none" />
           <TableCell
-            colSpan={1}
+            colSpan={isSmallScreen ? 2 : 1}
             align="center"
+            padding="none"
             sx={{
               fontWeight: 600,
             }}
           >
             {t("total")}
           </TableCell>
+
           <TableCell
+            colSpan={isSmallScreen ? 2 : 1}
             align="center"
+            padding="none"
             sx={{
               fontWeight: 600,
             }}
