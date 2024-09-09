@@ -1,13 +1,14 @@
 import {
   collection,
-  query,
-  where,
-  getDocs,
   doc,
+  getDocs,
+  query,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { db } from "../lib/config";
 import { OrdersData } from "../types";
+import { sortByDate } from "./sortByDate";
 
 export const getUnpaidOrders = async (
   userId: string
@@ -58,5 +59,5 @@ export const getUnpaidOrders = async (
       result.push(order);
     }
   }
-  return result;
+  return result.sort((a, b) => sortByDate(a.createdAt, b.createdAt));
 };

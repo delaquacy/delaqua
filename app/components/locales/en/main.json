@@ -33,6 +33,11 @@
   "description_tag": "We do water delivery of 19l bottles to homes and offices in Limassol (Cyprus) from 9 AM to 5 PM from Monday to Saturday. 6 euros for each 19l bottle. We deliver Mersini Spring Water, which is bottled at the source within minutes of leaving the ground.",
   "paymentWarning": "Your payment for delivery is awaiting to be paid. Pay via the link.",
   "pay": "Pay",
+
+  "viewOrderHistory": "View order history",
+  "newOrder": "Place a new order",
+  "admin": "Admin",
+  "order": "Orders",
   "customers": "Dear customers!",
   "info": "Please note that Thursday, 12th September is a day off. Kindly place your orders for an alternative date. Thank you for your understanding!"
 }

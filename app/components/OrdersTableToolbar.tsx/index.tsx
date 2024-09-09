@@ -147,16 +147,18 @@ export function OrdersTableToolbar(props: OrdersTableToolbarProps) {
           </>
         ) : (
           <Box display="flex" flexDirection="row">
-            <CSVLink
-              data={dataForCVS}
-              filename={`Orders_Report_${dayjs().format("DD-MM-YYYY")}.csv`}
-            >
-              <Tooltip title="Download CSV">
-                <IconButton id="download-button" size="large">
-                  <FileDownloadOutlined fontSize="large" />
-                </IconButton>
-              </Tooltip>
-            </CSVLink>
+            {dataForCVS.length > 0 && (
+              <CSVLink
+                data={dataForCVS}
+                filename={`Orders_Report_${dayjs().format("DD-MM-YYYY")}.csv`}
+              >
+                <Tooltip title="Download CSV">
+                  <IconButton id="download-button" size="large">
+                    <FileDownloadOutlined fontSize="large" />
+                  </IconButton>
+                </Tooltip>
+              </CSVLink>
+            )}
             <Tooltip title="Filter list">
               <IconButton
                 size="large"

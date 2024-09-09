@@ -6,7 +6,6 @@ import { app } from "@/app/lib/config";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import i18nConfig from "@/i18nConfig";
 import {
-  AccountCircle,
   Close,
   ExitToApp,
   ManageAccounts,
@@ -38,6 +37,7 @@ import "../../i18n";
 import { LogInProps } from "../Logins/Logins";
 import WrapperLogin from "../WrapperLogin/WrapperLogin";
 import styles from "./Header.module.css";
+import { MyAccountMenu } from "./MyAccountMenu";
 
 dayjs.extend(customParseFormat);
 
@@ -73,7 +73,7 @@ export default function Headers({
     }
     if (user && isToggled) {
       setToggle(false);
-      router.push("my_account");
+      router.push("/new_order");
     }
   }, [isToggled]);
 
@@ -129,7 +129,7 @@ export default function Headers({
   }, []);
 
   useEffect(() => {
-    if (pathname == "/my_account") {
+    if (pathname == "/new_order" || pathname === "/order_history") {
       setShowLogin(false);
     }
   }, [pathname, router]);
@@ -212,7 +212,7 @@ export default function Headers({
       )}
       {user &&
         unpaidOrders.length !== 0 &&
-        !pathname.endsWith("/admin_dashboard") && (
+        !pathname.includes("/admin_dashboard") && (
           <Box
             sx={{
               background: "#D34942",
@@ -254,7 +254,7 @@ export default function Headers({
             <Box className={styles.name_container} sx={{ flexGrow: 1 }}>
               <Link href="/">
                 <Image
-                  src="/water.png"
+                  src="/water.svg"
                   alt="DelAqua logo"
                   width={50}
                   height={50}
@@ -277,7 +277,7 @@ export default function Headers({
 
             {showLogin && <WrapperLogin {...loginProps} />}
             <div className={styles.buttonsContainer}>
-              <Box style={{ marginRight: "5px" }}>
+              <Box>
                 <Select
                   className={styles.language}
                   value={currentLocale}
@@ -307,23 +307,17 @@ export default function Headers({
                   {user && (
                     <>
                       <Box className={styles.loginMyaccountButtons}>
-                        <Link href="/my_account">
-                          <Button
-                            variant="contained"
-                            endIcon={<AccountCircle fontSize="small" />}
-                          >
-                            {t("my_account")}
-                          </Button>
-                        </Link>
+                        <MyAccountMenu />
                         {isAdmin && (
-                          <Link href="/admin_dashboard">
-                            <Button
-                              variant="contained"
-                              endIcon={<ManageAccounts fontSize="small" />}
-                            >
-                              Admin
-                            </Button>
-                          </Link>
+                          <Button
+                            onClick={() => {
+                              router.push("/admin_dashboard");
+                            }}
+                            variant="contained"
+                            endIcon={<ManageAccounts fontSize="small" />}
+                          >
+                            {t("admin")}
+                          </Button>
                         )}
                         <Link href="/">
                           <Button
@@ -335,17 +329,23 @@ export default function Headers({
                           </Button>
                         </Link>
                       </Box>
+
+                      {/* mobile buttons */}
                       <Box className={styles.mobileScreen}>
-                        <Link href="/my_account">
-                          <AccountCircle color="primary" fontSize="small" />
-                        </Link>
+                        <MyAccountMenu />
                         {isAdmin && (
-                          <Link href="/admin_dashboard">
+                          <IconButton
+                            onClick={() => router.push("/admin_dashboard")}
+                            sx={{
+                              width: "50px",
+                              height: "50px",
+                            }}
+                          >
                             <ManageAccountsSharp
                               color="primary"
                               fontSize="small"
                             />
-                          </Link>
+                          </IconButton>
                         )}
                         <Link href="/">
                           <ExitToApp

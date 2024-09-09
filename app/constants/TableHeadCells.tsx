@@ -1,23 +1,25 @@
 import Image from "next/image";
-import EmptyBottle from "../../public/emptyBottle.png";
-import FullBottle from "../../public/fullBottle.png";
-import Phone from "../../public/phoneNumber.png";
-import Pump from "../../public/pump.png";
+import TenL from "../../public/10l.svg";
+import FifteenL from "../../public/15L.svg";
 import Address from "../../public/address.png";
 import AddressDetail from "../../public/addressDetail.png";
+import Bage from "../../public/bage.png";
+import PaymentsTotal from "../../public/billEuro.png";
+import CreatedAt from "../../public/calendar.png";
+import Comments from "../../public/comments.png";
+import CompletedStatus from "../../public/completedStatus.png";
 import DeliveryDate from "../../public/deliveryDate.png";
 import DeliveryTime from "../../public/deliveryTime.png";
-import PaymentsTotal from "../../public/billEuro.png";
+import EmptyBottle from "../../public/emptyBottle.png";
+import FullBottle from "../../public/fullBottle.png";
 import PaymentsStatus from "../../public/paymentStatus.png";
-import Bage from "../../public/bage.png";
-import Comments from "../../public/comments.png";
-import CreatedAt from "../../public/calendar.png";
-import CompletedStatus from "../../public/completedStatus.png";
+import Phone from "../../public/phoneNumber.png";
+import Pump from "../../public/pump.png";
 import { OrdersData } from "../types";
 
 interface HeadCell {
   disablePadding: boolean;
-  id: keyof OrdersData;
+  id: keyof OrdersData | "15LbottlesNumberToBuy" | "10LbottlesNumberToBuy";
   label: string;
   numeric: boolean;
   sortable: boolean;
@@ -67,6 +69,22 @@ export const TableHeadCells: readonly HeadCell[] = [
     image: (
       <Image src={EmptyBottle} alt="Bottles Number To Return" width={30} />
     ),
+  },
+  {
+    id: "15LbottlesNumberToBuy",
+    numeric: true,
+    disablePadding: false,
+    label: "tableHeadCells.buy",
+    sortable: false,
+    image: <Image src={FifteenL} alt="FifteenL" width={22} />,
+  },
+  {
+    id: "10LbottlesNumberToBuy",
+    numeric: true,
+    disablePadding: false,
+    label: "tableHeadCells.buy",
+    sortable: false,
+    image: <Image src={TenL} alt="TenL" width={22} />,
   },
   {
     id: "pump",

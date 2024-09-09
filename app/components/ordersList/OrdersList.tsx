@@ -7,7 +7,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
+  Card,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import styles from "./OrdersList.module.css";
@@ -15,24 +15,43 @@ import "../../i18n";
 import { OrdersData } from "@/app/types";
 import { getDateFromTimestamp } from "@/app/utils";
 import useGetOrdersFromDb from "@/app/utils/getOrdersfromDb";
+import { useUserContext } from "@/app/contexts/UserContext";
 
 export default function OrdersList() {
-  const { orders, loading } = useGetOrdersFromDb();
-
   const { t } = useTranslation("orderslist");
-  if (loading) {
-    return <CircularProgress />;
-  }
+  const { orders } = useUserContext();
 
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="simple table">
+    <TableContainer
+      component={Card}
+      sx={{
+        boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+        padding: "10px",
+      }}
+    >
+      <Table
+        stickyHeader
+        sx={{
+          paddingBottom: "10px",
+          overflowY: "scroll",
+          width: "100vw",
+        }}
+        size="small"
+      >
         <TableHead>
           <TableRow>
-            <TableCell align="center">{t("table_phone")}</TableCell>
-            <TableCell align="center">{t("table_index")}</TableCell>
+            <TableCell align="center" padding="none">
+              {t("table_phone")}
+            </TableCell>
             <TableCell align="center">{t("table_address")}</TableCell>
-            <TableCell align="center">{t("table_bottles_to_buy")}</TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                maxWidth: "150px",
+              }}
+            >
+              {t("table_bottles_to_buy")}
+            </TableCell>
             <TableCell align="center">{t("table_delivery_time")}</TableCell>
             <TableCell align="center">{t("table_order_time")}</TableCell>
             <TableCell align="center">{t("table_payment_method")}</TableCell>
@@ -48,38 +67,39 @@ export default function OrdersList() {
               </TableCell>
             </TableRow>
           ) : (
-            orders.map((order: OrdersData) => (
-              <TableRow
-                key={order.id}
-                sx={{
-                  "&:last-child td, &:last-child th": { border: 0 },
-                }}
-              >
-                <TableCell align="center">{order.phoneNumber}</TableCell>
-                <TableCell align="center">{order.postalIndex}</TableCell>
-                <TableCell className={styles.truncated} align="center">
-                  <Tooltip title={order.deliveryAddress}>
-                    <span>{order.deliveryAddress}</span>
-                  </Tooltip>
-                </TableCell>
+            [...orders, ...orders, ...orders].map(
+              (order: OrdersData, index) => (
+                <TableRow
+                  key={`${order.id}-${index}`}
+                  sx={{
+                    "&:last-child td, &:last-child th": { border: 0 },
+                  }}
+                >
+                  <TableCell align="center">{order.phoneNumber}</TableCell>
+                  <TableCell className={styles.truncated} align="center">
+                    <Tooltip title={order.deliveryAddress}>
+                      <span>{`${order.postalIndex}, ${order.deliveryAddress}`}</span>
+                    </Tooltip>
+                  </TableCell>
 
-                <TableCell align="center">
-                  {`${order.bottlesNumberToBuy} / ${order.bottlesNumberToReturn} / ${order.pump}`}
-                </TableCell>
-                <TableCell align="center">
-                  {`${order.deliveryDate},`}
-                  <br />
-                  {order.deliveryTime}
-                </TableCell>
-                <TableCell align="center">
-                  {getDateFromTimestamp(order.createdAt as any)}
-                </TableCell>
-                <TableCell align="center">{order.paymentMethod}</TableCell>
-                <TableCell align="center">{order.totalPayments}</TableCell>
+                  <TableCell align="center">
+                    {`${order.bottlesNumberToBuy} / ${order.bottlesNumberToReturn} / ${order.pump}`}
+                  </TableCell>
+                  <TableCell align="center">
+                    {`${order.deliveryDate},`}
+                    <br />
+                    {order.deliveryTime}
+                  </TableCell>
+                  <TableCell align="center">
+                    {getDateFromTimestamp(order.createdAt as any)}
+                  </TableCell>
+                  <TableCell align="center">{order.paymentMethod}</TableCell>
+                  <TableCell align="center">{order.totalPayments}</TableCell>
 
-                <TableCell align="center">{order.paymentStatus}</TableCell>
-              </TableRow>
-            ))
+                  <TableCell align="center">{order.paymentStatus}</TableCell>
+                </TableRow>
+              )
+            )
           )}
         </TableBody>
       </Table>

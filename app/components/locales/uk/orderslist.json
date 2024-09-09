@@ -11,5 +11,10 @@
   "table_payment_method": "Спосіб оплати",
   "table_status": "Статус",
   "table_total": "Сума",
-  "table_no_orders_yet": "Поки що немає замовлень"
+  "table_no_orders_yet": "Поки що немає замовлень",
+  "open": "Розгорнути для перегляду деталей",
+  "history": "Історія замовлень",
+  "downloadInvoice": "Завантажити рахунок",
+  "invoice": "Рахунок",
+  "close": "Згорнути"
 }

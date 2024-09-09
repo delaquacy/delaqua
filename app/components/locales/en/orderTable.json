@@ -19,6 +19,8 @@
     "orderStatus": "Order Status",
     "value": "Value"
   },
+  "tableTitle": "Unpaid orders",
+
   "tableHeadCells": {
       "clientId": "Client ID",
       "contact": "contact",
@@ -38,7 +40,21 @@
       "bottles": "Bottles to buy / to return / pump",
       "dateAndTime": "Delivery date and time",
       "status": "Status",
-      "paymentLink": "Payment link"
+      "paymentLink": "Payment link",
+      "invoiceNumber": "Invoice number",
+      "netVal": "Net value €",
+      "vatVal": "Amount of VAT €",
+      "": ""
+
   },
-  "removeFilter": "Remove filter"
+  "paymentStatuses": {
+    "Unpaid": "Unpaid",
+    "CASH": "Cash",
+    "ORDER_COMPLETED": "Payment completed",
+    "ORDER_CANCELLED": "Payment cancelled",
+    "ORDER_PAYMENT_DECLINED": "Payment declined",
+    "ORDER_PAYMENT_FAILED": "Payment failed"
+  },
+  "removeFilter": "Remove filter",
+  "table_no_orders_yet": "No orders yet"
 }

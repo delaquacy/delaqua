@@ -1,38 +1,41 @@
-import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from "react";
-import Link from "next/link.js";
+"use client";
+import {
+  ChangeEvent,
+  MouseEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
+
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
-import { useToast, useScreenSize } from "@/app/hooks";
+
+import { OrdersTableHead } from "@/app/components/OrdersTableHead";
+import { useScreenSize, useToast } from "@/app/hooks";
 import { FilterItem, OrdersData } from "@/app/types";
 import {
+  getClipboardOrderRowData,
   getComparator,
   getFilteredOrders,
-  stableSort,
   getOrdersArray,
-  getClipboardOrderRowData,
+  stableSort,
 } from "@/app/utils";
-import { OrdersTableHead } from "@/app/components/OrdersTableHead";
 import {
   Box,
   Paper,
-  TableContainer,
   Table,
   TableBody,
-  TableRow,
   TableCell,
-  Checkbox,
-  TablePagination,
+  TableContainer,
   TableHead,
-  Button,
+  TablePagination,
+  TableRow,
 } from "@mui/material";
+
 import { OrdersTableToolbar } from "../OrdersTableToolbar.tsx";
-import {
-  CancelOutlined,
-  ContentCopy,
-  CheckCircle,
-  HourglassBottom,
-} from "@mui/icons-material";
+import { OrderRow } from "./OrdersRow";
 
 dayjs.extend(customParseFormat);
 
@@ -54,12 +57,14 @@ export default function OrdersTable() {
   const { showSuccessToast } = useToast();
   const { isSmallScreen } = useScreenSize();
 
+  const tableRef = useRef<any | null>(null);
+
   const getOrdersRows = async () => {
     try {
       const data = await getOrdersArray();
       const sorted = stableSort(data as any, getComparator(order, orderBy));
-      setRows(sorted as OrdersData[]);
-      setFilteredRows(sorted as OrdersData[]);
+      setRows(sorted as any);
+      setFilteredRows(sorted as any);
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
@@ -104,6 +109,12 @@ export default function OrdersTable() {
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
+    if (tableRef.current) {
+      tableRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
     setSelected([]);
   };
 
@@ -176,6 +187,7 @@ export default function OrdersTable() {
           />
 
           <TableContainer
+            ref={tableRef}
             sx={{
               height: isSmallScreen
                 ? `calc(100dvh - 240px)`
@@ -203,204 +215,49 @@ export default function OrdersTable() {
                 />
               </TableHead>
 
-              {
-                <TableBody>
-                  {visibleRows.map((row, index) => {
-                    const isItemSelected = isSelected(row.id as string);
-                    const labelId = `enhanced-table-checkbox-${index}`;
+              <TableBody>
+                {visibleRows.length ? (
+                  <>
+                    {visibleRows.map((row, index) => {
+                      const isItemSelected = isSelected(row.id as string);
+                      const labelId = `enhanced-table-checkbox-${index}`;
 
-                    const onCopy = (event: any) => {
-                      event.stopPropagation();
+                      const onCopy = (event: any) => {
+                        event.stopPropagation();
 
-                      navigator.clipboard
-                        .writeText(getClipboardOrderRowData(row as OrdersData))
-                        .then(() => showSuccessToast("Copied!"));
-                    };
-                    return (
+                        navigator.clipboard
+                          .writeText(getClipboardOrderRowData(row as any))
+                          .then(() => showSuccessToast("Copied!"));
+                      };
+                      return (
+                        <OrderRow
+                          key={`${row.id}-${index}`}
+                          row={row}
+                          handleClick={handleClick}
+                          isItemSelected={isItemSelected}
+                          labelId={labelId}
+                          onCopy={onCopy}
+                        />
+                      );
+                    })}
+                    {emptyRows > 0 && (
                       <TableRow
-                        onClick={(event: any) =>
-                          handleClick(event, row.id as string)
-                        }
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.id as string}
-                        selected={isItemSelected}
-                        sx={{
-                          cursor: "pointer",
-                          transition: "all, 0.3s",
-                          background: row.completed
-                            ? "#EAF4EA"
-                            : row.expire || row.canceled
-                            ? "#FFE5E5"
-                            : "#fff",
-
-                          "&.Mui-selected": {
-                            background: "#D1E3F6",
-                            "&:hover": {
-                              background: "#E8F1FA",
-                            },
-                          },
-                          ":hover": {
-                            background:
-                              !row.completed && !row.expire ? "#E8F1FA" : "",
-                          },
+                        style={{
+                          height: 33 * emptyRows,
                         }}
                       >
-                        <TableCell
-                          sx={{
-                            position: isSmallScreen ? "static" : "sticky",
-                            left: 0,
-                            zIndex: 2,
-                            background: "inherit",
-                          }}
-                        >
-                          <Checkbox
-                            color="primary"
-                            checked={isItemSelected}
-                            inputProps={{
-                              "aria-labelledby": labelId,
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell
-                          component="th"
-                          scope="row"
-                          padding="none"
-                          align="center"
-                          sx={{
-                            position: isSmallScreen ? "static" : "sticky",
-                            left: "74px",
-                            zIndex: 2,
-                            background: "inherit",
-                          }}
-                        >
-                          {row.userId || row.useId}
-                        </TableCell>
-                        <TableCell
-                          component="th"
-                          id={labelId}
-                          scope="row"
-                          padding="normal"
-                          align="center"
-                          sx={{
-                            position: isSmallScreen ? "static" : "sticky",
-                            left: "155.45px",
-                            zIndex: 2,
-                            background: "inherit",
-                          }}
-                        >
-                          {row.phoneNumber}
-                        </TableCell>
-                        <TableCell
-                          component="th"
-                          id={labelId}
-                          scope="row"
-                          padding="normal"
-                          align="center"
-                          sx={{
-                            position: isSmallScreen ? "static" : "sticky",
-                            left: "290.9px",
-                            zIndex: 2,
-                            background: "inherit",
-                            borderRight: "solid 1px rgba(38, 40, 82, 0.1)",
-                          }}
-                        >
-                          {row.firstAndLast}
-                        </TableCell>
-                        <TableCell align="center">
-                          {row.bottlesNumberToBuy}
-                        </TableCell>
-                        <TableCell align="center">
-                          {row.bottlesNumberToReturn}
-                        </TableCell>
-                        <TableCell align="center">{row.pump}</TableCell>
-                        <TableCell align="center" padding="none">
-                          <Link
-                            href={row.geolocation as string}
-                            onClick={(event) => event.stopPropagation()}
-                          >
-                            <Box
-                              paddingBlock={2}
-                              sx={{
-                                transition: "all 0.3s",
-                                ":hover": {
-                                  color: "#4788C7",
-                                  textDecoration: "underline",
-                                  textUnderlineOffset: "2px",
-                                },
-                              }}
-                            >
-                              {row.postalIndex
-                                ? `${row.postalIndex} ${
-                                    row.deliveryAddress
-                                      ? `, ${row.deliveryAddress}`
-                                      : ""
-                                  }`
-                                : row.deliveryAddress}
-                            </Box>
-                          </Link>
-                        </TableCell>
-                        <TableCell align="center">
-                          {row.addressDetails}
-                        </TableCell>
-                        <TableCell align="center">{row.deliveryDate}</TableCell>
-                        <TableCell align="center">{row.deliveryTime}</TableCell>
-                        <TableCell align="center">
-                          {row.totalPayments}
-                        </TableCell>
-                        {/* <TableCell align="center">{row.paymentMethod}</TableCell> */}
-                        <TableCell align="center">
-                          {row.paymentStatus}
-                        </TableCell>
-                        <TableCell align="center" padding="none">
-                          {row.comments || "-"}
-                        </TableCell>
-                        <TableCell align="center">{row.createdAt}</TableCell>
-                        <TableCell align="center" padding="none">
-                          {row.completed ? (
-                            <CheckCircle
-                              sx={{
-                                color: "green",
-                              }}
-                            />
-                          ) : row.canceled ? (
-                            <CancelOutlined
-                              sx={{
-                                color: "red",
-                              }}
-                            />
-                          ) : (
-                            <HourglassBottom
-                              sx={{
-                                color: "#1976d2",
-                              }}
-                            />
-                          )}
-                        </TableCell>
-                        <TableCell align="center">
-                          <Button onClick={onCopy}>
-                            <ContentCopy
-                              sx={{
-                                color: "#4788C7",
-                              }}
-                            />
-                          </Button>
-                        </TableCell>
+                        <TableCell colSpan={6} />
                       </TableRow>
-                    );
-                  })}
-                  {emptyRows > 0 && (
-                    <TableRow
-                      style={{
-                        height: 33 * emptyRows,
-                      }}
-                    >
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-              }
+                    )}
+                  </>
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={12} align="center">
+                      {t("table_no_orders_yet")}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
             </Table>
           </TableContainer>
 

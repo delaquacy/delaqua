@@ -47,7 +47,7 @@ export const DateRangePicker = ({ filter, onChange }: DateRangePickerProps) => {
   );
 };
 
-const datePickerStyle = (isSmallScreen: boolean) => ({
+export const datePickerStyle = (isSmallScreen: boolean) => ({
   width: isSmallScreen ? "112px !important" : "231px",
   minWidth: isSmallScreen ? "90px !important" : "231px",
   "& .MuiFormLabel-root": {

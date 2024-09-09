@@ -19,6 +19,8 @@
     "orderStatus": "Статус заказа",
     "value": "Значение"
   },
+  "tableTitle": "Неоплаченные заказы",
+
   "tableHeadCells": {
     "clientId": "ID клиента",
     "contact": "контакт",
@@ -38,7 +40,21 @@
     "bottles": "Бутыли для покупки / для возврата / насос",     
     "dateAndTime": "Дата и время доставки",
     "status": "Статус",
-    "paymentLink": "Линк к оплате"
+    "paymentLink": "Линк к оплате",
+    "invoiceNumber": "Номер счета",
+    "netVal": "Чистая стоимость €",
+    "vatVal": "Сумма НДС €",
+    "": ""
+
   },
+  "paymentStatuses": {
+    "Unpaid": "Не оплачено",
+    "CASH": "Наличные",
+    "ORDER_COMPLETED": "Оплата завершена",
+    "ORDER_CANCELLED": "Оплата отменена",
+    "ORDER_PAYMENT_DECLINED": "Оплата отклонена",
+    "ORDER_PAYMENT_FAILED": "Ошибка оплаты"
+  },
+  "table_no_orders_yet": "Пока нет заказов",
   "removeFilter": "Удалить фильтр"
 }

@@ -1,29 +1,46 @@
 "use client";
 
-import { User, getAuth } from "firebase/auth";
-import React, { ReactNode, useEffect, useState } from "react";
-import { getUnpaidOrders } from "../utils/getUnpaidOrders";
-import { adminCheck } from "../utils";
 import dayjs from "dayjs";
+import { User, getAuth } from "firebase/auth";
+import React, {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
+import { adminCheck } from "../utils";
+import { getUnpaidOrders } from "../utils/getUnpaidOrders";
 
-import { fetchOrdersWithSpecificDate } from "../utils/fetchOrdersWithSpecificDate";
-import { checkAndAddAllOrder } from "../utils/checkAndAddAllOrder";
 import { OrdersData } from "../types";
+import { checkAndAddAllOrder } from "../utils/checkAndAddAllOrder";
+import { fetchOrdersWithSpecificDate } from "../utils/fetchOrdersWithSpecificDate";
+import { getAllUserOrders } from "../utils/getAllUserOrders";
 
 const auth = getAuth();
 
 interface UserContextType {
   user: User | null;
   isAdmin: boolean;
+  orders: OrdersData[];
+  loading: boolean;
+  showWindow: boolean;
   unpaidOrders: OrdersData[];
   setUser: (user: User) => void;
+  setOrders: Dispatch<SetStateAction<OrdersData[]>>;
+  setShowWindow: (show: boolean) => void;
 }
 
 export const UserContext = React.createContext<UserContextType>({
   user: null,
   isAdmin: false,
+  orders: [],
   unpaidOrders: [],
+  loading: true,
+  showWindow: true,
   setUser: () => {},
+  setOrders: () => {},
+  setShowWindow: () => {},
 });
 
 type UserProviderProps = {
@@ -33,19 +50,25 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [unpaidOrders, setUnpaidOrders] = useState<OrdersData[]>([]);
-  let order: any = [];
+  const [orders, setOrders] = useState<OrdersData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showWindow, setShowWindow] = useState<boolean>(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (currentUser) {
+        setLoading(true);
         adminCheck(currentUser.phoneNumber as string).then((res) =>
           setIsAdmin(res as boolean)
         );
 
         getUnpaidOrders(currentUser?.uid as string).then(setUnpaidOrders);
+        getAllUserOrders(currentUser?.uid as string).then(setOrders);
         setUser(currentUser);
+        setLoading(false);
       }
     });
+    setLoading(false);
 
     return () => unsubscribe();
   }, []);
@@ -83,7 +106,12 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         user,
         isAdmin,
         unpaidOrders,
+        orders,
+        loading,
+        showWindow,
+        setShowWindow,
         setUser,
+        setOrders,
       }}
     >
       {children}

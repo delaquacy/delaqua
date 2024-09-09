@@ -19,6 +19,7 @@
     "orderStatus": "Статус замовлення",
     "value": "Значення"
   },
+  "tableTitle": "Неоплачені замовлення",
   "tableHeadCells": {
     "clientId": "ID клієнта",
     "contact": "контакт",
@@ -38,7 +39,21 @@
     "bottles": "Пляшки для покупки / для повернення / насос",
     "dateAndTime": "Дата та час доставки",
     "status": "Статус",
-    "paymentLink": "Посилання для оплати"
+    "paymentLink": "Посилання для оплати",
+    "invoiceNumber": "Номер рахунку",
+    "netVal": "Чиста вартість €",
+    "vatVal": "Сума ПДВ €",
+    "": ""
   },
-  "removeFilter": "Видалити фільтр"
+  "table_no_orders_yet": "Поки що немає замовлень",
+  "removeFilter": "Видалити фільтр",
+  "paymentStatuses": {
+    "Unpaid": "Неоплачено",
+    "CASH": "Готівка",
+    "ORDER_COMPLETED": "Оплату завершено",
+    "ORDER_CANCELLED": "Оплату скасовано",
+    "ORDER_PAYMENT_DECLINED": "Оплату відхилено",
+    "ORDER_PAYMENT_FAILED": "Помилка оплати"
+  },
+  "": ""
 }

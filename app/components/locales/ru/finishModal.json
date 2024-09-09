@@ -3,7 +3,11 @@
   "click_to_pay_online": "Нажмите здесь, чтобы перейти по ссылке для оплаты онлайн",
   "prepare_for_payment": "Подготовьте {{amount}} € для оплаты",
   "thanks_for_order": "Спасибо за ваш заказ!",
-  "we_will_deliver_to_you": "Мы доставим вам",
   "numbers_of_deliver_water": " воды в ",
-  "we_will_deliver_to_you_pay": "После получения оплаты, мы организуем доставку"
+  "we_will_deliver_to_you": "Мы доставим ваш заказ {{date}} в {{time}}",
+  "we_will_deliver_to_you_pay": "После получения оплаты, мы доставим ваш заказ {{date}} в {{time}}",
+  "delivery": "Мы доставим ваш заказ {{date}} в {{time}}",
+  "done": "Готово!"
+
+  
 }
