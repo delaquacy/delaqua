@@ -90,12 +90,11 @@ export default function OrderStepper() {
           >
             {STEPS_COMPONENTS[activeStep]({
               handleNext,
-              renderButtonsGroup: (errorMessage: string) => (
+              renderButtonsGroup: () => (
                 <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
                   <Box sx={{ flex: "1 1 auto" }} />
 
                   <Button onClick={handleBack}>Back</Button>
-                  <Button onClick={handleReset}>Reset</Button>
                 </Box>
               ),
             })}

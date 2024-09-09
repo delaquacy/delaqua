@@ -36,7 +36,7 @@ export const UserInvoicesTable = () => {
 
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<Invoices[]>([]);
-  const [order, setOrder] = useState<"asc" | "desc">("asc");
+  const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [orderBy, setOrderBy] = useState<keyof Invoices>("deliveryDate");
   const [selected, setSelected] = useState<string[]>([]);
   const [page, setPage] = useState(0);
@@ -122,8 +122,6 @@ export const UserInvoicesTable = () => {
     [order, orderBy, page, rowsPerPage, filteredRows]
   );
 
-  console.log(visibleRows);
-
   useEffect(() => {
     getInvoicesRows();
   }, []);
@@ -131,7 +129,7 @@ export const UserInvoicesTable = () => {
   useEffect(() => {
     if (applyFilters) {
       const filteredInvoices = getFilteredInvoices(filters, rows);
-      console.log(filteredInvoices, "FILTERED");
+
       setFilteredRows(filteredInvoices);
       setApplyFilters(false);
     }

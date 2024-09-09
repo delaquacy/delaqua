@@ -3,6 +3,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../lib/config";
 import { OrdersData } from "../types";
+import { sortByDate } from "./sortByDate";
 
 dayjs.extend(customParseFormat);
 
@@ -11,6 +12,7 @@ export const getAllUserOrders = async (
 ): Promise<OrdersData[]> => {
   try {
     const ordersRef = collection(db, `users/${userId}/orders`);
+
     const querySnapshot = await getDocs(ordersRef);
 
     const orders = querySnapshot.docs.map((doc) => ({
@@ -57,13 +59,10 @@ export const getAllUserOrders = async (
       return { ...order, items };
     }) as OrdersData[];
 
-    const formatString = "DD.MM.YYYY";
+    const formatString = "DD.MM.YYYY HH:mm";
 
     return processedOrders.sort((a, b) => {
-      const dateA = dayjs(a.deliveryDate, formatString);
-      const dateB = dayjs(b.deliveryDate, formatString);
-
-      return dateB.isAfter(dateA) ? 1 : -1;
+      return sortByDate(a.createdAt, b.createdAt, formatString);
     });
   } catch (error) {
     console.error("Error fetching user orders:", error);

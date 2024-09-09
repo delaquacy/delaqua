@@ -305,8 +305,17 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
   return (
     <Box>
       <Tooltip title="open and save invoice">
-        <IconButton onClick={generatePDF}>
-          <Download />
+        <IconButton
+          onClick={generatePDF}
+          sx={{
+            border: "1px solid rgba(25, 118, 210, 0.2)",
+          }}
+        >
+          <Download
+            sx={{
+              color: "rgba(25, 118, 210, 0.7)",
+            }}
+          />
         </IconButton>
       </Tooltip>
     </Box>

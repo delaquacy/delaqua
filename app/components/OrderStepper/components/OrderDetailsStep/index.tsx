@@ -7,12 +7,8 @@ import Image from "next/image";
 
 import { OrderItemsTable } from "@/app/components/OrderItemsTable";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-import { useUserContext } from "@/app/contexts/UserContext";
 import { useToast } from "@/app/hooks";
-import { db } from "@/app/lib/config";
-import { deliveryValidation } from "@/app/utils";
-import { getAndSetPaymentLink } from "@/app/utils/getAndSetPaymentLink";
-import { postInvoicesData } from "@/app/utils/postInvoiceData";
+import { processOrder } from "@/app/utils/processOrder";
 import {
   AccountCircleOutlined,
   EventOutlined,
@@ -28,9 +24,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 import dayjs from "dayjs";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import Link from "next/link";
 import {
   DetailsCard,
@@ -54,23 +48,23 @@ export const OrderDetailsStep = ({
 }) => {
   const { t } = useTranslation("form");
   const { trackAmplitudeEvent } = useAmplitudeContext();
-  const { setShowWindow, unpaidOrders } = useUserContext();
   const { userOrder, userData, handleAddOrderDetails, setPaymentUrl } =
     useOrderDetailsContext();
+
   const { showErrorToast } = useToast();
 
-  const [showTooltipMessage, setShowTooltipMessage] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>({
+  const { control, handleSubmit } = useForm<FormValues>({
     defaultValues: {
       paymentMethod: "Cash",
     },
   });
+
+  const addressInfo = `${userOrder.deliveryAddressObj.postalIndex}, 
+  ${userOrder.deliveryAddressObj.deliveryAddress}, 
+  ${userOrder.deliveryAddressObj.addressDetails}, 
+  ${userOrder.deliveryAddressObj.comments}`;
 
   const handleChangePayment = (e: ChangeEvent<HTMLInputElement>) => {
     const paymentMethod = e.target.value;
@@ -80,6 +74,7 @@ export const OrderDetailsStep = ({
         text: "Payment by cash selected",
       });
     }
+
     if (paymentMethod === "Online") {
       trackAmplitudeEvent("payOnline", {
         text: "Payment online selected",
@@ -89,9 +84,10 @@ export const OrderDetailsStep = ({
 
   const onSubmit = async (data: FormValues) => {
     setLoading(true);
-    // trackAmplitudeEvent("submitOrder", {
-    //   text: "On submit click",
-    // });
+
+    trackAmplitudeEvent("submitOrder", {
+      text: "On submit click",
+    });
 
     handleAddOrderDetails(data);
 
@@ -102,93 +98,18 @@ export const OrderDetailsStep = ({
       items: userOrder.items.filter(({ count }) => !!+count),
     };
 
-    const { isCurrentDayAfterTen, isCurrentDayAfterNoon } = deliveryValidation(
-      dayjs()
-    );
-
-    if (
-      isCurrentDayAfterTen &&
-      orderData.deliveryDate === dayjs().format("DD.MM.YYYY") &&
-      orderData.deliveryTime === "9-12"
-    ) {
-      showErrorToast("Please, change the delivery time");
-      return;
-    }
-
-    if (
-      isCurrentDayAfterNoon &&
-      orderData.deliveryDate === dayjs().format("DD.MM.YYYY") &&
-      orderData.deliveryTime === "9-17"
-    ) {
-      showErrorToast("Please, change the delivery date");
-      return;
-    }
-
-    const rentCount = orderData.items.find(
-      ({ itemCode }) => +itemCode === RENT_CODE
-    )?.count;
-
-    if (data.paymentMethod === "Cash") {
-      orderData.paymentStatus = "CASH";
-    }
-
-    const orderRef = await addDoc(
-      collection(db, `users/${userData.userId}/orders`),
-      orderData
-    );
-    const allOrderRef = await addDoc(collection(db, `allOrders`), orderData);
-
-    const addressRef = doc(
-      db,
-      `users/${userData.userId}/addresses/${userOrder.deliveryAddressObj.id}`
-    );
-
-    if (rentCount)
-      await updateDoc(addressRef, {
-        numberOfBottles:
-          +orderData.deliveryAddressObj.numberOfBottles + +rentCount,
-      });
-
-    const currentOrderId = orderRef.id;
-    const currentAllOrderId = allOrderRef.id;
-
-    const response = await axios.post(
-      process.env.NEXT_PUBLIC_ORDERS_SHEET_LINK as string,
+    const invoiceNumber = await processOrder(
+      userData,
+      userOrder,
       orderData,
-      {
-        headers: {
-          "Content-Type": "text/plain",
-        },
-      }
+      setPaymentUrl,
+      handleNext,
+      showErrorToast
     );
 
-    const invoiceNumber = await postInvoicesData(
-      orderData,
-      currentOrderId,
-      currentAllOrderId
-    );
+    handleAddOrderDetails({ invoiceNumber });
 
-    await updateDoc(orderRef, {
-      invoiceNumber,
-    });
-    await updateDoc(allOrderRef, {
-      invoiceNumber,
-    });
-
-    if (data.paymentMethod === "Online") {
-      await getAndSetPaymentLink(
-        +userOrder.totalPayments,
-        userOrder.phoneNumber,
-        `${userOrder.deliveryDate}, ${userOrder.deliveryTime}`,
-        currentOrderId,
-        currentAllOrderId,
-        userData.userId,
-        setPaymentUrl
-      );
-    }
     setLoading(false);
-
-    handleNext();
   };
 
   if (loading) {
@@ -284,9 +205,7 @@ export const OrderDetailsStep = ({
               <Tooltip title={t("address")}>
                 <HomeOutlined />
               </Tooltip>
-              <Typography>
-                {`${userOrder.deliveryAddressObj.postalIndex}, ${userOrder.deliveryAddressObj.deliveryAddress}, ${userOrder.deliveryAddressObj.addressDetails}, ${userOrder.deliveryAddressObj.comments}`}
-              </Typography>
+              <Typography>{addressInfo}</Typography>
             </DetailsCardItemRow>
           </DetailsCard>
         </Box>
@@ -350,8 +269,7 @@ export const OrderDetailsStep = ({
           />
         </Box>
       </FormInternalWrapper>
-
-      {renderButtonsGroup(showTooltipMessage ? "Done Requirement first" : "")}
+      {renderButtonsGroup()}
     </FormWrapper>
   );
 };

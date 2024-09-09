@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { MainContentWrapper } from "../shared/styled";
 
 const AdminDashboard = () => {
@@ -20,7 +20,7 @@ const AdminDashboard = () => {
 
   const { user } = useUserContext();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const checkAdmin = async () => {
       if (!user) {
         setIsLoading(false);

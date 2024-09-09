@@ -1,6 +1,5 @@
-import axios from "axios";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "../lib/config";
+import { FirebaseService } from "../lib/FirebaseServices";
+import { OrderService } from "../lib/OrderService";
 
 export const getAndSetPaymentLink = async (
   amount: number,
@@ -12,58 +11,36 @@ export const getAndSetPaymentLink = async (
   setUrl: (url: string) => void
 ) => {
   try {
-    const response = await fetch("/api/payment", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        amount: amount,
-        currency: "EUR",
-        description: `Delaqua Water delivery for ${phoneNumber}, ordered on ${dataAndTime}`,
-      }),
-    });
-
-    const data = await response.json();
+    const data = await OrderService.createPayment(
+      amount,
+      phoneNumber,
+      dataAndTime
+    );
 
     const formatPhoneNumber = phoneNumber?.replace(/\+/g, "");
 
-    const resp = await axios.post(
-      process.env.NEXT_PUBLIC_PAYMENT_SHEET_LINK as string,
+    await OrderService.sendPaymentDataToSheet(
+      formatPhoneNumber || "",
+      amount,
+      data.id,
+      dataAndTime
+    );
+
+    await OrderService.updateOrderPaymentData(
+      userId,
+      orderIdFromDB,
+      currentAllOrderId,
       {
-        userPhone: formatPhoneNumber,
-        amount: `${amount}€`,
-        orderId: data.id,
-        description: `date:${dataAndTime}, number: ${phoneNumber}`,
-      },
-      {
-        headers: {
-          "Content-Type": "text/plain",
-        },
+        paymentId: data.id,
+        paymentLink: data.checkout_url,
+        paymentMethod: "Online",
       }
     );
 
-    const orderRef = doc(db, `users/${userId}/orders/${orderIdFromDB}`);
-    const allOrdersRef = doc(db, `allOrders/${currentAllOrderId}`);
-
-    await updateDoc(orderRef, {
-      paymentId: data.id,
-      paymentLink: data.checkout_url,
-      paymentMethod: "Online",
-    });
-
-    await updateDoc(allOrdersRef, {
-      paymentId: data.id,
-      paymentLink: data.checkout_url,
-      paymentMethod: "Online",
-    });
-
-    const paymentRef = doc(db, `payments/${data.id}`);
-
-    await setDoc(paymentRef, {
-      userId: userId,
+    await FirebaseService.setDocument("payments", data.id, {
+      userId,
       number: phoneNumber,
-      amount: amount,
+      amount,
     });
 
     setUrl(data.checkout_url);

@@ -19,6 +19,8 @@
     "orderStatus": "Κατάσταση παραγγελίας",
     "value": "Τιμή"
   },
+  "tableTitle": "Απλήρωτες παραγγελίες",
+
   "tableHeadCells": {
     "clientId": "Αναγνωριστικό πελάτη",
     "contact": "επικοινωνία",
@@ -43,8 +45,14 @@
     "netVal": "Καθαρή αξία €",
     "vatVal": "Ποσό ΦΠΑ €",
     "": ""
-
-
+  },
+  "paymentStatuses": {
+    "Unpaid": "Απλήρωτο",
+    "CASH": "Μετρητά",
+    "ORDER_COMPLETED": "Η πληρωμή ολοκληρώθηκε",
+    "ORDER_CANCELLED": "Η πληρωμή ακυρώθηκε",
+    "ORDER_PAYMENT_DECLINED": "Η πληρωμή απορρίφθηκε",
+    "ORDER_PAYMENT_FAILED": "Η πληρωμή απέτυχε"
   },
   "removeFilter": "Αφαίρεση φίλτρου",
   "table_no_orders_yet": "Καμία παραγγελία ακόμα"

@@ -7,7 +7,7 @@ export const Wrapper = styled(Box)({
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
-  width: "130px",
+  width: "120px",
   alignSelf: "center",
   [theme.breakpoints.down(350)]: {
     flexDirection: "column",

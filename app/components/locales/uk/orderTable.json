@@ -19,6 +19,7 @@
     "orderStatus": "Статус замовлення",
     "value": "Значення"
   },
+  "tableTitle": "Неоплачені замовлення",
   "tableHeadCells": {
     "clientId": "ID клієнта",
     "contact": "контакт",
@@ -45,5 +46,14 @@
     "": ""
   },
   "table_no_orders_yet": "Поки що немає замовлень",
-  "removeFilter": "Видалити фільтр"
+  "removeFilter": "Видалити фільтр",
+  "paymentStatuses": {
+    "Unpaid": "Неоплачено",
+    "CASH": "Готівка",
+    "ORDER_COMPLETED": "Оплату завершено",
+    "ORDER_CANCELLED": "Оплату скасовано",
+    "ORDER_PAYMENT_DECLINED": "Оплату відхилено",
+    "ORDER_PAYMENT_FAILED": "Помилка оплати"
+  },
+  "": ""
 }

@@ -1,5 +1,4 @@
-import { Goods } from "../contexts/OrderDetailsContext";
-import { OrdersData } from "../types";
+import { Goods, OrdersData } from "../types";
 
 export const generateInvoiceTableRows = (order: OrdersData, goods: Goods[]) => {
   const calculation = {

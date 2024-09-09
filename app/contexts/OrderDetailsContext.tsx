@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import dayjs, { Dayjs } from "dayjs";
 import { FieldValue, serverTimestamp } from "firebase/firestore";
+import { Goods } from "../types";
 import {
   fetchAddresses,
   fetchOrders,
@@ -22,22 +23,6 @@ import {
 } from "../utils";
 import { getStaticGoodsArray } from "../utils/getStaticGoodsArray";
 import { useUserContext } from "./UserContext";
-
-export interface Goods {
-  id: string;
-  itemCode: string;
-  name: string;
-  picture: string;
-  description: string;
-  netBuyWorth: string;
-  netSaleWorth: string;
-  sellPrice: string;
-  sellPriceVAT: string;
-  taxRate: string;
-  buyPrice: string;
-  buyPriceVAT: string;
-  category: "water" | "supplies";
-}
 
 export interface UserOrderItem {
   id: string;

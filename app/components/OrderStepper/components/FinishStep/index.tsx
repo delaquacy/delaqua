@@ -3,7 +3,6 @@ import { Box, Button, Card, Typography } from "@mui/material";
 
 import styles from "../../../OrderCreated/OrderCreated.module.css";
 
-import { useScreenSize } from "@/app/hooks";
 import { useTranslation } from "react-i18next";
 
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
@@ -11,34 +10,26 @@ import { CheckBox } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import "../../../../i18n";
 
-interface FormValues {}
-
-export const FinishStep = ({
-  renderButtonsGroup,
-  handleNext,
-}: {
-  renderButtonsGroup: (errorMessage?: string) => React.ReactNode;
-  handleNext: () => void;
-}) => {
-  const { t, i18n } = useTranslation("finishModal");
+export const FinishStep = () => {
+  const { t } = useTranslation("finishModal");
   const router = useRouter();
 
   const { trackAmplitudeEvent } = useAmplitudeContext();
 
   const { userOrder, paymentUrl } = useOrderDetailsContext();
-  const { isSmallScreen } = useScreenSize();
-
-  const currentLocale = i18n.language;
 
   const clickToPay = () => {
     trackAmplitudeEvent("clickToPay", {
       text: "Click ot payment link",
     });
   };
-  const closePayment = () => {
+
+  const handleClose = () => {
     trackAmplitudeEvent("closePayment", {
       text: "Close payment",
     });
+
+    window.location.href = "/order_history";
   };
 
   const paymentText =
@@ -62,10 +53,6 @@ export const FinishStep = ({
         {t("prepare_for_payment", { amount: userOrder.totalPayments })}
       </span>
     );
-
-  const onSubmit = (data: FormValues) => {
-    console.log(data, "INSIDE");
-  };
 
   return (
     <Card
@@ -116,7 +103,7 @@ export const FinishStep = ({
           alignSelf: "center",
           width: "200px",
         }}
-        onClick={() => router.push("/order_history")}
+        onClick={handleClose}
       >
         {t("done")}
       </Button>

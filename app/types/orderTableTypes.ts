@@ -81,3 +81,21 @@ export interface Address {
   postalIndex: string;
   comments: string;
 }
+
+export interface Goods {
+  id: string;
+  itemCode: string;
+  name: string;
+  picture: string;
+  description: string;
+  netBuyWorth: string;
+  netSaleWorth: string;
+  sellPrice: string;
+  sellPriceVAT: string;
+  taxRate: string;
+  buyPrice: string;
+  buyPriceVAT: string;
+  category: "water" | "supplies";
+}
+
+export type CombinedItem = UserOrderItem & Goods;

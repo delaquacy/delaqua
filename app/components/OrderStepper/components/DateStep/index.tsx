@@ -55,18 +55,13 @@ export const DateStep = ({
 
   const { userOrder, handleAddOrderDetails } = useOrderDetailsContext();
   const { isSmallScreen } = useScreenSize();
+
   const disabledDates: any = useDatesFromDB();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(true);
   const [nextDay, setNextDay] = useState(dayjs());
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    watch,
-    setValue,
-  } = useForm<FormValues>({
+  const { control, handleSubmit, watch, setValue } = useForm<FormValues>({
     defaultValues: {
       deliveryDate: dayjs(userOrder.deliveryDate, "DD.MM.YYYY"),
       deliveryTime: userOrder.deliveryTime,

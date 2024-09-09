@@ -1,21 +1,6 @@
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../lib/config";
-
-interface Goods {
-  id: string;
-  itemCode: string;
-  name: string;
-  picture: string;
-  description: string;
-  netBuyWorth: string;
-  netSaleWorth: string;
-  sellPrice: string;
-  sellPriceVAT: string;
-  taxRate: string;
-  buyPrice: string;
-  buyPriceVAT: string;
-  category: "water" | "supplies";
-}
+import { Goods } from "../types";
 
 export const getStaticGoodsArray = async () => {
   const goodsRef = collection(db, "goods");

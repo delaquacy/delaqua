@@ -20,7 +20,7 @@ import Link from "next/link";
 export function ExpandRow(props: { order: OrdersData }) {
   const { order } = props;
   const [open, setOpen] = useState(false);
-  const { t } = useTranslation("orderslist");
+  const { t } = useTranslation(["orderslist", "orderTable"]);
 
   return (
     <Fragment>
@@ -47,7 +47,9 @@ export function ExpandRow(props: { order: OrdersData }) {
 
         <TableCell align="center">{order.totalPayments}</TableCell>
 
-        <TableCell align="center">{order.paymentStatus}</TableCell>
+        <TableCell align="center">
+          {t(`paymentStatuses.${order.paymentStatus}`, { ns: "orderTable" })}
+        </TableCell>
 
         <TableCell
           align="center"

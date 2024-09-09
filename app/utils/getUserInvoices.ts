@@ -4,6 +4,7 @@ import { collection, getDocs } from "firebase/firestore";
 import dayjs from "dayjs";
 import { db } from "../lib/config";
 import { Invoices } from "../types";
+import { sortByDate } from "./sortByDate";
 
 dayjs.extend(customParseFormat);
 
@@ -17,21 +18,9 @@ export const getUserInvoices = async (): Promise<Invoices[]> => {
       ...doc.data(),
     }));
 
-    const processedInvoices = (invoices as Invoices[]).sort((a, b) => {
-      const dateA =
-        typeof a.createdAt === "string"
-          ? dayjs(a.createdAt, "DD.MM.YYYY HH:mm").toDate()
-          : new Date(a.createdAt);
-
-      const dateB =
-        typeof b.createdAt === "string"
-          ? dayjs(b.createdAt, "DD.MM.YYYY HH:mm").toDate()
-          : new Date(b.createdAt);
-
-      return dateB.getTime() - dateA.getTime();
+    return (invoices as Invoices[]).sort((a, b) => {
+      return sortByDate(b.createdAt, a.createdAt, "DD.MM.YYYY HH:mm");
     });
-
-    return processedInvoices as Invoices[];
   } catch (error) {
     console.error("Error fetching user invoices:", error);
     return [];

@@ -13,5 +13,8 @@
   "table_no_orders_yet": "No orders yet",
   "open": "Expand to view details",
   "history": "Order history",
+  "downloadInvoice": "Download invoice",
+  "invoice": "Invoice",
+
   "close": "Collapse"
 }

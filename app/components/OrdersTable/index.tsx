@@ -1,5 +1,12 @@
 "use client";
-import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  MouseEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 
 import dayjs from "dayjs";
@@ -49,6 +56,8 @@ export default function OrdersTable() {
 
   const { showSuccessToast } = useToast();
   const { isSmallScreen } = useScreenSize();
+
+  const tableRef = useRef<any | null>(null);
 
   const getOrdersRows = async () => {
     try {
@@ -100,6 +109,12 @@ export default function OrdersTable() {
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
+    if (tableRef.current) {
+      tableRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
     setSelected([]);
   };
 
@@ -172,6 +187,7 @@ export default function OrdersTable() {
           />
 
           <TableContainer
+            ref={tableRef}
             sx={{
               height: isSmallScreen
                 ? `calc(100dvh - 240px)`

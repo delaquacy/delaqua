@@ -4,9 +4,11 @@ import {
   useOrderDetailsContext,
 } from "@/app/contexts/OrderDetailsContext";
 import { useScreenSize } from "@/app/hooks";
+import { CombinedItem } from "@/app/types";
+import { findBottlesByCode } from "@/app/utils/findBottlesByCode";
 import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { BigOrderCard } from "../BigOrderCard";
 import { OrderCard } from "../OrderCard";
@@ -37,38 +39,27 @@ export const StoreStep = ({
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(true);
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-    setValue,
-  } = useForm<FormValues>({
-    defaultValues: {
-      items: [],
-      bottlesNumberToReturn: "0",
-    },
-  });
-
-  const { fields } = useFieldArray({
-    control,
-    name: "items",
-  });
+  const { control, handleSubmit, reset, watch, setValue } = useForm<FormValues>(
+    {
+      defaultValues: {
+        items: [],
+        bottlesNumberToReturn: "0",
+      },
+    }
+  );
 
   const items = watch("items");
+
   const itemsDetails = items.map((item) => {
     const good = goods.find((good) => good.itemCode === item.itemCode);
-
     return {
       ...item,
       ...good,
     };
   });
 
-  const bigBottle = itemsDetails[1];
-  const mediumBottle = itemsDetails[2];
-  const smallBottle = itemsDetails[3];
+  const { bigBottle, bigBottleRent, middleBottle, smallBottle } =
+    findBottlesByCode(itemsDetails) as Record<string, CombinedItem | undefined>;
 
   const getOrderItemSum = (order: UserOrderItem) => {
     return +order.count ? +order.count * +order.sellPrice : "";
@@ -77,14 +68,10 @@ export const StoreStep = ({
   const onSubmit = (data: FormValues) => {
     if (showTooltipMessage) return;
 
-    console.log(data, "DATA");
-
     const formattedData = data.items.map((order) => ({
       ...order,
       sum: getOrderItemSum(order),
     }));
-
-    console.log(formattedData);
 
     handleAddOrderDetails({
       items: formattedData,
@@ -105,24 +92,28 @@ export const StoreStep = ({
   }, [userOrder.items]);
 
   useEffect(() => {
+    const bigBottleCount = bigBottle?.count ? +bigBottle.count : 0;
+    const middleBottleCount = middleBottle?.count ? +middleBottle.count : 0;
+    const smallBottleCount = smallBottle?.count ? +smallBottle.count : 0;
+
     const minOrder =
-      (isFirstOrder ? +bigBottle?.count >= 1 : +bigBottle?.count >= 2) ||
-      +mediumBottle?.count >= 2 ||
-      +smallBottle?.count >= 4;
+      (isFirstOrder ? bigBottleCount >= 1 : bigBottleCount >= 2) ||
+      middleBottleCount >= 2 ||
+      smallBottleCount >= 4;
 
     setShowTooltipMessage(!minOrder);
-  }, [bigBottle, mediumBottle, smallBottle, isFirstOrder]);
+  }, [bigBottle, middleBottle, smallBottle, isFirstOrder]);
 
   return (
     <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
       <WaterWrapper>
         {bigBottle && (
           <BigOrderCard
-            imageSrc={bigBottle.picture || ""}
+            imageSrc={bigBottle?.picture || ""}
             imageAlt={bigBottle.name}
             isFirstOrder={isFirstOrder}
             nameBottle={`items[1].count`}
-            description={bigBottle.description || ""}
+            description={bigBottle?.description || ""}
             priceBottle={bigBottle.sellPrice}
             codeBottle={bigBottle.itemCode}
             nameRent={`items[0].count`}
@@ -141,17 +132,17 @@ export const StoreStep = ({
               flex: 1,
             }}
           >
-            {mediumBottle && (
+            {middleBottle && (
               <Controller
                 control={control}
                 name={`items.2.count`}
                 render={({ field }) => (
                   <OrderCard
-                    imageAlt={mediumBottle.name}
+                    imageAlt={middleBottle.name}
                     size="50"
-                    description={mediumBottle.description || ""}
-                    price={mediumBottle!.sellPrice}
-                    code={mediumBottle!.itemCode}
+                    description={middleBottle.description || ""}
+                    price={middleBottle!.sellPrice}
+                    code={middleBottle!.itemCode}
                     count={field.value}
                     minOrder={"115Min"}
                     onAdd={() => {

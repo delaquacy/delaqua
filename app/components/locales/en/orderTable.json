@@ -19,6 +19,8 @@
     "orderStatus": "Order Status",
     "value": "Value"
   },
+  "tableTitle": "Unpaid orders",
+
   "tableHeadCells": {
       "clientId": "Client ID",
       "contact": "contact",
@@ -44,6 +46,14 @@
       "vatVal": "Amount of VAT €",
       "": ""
 
+  },
+  "paymentStatuses": {
+    "Unpaid": "Unpaid",
+    "CASH": "Cash",
+    "ORDER_COMPLETED": "Payment completed",
+    "ORDER_CANCELLED": "Payment cancelled",
+    "ORDER_PAYMENT_DECLINED": "Payment declined",
+    "ORDER_PAYMENT_FAILED": "Payment failed"
   },
   "removeFilter": "Remove filter",
   "table_no_orders_yet": "No orders yet"

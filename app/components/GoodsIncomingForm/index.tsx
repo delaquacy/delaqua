@@ -1,44 +1,24 @@
-import {
-  Box,
-  Button,
-  Divider,
-  FormHelperText,
-  TextField,
-  Tooltip,
-} from "@mui/material";
-import dayjs, { Dayjs } from "dayjs";
-import { useEffect, useState } from "react";
-import SelectItem from "./Select";
-import { getStaticGoodsArray } from "@/app/utils/getStaticGoodsArray";
 import { useScreenSize, useToast } from "@/app/hooks";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { db } from "@/app/lib/config";
+import { Goods } from "@/app/types";
+import { addItemsQuantityToInventoryTable } from "@/app/utils/addItemsToInventoryTable";
+import { getStaticGoodsArray } from "@/app/utils/getStaticGoodsArray";
+import { yupResolver } from "@hookform/resolvers/yup";
 import {
   AddCircleOutline,
   CheckCircleOutline,
   Delete,
 } from "@mui/icons-material";
+import { Box, Button, Divider, FormHelperText, Tooltip } from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "@/app/lib/config";
-import { addItemsQuantityToInventoryTable } from "@/app/utils/addItemsToInventoryTable";
+import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { validationSchema } from "./validationSchema";
 import { ControllerInputField } from "../shared";
-
-interface Goods {
-  id: string;
-  itemCode: string;
-  name: string;
-  picture: string;
-  netBuyWorth: string;
-  netSaleWorth: string;
-  sellPrice: string;
-  sellPriceVAT: string;
-  taxRate: string;
-  buyPrice: string;
-  buyPriceVAT: string;
-}
+import SelectItem from "./Select";
+import { validationSchema } from "./validationSchema";
 
 export interface InventoryItem {
   id: string;

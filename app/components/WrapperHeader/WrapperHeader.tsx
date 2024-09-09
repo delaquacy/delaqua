@@ -1,7 +1,7 @@
 "use client";
 import { useUserContext } from "@/app/contexts/UserContext";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import Headers from "../Headers/Headers";
 import { UnpaidOrdersModal } from "../UnpaidOrdersModal";
 
@@ -11,7 +11,7 @@ export default function WrapperHeader() {
   const pathname = usePathname();
   const router = useRouter();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (pathname.includes("/my_account")) {
       router.push("/new_order");
     }
