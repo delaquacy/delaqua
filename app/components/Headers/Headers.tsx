@@ -6,6 +6,7 @@ import { app } from "@/app/lib/config";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import i18nConfig from "@/i18nConfig";
 import {
+  Close,
   ExitToApp,
   ManageAccounts,
   ManageAccountsSharp,
@@ -18,21 +19,29 @@ import {
   CircularProgress,
   IconButton,
   MenuItem,
+  Modal,
   Select,
   Toolbar,
+  Typography,
 } from "@mui/material";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import { User, getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { SnackbarProvider } from "notistack";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 import { LogInProps } from "../Logins/Logins";
 import WrapperLogin from "../WrapperLogin/WrapperLogin";
 import styles from "./Header.module.css";
 import { MyAccountMenu } from "./MyAccountMenu";
+
+dayjs.extend(customParseFormat);
+
+const END_INFO_BANNER = "13.09.2024 00:00";
 
 export default function Headers({
   setShowWindow,
@@ -41,17 +50,19 @@ export default function Headers({
 }) {
   const { i18n, t } = useTranslation("main");
   const { trackAmplitudeEvent } = useAmplitudeContext();
-
-  const [showLogin, setShowLogin] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
-  const { isToggled, setToggle } = useToggle();
-  const currentLocale = i18n.language;
-
   const { user, isAdmin, unpaidOrders, setUser } = useUserContext();
-
+  const currentLocale = i18n.language;
+  const { isToggled, setToggle } = useToggle();
   const router = useRouter();
   const auth = getAuth(app);
   const pathname = usePathname();
+
+  const [showLogin, setShowLogin] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [showInfoModal, setShowInfoModal] = useState(true);
+  const [open, setOpen] = useState(true);
+
+  const handleClose = () => setOpen(false);
 
   useEffect(() => {
     if (isToggled && !user) {
@@ -106,6 +117,17 @@ export default function Headers({
     }
   };
 
+  useLayoutEffect(() => {
+    const today = dayjs();
+    const endDate = dayjs(END_INFO_BANNER, "DD.MM.YYYY HH:mm");
+
+    if (today.isAfter(endDate)) {
+      console.log("here");
+      setShowInfoModal(false);
+      setOpen(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (pathname == "/new_order" || pathname === "/order_history") {
       setShowLogin(false);
@@ -128,6 +150,66 @@ export default function Headers({
 
   return (
     <SnackbarProvider>
+      {!pathname.endsWith("/admin_dashboard") && showInfoModal && (
+        <>
+          <Box
+            sx={{
+              background: "#428bca",
+              color: "white",
+              padding: 2,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "22px",
+              fontWeight: "bold",
+            }}
+          >
+            <Typography
+              width="80%"
+              fontSize={18}
+              fontWeight={"bold"}
+              textAlign="center"
+            >
+              {t("info")}
+            </Typography>
+          </Box>
+
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <IconButton
+                onClick={handleClose}
+                sx={{
+                  position: "absolute",
+                  right: 5,
+                  top: 5,
+                }}
+              >
+                <Close />
+              </IconButton>
+              <Typography
+                variant="h6"
+                component="h2"
+                fontWeight="bold"
+                fontSize={30}
+              >
+                {t("customers")}
+              </Typography>
+              <Typography
+                id="modal-modal-description"
+                textAlign="center"
+                sx={{ mt: 2 }}
+              >
+                {t("info")}
+              </Typography>
+            </Box>
+          </Modal>
+        </>
+      )}
       {user &&
         unpaidOrders.length !== 0 &&
         !pathname.includes("/admin_dashboard") && (
@@ -284,3 +366,19 @@ export default function Headers({
     </SnackbarProvider>
   );
 }
+
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 350,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: "10px",
+};
