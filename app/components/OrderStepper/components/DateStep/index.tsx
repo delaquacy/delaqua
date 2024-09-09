@@ -75,6 +75,7 @@ export const DateStep = ({
     isCurrentDayAfterNoon,
     isCurrentDayPrevious,
     isCurrentDayIsSunday,
+    infoDay,
   } = deliveryValidation(selectedDate as Dayjs);
 
   if (isCurrentDayAfterTen) {
@@ -82,10 +83,11 @@ export const DateStep = ({
   }
 
   const shouldDisableDate = (date: Dayjs) => {
-    const { isCurrentDayAfterNoon, isCurrentDayIsSunday } =
+    const { isCurrentDayAfterNoon, isCurrentDayIsSunday, infoDay } =
       deliveryValidation(date);
 
     return (
+      infoDay ||
       isCurrentDayIsSunday ||
       disabledDates.includes(date.format("DD.MM.YYYY")) ||
       isCurrentDayAfterNoon
@@ -123,10 +125,18 @@ export const DateStep = ({
 
   useEffect(() => {
     const disableNextConditions =
-      isCurrentDayAfterNoon || isCurrentDayPrevious || isCurrentDayIsSunday;
+      isCurrentDayAfterNoon ||
+      isCurrentDayPrevious ||
+      isCurrentDayIsSunday ||
+      infoDay;
 
     setShowTooltipMessage(disableNextConditions);
-  }, [isCurrentDayAfterNoon, isCurrentDayPrevious, isCurrentDayIsSunday]);
+  }, [
+    isCurrentDayAfterNoon,
+    isCurrentDayPrevious,
+    isCurrentDayIsSunday,
+    infoDay,
+  ]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
