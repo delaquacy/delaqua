@@ -679,7 +679,7 @@ const MyForm = () => {
         body: JSON.stringify({
           amount: amount,
           currency: "EUR",
-          description: `Delaqua Water delivery for ${phoneNumber}, ordered on ${dataAndTime}`,
+          description: `Delaqua Water delivery for ${phoneNumber}, ordered for ${dataAndTime}`,
         }),
       });
       const data = await response.json();
@@ -741,6 +741,7 @@ const MyForm = () => {
     isCurrentDayAfterNoon,
     isCurrentDayPrevious,
     isCurrentDayIsSunday,
+    infoDay,
   } = deliveryValidation(selectedDate);
 
   // Calculate the next delivery day.
@@ -794,6 +795,7 @@ const MyForm = () => {
   const disableFieldsCondition =
     (isCurrentDayAfterNoon && !!selectedDate) ||
     isCurrentDayIsSunday ||
+    infoDay ||
     isCurrentDayPrevious;
 
   useEffect(() => {
@@ -1196,7 +1198,8 @@ const MyForm = () => {
                         disabled={
                           isCurrentDayAfterNoon ||
                           isCurrentDayIsSunday ||
-                          isCurrentDayPrevious
+                          isCurrentDayPrevious ||
+                          infoDay
                         }
                       />
                       <FormControlLabel
@@ -1207,7 +1210,8 @@ const MyForm = () => {
                           isCurrentDayAfterTen ||
                           isCurrentDayAfterNoon ||
                           isCurrentDayIsSunday ||
-                          isCurrentDayPrevious
+                          isCurrentDayPrevious ||
+                          infoDay
                         }
                       />
                     </RadioGroup>

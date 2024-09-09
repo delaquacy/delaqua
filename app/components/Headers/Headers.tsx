@@ -1,47 +1,47 @@
 "use client";
 
-import styles from "./Header.module.css";
-import Image from "next/image";
-import Link from "next/link";
+import { useUserContext } from "@/app/contexts/UserContext";
+import { useToggle } from "@/app/lib/ToggleContext";
+import { app } from "@/app/lib/config";
+import useAmplitudeContext from "@/app/utils/amplitudeHook";
+import i18nConfig from "@/i18nConfig";
+import {
+  AccountCircle,
+  Close,
+  ExitToApp,
+  ManageAccounts,
+  ManageAccountsSharp,
+} from "@mui/icons-material";
 import LoginIcon from "@mui/icons-material/Login";
 import {
-  CircularProgress,
-  MenuItem,
-  Select,
   AppBar,
   Box,
-  Toolbar,
   Button,
-  Typography,
-  Modal,
+  CircularProgress,
   IconButton,
+  MenuItem,
+  Modal,
+  Select,
+  Toolbar,
+  Typography,
 } from "@mui/material";
-import { getAuth, onAuthStateChanged, signOut, User } from "firebase/auth";
-import { app } from "@/app/lib/config";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import { User, getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { SnackbarProvider } from "notistack";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
 import { LogInProps } from "../Logins/Logins";
-import {
-  AccountCircle,
-  ManageAccounts,
-  ManageAccountsSharp,
-  ExitToApp,
-  Close,
-} from "@mui/icons-material";
-import { useToggle } from "@/app/lib/ToggleContext";
-import useAmplitudeContext from "@/app/utils/amplitudeHook";
-import i18nConfig from "@/i18nConfig";
-import { SnackbarProvider } from "notistack";
 import WrapperLogin from "../WrapperLogin/WrapperLogin";
-import { useUserContext } from "@/app/contexts/UserContext";
-import { useEffect, useLayoutEffect, useState } from "react";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
+import styles from "./Header.module.css";
 
 dayjs.extend(customParseFormat);
 
-const END_INFO_BANNER = "27.08.2024 12:00";
+const END_INFO_BANNER = "13.09.2024 00:00";
 
 export default function Headers({
   setShowWindow,

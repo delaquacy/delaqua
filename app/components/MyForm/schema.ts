@@ -1,4 +1,3 @@
-import { deliveryValidation } from "@/app/utils/deliveryDateValidation";
 import * as yup from "yup";
 
 export const schema = yup.object().shape({
@@ -14,33 +13,7 @@ export const schema = yup.object().shape({
   pump: yup.boolean(),
   bottlesNumberToBuy: yup.number().required("Choose bootle number"),
   bottlesNumberToReturn: yup.number().required("Choose bootle number"),
-  deliveryDate: yup
-    .date()
-    .test("valid-delivery-date", "", (value, context) => {
-      const {
-        isCurrentDayAfterNoon,
-        isCurrentDayPrevious,
-        isCurrentDayIsSunday,
-      } = deliveryValidation(value as Date);
-
-      if (
-        (isCurrentDayAfterNoon &&
-          !isCurrentDayIsSunday &&
-          !isCurrentDayPrevious) ||
-        isCurrentDayPrevious
-      ) {
-        return context.createError({});
-      }
-
-      if (isCurrentDayIsSunday) {
-        return context.createError({
-          message:
-            "Sunday is the only non-delivery day for us 🙌   You can place your order for Monday-Saturday",
-        });
-      }
-      return true;
-    })
-    .required("Choose delivery date"),
+  deliveryDate: yup.date().required("Choose delivery date"),
   deliveryTime: yup.string().required("Choose time"),
   paymentMethod: yup.string().required("Choose payment method"),
   comments: yup.string(),
