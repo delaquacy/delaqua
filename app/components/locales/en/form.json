@@ -105,7 +105,15 @@
   "addToOrder": "Add to your order",
   "maxVal": "Maximum value",
   "outOfStock": "Out of stock",
+  "home": "Home",
+  "business": "Business",
+  "companyName": "Company name",
+  "companyNameLabel": "Official company name for invoice issue",
+  "contactPerson": "Contact person number",
+  "phoneNumber": "Phone number",
+  "VATNum": "VAT number",
 
+  
   "": ""
 
 }

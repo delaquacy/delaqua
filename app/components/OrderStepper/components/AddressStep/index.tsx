@@ -22,10 +22,13 @@ import {
   ToggleButtonGroupWrap,
 } from "./styled";
 
+const MAX_ADDRESS_NUM = 5;
+
 interface FormValues {
   id?: string;
   firstAndLast: string;
   addressDetails: string;
+  phoneNumber?: string;
   deliveryAddress: string;
   geolocation: string;
   postalIndex: string;
@@ -33,11 +36,13 @@ interface FormValues {
   createdAt: FieldValue;
   archived: boolean;
   numberOfBottles: string;
+  addressType?: string;
 }
 
 export const ADDRESS_DEFAULT_VALUES = {
   firstAndLast: "",
   postalIndex: "",
+  phoneNumber: "",
   deliveryAddress: "",
   geolocation: "",
   addressDetails: "",
@@ -45,6 +50,7 @@ export const ADDRESS_DEFAULT_VALUES = {
   createdAt: serverTimestamp(),
   archived: false,
   numberOfBottles: "",
+  addressType: "Home",
 };
 
 export const AddressStep = ({
@@ -59,7 +65,7 @@ export const AddressStep = ({
   const { userOrder, userData, loading, handleAddOrderDetails, setUserData } =
     useOrderDetailsContext();
   const { isSmallScreen } = useScreenSize();
-  const { showSuccessToast } = useToast();
+  const { showSuccessToast, showErrorToast } = useToast();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(
     !userOrder.deliveryAddressObj.id
@@ -211,67 +217,78 @@ export const AddressStep = ({
           />
         </FormWrapper>
       ) : (
-        <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
-          <FormHeaderWrapper>{t("deliveryAddress")}</FormHeaderWrapper>
-          <ToggleButtonGroupWrap
-            key={"1"}
-            orientation="vertical"
-            value={
-              addresses.find(({ id }) => id === selectedAddress?.id) || null
-            }
-            exclusive
-            onChange={(e, newVal) => {
-              setSelectedAddress(newVal);
-              handleSetNewValues(newVal);
-              setShowTooltipMessage(!newVal);
-            }}
-          >
-            {addresses.map((address, index) => (
-              <ToggleButton
-                key={`${address.id}-index`}
-                value={address}
-                sx={{
-                  padding: "7px",
-                  width: "100%",
-                  textTransform: "none",
-                }}
-              >
-                <AddressDetailCard
-                  onRemove={handleRemoveAddress}
-                  selected={selectedAddress?.id === address.id}
-                  onTransfer={() =>
-                    handleTransferBottles(
-                      addresses.filter(({ id }) => id !== address.id)[0].id,
-                      address.numberOfBottles
-                    )
-                  }
-                  canBeRemoved={addresses.length > 1}
-                  address={address}
-                />
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroupWrap>
+        <>
+          <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
+            <FormHeaderWrapper>{t("deliveryAddress")}</FormHeaderWrapper>
+            <ToggleButtonGroupWrap
+              orientation="vertical"
+              value={
+                addresses.find(({ id }) => id === selectedAddress?.id) || null
+              }
+              exclusive
+              onChange={(e, newVal) => {
+                setSelectedAddress(newVal);
+                handleSetNewValues(newVal);
+                setShowTooltipMessage(!newVal);
+              }}
+            >
+              {addresses.map((address, index) => (
+                <ToggleButton
+                  key={address.id}
+                  value={address}
+                  sx={{
+                    padding: "7px",
+                    width: "100%",
+                    textTransform: "none",
+                  }}
+                >
+                  <AddressDetailCard
+                    onRemove={handleRemoveAddress}
+                    selected={selectedAddress?.id === address.id}
+                    onTransfer={() =>
+                      handleTransferBottles(
+                        addresses.filter(({ id }) => id !== address.id)[0].id,
+                        address.numberOfBottles
+                      )
+                    }
+                    canBeRemoved={addresses.length > 1}
+                    address={address}
+                  />
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroupWrap>
 
-          <ControllerInputField
-            name={"comments"}
-            type="string"
-            control={control}
-            label={`${t("comments")}`}
-            error={false}
-            helperText={`*${t("comments_placeholder")}`}
-            multiline
-            sx={{
-              flex: 1,
-            }}
-          />
-          <FormHeaderButton onClick={() => setShowAddressForm(true)}>
-            <AddLocationAltOutlined />
-            {t("add_new_address")}
-          </FormHeaderButton>
-          {renderButtonsGroup(
-            showTooltipMessage ? "Please select delivery address" : ""
-          )}
-        </FormWrapper>
+            <ControllerInputField
+              name={"comments"}
+              type="string"
+              control={control}
+              label={`${t("comments")}`}
+              error={false}
+              helperText={`*${t("comments_placeholder")}`}
+              multiline
+              sx={{
+                flex: 1,
+              }}
+            />
+            <FormHeaderButton
+              onClick={() => {
+                console.log(addresses.length, "addresses.length");
+                if (addresses.length >= 5) {
+                  showErrorToast("You cant have more than 5 addresses");
+                  return;
+                }
+
+                setShowAddressForm(true);
+              }}
+            >
+              <AddLocationAltOutlined />
+              {t("add_new_address")}
+            </FormHeaderButton>
+            {renderButtonsGroup(
+              showTooltipMessage ? "Please select delivery address" : ""
+            )}
+          </FormWrapper>
+        </>
       )}
     </>
   );

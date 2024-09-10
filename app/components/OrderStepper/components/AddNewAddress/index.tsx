@@ -1,8 +1,14 @@
 import { useScreenSize } from "@/app/hooks";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
 import { FieldValue } from "firebase/firestore";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { ControllerInputField } from "@/app/components/shared";
@@ -14,6 +20,7 @@ import { ButtonsWrapper, FieldWrapper, FormWrapper } from "./styled";
 interface FormValues {
   id?: string;
   firstAndLast: string;
+  phoneNumber: string;
   addressDetails: string;
   deliveryAddress: string;
   geolocation: string;
@@ -22,6 +29,7 @@ interface FormValues {
   createdAt: FieldValue;
   archived: boolean;
   numberOfBottles: string;
+  addressType?: string;
 }
 
 export const AddNewAddress = ({
@@ -39,23 +47,70 @@ export const AddNewAddress = ({
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: ADDRESS_DEFAULT_VALUES,
     resolver: yupResolver(addAddressValidationSchema as any),
   });
 
+  const addressType = watch("addressType");
+  const homeAddress = addressType === "Home";
+
   return (
     <FormWrapper component={"form"} onSubmit={handleSubmit(onAdd)}>
       <Box>
+        <Controller
+          control={control}
+          name="addressType"
+          render={({ field }) => (
+            <RadioGroup
+              row
+              value={field.value}
+              onChange={(e) => {
+                field.onChange(e);
+              }}
+              sx={{
+                gap: "10px",
+                paddingInline: "2px",
+                borderBlock: "1px solid lightgray",
+                width: "fit-content",
+                marginBottom: "10px",
+              }}
+            >
+              <FormControlLabel
+                value="Home"
+                control={<Radio />}
+                label={t("home")}
+              />
+              <FormControlLabel
+                value="Business"
+                control={<Radio />}
+                label={t("business")}
+              />
+            </RadioGroup>
+          )}
+        />
         <FieldWrapper is_small_screen={isSmallScreen.toString()}>
           <ControllerInputField
             name={"firstAndLast"}
             type="string"
             control={control}
-            label={`${t("first_and_last")} *`}
+            label={`${homeAddress ? t("first_and_last") : t("companyName")} *`}
             error={!!errors.firstAndLast}
             helperText={errors.firstAndLast?.message as string}
+            sx={{
+              flex: 1,
+            }}
+          />
+
+          <ControllerInputField
+            name={"phoneNumber"}
+            type="string"
+            control={control}
+            label={`${homeAddress ? t("phoneNumber") : t("contactPerson")} *`}
+            error={!!errors.phoneNumber}
+            helperText={errors.phoneNumber?.message as string}
             sx={{
               flex: 1,
             }}
@@ -72,6 +127,8 @@ export const AddNewAddress = ({
               flex: 1,
             }}
           />
+        </FieldWrapper>
+        <FieldWrapper is_small_screen={isSmallScreen.toString()}>
           <ControllerInputField
             name={"deliveryAddress"}
             type="string"
@@ -83,9 +140,6 @@ export const AddNewAddress = ({
               flex: 1,
             }}
           />
-        </FieldWrapper>
-
-        <FieldWrapper is_small_screen={isSmallScreen.toString()}>
           <Box
             sx={{
               flex: 1,
@@ -125,19 +179,19 @@ export const AddNewAddress = ({
               />
             }
           />
-          <ControllerInputField
-            name={"comments"}
-            type="string"
-            control={control}
-            label={`${t("comments")}`}
-            error={false}
-            helperText={t("comments_placeholder")}
-            multiline
-            sx={{
-              flex: 1,
-            }}
-          />
         </FieldWrapper>
+        <ControllerInputField
+          name={"comments"}
+          type="string"
+          control={control}
+          label={`${t("comments")}`}
+          error={false}
+          helperText={t("comments_placeholder")}
+          multiline
+          sx={{
+            flex: 1,
+          }}
+        />
       </Box>
 
       <ButtonsWrapper>
