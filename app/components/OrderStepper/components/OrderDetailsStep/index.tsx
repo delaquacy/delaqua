@@ -117,12 +117,15 @@ export const OrderDetailsStep = ({
       <Box
         sx={{
           display: "flex",
+          flexDirection: "column",
+          gap: "50px",
           width: "100%",
-          height: "100%",
-          justifyContent: "center",
+          justifyContent: "top",
+          marginTop: "30px",
           alignItems: "center",
         }}
       >
+        <Typography align="center">{t("loading_paymentLink")}</Typography>
         <CircularProgress size={100} thickness={2} />
       </Box>
     );

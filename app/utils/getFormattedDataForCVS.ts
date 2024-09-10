@@ -1,7 +1,24 @@
-import { OrdersData } from "../types";
+import { CombinedItem, OrdersData, UserOrderItem } from "../types";
+import { findBottlesByCode } from "./findBottlesByCode";
+
+const POMP_CODES_MAX = 104;
 
 export const getFormattedDataForCVS = (orders: OrdersData[]) => {
   return orders.map((order) => {
+    const { bigBottle, bigBottleRent, middleBottle, smallBottle } =
+      findBottlesByCode(order?.items) as Record<
+        string,
+        CombinedItem | undefined
+      >;
+
+    const pomps =
+      order?.items &&
+      order?.items.reduce(
+        (acc: string, item: UserOrderItem) =>
+          +item.itemCode < +POMP_CODES_MAX ? `${acc} ${item.itemCode}` : acc,
+        ""
+      );
+
     const {
       userId,
       useId,
@@ -26,9 +43,11 @@ export const getFormattedDataForCVS = (orders: OrdersData[]) => {
       "Client ID": userId || useId,
       "Client Name": firstAndLast,
       "Client Phone": phoneNumber,
-      "Bottles to delivery": bottlesNumberToBuy,
-      "Bottles to return": bottlesNumberToReturn,
-      Pump: pump,
+      "18.9 L Bottles to delivery": bigBottle?.count || "-",
+      "15 L Bottles to delivery": middleBottle?.count || "-",
+      "10 L Bottles to delivery": smallBottle?.count || "-",
+      "Bottles to return": bottlesNumberToReturn || "-",
+      Pump: pomps || "-",
       Date: deliveryDate,
       Index: postalIndex,
       Address: deliveryAddress,
