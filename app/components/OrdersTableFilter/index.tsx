@@ -1,24 +1,24 @@
 "use client";
-import { ChangeEvent, Dispatch, SetStateAction } from "react";
-import { TableHeadCells } from "@/app/constants/TableHeadCells";
-import {
-  MenuItem,
-  Box,
-  TextField,
-  SelectChangeEvent,
-  Button,
-  Tooltip,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { useToast } from "@/app/hooks/useToast";
-import { useTranslation } from "react-i18next";
-import { FilterItem } from "@/app/types";
-import { useScreenSize } from "@/app/hooks";
 import {
   DELIVERY_TIMES,
   ORDER_STATUSES,
   PAYMENT_STATUSES,
 } from "@/app/constants/TableFilterFieldsValues";
+import { TableHeadCells } from "@/app/constants/TableHeadCells";
+import { useScreenSize } from "@/app/hooks";
+import { useToast } from "@/app/hooks/useToast";
+import { FilterItem } from "@/app/types";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  Box,
+  Button,
+  MenuItem,
+  SelectChangeEvent,
+  TextField,
+  Tooltip,
+} from "@mui/material";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
+import { useTranslation } from "react-i18next";
 import { DateRangePicker } from "./DateRangePicker";
 import SelectFilter from "./SelectFilter";
 
@@ -174,7 +174,9 @@ export const OrdersTableFilter = ({
                 />
               )}
 
-              {(filter.column === "Phone Number" || filter.column === "") && (
+              {(filter.column === "Phone Number" ||
+                filter.column === "Client ID" ||
+                filter.column === "") && (
                 <TextField
                   id="value-input"
                   label={t("fieldsLabel.value")}

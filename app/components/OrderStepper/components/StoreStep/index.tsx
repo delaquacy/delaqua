@@ -61,17 +61,26 @@ export const StoreStep = ({
   const { bigBottle, bigBottleRent, middleBottle, smallBottle } =
     findBottlesByCode(itemsDetails) as Record<string, CombinedItem | undefined>;
 
-  const getOrderItemSum = (order: UserOrderItem) => {
-    return +order.count ? +order.count * +order.sellPrice : "";
+  const getOrderItemSum = (orderCount: string, orderSellPrice: string) => {
+    return +orderCount * +orderSellPrice;
   };
 
   const onSubmit = (data: FormValues) => {
     if (showTooltipMessage) return;
 
-    const formattedData = data.items.map((order) => ({
-      ...order,
-      sum: getOrderItemSum(order),
-    }));
+    const formattedData = data.items.map((order) => {
+      const isBigBottle = +order.itemCode === 119;
+      const newSellPrice =
+        isFirstOrder && isBigBottle
+          ? `${+order.sellPrice + 1}`
+          : order.sellPrice;
+
+      return {
+        ...order,
+        sellPrice: newSellPrice,
+        sum: getOrderItemSum(order.count, newSellPrice),
+      };
+    });
 
     handleAddOrderDetails({
       items: formattedData,
