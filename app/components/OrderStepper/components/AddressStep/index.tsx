@@ -102,6 +102,8 @@ export const AddressStep = ({
     showSuccessToast(`Add new address successfully`);
     setSelectedAddress(newAddress);
     setShowAddressForm(false);
+
+    window.location.reload();
   };
 
   const handleRemoveAddress = async (address: FormValues) => {
