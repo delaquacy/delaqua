@@ -15,8 +15,8 @@ export const getClipboardOrderRowData = (row: OrdersData) => {
       ""
     );
 
-  return `${row.userId || row.useId}\t ${row.phoneNumber}\t  ${
-    row.firstAndLast
+  return `${row.userId || row.useId}\t ${row.firstAndLast}\t  ${
+    row.phoneNumber
   }\t ${bigBottle?.count || row.bottlesNumberToBuy}\t ${
     row.bottlesNumberToReturn
   }\t ${middleBottle?.count || "-"}\t ${
