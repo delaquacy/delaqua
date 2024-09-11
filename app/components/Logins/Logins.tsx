@@ -164,7 +164,7 @@ export default function Logins({ params }: LogInProps) {
       setOtp("");
       // User is an administrator, access to admin section allowed
       isAdmin ? router.push("/admin_dashboard") : router.push("/new_order");
-      router.refresh();
+      window.location.reload();
 
       setToggle(false);
       trackAmplitudeEvent("myAccount", {

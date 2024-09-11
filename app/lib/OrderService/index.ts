@@ -30,7 +30,7 @@ export const OrderService = {
     await FirebaseService.updateDocument(
       `users/${userId}/addresses`,
       addressId,
-      { numberOfBottles: rentCount }
+      { numberOfBottles: rentCount || 0 }
     );
   },
 
