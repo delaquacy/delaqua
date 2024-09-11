@@ -45,7 +45,7 @@ export const OrderRow = ({
     row?.items &&
     row?.items.reduce(
       (acc: string, item: UserOrderItem) =>
-        +item.itemCode < +POMP_CODES_MAX ? `${acc} ${item.itemCode}` : acc,
+        +item.itemCode <= +POMP_CODES_MAX ? `${acc} ${item.itemCode}` : acc,
       ""
     );
 
@@ -146,9 +146,7 @@ export const OrderRow = ({
         {bigBottle?.count || row.bottlesNumberToBuy}
       </TableCell>
 
-      <TableCell align="center">
-        {bigBottleRent?.count || row.bottlesNumberToReturn || 0}
-      </TableCell>
+      <TableCell align="center">{row.bottlesNumberToReturn || 0}</TableCell>
 
       <TableCell align="center">{middleBottle?.count || "-"}</TableCell>
 
