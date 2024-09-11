@@ -51,7 +51,7 @@ export const processOrder = async (
     await OrderService.updateAddressWithBottles(
       userData.userId,
       userOrder.deliveryAddressObj.id,
-      +orderData.deliveryAddressObj.numberOfBottles + +rentCount
+      (+orderData.deliveryAddressObj.numberOfBottles || 0) + +rentCount
     );
   }
 

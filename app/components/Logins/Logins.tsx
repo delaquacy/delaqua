@@ -1,26 +1,26 @@
 "use client";
-import React, { useState, useEffect, ChangeEvent } from "react";
-import {
-  ConfirmationResult,
-  getAuth,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-} from "firebase/auth";
-import { useRouter } from "next/navigation";
-import { Box, Button, TextField, Typography } from "@mui/material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { enqueueSnackbar } from "notistack";
-import { app, db } from "../../lib/config";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import PhoneInput from "react-phone-number-input";
-import CloseIcon from "@mui/icons-material/Close";
-import { useTranslation } from "react-i18next";
-import styles from "./page.module.css";
-import "../../i18n";
-import useAmplitudeContext from "@/app/utils/amplitudeHook";
+import { useUserContext } from "@/app/contexts/UserContext";
 import { useToggle } from "@/app/lib/ToggleContext";
 import { adminCheck } from "@/app/utils/adminCheck";
-import { useUserContext } from "@/app/contexts/UserContext";
+import useAmplitudeContext from "@/app/utils/amplitudeHook";
+import CloseIcon from "@mui/icons-material/Close";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import {
+  ConfirmationResult,
+  RecaptchaVerifier,
+  getAuth,
+  signInWithPhoneNumber,
+} from "firebase/auth";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+import { enqueueSnackbar } from "notistack";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import PhoneInput from "react-phone-number-input";
+import "../../i18n";
+import { app, db } from "../../lib/config";
+import styles from "./page.module.css";
 
 interface CustomWindow extends Window {
   recaptchaVerifier?: any;
@@ -164,6 +164,8 @@ export default function Logins({ params }: LogInProps) {
       setOtp("");
       // User is an administrator, access to admin section allowed
       isAdmin ? router.push("/admin_dashboard") : router.push("/new_order");
+      router.refresh();
+
       setToggle(false);
       trackAmplitudeEvent("myAccount", {
         text: "Redirect to my_account",

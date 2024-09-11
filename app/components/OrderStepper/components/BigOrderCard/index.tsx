@@ -55,7 +55,7 @@ export const BigOrderCard = ({
   const maxNumBottlesReturn = userOrder.deliveryAddressObj.numberOfBottles;
 
   const rentPrice = Math.max(
-    +priceRent * (+currentBottlesNum - +currentBottlesReturn),
+    +priceRent * (+currentBottlesNum - +(currentBottlesReturn || 0)),
     0
   );
 

@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import { getFormattedDateString } from "./getFormattedDateString";
 import { FilterItem, OrdersData } from "../types";
+import { getFormattedDateString } from "./getFormattedDateString";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -26,6 +26,8 @@ export const getFilteredOrders = (
       );
     },
     "Phone Number": (order, filter) => order.phoneNumber === filter.value1,
+    "Client ID": (order, filter) =>
+      (order?.userId || order?.useId || "") === +filter.value1,
     "Payment Status": (order, filter) => order.paymentStatus === filter.value1,
     "Delivery Time": (order, filter) =>
       order.deliveryTime === filter.value1.split(" ").join(""),

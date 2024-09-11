@@ -33,6 +33,7 @@ export const TableHeadCells: readonly HeadCell[] = [
     numeric: false,
     disablePadding: true,
     sortable: false,
+    columns: "Client ID",
     label: "tableHeadCells.clientId",
   },
   {
