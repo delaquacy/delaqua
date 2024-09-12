@@ -34,7 +34,7 @@ import {
   TableRow,
 } from "@mui/material";
 
-import { OrdersTableToolbar } from "../OrdersTableToolbar.tsx";
+import { OrdersTableToolbar } from "../OrdersTableToolbar";
 import { OrderRow } from "./OrdersRow";
 
 dayjs.extend(customParseFormat);
