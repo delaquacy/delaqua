@@ -52,7 +52,6 @@ export const BigOrderCard = ({
 
   const currentBottlesNum = watch(nameBottle);
   const currentBottlesReturn = watch(`${nameReturn}`) || 0;
-  const maxNumBottlesReturn = userOrder.deliveryAddressObj.numberOfBottles;
 
   const rentPrice = Math.max(
     +priceRent * (+currentBottlesNum - +(currentBottlesReturn || 0)),
@@ -86,7 +85,6 @@ export const BigOrderCard = ({
             alignSelf: "center",
             objectFit: "contain",
             width: "120px",
-            // maxWidth: "200px",
             aspectRatio: 7 / 11,
           }}
         />
@@ -136,14 +134,7 @@ export const BigOrderCard = ({
 
                 <OrderCardCounter
                   count={field.value}
-                  tooltipMessage={
-                    +field.value === +maxNumBottlesReturn ? t("maxVal") : ""
-                  }
-                  onAdd={() =>
-                    field.onChange(
-                      Math.min(+field.value + 1, +maxNumBottlesReturn)
-                    )
-                  }
+                  onAdd={() => field.onChange(+field.value + 1)}
                   onRemove={() => {
                     field.onChange(Math.max(+field.value - 1, 0));
                   }}

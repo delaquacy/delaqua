@@ -95,7 +95,7 @@ export const StoreStep = ({
     if (userOrder.items.length > 0) {
       reset({
         items: userOrder.items,
-        bottlesNumberToReturn: userOrder.deliveryAddressObj.numberOfBottles,
+        bottlesNumberToReturn: userOrder.bottlesNumberToReturn,
       });
     }
   }, [userOrder.items]);

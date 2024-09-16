@@ -34,9 +34,13 @@ export const processOrder = async (
     return;
   }
 
-  const rentCount = orderData.items.find(
-    ({ itemCode }: { itemCode: string }) => +itemCode === 120
+  const bottleCount = orderData.items.find(
+    ({ itemCode }: { itemCode: string }) => +itemCode === 119
   )?.count;
+
+  const numOfBottles =
+    Math.max(orderData.numberOfBottles - +orderData.bottlesNumberToReturn, 0) +
+    +bottleCount;
 
   if (orderData.paymentMethod === "Cash") {
     orderData.paymentStatus = "CASH";
@@ -47,11 +51,11 @@ export const processOrder = async (
     orderData
   );
 
-  if (rentCount) {
+  if (bottleCount) {
     await OrderService.updateAddressWithBottles(
       userData.userId,
       userOrder.deliveryAddressObj.id,
-      (+orderData.deliveryAddressObj.numberOfBottles || 0) + +rentCount
+      numOfBottles
     );
   }
 
