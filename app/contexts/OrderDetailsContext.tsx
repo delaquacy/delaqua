@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import dayjs, { Dayjs } from "dayjs";
 import { FieldValue, serverTimestamp } from "firebase/firestore";
+import sessionService from "../lib/SessionService";
 import { Goods } from "../types";
 import {
   fetchAddresses,
@@ -155,37 +156,39 @@ export const OrderDetailsProvider = ({
   const [isFirstOrder, setIsFirstOrder] = useState(true);
   const [paymentUrl, setPaymentUrl] = useState("");
   const [loading, setLoading] = useState(true);
-  const [userOrder, setUserOrder] = useState<UserOrder>({
-    id: uuidv4(),
-    items: [] as UserOrderItem[],
-    deliveryDate: dayjs(),
-    deliveryTime: "9-12",
-    deliveryAddressObj: {
-      id: "",
-      firstAndLast: "",
-      postalIndex: "",
-      deliveryAddress: "",
-      geolocation: "",
-      addressDetails: "",
-      comments: "",
-      createdAt: serverTimestamp(),
-      archived: false,
-      numberOfBottles: "",
-    },
-    phoneNumber: "",
-    bottlesNumberToReturn: "",
-    pump: "",
-    createdAt: "",
-    userId: "",
-    priceOfWater: "",
-    depositForBottles: "",
-    totalPayments: "",
-    numberOfBottlesAtThisAddress: "",
-    paymentStatus: "Unpaid",
-    paymentMethod: "",
-    completed: false,
-    canceled: false,
-  });
+  const [userOrder, setUserOrder] = useState<UserOrder>(
+    sessionService.getFormData() || {
+      id: uuidv4(),
+      items: [] as UserOrderItem[],
+      deliveryDate: dayjs(),
+      deliveryTime: "9-12",
+      deliveryAddressObj: {
+        id: "",
+        firstAndLast: "",
+        postalIndex: "",
+        deliveryAddress: "",
+        geolocation: "",
+        addressDetails: "",
+        comments: "",
+        createdAt: serverTimestamp(),
+        archived: false,
+        numberOfBottles: "",
+      },
+      phoneNumber: "",
+      bottlesNumberToReturn: "",
+      pump: "",
+      createdAt: "",
+      userId: "",
+      priceOfWater: "",
+      depositForBottles: "",
+      totalPayments: "",
+      numberOfBottlesAtThisAddress: "",
+      paymentStatus: "Unpaid",
+      paymentMethod: "",
+      completed: false,
+      canceled: false,
+    }
+  );
 
   const [userData, setUserData] = useState<UserData>({
     formattedUserPhone: null,
@@ -234,6 +237,8 @@ export const OrderDetailsProvider = ({
     try {
       const data = await getStaticGoodsArray();
       setGoods(data.map((item) => ({ ...item, picture: `${item.id}.webp` }))); // TODO: remove this when we will have correct picture link from storage
+      if (userOrder.items.length) return;
+
       setUserOrder((prev) => ({
         ...prev,
         items: data.reverse().map((good) => ({
