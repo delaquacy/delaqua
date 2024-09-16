@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import dayjs, { Dayjs } from "dayjs";
 import { serverTimestamp } from "firebase/firestore";
 import { usePathname } from "next/navigation";
+import sessionService from "../lib/SessionService";
 import { Address, Goods, OrdersData } from "../types";
 import {
   fetchAddresses,
@@ -172,38 +173,40 @@ export const OrderDetailsProvider = ({
   const [adminCreateMode, setAdminCreateMode] = useState(false);
   const [adminAssignedUser, setAdminAssignedUser] =
     useState<AdminAssignedUser | null>();
-  const [userOrder, setUserOrder] = useState<UserOrder>({
-    id: uuidv4(),
-    items: [] as UserOrderItem[],
-    deliveryDate: dayjs(),
-    deliveryTime: "9-12",
-    deliveryAddressObj: {
-      id: "",
-      firstAndLast: "",
-      postalIndex: "",
-      deliveryAddress: "",
-      geolocation: "",
-      addressDetails: "",
-      comments: "",
-      createdAt: serverTimestamp(),
-      archived: false,
-      numberOfBottles: "",
-    },
-    phoneNumber: "",
-    bottlesNumberToReturn: "",
-    pump: "",
-    createdAt: "",
-    userId: "",
-    priceOfWater: "",
-    depositForBottles: "",
-    totalPayments: "",
-    numberOfBottlesAtThisAddress: "",
-    paymentStatus: "Unpaid",
-    orderStatus: "Created",
-    paymentMethod: "",
-    completed: false,
-    canceled: false,
-  });
+
+  const [userOrder, setUserOrder] = useState<UserOrder>(
+    sessionService.getFormData() || {
+      id: uuidv4(),
+      items: [] as UserOrderItem[],
+      deliveryDate: dayjs(),
+      deliveryTime: "9-12",
+      deliveryAddressObj: {
+        id: "",
+        firstAndLast: "",
+        postalIndex: "",
+        deliveryAddress: "",
+        geolocation: "",
+        addressDetails: "",
+        comments: "",
+        createdAt: serverTimestamp(),
+        archived: false,
+        numberOfBottles: "",
+      },
+      phoneNumber: "",
+      bottlesNumberToReturn: "",
+      pump: "",
+      createdAt: "",
+      userId: "",
+      priceOfWater: "",
+      depositForBottles: "",
+      totalPayments: "",
+      numberOfBottlesAtThisAddress: "",
+      paymentStatus: "Unpaid",
+      paymentMethod: "",
+      completed: false,
+      canceled: false,
+    }
+  );
 
   const [userData, setUserData] = useState<UserData>({
     formattedUserPhone: null,

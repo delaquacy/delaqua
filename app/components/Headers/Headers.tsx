@@ -45,8 +45,10 @@ const END_INFO_BANNER = "29.10.2024 00:00";
 
 export default function Headers({
   setShowWindow,
+  setShowContinueText,
 }: {
   setShowWindow: (val: boolean) => void;
+  setShowContinueText: (val: boolean) => void;
 }) {
   const { i18n, t } = useTranslation("main");
   const { trackAmplitudeEvent } = useAmplitudeContext();
@@ -60,7 +62,7 @@ export default function Headers({
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [showInfoModal, setShowInfoModal] = useState(false);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
 
@@ -117,18 +119,6 @@ export default function Headers({
     }
   };
 
-  useLayoutEffect(() => {
-    const today = dayjs();
-    const endDate = dayjs(END_INFO_BANNER, "DD.MM.YYYY HH:mm");
-
-    if (today.isAfter(endDate)) {
-      setShowInfoModal(false);
-      setOpen(false);
-    } else {
-      setShowInfoModal(true);
-    }
-  }, []);
-
   useEffect(() => {
     if (pathname == "/new_order" || pathname === "/order_history") {
       setShowLogin(false);
@@ -145,9 +135,23 @@ export default function Headers({
       unsubscribe();
     };
   }, [auth, router]);
+
   const loginProps: LogInProps = {
     params: { onLogin: handleLogin },
   };
+
+  useLayoutEffect(() => {
+    setShowInfoModal(true);
+    setOpen(true);
+
+    const today = dayjs();
+    const endDate = dayjs(END_INFO_BANNER, "DD.MM.YYYY HH:mm");
+
+    if (today.isAfter(endDate)) {
+      setShowInfoModal(false);
+      setOpen(false);
+    }
+  }, []);
 
   return (
     <SnackbarProvider>
@@ -214,6 +218,7 @@ export default function Headers({
         )}
         {user &&
           unpaidOrders.length !== 0 &&
+          unpaidOrders[0].paymentId &&
           !pathname.includes("/admin_dashboard") && (
             <Box
               sx={{
@@ -229,7 +234,10 @@ export default function Headers({
             >
               {t("paymentWarning")}
               <Button
-                onClick={() => setShowWindow(true)}
+                onClick={() => {
+                  setShowWindow(true);
+                  setShowContinueText(false);
+                }}
                 size="large"
                 sx={{
                   paddingInline: 4,
