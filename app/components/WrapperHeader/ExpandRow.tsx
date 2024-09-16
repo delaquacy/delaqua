@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { OrderItemsTable } from "../OrderItemsTable";
 
 import { OrdersData } from "@/app/types";
+import { getOrderInfo } from "@/app/utils";
 import { Tooltip } from "@mui/material";
 import Link from "next/link";
 
@@ -21,6 +22,8 @@ export function ExpandRow(props: { order: OrdersData }) {
   const { order } = props;
   const [open, setOpen] = useState(false);
   const { t } = useTranslation(["orderslist", "orderTable"]);
+
+  const { paymentStatusText } = getOrderInfo(order, t);
 
   return (
     <Fragment>
@@ -47,18 +50,14 @@ export function ExpandRow(props: { order: OrdersData }) {
 
         <TableCell align="center">{order.totalPayments}</TableCell>
 
-        <TableCell align="center">
-          {t(`paymentStatuses.${order.paymentStatus}`, { ns: "orderTable" })}
-        </TableCell>
+        <TableCell align="center">{paymentStatusText}</TableCell>
 
         <TableCell
           align="center"
           sx={{
-            ":hover": {
-              color: "#1565c0",
-              textDecoration: "underline",
-              textUnderlineOffset: 2,
-            },
+            color: "#1565c0",
+            textDecoration: "underline",
+            textUnderlineOffset: 2,
           }}
         >
           <Link href={(order.paymentLink as string) || "/"} target="_blank">
