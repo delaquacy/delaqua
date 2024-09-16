@@ -30,7 +30,7 @@ interface OrdersTableToolbarProps {
   selected: string[];
   filters: FilterItem[];
   filteredRows: OrdersData[];
-  onStatusUpdate: () => void;
+  onStatusUpdate: (status: string) => void;
   onFiltersClear: () => void;
   onFilterChange: Dispatch<SetStateAction<FilterItem[]>>;
   onFiltersApply: () => void;
@@ -78,12 +78,12 @@ export function OrdersTableToolbar(props: OrdersTableToolbarProps) {
 
   const handleCompleted = async () => {
     await updateOrderStatus(selected, "completed");
-    onStatusUpdate();
+    onStatusUpdate("completed");
   };
 
   const handleCanceled = async () => {
     await updateOrderStatus(selected, "canceled");
-    onStatusUpdate();
+    onStatusUpdate("canceled");
   };
 
   const handleClearAllFilters = () => {

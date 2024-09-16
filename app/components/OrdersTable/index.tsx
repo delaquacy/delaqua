@@ -102,9 +102,22 @@ export default function OrdersTable() {
     setSelected(newSelected);
   };
 
-  const handleUpdateStatus = () => {
+  const handleUpdateStatus = (status: string) => {
+    setFilteredRows((prev) =>
+      prev.map((item) => {
+        const isSelected = selected.includes(item.id);
+
+        if (!isSelected) {
+          return item;
+        }
+
+        return status === "completed"
+          ? { ...item, completed: true, canceled: false }
+          : { ...item, canceled: true, completed: false };
+      })
+    );
+
     setSelected([]);
-    getOrdersRows();
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
