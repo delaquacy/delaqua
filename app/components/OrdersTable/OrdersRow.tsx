@@ -49,6 +49,14 @@ export const OrderRow = ({
       ""
     );
 
+  const addressParts = [
+    row.postalIndex,
+    row.deliveryAddress,
+    row.addressDetails,
+  ];
+
+  const fullAddress = addressParts.filter(Boolean).join(", ");
+
   return (
     <TableRow
       onClick={(event: any) => handleClick(event, row.id as string)}
@@ -170,16 +178,10 @@ export const OrderRow = ({
               },
             }}
           >
-            {row.postalIndex
-              ? `${row.postalIndex} ${
-                  row.deliveryAddress ? `, ${row.deliveryAddress}` : ""
-                }`
-              : row.deliveryAddress}
+            {fullAddress}
           </Box>
         </Link>
       </TableCell>
-
-      <TableCell align="center">{row.addressDetails}</TableCell>
 
       <TableCell align="center">{row.deliveryDate}</TableCell>
 

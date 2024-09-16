@@ -2,7 +2,6 @@ import Image from "next/image";
 import TenL from "../../public/10l.svg";
 import FifteenL from "../../public/15L.svg";
 import Address from "../../public/address.png";
-import AddressDetail from "../../public/addressDetail.png";
 import Bage from "../../public/bage.png";
 import PaymentsTotal from "../../public/billEuro.png";
 import CreatedAt from "../../public/calendar.png";
@@ -103,14 +102,7 @@ export const TableHeadCells: readonly HeadCell[] = [
     sortable: false,
     image: <Image src={Address} alt="Delivery Address" width={30} />,
   },
-  {
-    id: "addressDetails",
-    numeric: false,
-    disablePadding: false,
-    label: "tableHeadCells.addressDetail",
-    sortable: false,
-    image: <Image src={AddressDetail} alt="Delivery Address" width={35} />,
-  },
+
   {
     id: "deliveryDate",
     numeric: true,
@@ -137,15 +129,7 @@ export const TableHeadCells: readonly HeadCell[] = [
     sortable: false,
     image: <Image src={PaymentsTotal} alt="PaymentsTotal" width={30} />,
   },
-  // {
-  //   id: "paymentMethod",
-  //   numeric: false,
-  //   disablePadding: false,
-  //   label: "method",
-  //   sortable: true,
-  //   columns: "Payments Method",
-  //   image: <Image src={PaymentsMethod} alt="PaymentsMethod" width={30} />,
-  // },
+
   {
     id: "paymentStatus",
     numeric: false,
