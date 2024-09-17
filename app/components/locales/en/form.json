@@ -118,6 +118,7 @@
   "address_business": "Business",
   "home_address_limit_reached": "You cannot add more than 5 home addresses.",
   "business_address_limit_reached": "You cannot add more than 5 business addresses.",
+  "addressReturn": "Select the address for bottle return",
+  "no_bottles_to_return": "You don't have any bottles to return",
   "": ""
-
 }

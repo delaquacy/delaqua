@@ -10,7 +10,7 @@ import { CheckBox } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import "../../../../i18n";
 
-export const FinishStep = () => {
+export const FinishStep = ({ returnBottles }: { returnBottles: boolean }) => {
   const { t } = useTranslation("finishModal");
   const router = useRouter();
 
@@ -48,6 +48,8 @@ export const FinishStep = () => {
           </Button>
         </div>
       </>
+    ) : returnBottles ? (
+      <span style={{ fontWeight: "bold" }}>{t("returnBottle")}</span>
     ) : (
       <span style={{ fontWeight: "bold" }}>
         {t("prepare_for_payment", { amount: userOrder.totalPayments })}
@@ -81,17 +83,19 @@ export const FinishStep = () => {
           <span className={styles.bold}> {t("thanks_for_order")}</span>
         </Typography>
 
-        <Typography className={styles.center} id="modal-modal-description">
-          {userOrder.paymentMethod === "Cash"
-            ? t("we_will_deliver_to_you", {
-                date: userOrder.deliveryDate,
-                time: userOrder.deliveryTime,
-              })
-            : t("we_will_deliver_to_you_pay", {
-                date: userOrder.deliveryDate,
-                time: userOrder.deliveryTime,
-              })}
-        </Typography>
+        {!returnBottles && (
+          <Typography className={styles.center} id="modal-modal-description">
+            {userOrder.paymentMethod === "Cash"
+              ? t("we_will_deliver_to_you", {
+                  date: userOrder.deliveryDate,
+                  time: userOrder.deliveryTime,
+                })
+              : t("we_will_deliver_to_you_pay", {
+                  date: userOrder.deliveryDate,
+                  time: userOrder.deliveryTime,
+                })}
+          </Typography>
+        )}
 
         <Box className={styles.center} id="modal-modal-description">
           {paymentText}

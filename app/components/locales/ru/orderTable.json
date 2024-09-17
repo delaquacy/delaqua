@@ -51,6 +51,7 @@
   "paymentStatuses": {
     "Unpaid": "Не оплачено",
     "CASH": "Наличные",
+    "ReturnCash": "Возврат наличных",
     "ORDER_COMPLETED": "Оплата завершена",
     "ORDER_CANCELLED": "Оплата отменена",
     "ORDER_PAYMENT_DECLINED": "Оплата отклонена",

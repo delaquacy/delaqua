@@ -18,7 +18,7 @@ export const MyAccountMenu = () => {
   const { trackAmplitudeEvent } = useAmplitudeContext();
   const router = useRouter();
 
-  const { i18n, t } = useTranslation("main");
+  const { t } = useTranslation("main");
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(750));
 
@@ -78,6 +78,7 @@ export const MyAccountMenu = () => {
         >
           <Box>{t("viewOrderHistory")}</Box>
         </MenuItem>
+
         <MenuItem
           onClick={() => {
             router.push("/new_order");
@@ -85,6 +86,15 @@ export const MyAccountMenu = () => {
           }}
         >
           <Box>{t("newOrder")}</Box>
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            router.push("/return_bottles");
+            handleClose();
+          }}
+        >
+          <Box>{t("returnBottles")}</Box>
         </MenuItem>
       </Menu>
     </Box>
