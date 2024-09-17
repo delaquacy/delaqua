@@ -68,7 +68,7 @@ export const AddressDetailCard = ({
       >
         <PlaceOutlined />
         <Link href={address.geolocation || "/"}>
-          <Typography textAlign={"left"} color="#1c60a5">
+          <Typography textAlign={"left"} sx={{ color: "#1976d2" }}>
             {`${address.postalIndex}, ${address.deliveryAddress}, ${address.addressDetails}`}
           </Typography>
         </Link>
@@ -101,25 +101,10 @@ export const AddressDetailCard = ({
           <ApartmentOutlined />
         )}
 
-        <Typography>{address.addressType || "Home"}</Typography>
-      </CardBlockRow>
-
-      {/* <CardBlockRow
-        sx={{
-          flex: 2,
-        }}
-      >
-        
-        <Typography
-          sx={{
-            textAlign: "left",
-            wordBreak: "break-word",
-            whiteSpace: "normal",
-          }}
-        >
-          {address.geolocation}
+        <Typography>
+          {t(address.addressType?.toLowerCase() || "home")}
         </Typography>
-      </CardBlockRow> */}
+      </CardBlockRow>
 
       {canBeRemoved ? (
         <Tooltip

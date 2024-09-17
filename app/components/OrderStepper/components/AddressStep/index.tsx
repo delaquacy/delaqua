@@ -12,7 +12,9 @@ import {
 import { FieldValue, serverTimestamp } from "firebase/firestore";
 
 import { ControllerInputField } from "@/app/components/shared";
+import { MAX_ADDRESS_NUM } from "@/app/constants/AddressesNum";
 import { AddressesService } from "@/app/lib/AddressesService";
+import { getAddressTypeCount } from "@/app/utils/getAddressTypeCount";
 import { AddNewAddress } from "../AddNewAddress";
 import { AddressDetailCard } from "../AddressDetailCard";
 import {
@@ -21,8 +23,6 @@ import {
   FormWrapper,
   ToggleButtonGroupWrap,
 } from "./styled";
-
-const MAX_ADDRESS_NUM = 5;
 
 interface FormValues {
   id?: string;
@@ -37,6 +37,7 @@ interface FormValues {
   archived: boolean;
   numberOfBottles: string;
   addressType?: string;
+  VAT_Num?: string;
 }
 
 export const ADDRESS_DEFAULT_VALUES = {
@@ -51,6 +52,7 @@ export const ADDRESS_DEFAULT_VALUES = {
   archived: false,
   numberOfBottles: "",
   addressType: "Home",
+  VAT_Num: "",
 };
 
 export const AddressStep = ({
@@ -84,6 +86,8 @@ export const AddressStep = ({
   } = useForm<FormValues>({
     defaultValues: userOrder.deliveryAddressObj,
   });
+
+  const addressCount = getAddressTypeCount(addresses);
 
   const handleSetNewValues = (newValues: FormValues | null) => {
     if (!newValues) {
@@ -214,6 +218,7 @@ export const AddressStep = ({
             onAdd={handleAddNewAddress}
             onBack={() => setShowAddressForm(false)}
             disableBack={addresses.length === 0}
+            addressCount={addressCount}
           />
         </FormWrapper>
       ) : (
@@ -273,8 +278,11 @@ export const AddressStep = ({
             <FormHeaderButton
               onClick={() => {
                 console.log(addresses.length, "addresses.length");
-                if (addresses.length >= 5) {
-                  showErrorToast("You cant have more than 5 addresses");
+                if (
+                  addresses.length >=
+                  MAX_ADDRESS_NUM.HOME + MAX_ADDRESS_NUM.BUSINESS
+                ) {
+                  showErrorToast("You cant have more than 10 addresses");
                   return;
                 }
 

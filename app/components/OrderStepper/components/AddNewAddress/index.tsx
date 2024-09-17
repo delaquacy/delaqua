@@ -6,12 +6,14 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
+  Tooltip,
 } from "@mui/material";
 import { FieldValue } from "firebase/firestore";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { ControllerInputField } from "@/app/components/shared";
+import { MAX_ADDRESS_NUM } from "@/app/constants/AddressesNum";
 import { AddAddressHelperText } from "../AddAddressHelperText";
 import { ADDRESS_DEFAULT_VALUES } from "../AddressStep";
 import { addAddressValidationSchema } from "./addAddressValidationSchema";
@@ -30,16 +32,19 @@ interface FormValues {
   archived: boolean;
   numberOfBottles: string;
   addressType?: string;
+  VAT_Num?: string;
 }
 
 export const AddNewAddress = ({
   onBack,
   onAdd,
   disableBack,
+  addressCount,
 }: {
   onBack: () => void;
   onAdd: (address: FormValues) => void;
   disableBack: boolean;
+  addressCount: { business: number; home: number };
 }) => {
   const { isSmallScreen } = useScreenSize();
   const { t } = useTranslation("form");
@@ -56,6 +61,9 @@ export const AddNewAddress = ({
 
   const addressType = watch("addressType");
   const homeAddress = addressType === "Home";
+
+  const disableBusiness = addressCount.business >= MAX_ADDRESS_NUM.BUSINESS;
+  const disableHome = addressCount.home >= MAX_ADDRESS_NUM.HOME;
 
   return (
     <FormWrapper component={"form"} onSubmit={handleSubmit(onAdd)}>
@@ -78,16 +86,31 @@ export const AddNewAddress = ({
                 marginBottom: "10px",
               }}
             >
-              <FormControlLabel
-                value="Home"
-                control={<Radio />}
-                label={t("home")}
-              />
-              <FormControlLabel
-                value="Business"
-                control={<Radio />}
-                label={t("business")}
-              />
+              <Tooltip
+                title={disableBusiness ? t("home_address_limit_reached") : ""}
+                enterTouchDelay={1}
+              >
+                <FormControlLabel
+                  value="Home"
+                  control={<Radio />}
+                  label={t("home")}
+                  disabled={disableHome}
+                />
+              </Tooltip>
+
+              <Tooltip
+                title={
+                  disableBusiness ? t("business_address_limit_reached") : ""
+                }
+                enterTouchDelay={1}
+              >
+                <FormControlLabel
+                  value="Business"
+                  control={<Radio />}
+                  label={t("business")}
+                  disabled={disableBusiness}
+                />
+              </Tooltip>
             </RadioGroup>
           )}
         />
@@ -180,18 +203,36 @@ export const AddNewAddress = ({
             }
           />
         </FieldWrapper>
-        <ControllerInputField
-          name={"comments"}
-          type="string"
-          control={control}
-          label={`${t("comments")}`}
-          error={false}
-          helperText={t("comments_placeholder")}
-          multiline
-          sx={{
-            flex: 1,
-          }}
-        />
+
+        <FieldWrapper>
+          {!homeAddress && (
+            <ControllerInputField
+              name={"VAT_Num"}
+              type="string"
+              control={control}
+              label={`${t("VATNum")}`}
+              error={false}
+              helperText={""}
+              multiline
+              sx={{
+                flex: 0.98,
+              }}
+            />
+          )}
+
+          <ControllerInputField
+            name={"comments"}
+            type="string"
+            control={control}
+            label={`${t("comments")}`}
+            error={false}
+            helperText={t("comments_placeholder")}
+            multiline
+            sx={{
+              flex: 2,
+            }}
+          />
+        </FieldWrapper>
       </Box>
 
       <ButtonsWrapper>

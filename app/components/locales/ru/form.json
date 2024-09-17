@@ -115,6 +115,9 @@
   "contactPerson": "Номер контактного лица",
   "phoneNumber": "Номер телефона",
   "VATNum": "Номер НДС",
-
+  "address_home": "Дом",
+  "address_business": "Бизнес",
+  "home_address_limit_reached": "Вы не можете добавить больше 5 домашних адресов.",
+  "business_address_limit_reached": "Вы не можете добавить больше 5 бизнес-адресов.",
   "": ""
 }

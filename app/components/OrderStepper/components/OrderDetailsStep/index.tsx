@@ -177,15 +177,11 @@ export const OrderDetailsStep = ({
               <Tooltip title={t("geolocation_link")}>
                 <PlaceOutlined />
               </Tooltip>
-              <Typography
-                sx={{
-                  wordBreak: "break-word",
-                }}
-              >
-                <Link href={userOrder.deliveryAddressObj.geolocation}>
+              <Link href={userOrder.deliveryAddressObj.geolocation}>
+                <Typography sx={{ color: "#1976d2", wordBreak: "break-word" }}>
                   {userOrder.deliveryAddressObj.geolocation}
-                </Link>
-              </Typography>
+                </Typography>
+              </Link>
             </DetailsCardItemRow>
 
             <DetailsCardItemRow
@@ -198,6 +194,26 @@ export const OrderDetailsStep = ({
               </Tooltip>
               <Typography>{addressInfo}</Typography>
             </DetailsCardItemRow>
+
+            {userOrder.deliveryAddressObj?.VAT_Num && (
+              <DetailsCardItemRow
+                sx={{
+                  flex: 1,
+                }}
+              >
+                <Tooltip title={t("address")}>
+                  <Image
+                    src="/vat_num.svg"
+                    height={25}
+                    width={25}
+                    alt="vat num"
+                  />
+                </Tooltip>
+                <Typography>
+                  {userOrder.deliveryAddressObj?.VAT_Num || ""}
+                </Typography>
+              </DetailsCardItemRow>
+            )}
           </DetailsCard>
         </Box>
 
