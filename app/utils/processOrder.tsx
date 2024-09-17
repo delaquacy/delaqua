@@ -10,7 +10,8 @@ export const processOrder = async (
   orderData: any,
   setPaymentUrl: (url: string) => void,
   handleNext: () => void,
-  showErrorToast: (message: string) => void
+  showErrorToast: (message: string) => void,
+  returnBottles?: boolean
 ) => {
   const { isCurrentDayAfterTen, isCurrentDayAfterNoon } = deliveryValidation(
     dayjs()
@@ -60,6 +61,15 @@ export const processOrder = async (
   }
 
   await OrderService.sendOrderDataToSheet(orderData);
+
+  if (returnBottles) {
+    await OrderService.updateAddressWithBottles(
+      userData.userId,
+      userOrder.deliveryAddressObj.id,
+      0
+    );
+    return;
+  }
 
   const invoiceNumber = await postInvoicesData(
     orderData,

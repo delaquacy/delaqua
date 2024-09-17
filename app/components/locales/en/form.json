@@ -120,6 +120,7 @@
   "business_address_limit_reached": "You cannot add more than 5 business addresses.",
   "maxNumOrdersTitle": "Oops, all delivery slots for today are already taken 😔.",
   "maxNumOrdersSubtitle": "But don’t worry! You can choose another convenient day for your order 😊.",
+  "addressReturn": "Select the address for bottle return",
+  "no_bottles_to_return": "You don't have any bottles to return",
   "": ""
-
 }

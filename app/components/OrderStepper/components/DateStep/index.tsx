@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { datePickerStyle } from "@/app/components/OrdersTableFilter/DateRangePicker";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-import { useScreenSize } from "@/app/hooks";
+import { useScreenSize, useToast } from "@/app/hooks";
 import { deliveryValidation } from "@/app/utils";
 import {
   Box,
@@ -16,12 +16,14 @@ import {
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
+import { Loader } from "@/app/components/Loader";
 import {
   dayOfWeekFormatter,
   getValidationMessage,
   shouldDisableDate,
 } from "@/app/utils/dayStepUtils";
 import { getNextAvailableDate } from "@/app/utils/getNextAvailableDate";
+import { processOrder } from "@/app/utils/processOrder";
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
@@ -47,19 +49,29 @@ interface FormValues {
 export const DateStep = ({
   renderButtonsGroup,
   handleNext,
+  returnBottles,
 }: {
   renderButtonsGroup: (errorMessage?: string) => React.ReactNode;
   handleNext: () => void;
+  returnBottles?: boolean;
 }) => {
   const { t } = useTranslation("form");
+
+  const {
+    userOrder,
+    userData,
+    allOrders,
+    handleAddOrderDetails,
+    setPaymentUrl,
+  } = useOrderDetailsContext();
   const { isSmallScreen } = useScreenSize();
-  const { userOrder, allOrders, handleAddOrderDetails } =
-    useOrderDetailsContext();
+  const { showErrorToast } = useToast();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [nextDay, setNextDay] = useState(dayjs());
   const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { control, handleSubmit, watch } = useForm<FormValues>({
     defaultValues: {
@@ -79,13 +91,39 @@ export const DateStep = ({
     isOrdersLimitReached,
   } = deliveryValidation(selectedDate as Dayjs, allOrders);
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     if (showTooltipMessage) return;
 
-    handleAddOrderDetails({
+    const dateObj = {
       deliveryDate: (data.deliveryDate as Dayjs).format("DD.MM.YYYY"),
       deliveryTime: data.deliveryTime,
-    });
+    };
+
+    handleAddOrderDetails(dateObj);
+
+    if (returnBottles) {
+      setLoading(true);
+
+      const orderData = {
+        ...userOrder,
+        ...dateObj,
+        createdAt: dayjs().format("DD.MM.YYYY HH:mm"),
+        items: [],
+        paymentMethod: "Return cash",
+        paymentStatus: "ReturnCash",
+      };
+
+      await processOrder(
+        userData,
+        userOrder,
+        orderData,
+        setPaymentUrl,
+        handleNext,
+        showErrorToast,
+        returnBottles
+      );
+    }
+
     handleNext();
   };
 
@@ -130,6 +168,10 @@ export const DateStep = ({
     isCurrentDayPrevious,
     isCurrentDayAfterNoon,
   ]);
+
+  if (loading) {
+    return <Loader text={t("loading_paymentLink")} />;
+  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

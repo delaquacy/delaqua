@@ -50,6 +50,7 @@
   "paymentStatuses": {
     "Unpaid": "Απλήρωτο",
     "CASH": "Μετρητά",
+    "ReturnCash": "Επιστροφή μετρητών",
     "ORDER_COMPLETED": "Η πληρωμή ολοκληρώθηκε",
     "ORDER_CANCELLED": "Η πληρωμή ακυρώθηκε",
     "ORDER_PAYMENT_DECLINED": "Η πληρωμή απορρίφθηκε",
