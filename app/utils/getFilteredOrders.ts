@@ -20,9 +20,10 @@ export const getFilteredOrders = (
       const startDate = dayjs(filter.value1);
       const endDate = dayjs(filter.value2);
       const deliveryDate = dayjs(getFormattedDateString(order.deliveryDate));
+
       return (
-        deliveryDate.isSameOrAfter(startDate) &&
-        deliveryDate.isSameOrBefore(endDate)
+        deliveryDate.isSameOrAfter(startDate, "day") &&
+        deliveryDate.isSameOrBefore(endDate, "day")
       );
     },
     "Phone Number": (order, filter) => order.phoneNumber === filter.value1,
