@@ -17,9 +17,22 @@ export const getFilteredOrders = (
     [key: string]: (order: OrdersData, filter: FilterItem) => boolean;
   } = {
     "Delivery Date": (order, filter) => {
-      const startDate = dayjs(filter.value1);
-      const endDate = dayjs(filter.value2);
-      const deliveryDate = dayjs(getFormattedDateString(order.deliveryDate));
+      const parseFormat = "YYYY-MM-DD";
+
+      const startDate = dayjs(
+        dayjs(filter.value1).format(parseFormat),
+        parseFormat
+      );
+
+      const endDate = dayjs(
+        dayjs(filter.value2).format(parseFormat),
+        parseFormat
+      );
+
+      const deliveryDate = dayjs(
+        getFormattedDateString(order.deliveryDate),
+        parseFormat
+      );
 
       return (
         deliveryDate.isSameOrAfter(startDate, "day") &&
