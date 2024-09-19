@@ -1,5 +1,3 @@
-import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-import { useScreenSize } from "@/app/hooks";
 import { HelpOutlineOutlined } from "@mui/icons-material";
 import { Box, FormHelperText, Tooltip, Typography } from "@mui/material";
 import { useEffect } from "react";
@@ -47,8 +45,6 @@ export const BigOrderCard = ({
   setValue,
 }: BigOrderCardProps) => {
   const { t } = useTranslation("form");
-  const { isSmallScreen } = useScreenSize();
-  const { userOrder } = useOrderDetailsContext();
 
   const currentBottlesNum = watch(nameBottle);
   const currentBottlesReturn = watch(`${nameReturn}`) || 0;
@@ -124,25 +120,24 @@ export const BigOrderCard = ({
           )}
         />
 
-        {!isFirstOrder && (
-          <Controller
-            control={control}
-            name={nameReturn}
-            render={({ field }) => (
-              <InternalCountWrapper>
-                <Title>{t("number_of_bottles_to_return")}</Title>
+        <Controller
+          control={control}
+          name={nameReturn}
+          render={({ field }) => (
+            <InternalCountWrapper>
+              <Title>{t("number_of_bottles_to_return")}</Title>
 
-                <OrderCardCounter
-                  count={field.value}
-                  onAdd={() => field.onChange(+field.value + 1)}
-                  onRemove={() => {
-                    field.onChange(Math.max(+field.value - 1, 0));
-                  }}
-                />
-              </InternalCountWrapper>
-            )}
-          />
-        )}
+              <OrderCardCounter
+                count={field.value}
+                onAdd={() => field.onChange(+field.value + 1)}
+                onRemove={() => {
+                  field.onChange(Math.max(+field.value - 1, 0));
+                }}
+              />
+            </InternalCountWrapper>
+          )}
+        />
+
         <Controller
           control={control}
           name={nameRent}
