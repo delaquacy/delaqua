@@ -70,8 +70,10 @@ export const StoreStep = ({
 
     const formattedData = data.items.map((order) => {
       const isBigBottle = +order.itemCode === 119;
+      const isMoreThanOneBigBottle = isBigBottle && +order.count > 1;
+
       const newSellPrice =
-        isFirstOrder && isBigBottle
+        isFirstOrder && isBigBottle && !isMoreThanOneBigBottle
           ? `${+order.sellPrice + 1}`
           : order.sellPrice;
 
@@ -149,6 +151,7 @@ export const StoreStep = ({
                   <OrderCard
                     imageAlt={middleBottle.name}
                     size="50"
+                    available={middleBottle.available}
                     description={middleBottle.description || ""}
                     price={middleBottle!.sellPrice}
                     code={middleBottle!.itemCode}
@@ -180,6 +183,7 @@ export const StoreStep = ({
                   <OrderCard
                     imageAlt={smallBottle.name}
                     size="50"
+                    available={smallBottle.available}
                     description={smallBottle.description || ""}
                     price={smallBottle.sellPrice}
                     code={smallBottle.itemCode}
@@ -232,6 +236,7 @@ export const StoreStep = ({
                       imageAlt={good!.name}
                       size="40"
                       description={good!.description}
+                      available={good!.available}
                       price={good!.sellPrice}
                       code={good!.itemCode}
                       count={field.value}

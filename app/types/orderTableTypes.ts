@@ -85,6 +85,7 @@ export interface Address {
 export interface Goods {
   id: string;
   itemCode: string;
+  available: boolean;
   name: string;
   picture: string;
   description: string;

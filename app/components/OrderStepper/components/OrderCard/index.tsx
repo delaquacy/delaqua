@@ -10,6 +10,7 @@ interface OrderCardProps {
   imageSrc?: string;
   imageAlt: string;
   size: string;
+  available: boolean;
   description: string;
   price: string;
   code: string;
@@ -26,6 +27,7 @@ export const OrderCard = ({
   imageSrc,
   imageAlt,
   size,
+  available,
   description,
   price,
   code,
@@ -40,7 +42,14 @@ export const OrderCard = ({
 
   return (
     <Tooltip
-      title={+code === DISPENSER_DELIVERY_CODE ? t("104Tooltip") : ""}
+      placement="top"
+      title={
+        +code === DISPENSER_DELIVERY_CODE && available
+          ? t("104Tooltip")
+          : available
+          ? ""
+          : t("outOfStock")
+      }
       enterTouchDelay={1}
     >
       <CardWrapper sx={sx}>
@@ -95,8 +104,13 @@ export const OrderCard = ({
           )}
 
           <Typography textAlign="center">{description}</Typography>
+          <OrderCardCounter
+            count={count}
+            onAdd={onAdd}
+            onRemove={onRemove}
+            disabled={!available}
+          />
 
-          <OrderCardCounter count={count} onAdd={onAdd} onRemove={onRemove} />
           <Tooltip title={`${price} € / 1`} enterTouchDelay={1}>
             <Typography textAlign="center" color="gray" fontSize="12px">
               {`${+price * +count} €`}

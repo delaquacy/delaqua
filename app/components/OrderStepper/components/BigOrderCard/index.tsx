@@ -48,6 +48,7 @@ export const BigOrderCard = ({
 
   const currentBottlesNum = watch(nameBottle);
   const currentBottlesReturn = watch(`${nameReturn}`) || 0;
+  const isMoreThanOneBigBottle = +currentBottlesNum > 1;
 
   const rentPrice = Math.max(
     +priceRent * (+currentBottlesNum - +(currentBottlesReturn || 0)),
@@ -106,13 +107,20 @@ export const BigOrderCard = ({
                 }}
               />{" "}
               <Tooltip
-                title={t(`${isFirstOrder ? "119CostFirst" : "119Cost"}`)}
+                title={t(
+                  `${
+                    isFirstOrder && !isMoreThanOneBigBottle
+                      ? "119CostFirst"
+                      : "119Cost"
+                  }`
+                )}
                 enterTouchDelay={1}
               >
                 <Typography textAlign="center" color="gray">
                   {`${
-                    (isFirstOrder ? +priceBottle + 1 : +priceBottle) *
-                    +currentBottlesNum
+                    (isFirstOrder && !isMoreThanOneBigBottle
+                      ? +priceBottle + 1
+                      : +priceBottle) * +currentBottlesNum
                   } €`}
                 </Typography>
               </Tooltip>
