@@ -10,8 +10,9 @@ import { useToast } from "@/app/hooks";
 import { processOrder } from "@/app/utils/processOrder";
 import {
   AccountCircleOutlined,
+  ApartmentOutlined,
   EventOutlined,
-  HomeOutlined,
+  HouseOutlined,
   PlaceOutlined,
 } from "@mui/icons-material";
 import {
@@ -24,6 +25,7 @@ import {
   Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
+import Image from "next/image";
 import Link from "next/link";
 import {
   DetailsCard,
@@ -45,7 +47,7 @@ export const OrderDetailsStep = ({
   renderButtonsGroup: (errorMessage?: string) => React.ReactNode;
   handleNext: () => void;
 }) => {
-  const { t } = useTranslation("form");
+  const { t } = useTranslation(["form", "orderTable"]);
   const { trackAmplitudeEvent } = useAmplitudeContext();
   const { userOrder, userData, handleAddOrderDetails, setPaymentUrl } =
     useOrderDetailsContext();
@@ -189,8 +191,23 @@ export const OrderDetailsStep = ({
                 flex: 3,
               }}
             >
-              <Tooltip title={t("address")}>
-                <HomeOutlined />
+              <Tooltip
+                title={
+                  t("tableHeadCells.addressType", { ns: "orderTable" }) +
+                  ": " +
+                  t(
+                    userOrder.deliveryAddressObj.addressType?.toLowerCase() ||
+                      "home",
+                    { ns: "savedAddresses" }
+                  )
+                }
+              >
+                {!userOrder.deliveryAddressObj.addressType ||
+                userOrder.deliveryAddressObj.addressType === "Home" ? (
+                  <HouseOutlined />
+                ) : (
+                  <ApartmentOutlined />
+                )}
               </Tooltip>
               <Typography>{addressInfo}</Typography>
             </DetailsCardItemRow>

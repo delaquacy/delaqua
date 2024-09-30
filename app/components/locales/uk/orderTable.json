@@ -43,6 +43,8 @@
     "invoiceNumber": "Номер рахунку",
     "netVal": "Чиста вартість €",
     "vatVal": "Сума ПДВ €",
+    "addressType": "Тип адреси",
+
     "": ""
   },
   "table_no_orders_yet": "Поки що немає замовлень",

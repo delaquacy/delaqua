@@ -1,5 +1,5 @@
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-import { useScreenSize, useToast } from "@/app/hooks";
+import { useToast } from "@/app/hooks";
 import { Box, Skeleton, ToggleButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -66,7 +66,6 @@ export const AddressStep = ({
 
   const { userOrder, userData, loading, handleAddOrderDetails, setUserData } =
     useOrderDetailsContext();
-  const { isSmallScreen } = useScreenSize();
   const { showSuccessToast, showErrorToast } = useToast();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(
@@ -101,19 +100,20 @@ export const AddressStep = ({
   };
 
   const handleAddNewAddress = async (newAddress: FormValues) => {
-    await AddressesService.addNewAddress(userData.userId, newAddress);
+    const id = await AddressesService.addNewAddress(
+      userData.userId,
+      newAddress
+    );
 
-    setAddresses((prev) => [newAddress, ...prev]);
+    setAddresses((prev) => [{ id, ...newAddress }, ...prev]);
     setUserData((prev) => ({
       ...prev,
-      addresses: [newAddress, ...prev.addresses],
+      addresses: [{ id, ...newAddress }, ...prev.addresses],
     }));
 
     showSuccessToast(`Add new address successfully`);
-    setSelectedAddress(newAddress);
+    setSelectedAddress({ id, ...newAddress });
     setShowAddressForm(false);
-
-    window.location.reload();
   };
 
   const handleRemoveAddress = async (address: FormValues) => {
@@ -163,6 +163,7 @@ export const AddressStep = ({
     if (showTooltipMessage) return;
 
     const { id, ...restData } = data;
+    console.log(data, "addressData");
 
     handleAddOrderDetails({ deliveryAddressObj: data, ...restData });
     handleNext();
@@ -277,7 +278,6 @@ export const AddressStep = ({
             />
             <FormHeaderButton
               onClick={() => {
-                console.log(addresses.length, "addresses.length");
                 if (
                   addresses.length >=
                   MAX_ADDRESS_NUM.HOME + MAX_ADDRESS_NUM.BUSINESS

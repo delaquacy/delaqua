@@ -67,6 +67,7 @@ export interface Invoices {
   paymentId?: string;
   orderId?: string;
   allOrderId: string;
+  addressType?: string;
 }
 
 export interface Address {

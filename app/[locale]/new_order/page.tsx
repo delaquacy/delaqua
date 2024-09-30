@@ -1,13 +1,13 @@
-import initTranslations from "../../i18n";
-import TranslationsProvider from "../../components/TranslationsProvider/TranslationsProvider";
 import Account from "../../components/Account/Account";
-import WrapperFooter from "@/app/components/WrapperFooter/WrapperFooter";
+import TranslationsProvider from "../../components/TranslationsProvider/TranslationsProvider";
+import initTranslations from "../../i18n";
 
 const i18nNamespaces = [
   "finishModal",
   "form",
   "orderslist",
   "savedAddresses",
+  "orderTable",
   "main",
 ];
 
