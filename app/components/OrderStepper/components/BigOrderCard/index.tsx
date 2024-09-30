@@ -1,3 +1,4 @@
+import { BIG_BOTTLE_PRICE } from "@/app/constants/bigBottlePrise";
 import { HelpOutlineOutlined } from "@mui/icons-material";
 import { Box, FormHelperText, Tooltip, Typography } from "@mui/material";
 import { useEffect } from "react";
@@ -49,6 +50,7 @@ export const BigOrderCard = ({
   const currentBottlesNum = watch(nameBottle);
   const currentBottlesReturn = watch(`${nameReturn}`) || 0;
   const isMoreThanOneBigBottle = +currentBottlesNum > 1;
+  const isTenOrMoreBigBottle = +currentBottlesNum >= 10;
 
   const rentPrice = Math.max(
     +priceRent * (+currentBottlesNum - +(currentBottlesReturn || 0)),
@@ -74,10 +76,7 @@ export const BigOrderCard = ({
       >
         <img
           alt={imageAlt}
-          src={
-            `/${imageSrc}` ||
-            "https://storage.googleapis.com/image_del_aq/Remove-background-project.png"
-          }
+          src={`/${imageSrc}`}
           style={{
             alignSelf: "center",
             objectFit: "contain",
@@ -111,6 +110,8 @@ export const BigOrderCard = ({
                   `${
                     isFirstOrder && !isMoreThanOneBigBottle
                       ? "119CostFirst"
+                      : isTenOrMoreBigBottle
+                      ? "119TenCost"
                       : "119Cost"
                   }`
                 )}
@@ -119,8 +120,10 @@ export const BigOrderCard = ({
                 <Typography textAlign="center" color="gray">
                   {`${
                     (isFirstOrder && !isMoreThanOneBigBottle
-                      ? +priceBottle + 1
-                      : +priceBottle) * +currentBottlesNum
+                      ? +BIG_BOTTLE_PRICE.FIRST_AND_ONE
+                      : isTenOrMoreBigBottle
+                      ? +BIG_BOTTLE_PRICE.TEN_OR_MORE
+                      : +BIG_BOTTLE_PRICE.DEFAULT) * Number(currentBottlesNum)
                   } €`}
                 </Typography>
               </Tooltip>

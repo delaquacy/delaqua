@@ -1,4 +1,5 @@
 import { FormWrapper } from "@/app/components/shared";
+import { BIG_BOTTLE_PRICE } from "@/app/constants/bigBottlePrise";
 import {
   UserOrderItem,
   useOrderDetailsContext,
@@ -71,16 +72,22 @@ export const StoreStep = ({
     const formattedData = data.items.map((order) => {
       const isBigBottle = +order.itemCode === 119;
       const isMoreThanOneBigBottle = isBigBottle && +order.count > 1;
+      const isTenOrMoreBigBottle = isBigBottle && +order.count >= 10;
 
       const newSellPrice =
-        isFirstOrder && isBigBottle && !isMoreThanOneBigBottle
-          ? `${+order.sellPrice + 1}`
-          : order.sellPrice;
+        isFirstOrder && !isMoreThanOneBigBottle
+          ? BIG_BOTTLE_PRICE.FIRST_AND_ONE
+          : isTenOrMoreBigBottle
+          ? BIG_BOTTLE_PRICE.TEN_OR_MORE
+          : BIG_BOTTLE_PRICE.DEFAULT;
 
       return {
         ...order,
-        sellPrice: newSellPrice,
-        sum: getOrderItemSum(order.count, newSellPrice),
+        sellPrice: isBigBottle ? newSellPrice : order.sellPrice,
+        sum: getOrderItemSum(
+          order.count,
+          isBigBottle ? newSellPrice : order.sellPrice
+        ),
       };
     });
 
