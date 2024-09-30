@@ -108,12 +108,17 @@ export const DateStep = ({
     // Calculate the next delivery day.
     // If today is Saturday and the current time is after noon, set the next delivery day to Monday.
     let nextDay = dayjs().add(1, "day");
+    const isInfoDay = nextDay.format("DD/MM/YYYY") === "01/10/2024";
 
     if (
       dayjs().day() === 6 &&
       dayjs().isAfter(dayjs().startOf("day").add(12, "hours"))
     ) {
       nextDay = dayjs().add(2, "day");
+    }
+
+    if (isInfoDay) {
+      nextDay = nextDay.add(1, "day");
     }
 
     setNextDay(nextDay);

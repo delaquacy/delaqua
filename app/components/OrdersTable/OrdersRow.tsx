@@ -45,7 +45,9 @@ export const OrderRow = ({
     row?.items &&
     row?.items.reduce(
       (acc: string, item: UserOrderItem) =>
-        +item.itemCode <= +POMP_CODES_MAX ? `${acc} ${item.itemCode}` : acc,
+        +item.itemCode <= +POMP_CODES_MAX
+          ? acc + ` ${item.itemCode}(${item.count})`
+          : acc,
       ""
     );
 
@@ -160,7 +162,9 @@ export const OrderRow = ({
 
       <TableCell align="center">{smallBottle?.count || "-"}</TableCell>
 
-      <TableCell align="center">{pomps || row.pump || "no"}</TableCell>
+      <TableCell align="center">
+        {pomps.trim().split(" ").join(", ") || row.pump || "no"}
+      </TableCell>
 
       <TableCell align="center" padding="none">
         <Link
