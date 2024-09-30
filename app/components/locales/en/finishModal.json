@@ -7,7 +7,12 @@
   "we_will_deliver_to_you_pay": "Once we receive your payment, we will arrange the delivery of on {{date}} at {{time}}",
   "numbers_of_deliver_water": "bottles of water on",
   "done": "Done!",
-  "returnBottle": "The courier will arrive to collect the empty bottles and refund the deposit based on the number of bottles returned."
+  "returnBottle": "The courier will arrive to collect the empty bottles and refund the deposit based on the number of bottles returned.",
+  "sorry": "We're sorry to see you go 🥺",
+  "sum": "The refund amount for returning {{count}} bottle(s) = {{countSum}} euros.",
+  "afterSum": "The final refund amount will be determined by the courier.",
+  "thanks": "Thank you for being with us!",
+  "accept": "Your return request has been accepted"
 
 
 }
