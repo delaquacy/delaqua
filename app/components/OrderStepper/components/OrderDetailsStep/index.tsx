@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -7,7 +7,9 @@ import Image from "next/image";
 
 import { OrderItemsTable } from "@/app/components/OrderItemsTable";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
+import { useUserContext } from "@/app/contexts/UserContext";
 import { useToast } from "@/app/hooks";
+import sessionService from "@/app/lib/SessionService";
 import { processOrder } from "@/app/utils/processOrder";
 import {
   AccountCircleOutlined,
@@ -42,20 +44,24 @@ const RENT_CODE = 120;
 export const OrderDetailsStep = ({
   renderButtonsGroup,
   handleNext,
+  activeStep,
 }: {
   renderButtonsGroup: (errorMessage?: string) => React.ReactNode;
   handleNext: () => void;
+  activeStep: number;
 }) => {
   const { t } = useTranslation("form");
   const { trackAmplitudeEvent } = useAmplitudeContext();
   const { userOrder, userData, handleAddOrderDetails, setPaymentUrl } =
     useOrderDetailsContext();
 
+  const { unpaidOrders, setShowWindow, setShowContinueText } = useUserContext();
+
   const { showErrorToast } = useToast();
 
   const [loading, setLoading] = useState(false);
 
-  const { control, handleSubmit } = useForm<FormValues>({
+  const { control, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: {
       paymentMethod: "Cash",
     },
@@ -98,6 +104,16 @@ export const OrderDetailsStep = ({
       items: userOrder.items.filter(({ count }) => !!+count),
     };
 
+    if (data.paymentMethod === "Online" && unpaidOrders.length) {
+      setLoading(false);
+      setShowWindow(true);
+      setShowContinueText(true);
+
+      sessionService.saveStep(activeStep);
+      sessionService.saveFormData(orderData);
+      return;
+    }
+
     const invoiceNumber = await processOrder(
       userData,
       userOrder,
@@ -110,7 +126,16 @@ export const OrderDetailsStep = ({
     handleAddOrderDetails({ invoiceNumber });
 
     setLoading(false);
+    sessionService.clearAll();
   };
+
+  useEffect(() => {
+    if (userOrder.paymentMethod) {
+      reset({
+        paymentMethod: userOrder.paymentMethod,
+      });
+    }
+  }, [userOrder.items]);
 
   if (loading) {
     return (
@@ -125,7 +150,11 @@ export const OrderDetailsStep = ({
           alignItems: "center",
         }}
       >
-        <Typography align="center">{t("loading_paymentLink")}</Typography>
+        <Typography align="center">
+          {userOrder.paymentMethod === "Online"
+            ? t("loading_paymentLink")
+            : t("loading_order")}
+        </Typography>
         <CircularProgress size={100} thickness={2} />
       </Box>
     );
@@ -188,13 +217,17 @@ export const OrderDetailsStep = ({
 
             <DetailsCardItemRow
               sx={{
-                flex: 2,
+                flex: 1,
               }}
             >
               <Tooltip title={t("geolocation_link")}>
                 <PlaceOutlined />
               </Tooltip>
-              <Typography noWrap>
+              <Typography
+                sx={{
+                  wordBreak: "break-word",
+                }}
+              >
                 <Link href={userOrder.deliveryAddressObj.geolocation}>
                   {userOrder.deliveryAddressObj.geolocation}
                 </Link>
