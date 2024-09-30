@@ -41,7 +41,7 @@ export const processOrder = async (
 
   const numOfBottles =
     Math.max(orderData.numberOfBottles - +orderData.bottlesNumberToReturn, 0) +
-    +bottleCount;
+    +(bottleCount || "0");
 
   if (orderData.paymentMethod === "Cash") {
     orderData.paymentStatus = "CASH";
@@ -66,7 +66,7 @@ export const processOrder = async (
     await OrderService.updateAddressWithBottles(
       userData.userId,
       userOrder.deliveryAddressObj.id,
-      0
+      numOfBottles
     );
     return;
   }

@@ -13,6 +13,7 @@ import {
   FormHelperText,
   Radio,
   RadioGroup,
+  Typography,
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -24,6 +25,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
 import updateLocale from "dayjs/plugin/updateLocale";
 import utc from "dayjs/plugin/utc";
+import { OrderCardCounter } from "../OrderCardCounter";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(updateLocale);
@@ -44,6 +46,7 @@ const dayOfWeekFormatter = (dayOfWeek: string, date: Dayjs) => {
 interface FormValues {
   deliveryDate: Dayjs | string;
   deliveryTime: string;
+  bottlesNumberToReturn?: string;
 }
 
 export const DateStep = ({
@@ -63,7 +66,10 @@ export const DateStep = ({
 
   const disabledDates: any = useDatesFromDB();
 
-  const [showTooltipMessage, setShowTooltipMessage] = useState(true);
+  const [showTooltipMessage, setShowTooltipMessage] = useState({
+    date: true,
+    bottles: true,
+  });
   const [nextDay, setNextDay] = useState(dayjs());
   const [loading, setLoading] = useState(false);
 
@@ -71,10 +77,12 @@ export const DateStep = ({
     defaultValues: {
       deliveryDate: dayjs(userOrder.deliveryDate, "DD.MM.YYYY"),
       deliveryTime: userOrder.deliveryTime,
+      ...(returnBottles && { bottlesNumberToReturn: "0" }),
     },
   });
 
   const selectedDate = watch("deliveryDate");
+  const returnBottlesCount = watch("bottlesNumberToReturn");
 
   const {
     isCurrentDayAfterTen,
@@ -101,7 +109,13 @@ export const DateStep = ({
   };
 
   const onSubmit = async (data: FormValues) => {
-    if (showTooltipMessage) return;
+    if (showTooltipMessage.date) {
+      setShowTooltipMessage((prev) => ({
+        ...prev,
+        date: true,
+      }));
+      return;
+    }
 
     const dateObj = {
       deliveryDate: (data.deliveryDate as Dayjs).format("DD.MM.YYYY"),
@@ -113,9 +127,16 @@ export const DateStep = ({
     if (returnBottles) {
       setLoading(true);
 
+      handleAddOrderDetails({
+        bottlesNumberToReturn: data.bottlesNumberToReturn,
+      });
+
       const orderData = {
         ...userOrder,
         ...dateObj,
+        ...(returnBottles && {
+          bottlesNumberToReturn: data.bottlesNumberToReturn,
+        }),
         createdAt: dayjs().format("DD.MM.YYYY HH:mm"),
         items: [],
         paymentMethod: "Return cash",
@@ -167,7 +188,7 @@ export const DateStep = ({
       isCurrentDayIsSunday ||
       infoDay;
 
-    setShowTooltipMessage(disableNextConditions);
+    setShowTooltipMessage((prev) => ({ ...prev, date: disableNextConditions }));
   }, [
     isCurrentDayAfterNoon,
     isCurrentDayPrevious,
@@ -175,8 +196,28 @@ export const DateStep = ({
     infoDay,
   ]);
 
+  useEffect(() => {
+    if (returnBottles) {
+      setValue("bottlesNumberToReturn", userOrder.bottlesNumberToReturn);
+    } else {
+      setShowTooltipMessage((prev) => ({
+        ...prev,
+        bottles: false,
+      }));
+    }
+  }, [userOrder, returnBottles]);
+
+  useEffect(() => {
+    if (returnBottles) {
+      setShowTooltipMessage((prev) => ({
+        ...prev,
+        bottles: +(returnBottlesCount || "0") <= 0,
+      }));
+    }
+  }, [returnBottles, returnBottlesCount]);
+
   if (loading) {
-    return <Loader text={t("loading_paymentLink")} />;
+    return <Loader text={t("loading_order")} />;
   }
 
   return (
@@ -216,7 +257,7 @@ export const DateStep = ({
                 {
                   <FormHelperText
                     sx={{
-                      color: showTooltipMessage ? "#d32f2f" : "gray",
+                      color: showTooltipMessage.date ? "#d32f2f" : "gray",
                     }}
                   >
                     {!isCurrentDayPrevious && isCurrentDayIsSunday
@@ -231,7 +272,7 @@ export const DateStep = ({
                     color: "#d32f2f",
                   }}
                 >
-                  {showTooltipMessage &&
+                  {showTooltipMessage.date &&
                     t("soonest_day", {
                       nextDay: `${nextDay.format("dddd")} - ${nextDay.format(
                         "DD MMMM"
@@ -256,20 +297,60 @@ export const DateStep = ({
                   value="9-12"
                   control={<Radio />}
                   label={t("delivery_time_9_12")}
-                  disabled={showTooltipMessage || isCurrentDayAfterTen}
+                  disabled={showTooltipMessage.date || isCurrentDayAfterTen}
                 />
                 <FormControlLabel
                   value="9-17"
                   control={<Radio />}
                   label={t("delivery_time_9_17")}
-                  disabled={showTooltipMessage}
+                  disabled={showTooltipMessage.date}
                 />
               </RadioGroup>
             )}
           />
+          {returnBottles && (
+            <Box
+              sx={{
+                marginTop: "30px",
+                marginBottom: "20px",
+              }}
+            >
+              <Controller
+                name="bottlesNumberToReturn"
+                control={control}
+                render={({ field }) => (
+                  <Box display="flex" flexDirection="column">
+                    <Typography textAlign={isSmallScreen ? "center" : "left"}>
+                      {t("number_of_bottles_to_return")}
+                    </Typography>
+
+                    <Box
+                      display="flex"
+                      justifyContent={isSmallScreen ? "center" : "flex-start"}
+                    >
+                      <OrderCardCounter
+                        count={field?.value || "0"}
+                        onAdd={() => field.onChange(+(field?.value || "0") + 1)}
+                        disabled={showTooltipMessage.date}
+                        onRemove={() => {
+                          field.onChange(
+                            Math.max(+(field?.value || "0") - 1, 0)
+                          );
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                )}
+              />
+            </Box>
+          )}
         </Box>
         {renderButtonsGroup(
-          showTooltipMessage ? "Please select correct delivery date" : ""
+          showTooltipMessage.date
+            ? "Please select correct delivery date"
+            : showTooltipMessage.bottles
+            ? "You can not to return 0 bottles"
+            : ""
         )}
       </Box>
     </LocalizationProvider>
