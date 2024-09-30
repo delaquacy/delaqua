@@ -69,6 +69,15 @@ export const MyAccountMenu = () => {
       >
         <MenuItem
           onClick={() => {
+            router.push("/new_order");
+            handleClose();
+          }}
+        >
+          <Box>{t("newOrder")}</Box>
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
             router.push("/order_history");
             handleClose();
             trackAmplitudeEvent("myHistory", {
@@ -77,15 +86,6 @@ export const MyAccountMenu = () => {
           }}
         >
           <Box>{t("viewOrderHistory")}</Box>
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            router.push("/new_order");
-            handleClose();
-          }}
-        >
-          <Box>{t("newOrder")}</Box>
         </MenuItem>
 
         <MenuItem
