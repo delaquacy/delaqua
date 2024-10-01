@@ -194,7 +194,11 @@ export const OrderDetailsStep = ({
               <Tooltip title={t("geolocation_link")}>
                 <PlaceOutlined />
               </Tooltip>
-              <Typography noWrap>
+              <Typography
+                sx={{
+                  wordBreak: "break-word",
+                }}
+              >
                 <Link href={userOrder.deliveryAddressObj.geolocation}>
                   {userOrder.deliveryAddressObj.geolocation}
                 </Link>

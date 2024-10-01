@@ -85,7 +85,6 @@ export default function OrderStepper() {
           <Box
             sx={{
               paddingBlock: 4,
-              minHeight: "calc(100vh - 200px)",
             }}
           >
             {STEPS_COMPONENTS[activeStep]({
@@ -103,7 +102,6 @@ export default function OrderStepper() {
           <Box
             sx={{
               paddingTop: 4,
-              height: "calc(100dvh - 300px)",
               overflow: "scroll",
             }}
           >
