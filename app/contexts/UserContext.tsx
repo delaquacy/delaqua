@@ -81,7 +81,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         setUser(currentUser);
         setLoading(false);
 
-        return unsubscribeOrders;
+        return () => {
+          if (typeof unsubscribeOrders === "function") {
+            unsubscribeOrders();
+          }
+        };
       }
     });
     setLoading(false);

@@ -2,8 +2,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import {
   collection,
-  doc,
-  getDoc,
+  getDocs,
   onSnapshot,
   query,
   where,
@@ -15,37 +14,39 @@ import { sortByDate } from "./sortByDate";
 dayjs.extend(customParseFormat);
 
 // get all user orders in real-time
-export const getAllUserOrders = async (
+export const getAllUserOrders = (
   userId: string,
   setOrders: (orders: OrdersData[]) => void
 ) => {
   try {
-    const userDocRef = doc(db, "users", userId);
+    const ordersRef = collection(db, `users/${userId}/orders`);
 
-    const userDoc = await getDoc(userDocRef);
-
-    const user =
-      userDoc.exists() && ({ id: userDoc.id, ...userDoc.data() } as any);
-
-    const userNum = user?.userNumber;
-
-    const ordersQuery = query(
-      collection(db, "allOrders"),
-      where("userId", "==", +userNum)
-    );
-
-    const unsubscribe = onSnapshot(ordersQuery, (querySnapshot) => {
-      const orders = querySnapshot.docs.map((doc) => {
-        return {
-          idDb: doc.id,
-          ...doc.data(),
-        };
-      });
+    const unsubscribe = onSnapshot(ordersRef, (querySnapshot) => {
+      const orders = querySnapshot.docs.map((doc) => ({
+        idDb: doc.id,
+        ...doc.data(),
+      }));
 
       const processOrders = async () => {
         const processedOrders: OrdersData[] = [];
 
         for (const order of orders as OrdersData[]) {
+          if (order.paymentId) {
+            try {
+              const ordersQuery = query(
+                collection(db, "orders"),
+                where("paymentId", "==", order.paymentId)
+              );
+
+              const snapshot = await getDocs(ordersQuery);
+              snapshot.forEach((docSnapshot) => {
+                console.log(docSnapshot.data(), "SNAPSHOT");
+              });
+            } catch (err) {
+              console.error("Error fetching payment orders:", err);
+            }
+          }
+
           if (!order.items) {
             const items = [
               {
