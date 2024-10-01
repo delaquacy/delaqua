@@ -22,6 +22,7 @@ export * from "./getOrdersArray";
 export * from "./getOrdersfromDb";
 export * from "./getSortedOrders";
 export * from "./getUnableDates";
+export * from "./getUnpaidOrders";
 export * from "./stableSort";
 export * from "./updateOrderStatus";
 export * from "./webhoooks";

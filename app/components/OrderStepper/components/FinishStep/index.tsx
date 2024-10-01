@@ -29,7 +29,7 @@ export const FinishStep = () => {
       text: "Close payment",
     });
 
-    router.push("/order_history");
+    window.location.href = "/order_history";
   };
 
   const paymentText =

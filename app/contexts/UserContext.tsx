@@ -10,6 +10,7 @@ import React, {
   useState,
 } from "react";
 import { adminCheck } from "../utils";
+import { getUnpaidOrders } from "../utils/getUnpaidOrders";
 
 import { OrdersData } from "../types";
 import { checkAndAddAllOrder } from "../utils/checkAndAddAllOrder";
@@ -18,25 +19,16 @@ import { getAllUserOrders } from "../utils/getAllUserOrders";
 
 const auth = getAuth();
 
-const statusConditions = [
-  "Unpaid",
-  "ORDER_CANCELLED",
-  "ORDER_PAYMENT_DECLINED",
-  "ORDER_PAYMENT_FAILED",
-];
-
 interface UserContextType {
   user: User | null;
   isAdmin: boolean;
   orders: OrdersData[];
   loading: boolean;
   showWindow: boolean;
-  showContinueText: boolean;
   unpaidOrders: OrdersData[];
   setUser: (user: User) => void;
   setOrders: Dispatch<SetStateAction<OrdersData[]>>;
   setShowWindow: (show: boolean) => void;
-  setShowContinueText: (show: boolean) => void;
 }
 
 export const UserContext = React.createContext<UserContextType>({
@@ -46,11 +38,9 @@ export const UserContext = React.createContext<UserContextType>({
   unpaidOrders: [],
   loading: true,
   showWindow: true,
-  showContinueText: true,
   setUser: () => {},
   setOrders: () => {},
   setShowWindow: () => {},
-  setShowContinueText: () => {},
 });
 
 type UserProviderProps = {
@@ -63,7 +53,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [orders, setOrders] = useState<OrdersData[]>([]);
   const [loading, setLoading] = useState(true);
   const [showWindow, setShowWindow] = useState<boolean>(false);
-  const [showContinueText, setShowContinueText] = useState<boolean>(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -73,19 +62,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           setIsAdmin(res as boolean)
         );
 
-        const unsubscribeOrders = getAllUserOrders(
-          currentUser?.uid as string,
-          setOrders
-        );
-
+        getUnpaidOrders(currentUser?.uid as string).then(setUnpaidOrders);
+        getAllUserOrders(currentUser?.uid as string).then(setOrders);
         setUser(currentUser);
         setLoading(false);
-
-        return () => {
-          if (typeof unsubscribeOrders === "function") {
-            unsubscribeOrders();
-          }
-        };
       }
     });
     setLoading(false);
@@ -120,30 +100,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     });
   }, []);
 
-  useEffect(() => {
-    const isStatusInConditions = (paymentStatus: string | string[]) => {
-      if (typeof paymentStatus === "string") {
-        return statusConditions.includes(paymentStatus);
-      }
-      if (Array.isArray(paymentStatus)) {
-        return paymentStatus.some((status) =>
-          statusConditions.includes(status)
-        );
-      }
-      return false;
-    };
-
-    const unpaidOrders = orders.filter(
-      (order) =>
-        order.paymentMethod === "Online" &&
-        !order.canceled &&
-        !order.completed &&
-        isStatusInConditions(order.paymentStatus)
-    );
-
-    setUnpaidOrders(unpaidOrders);
-  }, [orders]);
-
   return (
     <UserContext.Provider
       value={{
@@ -153,9 +109,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         orders,
         loading,
         showWindow,
-        showContinueText,
         setShowWindow,
-        setShowContinueText,
         setUser,
         setOrders,
       }}

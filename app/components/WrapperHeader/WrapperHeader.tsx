@@ -6,13 +6,7 @@ import Headers from "../Headers/Headers";
 import { UnpaidOrdersModal } from "../UnpaidOrdersModal";
 
 export default function WrapperHeader() {
-  const {
-    unpaidOrders,
-    showWindow,
-    showContinueText,
-    setShowContinueText,
-    setShowWindow,
-  } = useUserContext();
+  const { unpaidOrders, showWindow, setShowWindow } = useUserContext();
 
   const pathname = usePathname();
   const router = useRouter();
@@ -25,14 +19,10 @@ export default function WrapperHeader() {
 
   return (
     <>
-      <Headers
-        setShowWindow={setShowWindow}
-        setShowContinueText={setShowContinueText}
-      />
+      <Headers setShowWindow={setShowWindow} />
       {showWindow && (
         <UnpaidOrdersModal
           showWindow={showWindow}
-          showContinueText={showContinueText}
           onClose={() => setShowWindow(false)}
           unpaidOrders={unpaidOrders}
         />

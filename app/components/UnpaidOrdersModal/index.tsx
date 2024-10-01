@@ -2,7 +2,6 @@ import { useScreenSize } from "@/app/hooks";
 import { OrdersData } from "@/app/types";
 import { Cancel } from "@mui/icons-material";
 import {
-  Box,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -14,10 +13,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from "@mui/material";
 import Link from "next/link";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ExpandRow } from "../WrapperHeader/ExpandRow";
 import {
@@ -31,25 +28,17 @@ import {
 
 interface UnpaidOrdersModalProps {
   showWindow: boolean;
-  showContinueText: boolean;
   onClose: () => void;
   unpaidOrders: OrdersData[];
 }
 
 export const UnpaidOrdersModal = ({
   showWindow,
-  showContinueText,
   onClose,
   unpaidOrders,
 }: UnpaidOrdersModalProps) => {
   const { t } = useTranslation("orderTable");
   const { isSmallScreen } = useScreenSize();
-
-  useEffect(() => {
-    if (unpaidOrders.length === 0) {
-      onClose();
-    }
-  }, [unpaidOrders]);
 
   return (
     <Dialog
@@ -73,47 +62,6 @@ export const UnpaidOrdersModal = ({
         <Cancel />
       </IconButton>
       <DialogTitle id="alert-dialog-title">{t("tableTitle")}</DialogTitle>
-      {showContinueText && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "5px",
-          }}
-        >
-          <Typography
-            sx={{
-              paddingInline: "24px",
-            }}
-          >
-            {t("tableSubTitle")}
-          </Typography>
-          <Box
-            sx={{
-              paddingInline: "24px",
-              width: "90%",
-            }}
-          >
-            <Typography
-              sx={{
-                display: "inline",
-              }}
-            >
-              {t("tableHelperText").split("Telegram")[0]}
-            </Typography>
-            <Link target="_blank" href="https://t.me/delaquacy">
-              <Typography
-                sx={{
-                  display: "inline",
-                  color: "#1976d2",
-                }}
-              >
-                Telegram
-              </Typography>
-            </Link>
-          </Box>
-        </Box>
-      )}
       <DialogContent>
         {isSmallScreen ? (
           <CardsContainer>

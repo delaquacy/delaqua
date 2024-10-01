@@ -20,9 +20,6 @@
     "value": "Value"
   },
   "tableTitle": "Unpaid orders",
-  "tableSubTitle": "To proceed, please complete the payment for your order(s).",
-  "tableHelperText": "If you have already completed the payment but the status hasn't updated within 5 minutes, try refreshing the page. If the issue persists, please contact us on Telegram.",
-
 
   "tableHeadCells": {
       "clientId": "Client ID",

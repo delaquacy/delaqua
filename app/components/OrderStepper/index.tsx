@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import sessionService from "@/app/lib/SessionService";
 import { Box, Button, Step, StepLabel, Stepper } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { CardShadow } from "../shared";
@@ -49,14 +48,13 @@ export default function OrderStepper() {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  const handleReset = () => {
+    setActiveStep(0);
+  };
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeStep]);
-
-  useEffect(() => {
-    const step = sessionService.getStep();
-    setActiveStep(step);
-  }, []);
 
   return (
     <>
@@ -119,7 +117,6 @@ export default function OrderStepper() {
                   errorMessage={errorMessage}
                 />
               ),
-              activeStep,
             })}
           </Box>
         )}
