@@ -6,15 +6,18 @@ import TableRow from "@mui/material/TableRow";
 
 import { OrdersData } from "@/app/types";
 import { ApartmentOutlined, HouseOutlined } from "@mui/icons-material";
-import { Box, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Tooltip, Typography } from "@mui/material";
 import TableCell from "@mui/material/TableCell";
 import { useTranslation } from "react-i18next";
 import { HistoryTableCell, HistoryTableWidthCell } from "./styled";
 
-export function HistoryTableRow(props: { order: OrdersData }) {
-  const { order } = props;
-  const { t } = useTranslation(["orderTable", "savedAddresses"]);
-
+export function HistoryTableRow(props: {
+  order: OrdersData;
+  hasUncompletedOrder: boolean;
+  handleOpenCancelModal: (order: OrdersData) => void;
+}) {
+  const { order, hasUncompletedOrder, handleOpenCancelModal } = props;
+  const { t } = useTranslation("orderTable");
   const GeneratePdf = dynamic(() => import("../InvoiceGenerator"), {
     ssr: false,
   });
@@ -28,6 +31,7 @@ export function HistoryTableRow(props: { order: OrdersData }) {
   const fullAddress = addressParts.filter(Boolean).join(", ");
 
   const typeOfAddress = order?.deliveryAddressObj?.addressType || "Home";
+  const couldBeCanceled = !order.canceled && !order.completed;
 
   const paymentStatusText = Array.isArray(order.paymentStatus)
     ? order.paymentStatus
@@ -91,6 +95,21 @@ export function HistoryTableRow(props: { order: OrdersData }) {
           "-"
         ) : (
           <GeneratePdf order={order} />
+        )}
+      </HistoryTableCell>
+      <HistoryTableCell align="center">
+        {couldBeCanceled && hasUncompletedOrder && (
+          <Button
+            variant="contained"
+            sx={{
+              textTransform: "capitalize",
+            }}
+            onClick={() => handleOpenCancelModal(order)}
+          >
+            {t("cancel", {
+              ns: "form",
+            })}
+          </Button>
         )}
       </HistoryTableCell>
     </TableRow>

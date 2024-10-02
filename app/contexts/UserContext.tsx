@@ -31,10 +31,12 @@ interface UserContextType {
   orders: OrdersData[];
   loading: boolean;
   showWindow: boolean;
+  showContinueText: boolean;
   unpaidOrders: OrdersData[];
   setUser: (user: User) => void;
   setOrders: Dispatch<SetStateAction<OrdersData[]>>;
   setShowWindow: (show: boolean) => void;
+  setShowContinueText: (show: boolean) => void;
 }
 
 export const UserContext = React.createContext<UserContextType>({
@@ -44,9 +46,11 @@ export const UserContext = React.createContext<UserContextType>({
   unpaidOrders: [],
   loading: true,
   showWindow: true,
+  showContinueText: true,
   setUser: () => {},
   setOrders: () => {},
   setShowWindow: () => {},
+  setShowContinueText: () => {},
 });
 
 type UserProviderProps = {
@@ -59,6 +63,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [orders, setOrders] = useState<OrdersData[]>([]);
   const [loading, setLoading] = useState(true);
   const [showWindow, setShowWindow] = useState<boolean>(false);
+  const [showContinueText, setShowContinueText] = useState<boolean>(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -144,7 +149,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         orders,
         loading,
         showWindow,
+        showContinueText,
         setShowWindow,
+        setShowContinueText,
         setUser,
         setOrders,
       }}
