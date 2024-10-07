@@ -35,7 +35,7 @@ export const StoreStep = ({
   const { t } = useTranslation("form");
   const { isSmallScreen } = useScreenSize();
 
-  const { goods, userOrder, isFirstOrder, handleAddOrderDetails } =
+  const { goods, userOrder, isFirstOrder, userData, handleAddOrderDetails } =
     useOrderDetailsContext();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(true);
@@ -102,8 +102,25 @@ export const StoreStep = ({
 
   useEffect(() => {
     if (userOrder.items.length > 0) {
+      const { bigBottle } = findBottlesByCode(userOrder.items) as Record<
+        string,
+        CombinedItem | undefined
+      >;
+
+      const bigBottleCount = isFirstOrder
+        ? "1"
+        : userData.orders.length === 1
+        ? "2"
+        : (userData.orders[0].items as UserOrderItem[]).find(
+            (item) => `${item.id}` === "119"
+          )?.count || "0";
+
       reset({
-        items: userOrder.items,
+        items: userOrder.items.map((item) =>
+          `${item.id}` === "119"
+            ? { ...bigBottle, count: bigBottleCount }
+            : item
+        ),
         bottlesNumberToReturn: userOrder.bottlesNumberToReturn,
       });
     }

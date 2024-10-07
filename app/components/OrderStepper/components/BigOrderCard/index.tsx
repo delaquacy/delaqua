@@ -108,7 +108,7 @@ export const BigOrderCard = ({
               <Tooltip
                 title={t(
                   `${
-                    isFirstOrder && !isMoreThanOneBigBottle
+                    !isMoreThanOneBigBottle
                       ? "119CostFirst"
                       : isTenOrMoreBigBottle
                       ? "119TenCost"
@@ -119,7 +119,7 @@ export const BigOrderCard = ({
               >
                 <Typography textAlign="center" color="gray">
                   {`${
-                    (isFirstOrder && !isMoreThanOneBigBottle
+                    (!isMoreThanOneBigBottle
                       ? +BIG_BOTTLE_PRICE.FIRST_AND_ONE
                       : isTenOrMoreBigBottle
                       ? +BIG_BOTTLE_PRICE.TEN_OR_MORE

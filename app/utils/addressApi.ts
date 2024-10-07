@@ -1,5 +1,7 @@
 import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import { db } from "../lib/config";
+import { OrdersData } from "../types";
+import { sortByDate } from "./sortByDate";
 
 export async function fetchAddresses(userId: string) {
   try {
@@ -32,7 +34,11 @@ export async function fetchOrders(userId: string) {
       ...doc.data(),
     }));
 
-    return ordersData;
+    const formatString = "DD.MM.YYYY HH:mm";
+
+    return (ordersData as OrdersData[]).sort((a, b) => {
+      return sortByDate(a.createdAt, b.createdAt, formatString);
+    });
   } catch (error) {
     console.error("Error fetching orders:", error);
     throw error;
