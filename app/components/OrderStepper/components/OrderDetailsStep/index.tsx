@@ -3,7 +3,6 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
-import Image from "next/image";
 
 import { OrderItemsTable } from "@/app/components/OrderItemsTable";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
@@ -155,22 +154,6 @@ export const OrderDetailsStep = ({
               <Typography>{`${userOrder.deliveryDate as string}, ${
                 userOrder.deliveryTime
               }`}</Typography>
-            </DetailsCardItemRow>
-
-            <DetailsCardItemRow
-              sx={{
-                flex: 1,
-              }}
-            >
-              <Tooltip title={t("number_of_bottles_to_return")}>
-                <Image
-                  src="/recycleWater.svg"
-                  height={25}
-                  width={25}
-                  alt="recycleWater"
-                />
-              </Tooltip>
-              <Typography>{userOrder.bottlesNumberToReturn || "0"}</Typography>
             </DetailsCardItemRow>
 
             <DetailsCardItemRow
