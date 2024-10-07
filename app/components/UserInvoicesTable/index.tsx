@@ -1,8 +1,8 @@
 "use client";
 
 import { useScreenSize, useToast } from "@/app/hooks";
-import { FilterItem, Invoices } from "@/app/types";
-import { getComparator, stableSort } from "@/app/utils";
+import { FilterItem, Invoices, OrdersData } from "@/app/types";
+import { getComparator, getOrdersArray, stableSort } from "@/app/utils";
 import { getClipboardInvoiceRowData } from "@/app/utils/getClipboardInvoiceRowData";
 import { getFilteredInvoices } from "@/app/utils/getFilteredInvoices";
 import { getUserInvoices } from "@/app/utils/getUserInvoices";
@@ -44,14 +44,17 @@ export const UserInvoicesTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [filters, setFilters] = useState<FilterItem[]>([]);
   const [applyFilters, setApplyFilters] = useState<boolean>(false);
+  const [orders, setOrders] = useState<OrdersData[]>([]);
 
   const getInvoicesRows = async () => {
     try {
       setLoading(true);
       const data = await getUserInvoices();
+      const orders = await getOrdersArray();
       const sorted = stableSort(data as any, getComparator(order, orderBy));
 
       setRows(sorted as any);
+      setOrders(orders as OrdersData[]);
       setFilteredRows(sorted as any);
       setLoading(false);
     } catch (error) {
@@ -206,6 +209,9 @@ export const UserInvoicesTable = () => {
                     {visibleRows.map((row, index) => {
                       const isItemSelected = isSelected(row.id as string);
                       const labelId = `enhanced-table-checkbox-${index}`;
+                      const order = orders.find(
+                        (order) => order.invoiceNumber === row.id
+                      );
 
                       const onCopy = (event: any) => {
                         event.stopPropagation();
@@ -218,6 +224,7 @@ export const UserInvoicesTable = () => {
                         <InvoiceTableRow
                           key={row.id as string}
                           row={row}
+                          order={order || null}
                           isItemSelected={isItemSelected}
                           handleClick={handleClick}
                           labelId={labelId}
