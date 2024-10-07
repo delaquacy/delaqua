@@ -1,10 +1,13 @@
 import { USER_INVOICES_HEAD } from "@/app/constants/UserInvoicesTable";
+import { OrdersData } from "@/app/types";
 import { ContentCopy } from "@mui/icons-material";
-import { Button, Checkbox, TableCell, TableRow } from "@mui/material";
+import { Box, Button, TableCell, TableRow } from "@mui/material";
+import dynamic from "next/dynamic";
 
 interface InvoiceTableRowProps {
   handleClick: (event: any, id: string) => void;
   row: any;
+  order: OrdersData | null;
   isItemSelected: boolean;
   labelId: string;
   onCopy: (event: any) => void;
@@ -13,10 +16,15 @@ interface InvoiceTableRowProps {
 export const InvoiceTableRow = ({
   handleClick,
   row,
+  order,
   isItemSelected,
   labelId,
   onCopy,
 }: InvoiceTableRowProps) => {
+  const GeneratePdf = dynamic(() => import("../../../InvoiceGenerator"), {
+    ssr: false,
+  });
+
   return (
     <TableRow
       // onClick={(event: any) => handleClick(event, row.id as string)}
@@ -72,6 +80,18 @@ export const InvoiceTableRow = ({
             }}
           />
         </Button>
+      </TableCell>
+      <TableCell align="center">
+        {!!order ? (
+          <GeneratePdf order={order} />
+        ) : (
+          <Box
+            sx={{
+              width: "42px",
+              height: "42px",
+            }}
+          ></Box>
+        )}
       </TableCell>
     </TableRow>
   );

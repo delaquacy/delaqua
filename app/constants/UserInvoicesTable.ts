@@ -84,9 +84,17 @@ export const InvoicesTableHeadCells = [
   {
     id: "paymentStatus",
     numeric: false,
-    disablePadding: true,
+    disablePadding: false,
     label: "tableHeadCells.payStatus",
     sortable: true,
     columns: "Payment Status",
+  },
+  {
+    id: "invoice",
+    numeric: false,
+    disablePadding: false,
+    label: "",
+    sortable: false,
+    columns: "invoice",
   },
 ];
