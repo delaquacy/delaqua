@@ -35,6 +35,10 @@ export const getFilteredInvoices = (
       );
     },
     "Client ID": (invoice, filter) => +invoice.clientId === +filter.value1,
+    "Address Type": (invoice, filter) =>
+      invoice?.addressType
+        ? invoice?.addressType === filter.value1
+        : filter.value1 === "Home",
     "Client name": (invoice, filter) => invoice.clientName === filter.value1,
     "Phone Number": (invoice, filter) => invoice.phoneNumber === filter.value1,
     "Payment Status": (invoice, filter) =>
