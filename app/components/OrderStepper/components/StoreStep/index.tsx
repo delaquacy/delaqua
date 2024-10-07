@@ -1,4 +1,5 @@
 import { FormWrapper } from "@/app/components/shared";
+import { BIG_BOTTLE_PRICE } from "@/app/constants/bigBottlePrise";
 import {
   UserOrderItem,
   useOrderDetailsContext,
@@ -34,7 +35,7 @@ export const StoreStep = ({
   const { t } = useTranslation("form");
   const { isSmallScreen } = useScreenSize();
 
-  const { goods, userOrder, isFirstOrder, handleAddOrderDetails } =
+  const { goods, userOrder, isFirstOrder, userData, handleAddOrderDetails } =
     useOrderDetailsContext();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(true);
@@ -71,16 +72,22 @@ export const StoreStep = ({
     const formattedData = data.items.map((order) => {
       const isBigBottle = +order.itemCode === 119;
       const isMoreThanOneBigBottle = isBigBottle && +order.count > 1;
+      const isTenOrMoreBigBottle = isBigBottle && +order.count >= 10;
 
       const newSellPrice =
-        isFirstOrder && isBigBottle && !isMoreThanOneBigBottle
-          ? `${+order.sellPrice + 1}`
-          : order.sellPrice;
+        isFirstOrder && !isMoreThanOneBigBottle
+          ? BIG_BOTTLE_PRICE.FIRST_AND_ONE
+          : isTenOrMoreBigBottle
+          ? BIG_BOTTLE_PRICE.TEN_OR_MORE
+          : BIG_BOTTLE_PRICE.DEFAULT;
 
       return {
         ...order,
-        sellPrice: newSellPrice,
-        sum: getOrderItemSum(order.count, newSellPrice),
+        sellPrice: isBigBottle ? newSellPrice : order.sellPrice,
+        sum: getOrderItemSum(
+          order.count,
+          isBigBottle ? newSellPrice : order.sellPrice
+        ),
       };
     });
 
@@ -95,8 +102,25 @@ export const StoreStep = ({
 
   useEffect(() => {
     if (userOrder.items.length > 0) {
+      const { bigBottle } = findBottlesByCode(userOrder.items) as Record<
+        string,
+        CombinedItem | undefined
+      >;
+
+      const bigBottleCount = isFirstOrder
+        ? "1"
+        : userData.orders.length === 1
+        ? "2"
+        : (userData.orders[0].items as UserOrderItem[]).find(
+            (item) => `${item.id}` === "119"
+          )?.count || "0";
+
       reset({
-        items: userOrder.items,
+        items: userOrder.items.map((item) =>
+          `${item.id}` === "119"
+            ? { ...bigBottle, count: bigBottleCount }
+            : item
+        ),
         bottlesNumberToReturn: userOrder.bottlesNumberToReturn,
       });
     }

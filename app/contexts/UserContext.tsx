@@ -68,6 +68,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         setLoading(false);
       }
     });
+
     setLoading(false);
 
     return () => unsubscribe();

@@ -233,7 +233,7 @@ export const OrderDetailsProvider = ({
   const getGoods = async () => {
     try {
       const data = await getStaticGoodsArray();
-      setGoods(data.map((item) => ({ ...item, picture: `${item.id}.webp` }))); // TODO: remove this when we will have correct picture link from storage
+      setGoods(data.map((item) => ({ ...item, picture: `${item.id}.webp` })));
       setUserOrder((prev) => ({
         ...prev,
         items: data.reverse().map((good) => ({
