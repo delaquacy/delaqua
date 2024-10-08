@@ -2,7 +2,6 @@ export const USER_INVOICES_HEAD = [
   { value: "Client ID", key: "clientId" },
   { value: "Client name", key: "clientName" },
   { value: "Phone number", key: "phoneNumber" },
-  { value: "Address Type", key: "addressType" },
   { value: "Delivery date", key: "deliveryDate" },
   { value: "Date of order placed", key: "createdAt" },
   { value: "Invoice number", key: "invoiceNumber" },
@@ -36,14 +35,6 @@ export const InvoicesTableHeadCells = [
     label: "tableHeadCells.contact",
     sortable: false,
     columns: "Phone Number",
-  },
-  {
-    id: "addressType",
-    numeric: false,
-    disablePadding: true,
-    sortable: false,
-    label: "tableHeadCells.addressType",
-    columns: "Address Type",
   },
   {
     id: "deliveryDate",

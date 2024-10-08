@@ -44,8 +44,6 @@
       "invoiceNumber": "Invoice number",
       "netVal": "Net value €",
       "vatVal": "Amount of VAT €",
-      "addressType": "Address Type",
-
       "": ""
 
   },

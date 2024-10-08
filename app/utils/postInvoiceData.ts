@@ -44,7 +44,6 @@ export const postInvoicesData = async (
       paymentStatus: data.paymentStatus,
       phoneNumber: data.phoneNumber,
       totalPayments: (+data.totalPayments).toFixed(2),
-      addressType: data.deliveryAddressObj.addressType || "home",
       netVal,
       vatVal,
       orderId: orderId,

@@ -69,7 +69,7 @@ export const InvoiceTableRow = ({
                 : "",
           }}
         >
-          {key === "addressType" ? row[key] || "Home" : row[key]}
+          {row[key]}
         </TableCell>
       ))}
       <TableCell align="center">

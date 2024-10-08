@@ -81,8 +81,6 @@ export interface Address {
   numberOfBottles: string;
   postalIndex: string;
   comments: string;
-  addressType?: string;
-  VAT_Num?: string;
 }
 interface UserData {
   formattedUserPhone: string | null;

@@ -194,9 +194,7 @@ export const OrderRow = ({
       <TableCell align="center">{row.totalPayments}</TableCell>
 
       <TableCell align="center">
-        {t(
-          `paymentStatuses.${row.paymentStatus ? row.paymentStatus : "Unpaid"}`
-        )}
+        {t(`paymentStatuses.${row.paymentStatus}`)}
       </TableCell>
 
       <TableCell align="center" padding="none">

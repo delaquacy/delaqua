@@ -5,15 +5,14 @@ import { getDateFromTimestamp } from "@/app/utils";
 import TableRow from "@mui/material/TableRow";
 
 import { OrdersData } from "@/app/types";
-import { ApartmentOutlined, HouseOutlined } from "@mui/icons-material";
-import { Box, Tooltip, Typography } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import TableCell from "@mui/material/TableCell";
 import { useTranslation } from "react-i18next";
 import { HistoryTableCell, HistoryTableWidthCell } from "./styled";
 
 export function HistoryTableRow(props: { order: OrdersData }) {
   const { order } = props;
-  const { t } = useTranslation(["orderTable", "savedAddresses"]);
+  const { t } = useTranslation("orderTable");
 
   const GeneratePdf = dynamic(() => import("../InvoiceGenerator"), {
     ssr: false,
@@ -29,27 +28,9 @@ export function HistoryTableRow(props: { order: OrdersData }) {
       <TableCell>{order.phoneNumber}</TableCell>
 
       <TableCell align="right">
-        <Box display="flex" flexDirection="column" alignItems="flex-start">
-          <Box display="flex" flexDirection="row" alignItems="flex-start">
-            {!order.deliveryAddressObj.addressType ||
-            order.deliveryAddressObj.addressType === "Home" ? (
-              <HouseOutlined />
-            ) : (
-              <ApartmentOutlined />
-            )}
-            <Typography fontSize="12px">
-              {t(
-                order.deliveryAddressObj.addressType?.toLowerCase() || "home",
-                { ns: "savedAddresses" }
-              )}
-            </Typography>
-          </Box>
-          <Tooltip title={order.deliveryAddress}>
-            <Typography
-              textAlign={"left"}
-            >{`${order.postalIndex}, ${order.deliveryAddress}`}</Typography>
-          </Tooltip>
-        </Box>
+        <Tooltip title={order.deliveryAddress}>
+          <span>{`${order.postalIndex}, ${order.deliveryAddress}`}</span>
+        </Tooltip>
       </TableCell>
 
       <HistoryTableWidthCell align="right">

@@ -10,9 +10,8 @@ import { useToast } from "@/app/hooks";
 import { processOrder } from "@/app/utils/processOrder";
 import {
   AccountCircleOutlined,
-  ApartmentOutlined,
   EventOutlined,
-  HouseOutlined,
+  HomeOutlined,
   PlaceOutlined,
 } from "@mui/icons-material";
 import {
@@ -25,7 +24,6 @@ import {
   Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
-import Image from "next/image";
 import Link from "next/link";
 import {
   DetailsCard,
@@ -47,7 +45,7 @@ export const OrderDetailsStep = ({
   renderButtonsGroup: (errorMessage?: string) => React.ReactNode;
   handleNext: () => void;
 }) => {
-  const { t } = useTranslation(["form", "orderTable"]);
+  const { t } = useTranslation("form");
   const { trackAmplitudeEvent } = useAmplitudeContext();
   const { userOrder, userData, handleAddOrderDetails, setPaymentUrl } =
     useOrderDetailsContext();
@@ -179,11 +177,15 @@ export const OrderDetailsStep = ({
               <Tooltip title={t("geolocation_link")}>
                 <PlaceOutlined />
               </Tooltip>
-              <Link href={userOrder.deliveryAddressObj.geolocation}>
-                <Typography sx={{ color: "#1976d2", wordBreak: "break-word" }}>
+              <Typography
+                sx={{
+                  wordBreak: "break-word",
+                }}
+              >
+                <Link href={userOrder.deliveryAddressObj.geolocation}>
                   {userOrder.deliveryAddressObj.geolocation}
-                </Typography>
-              </Link>
+                </Link>
+              </Typography>
             </DetailsCardItemRow>
 
             <DetailsCardItemRow
@@ -191,46 +193,11 @@ export const OrderDetailsStep = ({
                 flex: 3,
               }}
             >
-              <Tooltip
-                title={
-                  t("tableHeadCells.addressType", { ns: "orderTable" }) +
-                  ": " +
-                  t(
-                    userOrder.deliveryAddressObj.addressType?.toLowerCase() ||
-                      "home",
-                    { ns: "savedAddresses" }
-                  )
-                }
-              >
-                {!userOrder.deliveryAddressObj.addressType ||
-                userOrder.deliveryAddressObj.addressType === "Home" ? (
-                  <HouseOutlined />
-                ) : (
-                  <ApartmentOutlined />
-                )}
+              <Tooltip title={t("address")}>
+                <HomeOutlined />
               </Tooltip>
               <Typography>{addressInfo}</Typography>
             </DetailsCardItemRow>
-
-            {userOrder.deliveryAddressObj?.VAT_Num && (
-              <DetailsCardItemRow
-                sx={{
-                  flex: 1,
-                }}
-              >
-                <Tooltip title={t("address")}>
-                  <Image
-                    src="/vat_num.svg"
-                    height={25}
-                    width={25}
-                    alt="vat num"
-                  />
-                </Tooltip>
-                <Typography>
-                  {userOrder.deliveryAddressObj?.VAT_Num || ""}
-                </Typography>
-              </DetailsCardItemRow>
-            )}
           </DetailsCard>
         </Box>
 
