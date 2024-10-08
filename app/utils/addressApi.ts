@@ -37,9 +37,11 @@ export async function fetchOrders(userId: string) {
 
     const formatString = "DD.MM.YYYY HH:mm";
 
-    return (ordersData as OrdersData[]).sort((a, b) => {
-      return sortByDate(a.createdAt, b.createdAt, formatString);
-    });
+    return (ordersData as OrdersData[])
+      .filter((order) => (order as any).createdAt)
+      .sort((a, b) => {
+        return sortByDate(a.createdAt, b.createdAt, formatString);
+      });
   } catch (error) {
     console.error("Error fetching orders:", error);
     throw error;
