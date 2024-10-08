@@ -65,6 +65,7 @@ interface OrderDetailsContextType {
   isFirstOrder: boolean;
   paymentUrl: string;
   loading: boolean;
+  error: string;
   setPaymentUrl: (url: string) => void;
   setUserData: Dispatch<SetStateAction<UserData>>;
   handleAddOrderDetails: (newDetails: any) => void;
@@ -97,6 +98,7 @@ export const OrderDetailsContext = createContext<OrderDetailsContextType>({
   isFirstOrder: true,
   paymentUrl: "",
   loading: false,
+  error: "",
   setPaymentUrl: () => {},
   setUserData: () => {},
   userData: {
@@ -155,6 +157,7 @@ export const OrderDetailsProvider = ({
   const [isFirstOrder, setIsFirstOrder] = useState(true);
   const [paymentUrl, setPaymentUrl] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [userOrder, setUserOrder] = useState<UserOrder>({
     id: uuidv4(),
     items: [] as UserOrderItem[],
@@ -226,6 +229,8 @@ export const OrderDetailsProvider = ({
 
       return [addressesData, ordersData, userNumber];
     } catch (error) {
+      setError(`Error fetching user data: ${error}`);
+      setLoading(false);
       console.error("Error fetching user data:", error);
     }
   };
@@ -287,6 +292,7 @@ export const OrderDetailsProvider = ({
         isFirstOrder,
         paymentUrl,
         loading,
+        error,
         setPaymentUrl,
         setUserData,
         handleAddOrderDetails,

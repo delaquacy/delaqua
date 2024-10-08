@@ -1,12 +1,12 @@
-import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "../lib/config";
 import { OrdersData } from "../types";
 import { sortByDate } from "./sortByDate";
 
 export async function fetchAddresses(userId: string) {
   try {
-    const q = query(collection(db, `users/${userId}/addresses`));
-    const querySnapshot = await getDocs(q);
+    const addressesRef = collection(db, `users/${userId}/addresses`);
+    const querySnapshot = await getDocs(addressesRef);
 
     const addressesData = querySnapshot.docs
       .map((doc) => ({
@@ -24,10 +24,11 @@ export async function fetchAddresses(userId: string) {
     throw error;
   }
 }
+
 export async function fetchOrders(userId: string) {
   try {
-    const ordersQuery = query(collection(db, `users/${userId}/orders`));
-    const ordersQuerySnapshot = await getDocs(ordersQuery);
+    const ordersRef = collection(db, `users/${userId}/orders`);
+    const ordersQuerySnapshot = await getDocs(ordersRef);
 
     const ordersData = ordersQuerySnapshot.docs.map((doc) => ({
       id: doc.id,

@@ -105,6 +105,8 @@
   "addToOrder": "Add to your order",
   "maxVal": "Maximum value",
   "outOfStock": "Out of stock",
+  "loading": "Data is loading 🚀, please wait",
+  "reload":"Reload",
 
   "": ""
 
