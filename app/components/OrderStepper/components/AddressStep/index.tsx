@@ -1,6 +1,12 @@
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { useToast } from "@/app/hooks";
-import { Box, Skeleton, ToggleButton } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  ToggleButton,
+  Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -15,6 +21,7 @@ import { ControllerInputField } from "@/app/components/shared";
 import { MAX_ADDRESS_NUM } from "@/app/constants/AddressesNum";
 import { AddressesService } from "@/app/lib/AddressesService";
 import { getAddressTypeCount } from "@/app/utils/getAddressTypeCount";
+import { useRouter } from "next/navigation";
 import { AddNewAddress } from "../AddNewAddress";
 import { AddressDetailCard } from "../AddressDetailCard";
 import {
@@ -64,9 +71,17 @@ export const AddressStep = ({
 }) => {
   const { t } = useTranslation("form");
 
-  const { userOrder, userData, loading, handleAddOrderDetails, setUserData } =
-    useOrderDetailsContext();
+  const {
+    userOrder,
+    userData,
+    loading,
+    error,
+    handleAddOrderDetails,
+    setUserData,
+  } = useOrderDetailsContext();
+
   const { showSuccessToast, showErrorToast } = useToast();
+  const router = useRouter();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(
     !userOrder.deliveryAddressObj.id
@@ -159,6 +174,10 @@ export const AddressStep = ({
     );
   };
 
+  const handleReload = () => {
+    router.refresh();
+  };
+
   const onSubmit = (data: FormValues) => {
     if (showTooltipMessage) return;
 
@@ -190,8 +209,42 @@ export const AddressStep = ({
 
   if (loading) {
     return (
-      <Box>
-        <Skeleton height="250px" />
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          gap: "50px",
+          width: "100%",
+          justifyContent: "top",
+          marginTop: "30px",
+          alignItems: "center",
+        }}
+      >
+        <Typography align="center">{t("loading")}</Typography>
+        <CircularProgress size={100} thickness={2} />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          gap: "50px",
+          width: "100%",
+          justifyContent: "top",
+          marginTop: "30px",
+          alignItems: "center",
+        }}
+      >
+        <Typography align="center">{error}</Typography>
+        <Button variant="contained" onClick={handleReload}>
+          {t("reload")}
+        </Button>
       </Box>
     );
   }

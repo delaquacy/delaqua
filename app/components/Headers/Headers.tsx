@@ -59,7 +59,7 @@ export default function Headers({
 
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [showInfoModal, setShowInfoModal] = useState(true);
+  const [showInfoModal, setShowInfoModal] = useState(false);
   const [open, setOpen] = useState(true);
 
   const handleClose = () => setOpen(false);
@@ -122,9 +122,10 @@ export default function Headers({
     const endDate = dayjs(END_INFO_BANNER, "DD.MM.YYYY HH:mm");
 
     if (today.isAfter(endDate)) {
-      console.log("here");
       setShowInfoModal(false);
       setOpen(false);
+    } else {
+      setShowInfoModal(true);
     }
   }, []);
 
@@ -150,218 +151,220 @@ export default function Headers({
 
   return (
     <SnackbarProvider>
-      {!pathname.endsWith("/admin_dashboard") && showInfoModal && (
-        <>
-          <Box
-            sx={{
-              background: "#428bca",
-              color: "white",
-              padding: 2,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontSize: "22px",
-              fontWeight: "bold",
-            }}
-          >
-            <Typography
-              width="80%"
-              fontSize={18}
-              fontWeight={"bold"}
-              textAlign="center"
+      <Box>
+        {!pathname.endsWith("/admin_dashboard") && showInfoModal && (
+          <>
+            <Box
+              sx={{
+                background: "#428bca",
+                color: "white",
+                padding: 2,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontSize: "22px",
+                fontWeight: "bold",
+              }}
             >
-              {t("info")}
-            </Typography>
-          </Box>
-
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              <IconButton
-                onClick={handleClose}
-                sx={{
-                  position: "absolute",
-                  right: 5,
-                  top: 5,
-                }}
-              >
-                <Close />
-              </IconButton>
               <Typography
-                variant="h6"
-                component="h2"
-                fontWeight="bold"
-                fontSize={30}
-              >
-                {t("customers")}
-              </Typography>
-              <Typography
-                id="modal-modal-description"
+                width="80%"
+                fontSize={18}
+                fontWeight={"bold"}
                 textAlign="center"
-                sx={{ mt: 2 }}
               >
                 {t("info")}
               </Typography>
             </Box>
-          </Modal>
-        </>
-      )}
-      {user &&
-        unpaidOrders.length !== 0 &&
-        !pathname.includes("/admin_dashboard") && (
-          <Box
-            sx={{
-              background: "#D34942",
-              color: "white",
-              padding: 2,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontSize: "22px",
-              fontWeight: "bold",
-            }}
-          >
-            {t("paymentWarning")}
-            <Button
-              onClick={() => setShowWindow(true)}
-              size="large"
-              sx={{
-                paddingInline: 4,
-                marginLeft: 2,
-                background: "#fff",
-                border: "solid 2px #A72A24",
-                color: "#A72A24",
-                fontWeight: "bold",
 
-                ":hover": {
-                  background: "#A83A34",
-                  color: "#fff",
-                  boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
-                },
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <IconButton
+                  onClick={handleClose}
+                  sx={{
+                    position: "absolute",
+                    right: 5,
+                    top: 5,
+                  }}
+                >
+                  <Close />
+                </IconButton>
+                <Typography
+                  variant="h6"
+                  component="h2"
+                  fontWeight="bold"
+                  fontSize={30}
+                >
+                  {t("customers")}
+                </Typography>
+                <Typography
+                  id="modal-modal-description"
+                  textAlign="center"
+                  sx={{ mt: 2 }}
+                >
+                  {t("info")}
+                </Typography>
+              </Box>
+            </Modal>
+          </>
+        )}
+        {user &&
+          unpaidOrders.length !== 0 &&
+          !pathname.includes("/admin_dashboard") && (
+            <Box
+              sx={{
+                background: "#D34942",
+                color: "white",
+                padding: 2,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontSize: "22px",
+                fontWeight: "bold",
               }}
             >
-              {t("pay")}
-            </Button>
-          </Box>
-        )}
-      <Box className={styles.container}>
-        <AppBar position="static">
-          <Toolbar className={styles.toolbar}>
-            <Box className={styles.name_container} sx={{ flexGrow: 1 }}>
-              <Link href="/">
-                <Image
-                  src="/water.svg"
-                  alt="DelAqua logo"
-                  width={50}
-                  height={50}
-                />
-              </Link>
+              {t("paymentWarning")}
+              <Button
+                onClick={() => setShowWindow(true)}
+                size="large"
+                sx={{
+                  paddingInline: 4,
+                  marginLeft: 2,
+                  background: "#fff",
+                  border: "solid 2px #A72A24",
+                  color: "#A72A24",
+                  fontWeight: "bold",
 
-              <Box>
+                  ":hover": {
+                    background: "#A83A34",
+                    color: "#fff",
+                    boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+                  },
+                }}
+              >
+                {t("pay")}
+              </Button>
+            </Box>
+          )}
+        <Box className={styles.container}>
+          <AppBar position="static">
+            <Toolbar className={styles.toolbar}>
+              <Box className={styles.name_container} sx={{ flexGrow: 1 }}>
                 <Link href="/">
-                  <div className={styles.name}>
-                    Del
-                    <span>Aqua</span>
-                  </div>
+                  <Image
+                    src="/water.svg"
+                    alt="DelAqua logo"
+                    width={50}
+                    height={50}
+                  />
                 </Link>
 
-                <p className={styles.name_descr}>
-                  We deliver spring water in Limassol
-                </p>
-              </Box>
-            </Box>
+                <Box>
+                  <Link href="/">
+                    <div className={styles.name}>
+                      Del
+                      <span>Aqua</span>
+                    </div>
+                  </Link>
 
-            {showLogin && <WrapperLogin {...loginProps} />}
-            <div className={styles.buttonsContainer}>
-              <Box>
-                <Select
-                  className={styles.language}
-                  value={currentLocale}
-                  onChange={handleLanguageChange}
-                >
-                  <MenuItem value="en">EN</MenuItem>
-                  <MenuItem value="el">EL</MenuItem>
-                  <MenuItem value="uk">UA</MenuItem>
-                  <MenuItem value="ru">RU</MenuItem>
-                </Select>
+                  <p className={styles.name_descr}>
+                    We deliver spring water in Limassol
+                  </p>
+                </Box>
               </Box>
-              {loading ? (
-                <div className={styles.loadingContainer}>
-                  <CircularProgress size={20} />
-                </div>
-              ) : (
-                <>
-                  {!user && (
-                    <Button
-                      variant="contained"
-                      endIcon={<LoginIcon fontSize="small" />}
-                      onClick={handleLoginToggle}
-                    >
-                      {t("login")}
-                    </Button>
-                  )}
-                  {user && (
-                    <>
-                      <Box className={styles.loginMyaccountButtons}>
-                        <MyAccountMenu />
-                        {isAdmin && (
-                          <Button
-                            onClick={() => {
-                              router.push("/admin_dashboard");
-                            }}
-                            variant="contained"
-                            endIcon={<ManageAccounts fontSize="small" />}
-                          >
-                            {t("admin")}
-                          </Button>
-                        )}
-                        <Link href="/">
-                          <Button
-                            variant="contained"
-                            endIcon={<ExitToApp fontSize="small" />}
-                            onClick={handleLogout}
-                          >
-                            {t("logout")}
-                          </Button>
-                        </Link>
-                      </Box>
 
-                      {/* mobile buttons */}
-                      <Box className={styles.mobileScreen}>
-                        <MyAccountMenu />
-                        {isAdmin && (
-                          <IconButton
-                            onClick={() => router.push("/admin_dashboard")}
-                            sx={{
-                              width: "50px",
-                              height: "50px",
-                            }}
-                          >
-                            <ManageAccountsSharp
+              {showLogin && <WrapperLogin {...loginProps} />}
+              <div className={styles.buttonsContainer}>
+                <Box>
+                  <Select
+                    className={styles.language}
+                    value={currentLocale}
+                    onChange={handleLanguageChange}
+                  >
+                    <MenuItem value="en">EN</MenuItem>
+                    <MenuItem value="el">EL</MenuItem>
+                    <MenuItem value="uk">UA</MenuItem>
+                    <MenuItem value="ru">RU</MenuItem>
+                  </Select>
+                </Box>
+                {loading ? (
+                  <div className={styles.loadingContainer}>
+                    <CircularProgress size={20} />
+                  </div>
+                ) : (
+                  <>
+                    {!user && (
+                      <Button
+                        variant="contained"
+                        endIcon={<LoginIcon fontSize="small" />}
+                        onClick={handleLoginToggle}
+                      >
+                        {t("login")}
+                      </Button>
+                    )}
+                    {user && (
+                      <>
+                        <Box className={styles.loginMyaccountButtons}>
+                          <MyAccountMenu />
+                          {isAdmin && (
+                            <Button
+                              onClick={() => {
+                                router.push("/admin_dashboard");
+                              }}
+                              variant="contained"
+                              endIcon={<ManageAccounts fontSize="small" />}
+                            >
+                              {t("admin")}
+                            </Button>
+                          )}
+                          <Link href="/">
+                            <Button
+                              variant="contained"
+                              endIcon={<ExitToApp fontSize="small" />}
+                              onClick={handleLogout}
+                            >
+                              {t("logout")}
+                            </Button>
+                          </Link>
+                        </Box>
+
+                        {/* mobile buttons */}
+                        <Box className={styles.mobileScreen}>
+                          <MyAccountMenu />
+                          {isAdmin && (
+                            <IconButton
+                              onClick={() => router.push("/admin_dashboard")}
+                              sx={{
+                                width: "50px",
+                                height: "50px",
+                              }}
+                            >
+                              <ManageAccountsSharp
+                                color="primary"
+                                fontSize="small"
+                              />
+                            </IconButton>
+                          )}
+                          <Link href="/">
+                            <ExitToApp
                               color="primary"
+                              onClick={handleLogout}
                               fontSize="small"
                             />
-                          </IconButton>
-                        )}
-                        <Link href="/">
-                          <ExitToApp
-                            color="primary"
-                            onClick={handleLogout}
-                            fontSize="small"
-                          />
-                        </Link>
-                      </Box>
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-          </Toolbar>
-        </AppBar>
+                          </Link>
+                        </Box>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            </Toolbar>
+          </AppBar>
+        </Box>
       </Box>
     </SnackbarProvider>
   );
