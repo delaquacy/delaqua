@@ -1,13 +1,15 @@
-import { Address } from "@/app/contexts/OrderDetailsContext";
 import { useToast } from "@/app/hooks";
+import { Address } from "@/app/types";
 import {
   AccountCircleOutlined,
+  ApartmentOutlined,
   Delete,
-  HomeOutlined,
+  HouseOutlined,
   PlaceOutlined,
 } from "@mui/icons-material";
 import { Box, Tooltip, Typography } from "@mui/material";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ModalRemoveAddress } from "../ModalRemoveAddress";
@@ -64,10 +66,12 @@ export const AddressDetailCard = ({
           flex: 3,
         }}
       >
-        <HomeOutlined />
-        <Typography
-          textAlign={"left"}
-        >{`${address.postalIndex}, ${address.deliveryAddress}, ${address.addressDetails}`}</Typography>
+        <PlaceOutlined />
+        <Link href={address.geolocation || "/"}>
+          <Typography textAlign={"left"} sx={{ color: "#1976d2" }}>
+            {`${address.postalIndex}, ${address.deliveryAddress}, ${address.addressDetails}`}
+          </Typography>
+        </Link>
       </CardBlockRow>
 
       <CardBlockRow
@@ -88,18 +92,16 @@ export const AddressDetailCard = ({
 
       <CardBlockRow
         sx={{
-          flex: 2,
+          flex: 1,
         }}
       >
-        <PlaceOutlined />
-        <Typography
-          sx={{
-            textAlign: "left",
-            wordBreak: "break-word",
-            whiteSpace: "normal",
-          }}
-        >
-          {address.geolocation}
+        {!address.addressType || address.addressType === "Home" ? (
+          <HouseOutlined />
+        ) : (
+          <ApartmentOutlined />
+        )}
+        <Typography>
+          {t(address.addressType?.toLowerCase() || "home")}
         </Typography>
       </CardBlockRow>
 

@@ -1,27 +1,25 @@
 "use client";
-import { ChangeEvent, Dispatch, SetStateAction } from "react";
-import { TableHeadCells } from "@/app/constants/TableHeadCells";
 import {
-  MenuItem,
-  Box,
-  TextField,
-  SelectChangeEvent,
-  Button,
-  Tooltip,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { useToast } from "@/app/hooks/useToast";
-import { useTranslation } from "react-i18next";
-import { FilterItem } from "@/app/types";
-import { useScreenSize } from "@/app/hooks";
-import {
-  DELIVERY_TIMES,
   ORDER_STATUSES,
   PAYMENT_STATUSES,
 } from "@/app/constants/TableFilterFieldsValues";
-import SelectFilter from "@/app/components/OrdersTableFilter/SelectFilter";
+import { useScreenSize } from "@/app/hooks";
+import { useToast } from "@/app/hooks/useToast";
+import { FilterItem } from "@/app/types";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  Box,
+  Button,
+  MenuItem,
+  SelectChangeEvent,
+  TextField,
+  Tooltip,
+} from "@mui/material";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
+import { useTranslation } from "react-i18next";
+
 import { DateRangePicker } from "@/app/components/OrdersTableFilter/DateRangePicker";
-import { UserInvoicesTable } from "../..";
+import SelectFilter from "@/app/components/OrdersTableFilter/SelectFilter";
 import { InvoicesTableHeadCells } from "@/app/constants/UserInvoicesTable";
 
 interface InvoicesTableFilterProps {
@@ -170,6 +168,16 @@ export const InvoicesTableFilter = ({
                   onChange={handleFilterFieldsChange}
                   label="fieldsLabel.orderStatus"
                   values={ORDER_STATUSES}
+                />
+              )}
+
+              {filter.column === "Address Type" && (
+                <SelectFilter
+                  filter={filter}
+                  filterProp={"value1"}
+                  onChange={handleFilterFieldsChange}
+                  label="fieldsLabel.orderStatus"
+                  values={["Home", "Business"]}
                 />
               )}
 

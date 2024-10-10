@@ -27,6 +27,7 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
     `, ${order.deliveryAddressObj?.deliveryAddress || order.deliveryAddress}`;
 
   const { bodyRows, calculation } = generateInvoiceTableRows(order, goods);
+  const hasVatNum = !!order.deliveryAddressObj?.VAT_Num;
 
   const generatePDF = async () => {
     let invoiceNumber = order.invoiceNumber;
@@ -119,7 +120,7 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
     doc.setTextColor(0, 0, 0);
     const y = 40;
 
-    drawRectangle(leftPadding, 40, 32, [0, 0, 0]);
+    drawRectangle(leftPadding, 40, hasVatNum ? 37 : 32, [0, 0, 0]);
 
     // info
     setFont("OpenSans-Bold", 12);
@@ -134,6 +135,13 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
       lineHeightFactor: 1.7,
     });
 
+    hasVatNum &&
+      doc.text(
+        `VAT Number: ${order.deliveryAddressObj?.VAT_Num}` || "",
+        leftPadding + 2,
+        y + 36
+      );
+
     setFont("OpenSans-Bold", 12);
 
     doc.text("From", titlePaddingLeft, y + 6);
@@ -145,17 +153,21 @@ const InvoiceGenerator = ({ order }: InvoiceGeneratorProps) => {
     doc.text("4532, Agios Tychon, Cyprus", titlePaddingLeft, y + 24);
     doc.text("VAT Number: 60049220W", titlePaddingLeft, y + 30);
 
-    doc.text(`Date of supply: ${order.deliveryDate}`, leftPadding, 77);
+    doc.text(
+      `Date of supply: ${order.deliveryDate}`,
+      leftPadding,
+      hasVatNum ? 82 : 77
+    );
 
     setFont("OpenSans-Bold", 12);
 
-    doc.text("Order details:", leftPadding, 90);
+    doc.text("Order details:", leftPadding, hasVatNum ? 94 : 90);
 
     setFont("OpenSans-Medium", 12);
 
     // Order Table
     autoTable(doc, {
-      startY: 95,
+      startY: hasVatNum ? 98 : 95,
       head: [
         [
           "Item code",

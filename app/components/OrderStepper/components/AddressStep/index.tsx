@@ -1,5 +1,8 @@
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { useToast } from "@/app/hooks";
+
+import { MAX_ADDRESS_NUM } from "@/app/constants/AddressesNum";
+import { getAddressTypeCount } from "@/app/utils/getAddressTypeCount";
 import {
   Box,
   Button,
@@ -32,6 +35,7 @@ import {
 interface FormValues {
   id?: string;
   firstAndLast: string;
+  phoneNumber?: string;
   addressDetails: string;
   deliveryAddress: string;
   geolocation: string;
@@ -40,11 +44,14 @@ interface FormValues {
   createdAt: FieldValue;
   archived: boolean;
   numberOfBottles: string;
+  addressType?: string;
+  VAT_Num?: string;
 }
 
 export const ADDRESS_DEFAULT_VALUES = {
   firstAndLast: "",
   postalIndex: "",
+  phoneNumber: "",
   deliveryAddress: "",
   geolocation: "",
   addressDetails: "",
@@ -52,6 +59,8 @@ export const ADDRESS_DEFAULT_VALUES = {
   createdAt: serverTimestamp(),
   archived: false,
   numberOfBottles: "",
+  addressType: "Home",
+  VAT_Num: "",
 };
 
 export const AddressStep = ({
@@ -72,7 +81,7 @@ export const AddressStep = ({
     setUserData,
   } = useOrderDetailsContext();
 
-  const { showSuccessToast } = useToast();
+  const { showSuccessToast, showErrorToast } = useToast();
   const router = useRouter();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(
@@ -83,6 +92,8 @@ export const AddressStep = ({
   const [selectedAddress, setSelectedAddress] = useState<FormValues | null>(
     userOrder.deliveryAddressObj
   );
+
+  const addressCount = getAddressTypeCount(addresses);
 
   const {
     control,
@@ -105,19 +116,20 @@ export const AddressStep = ({
   };
 
   const handleAddNewAddress = async (newAddress: FormValues) => {
-    await AddressesService.addNewAddress(userData.userId, newAddress);
+    const id = await AddressesService.addNewAddress(
+      userData.userId,
+      newAddress
+    );
 
-    setAddresses((prev) => [newAddress, ...prev]);
+    setAddresses((prev) => [{ id, ...newAddress }, ...prev]);
     setUserData((prev) => ({
       ...prev,
-      addresses: [newAddress, ...prev.addresses],
+      addresses: [{ id, ...newAddress }, ...prev.addresses],
     }));
 
     showSuccessToast(`Add new address successfully`);
-    setSelectedAddress(newAddress);
+    setSelectedAddress({ id, ...newAddress });
     setShowAddressForm(false);
-
-    window.location.reload();
   };
 
   const handleRemoveAddress = async (address: FormValues) => {
@@ -259,71 +271,83 @@ export const AddressStep = ({
           <AddNewAddress
             onAdd={handleAddNewAddress}
             onBack={() => setShowAddressForm(false)}
+            addressCount={addressCount}
             disableBack={addresses.length === 0}
           />
         </FormWrapper>
       ) : (
-        <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
-          <FormHeaderWrapper>{t("deliveryAddress")}</FormHeaderWrapper>
-          <ToggleButtonGroupWrap
-            key={"1"}
-            orientation="vertical"
-            value={
-              addresses.find(({ id }) => id === selectedAddress?.id) || null
-            }
-            exclusive
-            onChange={(e, newVal) => {
-              setSelectedAddress(newVal);
-              handleSetNewValues(newVal);
-              setShowTooltipMessage(!newVal);
-            }}
-          >
-            {addresses.map((address, index) => (
-              <ToggleButton
-                key={`${address.id}-index`}
-                value={address}
-                sx={{
-                  padding: "7px",
-                  width: "100%",
-                  textTransform: "none",
-                }}
-              >
-                <AddressDetailCard
-                  onRemove={handleRemoveAddress}
-                  selected={selectedAddress?.id === address.id}
-                  onTransfer={() =>
-                    handleTransferBottles(
-                      addresses.filter(({ id }) => id !== address.id)[0].id,
-                      address.numberOfBottles
-                    )
-                  }
-                  canBeRemoved={addresses.length > 1}
-                  address={address}
-                />
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroupWrap>
-
-          <ControllerInputField
-            name={"comments"}
-            type="string"
-            control={control}
-            label={`${t("comments")}`}
-            error={false}
-            helperText={`*${t("comments_placeholder")}`}
-            multiline
-            sx={{
-              flex: 1,
-            }}
-          />
-          <FormHeaderButton onClick={() => setShowAddressForm(true)}>
-            <AddLocationAltOutlined />
-            {t("add_new_address")}
-          </FormHeaderButton>
-          {renderButtonsGroup(
-            showTooltipMessage ? "Please select delivery address" : ""
-          )}
-        </FormWrapper>
+        <>
+          <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
+            <FormHeaderWrapper>{t("deliveryAddress")}</FormHeaderWrapper>
+            <ToggleButtonGroupWrap
+              orientation="vertical"
+              value={
+                addresses.find(({ id }) => id === selectedAddress?.id) || null
+              }
+              exclusive
+              onChange={(e, newVal) => {
+                setSelectedAddress(newVal);
+                handleSetNewValues(newVal);
+                setShowTooltipMessage(!newVal);
+              }}
+            >
+              {addresses.map((address, index) => (
+                <ToggleButton
+                  key={address.id}
+                  value={address}
+                  sx={{
+                    padding: "7px",
+                    width: "100%",
+                    textTransform: "none",
+                  }}
+                >
+                  <AddressDetailCard
+                    onRemove={handleRemoveAddress}
+                    selected={selectedAddress?.id === address.id}
+                    onTransfer={() =>
+                      handleTransferBottles(
+                        addresses.filter(({ id }) => id !== address.id)[0].id,
+                        address.numberOfBottles
+                      )
+                    }
+                    canBeRemoved={addresses.length > 1}
+                    address={address}
+                  />
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroupWrap>
+            <ControllerInputField
+              name={"comments"}
+              type="string"
+              control={control}
+              label={`${t("comments")}`}
+              error={false}
+              helperText={`*${t("comments_placeholder")}`}
+              multiline
+              sx={{
+                flex: 1,
+              }}
+            />
+            <FormHeaderButton
+              onClick={() => {
+                if (
+                  addresses.length >=
+                  MAX_ADDRESS_NUM.HOME + MAX_ADDRESS_NUM.BUSINESS
+                ) {
+                  showErrorToast("You cant have more than 10 addresses");
+                  return;
+                }
+                setShowAddressForm(true);
+              }}
+            >
+              <AddLocationAltOutlined />
+              {t("add_new_address")}
+            </FormHeaderButton>
+            {renderButtonsGroup(
+              showTooltipMessage ? "Please select delivery address" : ""
+            )}
+          </FormWrapper>
+        </>
       )}
     </>
   );

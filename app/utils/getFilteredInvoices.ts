@@ -34,6 +34,10 @@ export const getFilteredInvoices = (
         createdDate.isSameOrBefore(endDate)
       );
     },
+    "Address Type": (invoice, filter) =>
+      invoice?.addressType
+        ? invoice?.addressType === filter.value1
+        : filter.value1 === "Home",
     "Client ID": (invoice, filter) => +invoice.clientId === +filter.value1,
     "Client name": (invoice, filter) => invoice.clientName === filter.value1,
     "Phone Number": (invoice, filter) => invoice.phoneNumber === filter.value1,
