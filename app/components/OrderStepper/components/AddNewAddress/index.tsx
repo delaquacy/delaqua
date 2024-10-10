@@ -1,19 +1,11 @@
 import { useScreenSize } from "@/app/hooks";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  Box,
-  Button,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Tooltip,
-} from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { FieldValue } from "firebase/firestore";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { ControllerInputField } from "@/app/components/shared";
-import { MAX_ADDRESS_NUM } from "@/app/constants/AddressesNum";
 import { AddAddressHelperText } from "../AddAddressHelperText";
 import { ADDRESS_DEFAULT_VALUES } from "../AddressStep";
 import { addAddressValidationSchema } from "./addAddressValidationSchema";
@@ -22,7 +14,6 @@ import { ButtonsWrapper, FieldWrapper, FormWrapper } from "./styled";
 interface FormValues {
   id?: string;
   firstAndLast: string;
-  phoneNumber: string;
   addressDetails: string;
   deliveryAddress: string;
   geolocation: string;
@@ -31,20 +22,16 @@ interface FormValues {
   createdAt: FieldValue;
   archived: boolean;
   numberOfBottles: string;
-  addressType?: string;
-  VAT_Num?: string;
 }
 
 export const AddNewAddress = ({
   onBack,
   onAdd,
   disableBack,
-  addressCount,
 }: {
   onBack: () => void;
   onAdd: (address: FormValues) => void;
   disableBack: boolean;
-  addressCount: { business: number; home: number };
 }) => {
   const { isSmallScreen } = useScreenSize();
   const { t } = useTranslation("form");
@@ -52,88 +39,23 @@ export const AddNewAddress = ({
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: ADDRESS_DEFAULT_VALUES,
     resolver: yupResolver(addAddressValidationSchema as any),
   });
 
-  const addressType = watch("addressType");
-  const homeAddress = addressType === "Home";
-
-  const disableBusiness = addressCount.business >= MAX_ADDRESS_NUM.BUSINESS;
-  const disableHome = addressCount.home >= MAX_ADDRESS_NUM.HOME;
-
   return (
     <FormWrapper component={"form"} onSubmit={handleSubmit(onAdd)}>
       <Box>
-        <Controller
-          control={control}
-          name="addressType"
-          render={({ field }) => (
-            <RadioGroup
-              row
-              value={field.value}
-              onChange={(e) => {
-                field.onChange(e);
-              }}
-              sx={{
-                gap: "10px",
-                paddingInline: "2px",
-                borderBlock: "1px solid lightgray",
-                width: "fit-content",
-                marginBottom: "10px",
-              }}
-            >
-              <Tooltip
-                title={disableBusiness ? t("home_address_limit_reached") : ""}
-                enterTouchDelay={1}
-              >
-                <FormControlLabel
-                  value="Home"
-                  control={<Radio />}
-                  label={t("home")}
-                  disabled={disableHome}
-                />
-              </Tooltip>
-
-              <Tooltip
-                title={
-                  disableBusiness ? t("business_address_limit_reached") : ""
-                }
-                enterTouchDelay={1}
-              >
-                <FormControlLabel
-                  value="Business"
-                  control={<Radio />}
-                  label={t("business")}
-                  disabled={disableBusiness}
-                />
-              </Tooltip>
-            </RadioGroup>
-          )}
-        />
         <FieldWrapper is_small_screen={isSmallScreen.toString()}>
           <ControllerInputField
             name={"firstAndLast"}
             type="string"
             control={control}
-            label={`${homeAddress ? t("first_and_last") : t("companyName")} *`}
+            label={`${t("first_and_last")} *`}
             error={!!errors.firstAndLast}
             helperText={errors.firstAndLast?.message as string}
-            sx={{
-              flex: 1,
-            }}
-          />
-
-          <ControllerInputField
-            name={"phoneNumber"}
-            type="string"
-            control={control}
-            label={`${homeAddress ? t("phoneNumber") : t("contactPerson")} *`}
-            error={!!errors.phoneNumber}
-            helperText={errors.phoneNumber?.message as string}
             sx={{
               flex: 1,
             }}
@@ -150,8 +72,6 @@ export const AddNewAddress = ({
               flex: 1,
             }}
           />
-        </FieldWrapper>
-        <FieldWrapper is_small_screen={isSmallScreen.toString()}>
           <ControllerInputField
             name={"deliveryAddress"}
             type="string"
@@ -163,6 +83,9 @@ export const AddNewAddress = ({
               flex: 1,
             }}
           />
+        </FieldWrapper>
+
+        <FieldWrapper is_small_screen={isSmallScreen.toString()}>
           <Box
             sx={{
               flex: 1,
@@ -202,24 +125,6 @@ export const AddNewAddress = ({
               />
             }
           />
-        </FieldWrapper>
-
-        <FieldWrapper>
-          {!homeAddress && (
-            <ControllerInputField
-              name={"VAT_Num"}
-              type="string"
-              control={control}
-              label={`${t("VATNum")}`}
-              error={false}
-              helperText={""}
-              multiline
-              sx={{
-                flex: 0.98,
-              }}
-            />
-          )}
-
           <ControllerInputField
             name={"comments"}
             type="string"
@@ -229,7 +134,7 @@ export const AddNewAddress = ({
             helperText={t("comments_placeholder")}
             multiline
             sx={{
-              flex: 2,
+              flex: 1,
             }}
           />
         </FieldWrapper>

@@ -2,7 +2,6 @@
 import { useUserContext } from "@/app/contexts/UserContext";
 import { useScreenSize } from "@/app/hooks";
 import { getDateFromTimestamp } from "@/app/utils";
-import { ApartmentOutlined, HouseOutlined } from "@mui/icons-material";
 import {
   Box,
   CircularProgress,
@@ -13,7 +12,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import dynamic from "next/dynamic";
@@ -63,26 +61,6 @@ export const History = () => {
         <HistoryCardsWrapper>
           {orders.map((order, index) => (
             <HistoryCardWrapper key={order.id + index}>
-              <Tooltip
-                title={`${order.postalIndex}, ${order.deliveryAddress}`}
-                placement="bottom-start"
-              >
-                <CardRow>
-                  {!order.deliveryAddressObj.addressType ||
-                  order.deliveryAddressObj.addressType === "Home" ? (
-                    <HouseOutlined />
-                  ) : (
-                    <ApartmentOutlined />
-                  )}
-                  <Typography fontSize="14px">
-                    {t(
-                      order.deliveryAddressObj.addressType?.toLowerCase() ||
-                        "home",
-                      { ns: "savedAddresses" }
-                    )}
-                  </Typography>
-                </CardRow>
-              </Tooltip>
               <CardRow>
                 <TitleTypo>{t("table_phone")}:</TitleTypo>
                 <TextTypo>{order.phoneNumber}</TextTypo>

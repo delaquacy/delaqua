@@ -44,8 +44,6 @@
     "invoiceNumber": "Αριθμός τιμολογίου",
     "netVal": "Καθαρή αξία €",
     "vatVal": "Ποσό ΦΠΑ €",
-    "addressType": "Τύπος διεύθυνσης",
-    
     "": ""
   },
   "paymentStatuses": {

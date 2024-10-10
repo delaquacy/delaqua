@@ -105,6 +105,7 @@
   "addToOrder": "Add to your order",
   "maxVal": "Maximum value",
   "outOfStock": "Out of stock",
+
   "home": "Home",
   "business": "Business",
   "companyName": "Company name",
@@ -118,7 +119,5 @@
   "business_address_limit_reached": "You cannot add more than 5 business addresses.",
   "loading": "Data is loading 🚀, please wait",
   "reload":"Reload",
-
   "": ""
-
 }
