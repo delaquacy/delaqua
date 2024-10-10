@@ -6,7 +6,6 @@ import { datePickerStyle } from "@/app/components/OrdersTableFilter/DateRangePic
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { useScreenSize } from "@/app/hooks";
 import { deliveryValidation } from "@/app/utils";
-import useDatesFromDB from "@/app/utils/getUnableDates";
 import {
   Box,
   FormControlLabel,
@@ -17,13 +16,18 @@ import {
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-import { OrdersData } from "@/app/types";
+import {
+  dayOfWeekFormatter,
+  getValidationMessage,
+  shouldDisableDate,
+} from "@/app/utils/dayStepUtils";
 import { getNextAvailableDate } from "@/app/utils/getNextAvailableDate";
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
 import updateLocale from "dayjs/plugin/updateLocale";
 import utc from "dayjs/plugin/utc";
+import { DataStepModal } from "../DataStepModal";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(updateLocale);
@@ -34,12 +38,6 @@ dayjs.updateLocale("en", {
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault("Europe/Nicosia");
-
-// Formats the day of the week from a Date object into a two-letter abbreviation in uppercase - DataPicker.
-const dayOfWeekFormatter = (dayOfWeek: string, date: Dayjs) => {
-  const formattedDay = dayjs(date).format("dd");
-  return formattedDay.toUpperCase();
-};
 
 interface FormValues {
   deliveryDate: Dayjs | string;
@@ -54,18 +52,17 @@ export const DateStep = ({
   handleNext: () => void;
 }) => {
   const { t } = useTranslation("form");
-
+  const { isSmallScreen } = useScreenSize();
   const { userOrder, allOrders, handleAddOrderDetails } =
     useOrderDetailsContext();
-  const { isSmallScreen } = useScreenSize();
-
-  const disabledDates: any = useDatesFromDB();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [nextDay, setNextDay] = useState(dayjs());
   const [isOrdersMaxNum, setIsOrdersMaxNum] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
-  const { control, handleSubmit, watch, setValue } = useForm<FormValues>({
+  const { control, handleSubmit, watch } = useForm<FormValues>({
     defaultValues: {
       deliveryDate: dayjs(userOrder.deliveryDate, "DD.MM.YYYY"),
       deliveryTime: userOrder.deliveryTime,
@@ -83,18 +80,6 @@ export const DateStep = ({
     isOrdersLimitReached,
   } = deliveryValidation(selectedDate as Dayjs, allOrders);
 
-  const shouldDisableDate = (date: Dayjs, orders: OrdersData[]) => {
-    const { isCurrentDayAfterNoon, isCurrentDayIsSunday, infoDay } =
-      deliveryValidation(date, allOrders);
-
-    return (
-      infoDay ||
-      isCurrentDayIsSunday ||
-      disabledDates.includes(date.format("DD.MM.YYYY")) ||
-      isCurrentDayAfterNoon
-    );
-  };
-
   const onSubmit = (data: FormValues) => {
     if (showTooltipMessage) return;
 
@@ -108,7 +93,7 @@ export const DateStep = ({
   useEffect(() => {
     const nextDay = getNextAvailableDate(allOrders);
     setNextDay(nextDay);
-  }, [allOrders, disabledDates]);
+  }, [allOrders]);
 
   useEffect(() => {
     const disableNextConditions =
@@ -120,12 +105,32 @@ export const DateStep = ({
 
     setShowTooltipMessage(disableNextConditions);
     setIsOrdersMaxNum(isOrdersLimitReached);
+
+    !isCurrentDayPrevious &&
+      !isCurrentDayAfterNoon &&
+      setOpenModal(isOrdersLimitReached);
   }, [
     isCurrentDayAfterNoon,
     isCurrentDayPrevious,
     isCurrentDayIsSunday,
     infoDay,
     isOrdersLimitReached,
+  ]);
+
+  useEffect(() => {
+    const validationMessage = getValidationMessage(
+      t,
+      isOrdersLimitReached,
+      isCurrentDayIsSunday,
+      isCurrentDayPrevious,
+      isCurrentDayAfterNoon
+    );
+    setErrorMessage(validationMessage);
+  }, [
+    isOrdersLimitReached,
+    isCurrentDayIsSunday,
+    isCurrentDayPrevious,
+    isCurrentDayAfterNoon,
   ]);
 
   return (
@@ -159,26 +164,15 @@ export const DateStep = ({
                   onChange={(newVal) => field.onChange(newVal)}
                   disablePast
                   dayOfWeekFormatter={dayOfWeekFormatter}
-                  shouldDisableDate={(date: Dayjs) =>
-                    shouldDisableDate(date, allOrders)
-                  }
+                  shouldDisableDate={(date: Dayjs) => shouldDisableDate(date)}
                   sx={datePickerStyle(isSmallScreen, true)}
                 />
-                {
-                  <FormHelperText
-                    sx={{
-                      color: showTooltipMessage ? "#d32f2f" : "gray",
-                    }}
-                  >
-                    {!isCurrentDayPrevious && isCurrentDayIsSunday
-                      ? t("sunday")
-                      : isCurrentDayPrevious || isCurrentDayAfterNoon
-                      ? t("change_day")
-                      : isOrdersMaxNum
-                      ? t("maxNumOrders")
-                      : `* ${t("delivery_date")}`}
-                  </FormHelperText>
-                }
+                <FormHelperText
+                  sx={{ color: errorMessage ? "#d32f2f" : "gray" }}
+                >
+                  {errorMessage || `* ${t("delivery_date")}`}
+                </FormHelperText>
+
                 <FormHelperText
                   sx={{
                     color: "#d32f2f",
@@ -225,6 +219,7 @@ export const DateStep = ({
           showTooltipMessage ? "Please select correct delivery date" : ""
         )}
       </Box>
+      <DataStepModal open={openModal} onClose={() => setOpenModal(false)} />
     </LocalizationProvider>
   );
 };
