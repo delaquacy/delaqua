@@ -19,6 +19,14 @@ export function HistoryTableRow(props: { order: OrdersData }) {
     ssr: false,
   });
 
+  const addressParts = [
+    order.postalIndex,
+    order.deliveryAddress,
+    order.addressDetails,
+  ];
+
+  const fullAddress = addressParts.filter(Boolean).join(", ");
+
   return (
     <TableRow
       sx={{
@@ -31,23 +39,22 @@ export function HistoryTableRow(props: { order: OrdersData }) {
       <TableCell align="right">
         <Box display="flex" flexDirection="column" alignItems="flex-start">
           <Box display="flex" flexDirection="row" alignItems="flex-start">
-            {!order.deliveryAddressObj.addressType ||
-            order.deliveryAddressObj.addressType === "Home" ? (
+            {!order?.deliveryAddressObj ||
+            !order?.deliveryAddressObj?.addressType ||
+            order?.deliveryAddressObj?.addressType === "Home" ? (
               <HouseOutlined />
             ) : (
               <ApartmentOutlined />
             )}
             <Typography fontSize="12px">
               {t(
-                order.deliveryAddressObj.addressType?.toLowerCase() || "home",
+                order?.deliveryAddressObj?.addressType?.toLowerCase() || "home",
                 { ns: "savedAddresses" }
               )}
             </Typography>
           </Box>
           <Tooltip title={order.deliveryAddress}>
-            <Typography
-              textAlign={"left"}
-            >{`${order.postalIndex}, ${order.deliveryAddress}`}</Typography>
+            <Typography textAlign={"left"}>{fullAddress}</Typography>
           </Tooltip>
         </Box>
       </TableCell>

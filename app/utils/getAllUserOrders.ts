@@ -61,9 +61,11 @@ export const getAllUserOrders = async (
 
     const formatString = "DD.MM.YYYY HH:mm";
 
-    return processedOrders.sort((a, b) => {
-      return sortByDate(a.createdAt, b.createdAt, formatString);
-    });
+    return processedOrders
+      .filter((order) => (order as any).createdAt)
+      .sort((a, b) => {
+        return sortByDate(a.createdAt, b.createdAt, formatString);
+      });
   } catch (error) {
     console.error("Error fetching user orders:", error);
     return [];
