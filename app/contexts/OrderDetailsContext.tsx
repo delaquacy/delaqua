@@ -14,12 +14,13 @@ import { v4 as uuidv4 } from "uuid";
 
 import dayjs, { Dayjs } from "dayjs";
 import { serverTimestamp } from "firebase/firestore";
-import { Address, Goods } from "../types";
+import { Address, Goods, OrdersData } from "../types";
 import {
   fetchAddresses,
   fetchOrders,
   fetchUserNumber,
   formatPhoneNumber,
+  getOrdersArray,
 } from "../utils";
 import { getStaticGoodsArray } from "../utils/getStaticGoodsArray";
 import { useUserContext } from "./UserContext";
@@ -66,6 +67,7 @@ interface OrderDetailsContextType {
   paymentUrl: string;
   loading: boolean;
   error: string;
+  allOrders: OrdersData[];
   setPaymentUrl: (url: string) => void;
   setUserData: Dispatch<SetStateAction<UserData>>;
   handleAddOrderDetails: (newDetails: any) => void;
@@ -86,6 +88,7 @@ export const OrderDetailsContext = createContext<OrderDetailsContextType>({
   paymentUrl: "",
   loading: false,
   error: "",
+  allOrders: [],
   setPaymentUrl: () => {},
   setUserData: () => {},
   userData: {
@@ -145,6 +148,7 @@ export const OrderDetailsProvider = ({
   const [paymentUrl, setPaymentUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [allOrders, setAllOrders] = useState<OrdersData[]>([]);
   const [userOrder, setUserOrder] = useState<UserOrder>({
     id: uuidv4(),
     items: [] as UserOrderItem[],
@@ -222,6 +226,15 @@ export const OrderDetailsProvider = ({
     }
   };
 
+  const getOrdersRows = async () => {
+    try {
+      const data = await getOrdersArray();
+      setAllOrders(data as OrdersData[]);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+
   const getGoods = async () => {
     try {
       const data = await getStaticGoodsArray();
@@ -265,6 +278,8 @@ export const OrderDetailsProvider = ({
         phoneNumber: user?.phoneNumber || "",
       }));
 
+      getOrdersRows();
+
       user?.uid && fetchUserData(user?.uid);
       getGoods();
     }
@@ -280,6 +295,7 @@ export const OrderDetailsProvider = ({
         paymentUrl,
         loading,
         error,
+        allOrders,
         setPaymentUrl,
         setUserData,
         handleAddOrderDetails,

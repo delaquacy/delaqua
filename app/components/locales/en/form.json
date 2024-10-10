@@ -118,6 +118,8 @@
   "address_business": "Business",
   "home_address_limit_reached": "You cannot add more than 5 home addresses.",
   "business_address_limit_reached": "You cannot add more than 5 business addresses.",
+  "maxNumOrdersTitle": "Oops, all delivery slots for today are already taken 😔.",
+  "maxNumOrdersSubtitle": "But don’t worry! You can choose another convenient day for your order 😊.",
   "": ""
 
 }
