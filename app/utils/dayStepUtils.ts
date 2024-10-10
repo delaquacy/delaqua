@@ -22,7 +22,8 @@ export const getValidationMessage = (
   isAfterNoon: boolean
 ): string => {
   if (isPrevious || isAfterNoon) return t("change_day");
-  if (isOrdersLimitReached) return t("maxNumOrders");
+  if (isOrdersLimitReached)
+    return `${t("maxNumOrdersTitle")} ${t("maxNumOrdersSubtitle")}`;
   if (isSunday) return t("sunday");
   return "";
 };
