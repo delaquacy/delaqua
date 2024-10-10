@@ -122,5 +122,7 @@
   "maxNumOrdersSubtitle": "But don’t worry! You can choose another convenient day for your order 😊.",
   "addressReturn": "Select the address for bottle return",
   "no_bottles_to_return": "You don't have any bottles to return",
+  "loading_order": "Please wait, the request is being processed ⏳",
+
   "": ""
 }

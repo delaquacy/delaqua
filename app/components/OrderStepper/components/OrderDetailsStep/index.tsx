@@ -56,11 +56,13 @@ export const OrderDetailsStep = ({
 
   const [loading, setLoading] = useState(false);
 
-  const { control, handleSubmit } = useForm<FormValues>({
+  const { control, handleSubmit, watch } = useForm<FormValues>({
     defaultValues: {
       paymentMethod: "Cash",
     },
   });
+
+  const currentMethod = watch("paymentMethod");
 
   const addressInfo = `${userOrder.deliveryAddressObj.postalIndex}, 
   ${userOrder.deliveryAddressObj.deliveryAddress}, 
@@ -114,7 +116,15 @@ export const OrderDetailsStep = ({
   };
 
   if (loading) {
-    return <Loader text={t("loading_paymentLink")} />;
+    return (
+      <Loader
+        text={
+          currentMethod === "Cash"
+            ? t("loading_order")
+            : t("loading_paymentLink")
+        }
+      />
+    );
   }
 
   return (
