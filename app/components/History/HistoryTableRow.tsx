@@ -78,7 +78,11 @@ export function HistoryTableRow(props: { order: OrdersData }) {
         {t(`paymentStatuses.${order.paymentStatus}`)}
       </HistoryTableCell>
       <HistoryTableCell align="center">
-        <GeneratePdf order={order} />
+        {order.paymentMethod === "Return cash" ? (
+          "-"
+        ) : (
+          <GeneratePdf order={order} />
+        )}
       </HistoryTableCell>
     </TableRow>
   );

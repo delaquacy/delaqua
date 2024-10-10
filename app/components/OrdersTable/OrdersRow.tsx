@@ -153,7 +153,7 @@ export const OrderRow = ({
       </TableCell>
 
       <TableCell align="center">
-        {bigBottle?.count || row.bottlesNumberToBuy}
+        {bigBottle?.count || row.bottlesNumberToBuy || "-"}
       </TableCell>
 
       <TableCell align="center">{row.bottlesNumberToReturn || 0}</TableCell>

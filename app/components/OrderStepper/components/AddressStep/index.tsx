@@ -66,9 +66,11 @@ export const ADDRESS_DEFAULT_VALUES = {
 export const AddressStep = ({
   renderButtonsGroup,
   handleNext,
+  returnBottles,
 }: {
   renderButtonsGroup: (errorMessage?: string) => React.ReactNode;
   handleNext: () => void;
+  returnBottles?: boolean;
 }) => {
   const { t } = useTranslation("form");
 
@@ -88,6 +90,7 @@ export const AddressStep = ({
     !userOrder.deliveryAddressObj.id
   );
   const [showAddressForm, setShowAddressForm] = useState(false);
+  const [disableReturnBottles, setDisableReturnBottles] = useState(false);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<FormValues | null>(
     userOrder.deliveryAddressObj
@@ -185,14 +188,22 @@ export const AddressStep = ({
     const { id, ...restData } = data;
 
     handleAddOrderDetails({ deliveryAddressObj: data, ...restData });
+    if (returnBottles) {
+      handleAddOrderDetails({ bottlesNumberToReturn: data.numberOfBottles });
+    }
     handleNext();
   };
 
   useEffect(() => {
-    const lastAddress = userData.addresses[0];
+    const addresses = returnBottles
+      ? userData.addresses.filter((address) => address.numberOfBottles)
+      : userData.addresses;
+
+    const lastAddress = addresses[0];
 
     if (lastAddress) {
-      setAddresses(userData.addresses);
+      setAddresses(addresses);
+
       setShowAddressForm(false);
     }
 
@@ -202,10 +213,16 @@ export const AddressStep = ({
       setShowAddressForm(false);
     }
 
-    if (!!userData && !lastAddress) {
+    if (!!userData && !lastAddress && !returnBottles) {
       setShowAddressForm(true);
     }
-  }, [userData, userOrder]);
+
+    if (!!userData && !lastAddress && returnBottles) {
+      setDisableReturnBottles(true);
+    } else {
+      setDisableReturnBottles(false);
+    }
+  }, [userData, userOrder, returnBottles]);
 
   if (loading) {
     return (
@@ -249,6 +266,23 @@ export const AddressStep = ({
     );
   }
 
+  if (disableReturnBottles) {
+    return (
+      <Box display="flex" flexDirection="column" gap="20px" marginInline="10px">
+        {t("no_bottles_to_return")}
+        <Button
+          variant="contained"
+          onClick={() => router.push("/new_order")}
+          sx={{
+            width: "300px",
+          }}
+        >
+          {t("newOrder")}
+        </Button>
+      </Box>
+    );
+  }
+
   return (
     <>
       {showAddressForm ? (
@@ -278,7 +312,9 @@ export const AddressStep = ({
       ) : (
         <>
           <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
-            <FormHeaderWrapper>{t("deliveryAddress")}</FormHeaderWrapper>
+            {!returnBottles && (
+              <FormHeaderWrapper>{t("deliveryAddress")}</FormHeaderWrapper>
+            )}
             <ToggleButtonGroupWrap
               orientation="vertical"
               value={
@@ -316,6 +352,7 @@ export const AddressStep = ({
                 </ToggleButton>
               ))}
             </ToggleButtonGroupWrap>
+
             <ControllerInputField
               name={"comments"}
               type="string"
@@ -328,21 +365,23 @@ export const AddressStep = ({
                 flex: 1,
               }}
             />
-            <FormHeaderButton
-              onClick={() => {
-                if (
-                  addresses.length >=
-                  MAX_ADDRESS_NUM.HOME + MAX_ADDRESS_NUM.BUSINESS
-                ) {
-                  showErrorToast("You cant have more than 10 addresses");
-                  return;
-                }
-                setShowAddressForm(true);
-              }}
-            >
-              <AddLocationAltOutlined />
-              {t("add_new_address")}
-            </FormHeaderButton>
+            {!returnBottles && (
+              <FormHeaderButton
+                onClick={() => {
+                  if (
+                    addresses.length >=
+                    MAX_ADDRESS_NUM.HOME + MAX_ADDRESS_NUM.BUSINESS
+                  ) {
+                    showErrorToast("You cant have more than 10 addresses");
+                    return;
+                  }
+                  setShowAddressForm(true);
+                }}
+              >
+                <AddLocationAltOutlined />
+                {t("add_new_address")}
+              </FormHeaderButton>
+            )}
             {renderButtonsGroup(
               showTooltipMessage ? "Please select delivery address" : ""
             )}
