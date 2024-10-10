@@ -13,8 +13,8 @@ import {
 import { v4 as uuidv4 } from "uuid";
 
 import dayjs, { Dayjs } from "dayjs";
-import { FieldValue, serverTimestamp } from "firebase/firestore";
-import { Goods } from "../types";
+import { serverTimestamp } from "firebase/firestore";
+import { Address, Goods } from "../types";
 import {
   fetchAddresses,
   fetchOrders,
@@ -69,19 +69,6 @@ interface OrderDetailsContextType {
   setPaymentUrl: (url: string) => void;
   setUserData: Dispatch<SetStateAction<UserData>>;
   handleAddOrderDetails: (newDetails: any) => void;
-}
-
-export interface Address {
-  id: string;
-  firstAndLast: string;
-  addressDetails: string;
-  archived: boolean;
-  createdAt: FieldValue;
-  deliveryAddress: string;
-  geolocation: string;
-  numberOfBottles: string;
-  postalIndex: string;
-  comments: string;
 }
 interface UserData {
   formattedUserPhone: string | null;
