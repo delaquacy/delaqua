@@ -10,9 +10,6 @@ interface DataStepModalProps {
 
 export const DataStepModal = ({ open, onClose }: DataStepModalProps) => {
   const { t } = useTranslation("form");
-  const separator = "😔.";
-
-  const [title, subtitle] = t("maxNumOrders").split(separator);
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -20,9 +17,9 @@ export const DataStepModal = ({ open, onClose }: DataStepModalProps) => {
         <CloseButton onClick={onClose}>
           <GridCloseIcon />
         </CloseButton>
-        <TypoWithPadding variant="h6">{`${title} ${separator}`}</TypoWithPadding>
+        <TypoWithPadding variant="h6">{t("maxNumOrdersTitle")}</TypoWithPadding>
 
-        <TypoWithPadding>{subtitle}</TypoWithPadding>
+        <TypoWithPadding>{t("maxNumOrdersSubtitle")}</TypoWithPadding>
       </Wrapper>
     </Modal>
   );

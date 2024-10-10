@@ -59,7 +59,6 @@ export const DateStep = ({
   const [showTooltipMessage, setShowTooltipMessage] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [nextDay, setNextDay] = useState(dayjs());
-  const [isOrdersMaxNum, setIsOrdersMaxNum] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
   const { control, handleSubmit, watch } = useForm<FormValues>({
@@ -104,7 +103,6 @@ export const DateStep = ({
       isOrdersLimitReached;
 
     setShowTooltipMessage(disableNextConditions);
-    setIsOrdersMaxNum(isOrdersLimitReached);
 
     !isCurrentDayPrevious &&
       !isCurrentDayAfterNoon &&
