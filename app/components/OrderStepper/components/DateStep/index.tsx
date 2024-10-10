@@ -17,6 +17,8 @@ import {
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
+import { OrdersData } from "@/app/types";
+import { getNextAvailableDate } from "@/app/utils/getNextAvailableDate";
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
@@ -53,13 +55,15 @@ export const DateStep = ({
 }) => {
   const { t } = useTranslation("form");
 
-  const { userOrder, handleAddOrderDetails } = useOrderDetailsContext();
+  const { userOrder, allOrders, handleAddOrderDetails } =
+    useOrderDetailsContext();
   const { isSmallScreen } = useScreenSize();
 
   const disabledDates: any = useDatesFromDB();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(true);
   const [nextDay, setNextDay] = useState(dayjs());
+  const [isOrdersMaxNum, setIsOrdersMaxNum] = useState(false);
 
   const { control, handleSubmit, watch, setValue } = useForm<FormValues>({
     defaultValues: {
@@ -76,15 +80,12 @@ export const DateStep = ({
     isCurrentDayPrevious,
     isCurrentDayIsSunday,
     infoDay,
-  } = deliveryValidation(selectedDate as Dayjs);
+    isOrdersLimitReached,
+  } = deliveryValidation(selectedDate as Dayjs, allOrders);
 
-  if (isCurrentDayAfterTen) {
-    setValue("deliveryTime", "9-17");
-  }
-
-  const shouldDisableDate = (date: Dayjs) => {
+  const shouldDisableDate = (date: Dayjs, orders: OrdersData[]) => {
     const { isCurrentDayAfterNoon, isCurrentDayIsSunday, infoDay } =
-      deliveryValidation(date);
+      deliveryValidation(date, allOrders);
 
     return (
       infoDay ||
@@ -105,42 +106,26 @@ export const DateStep = ({
   };
 
   useEffect(() => {
-    // Calculate the next delivery day.
-    // If today is Saturday and the current time is after noon, set the next delivery day to Monday.
-    let nextDay = dayjs().add(1, "day");
-    const isInfoDay = nextDay.format("DD/MM/YYYY") === "01/10/2024";
-
-    if (
-      dayjs().day() === 6 &&
-      dayjs().isAfter(dayjs().startOf("day").add(12, "hours"))
-    ) {
-      nextDay = dayjs().add(2, "day");
-    }
-
-    if (isInfoDay) {
-      nextDay = nextDay.add(1, "day");
-    }
-
+    const nextDay = getNextAvailableDate(allOrders);
     setNextDay(nextDay);
-
-    if (isCurrentDayIsSunday || isCurrentDayAfterNoon) {
-      setValue("deliveryDate", nextDay);
-    }
-  }, []);
+  }, [allOrders, disabledDates]);
 
   useEffect(() => {
     const disableNextConditions =
       isCurrentDayAfterNoon ||
       isCurrentDayPrevious ||
       isCurrentDayIsSunday ||
-      infoDay;
+      infoDay ||
+      isOrdersLimitReached;
 
     setShowTooltipMessage(disableNextConditions);
+    setIsOrdersMaxNum(isOrdersLimitReached);
   }, [
     isCurrentDayAfterNoon,
     isCurrentDayPrevious,
     isCurrentDayIsSunday,
     infoDay,
+    isOrdersLimitReached,
   ]);
 
   return (
@@ -174,7 +159,9 @@ export const DateStep = ({
                   onChange={(newVal) => field.onChange(newVal)}
                   disablePast
                   dayOfWeekFormatter={dayOfWeekFormatter}
-                  shouldDisableDate={(date: Dayjs) => shouldDisableDate(date)}
+                  shouldDisableDate={(date: Dayjs) =>
+                    shouldDisableDate(date, allOrders)
+                  }
                   sx={datePickerStyle(isSmallScreen, true)}
                 />
                 {
@@ -187,6 +174,8 @@ export const DateStep = ({
                       ? t("sunday")
                       : isCurrentDayPrevious || isCurrentDayAfterNoon
                       ? t("change_day")
+                      : isOrdersMaxNum
+                      ? t("maxNumOrders")
                       : `* ${t("delivery_date")}`}
                   </FormHelperText>
                 }
