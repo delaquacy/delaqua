@@ -27,6 +27,7 @@ interface BigOrderCardProps {
   nameRent: string;
   watch: any;
   setValue: any;
+  available: boolean;
 }
 
 export const BigOrderCard = ({
@@ -44,6 +45,7 @@ export const BigOrderCard = ({
   nameRent,
   watch,
   setValue,
+  available,
 }: BigOrderCardProps) => {
   const { t } = useTranslation("form");
 
@@ -96,25 +98,32 @@ export const BigOrderCard = ({
           name={nameBottle}
           render={({ field }) => (
             <InternalCountWrapper>
-              <Title>{t(`${codeBottle}`)}</Title>
+              <Tooltip title={available ? "" : t("outOfStock")}>
+                <Title>{t(`${codeBottle}`)}</Title>
+              </Tooltip>
               <Typography textAlign="center">{description}</Typography>
               <OrderCardCounter
+                disabled={!available}
                 count={field.value}
                 onAdd={() => field.onChange(+field.value + 1)}
                 onRemove={() => {
                   field.onChange(Math.max(+field.value - 1, 0));
                 }}
-              />{" "}
+              />
               <Tooltip
-                title={t(
-                  `${
-                    !isMoreThanOneBigBottle
-                      ? "119CostFirst"
-                      : isTenOrMoreBigBottle
-                      ? "119TenCost"
-                      : "119Cost"
-                  }`
-                )}
+                title={
+                  available
+                    ? t(
+                        `${
+                          !isMoreThanOneBigBottle
+                            ? "119CostFirst"
+                            : isTenOrMoreBigBottle
+                            ? "119TenCost"
+                            : "119Cost"
+                        }`
+                      )
+                    : t("outOfStock")
+                }
                 enterTouchDelay={1}
               >
                 <Typography textAlign="center" color="gray">

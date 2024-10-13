@@ -102,12 +102,13 @@ export const StoreStep = ({
 
   useEffect(() => {
     if (userOrder.items.length > 0) {
-      const { bigBottle } = findBottlesByCode(userOrder.items) as Record<
-        string,
-        CombinedItem | undefined
-      >;
+      const { bigBottle: bigBottleUser } = findBottlesByCode(
+        userOrder.items
+      ) as Record<string, CombinedItem | undefined>;
 
-      const bigBottleCount = isFirstOrder
+      const bigBottleCount = !bigBottle?.available
+        ? "0"
+        : isFirstOrder
         ? "1"
         : userData.orders.length === 1
         ? "2"
@@ -118,7 +119,7 @@ export const StoreStep = ({
       reset({
         items: userOrder.items.map((item) =>
           `${item.id}` === "119"
-            ? { ...bigBottle, count: bigBottleCount }
+            ? { ...bigBottleUser, count: bigBottleCount }
             : item
         ),
         bottlesNumberToReturn: userOrder.bottlesNumberToReturn,
@@ -146,6 +147,7 @@ export const StoreStep = ({
           <BigOrderCard
             imageSrc={bigBottle?.picture || ""}
             imageAlt={bigBottle.name}
+            available={bigBottle.available}
             isFirstOrder={isFirstOrder}
             nameBottle={`items[1].count`}
             description={bigBottle?.description || ""}
