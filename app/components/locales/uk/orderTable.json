@@ -51,6 +51,7 @@
   "removeFilter": "Видалити фільтр",
   "paymentStatuses": {
     "Unpaid": "Неоплачено",
+    "ReturnCash": "Повернення готівки",
     "CASH": "Готівка",
     "ORDER_COMPLETED": "Оплату завершено",
     "ORDER_CANCELLED": "Оплату скасовано",

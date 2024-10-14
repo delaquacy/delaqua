@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 
+import { Loader } from "@/app/components/Loader";
 import { OrderItemsTable } from "@/app/components/OrderItemsTable";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { useToast } from "@/app/hooks";
@@ -17,7 +18,6 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  CircularProgress,
   FormControlLabel,
   Radio,
   RadioGroup,
@@ -56,11 +56,13 @@ export const OrderDetailsStep = ({
 
   const [loading, setLoading] = useState(false);
 
-  const { control, handleSubmit } = useForm<FormValues>({
+  const { control, handleSubmit, watch } = useForm<FormValues>({
     defaultValues: {
       paymentMethod: "Cash",
     },
   });
+
+  const currentMethod = watch("paymentMethod");
 
   const addressInfo = `${userOrder.deliveryAddressObj.postalIndex}, 
   ${userOrder.deliveryAddressObj.deliveryAddress}, 
@@ -115,20 +117,13 @@ export const OrderDetailsStep = ({
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "50px",
-          width: "100%",
-          justifyContent: "top",
-          marginTop: "30px",
-          alignItems: "center",
-        }}
-      >
-        <Typography align="center">{t("loading_paymentLink")}</Typography>
-        <CircularProgress size={100} thickness={2} />
-      </Box>
+      <Loader
+        text={
+          currentMethod === "Cash"
+            ? t("loading_order")
+            : t("loading_paymentLink")
+        }
+      />
     );
   }
 

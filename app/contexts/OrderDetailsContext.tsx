@@ -196,19 +196,24 @@ export const OrderDetailsProvider = ({
     try {
       setLoading(true);
 
-      const [addressesData, ordersData, userNumber] = await Promise.all([
-        fetchAddresses(userId),
+      const [ordersData, userNumber] = await Promise.all([
         fetchOrders(userId),
         fetchUserNumber(userId),
       ]);
 
       setUserData((prevData) => ({
         ...prevData,
-        addresses: addressesData,
         orders: ordersData,
         userUniqId: userNumber,
         userId,
       }));
+
+      const unsubscribeAddresses = fetchAddresses(userId, (addressesData) => {
+        setUserData((prevData) => ({
+          ...prevData,
+          addresses: addressesData,
+        }));
+      });
 
       setUserOrder((prev) => ({
         ...prev,
@@ -218,7 +223,7 @@ export const OrderDetailsProvider = ({
       setIsFirstOrder(ordersData.length === 0);
       setLoading(false);
 
-      return [addressesData, ordersData, userNumber];
+      return unsubscribeAddresses;
     } catch (error) {
       setError(`Error fetching user data: ${error}`);
       setLoading(false);

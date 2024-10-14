@@ -1,28 +1,38 @@
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db } from "../lib/config";
 import { OrdersData } from "../types";
 import { sortByDate } from "./sortByDate";
 
-export async function fetchAddresses(userId: string) {
-  try {
-    const addressesRef = collection(db, `users/${userId}/addresses`);
-    const querySnapshot = await getDocs(addressesRef);
+export function fetchAddresses(
+  userId: string,
+  onUpdate: (addressesData: any[]) => void
+) {
+  const addressesRef = collection(db, `users/${userId}/addresses`);
 
+  const q = query(addressesRef, orderBy("createdAt", "desc"));
+
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const addressesData = querySnapshot.docs
       .map((doc) => ({
         id: doc.id,
         ...doc.data(),
         comments: doc.data().comments || "",
       }))
-      //@ts-ignore
-      .filter((address) => !address.archived)
+      .filter((address: any) => !address.archived)
       .sort((a: any, b: any) => b.createdAt - a.createdAt);
 
-    return addressesData;
-  } catch (error) {
-    console.error("Error fetching addresses:", error);
-    throw error;
-  }
+    onUpdate(addressesData);
+  });
+
+  return unsubscribe;
 }
 
 export async function fetchOrders(userId: string) {

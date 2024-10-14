@@ -51,6 +51,7 @@
   "paymentStatuses": {
     "Unpaid": "Unpaid",
     "CASH": "Cash",
+    "ReturnCash": "Return cash",
     "ORDER_COMPLETED": "Payment completed",
     "ORDER_CANCELLED": "Payment cancelled",
     "ORDER_PAYMENT_DECLINED": "Payment declined",
