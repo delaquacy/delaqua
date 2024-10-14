@@ -6,7 +6,6 @@ import { datePickerStyle } from "@/app/components/OrdersTableFilter/DateRangePic
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { useScreenSize } from "@/app/hooks";
 import { deliveryValidation } from "@/app/utils";
-import useDatesFromDB from "@/app/utils/getUnableDates";
 import {
   Box,
   FormControlLabel,
@@ -17,11 +16,18 @@ import {
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
+import {
+  dayOfWeekFormatter,
+  getValidationMessage,
+  shouldDisableDate,
+} from "@/app/utils/dayStepUtils";
+import { getNextAvailableDate } from "@/app/utils/getNextAvailableDate";
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
 import updateLocale from "dayjs/plugin/updateLocale";
 import utc from "dayjs/plugin/utc";
+import { DataStepModal } from "../DataStepModal";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(updateLocale);
@@ -32,12 +38,6 @@ dayjs.updateLocale("en", {
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault("Europe/Nicosia");
-
-// Formats the day of the week from a Date object into a two-letter abbreviation in uppercase - DataPicker.
-const dayOfWeekFormatter = (dayOfWeek: string, date: Dayjs) => {
-  const formattedDay = dayjs(date).format("dd");
-  return formattedDay.toUpperCase();
-};
 
 interface FormValues {
   deliveryDate: Dayjs | string;
@@ -52,16 +52,16 @@ export const DateStep = ({
   handleNext: () => void;
 }) => {
   const { t } = useTranslation("form");
-
-  const { userOrder, handleAddOrderDetails } = useOrderDetailsContext();
   const { isSmallScreen } = useScreenSize();
-
-  const disabledDates: any = useDatesFromDB();
+  const { userOrder, allOrders, handleAddOrderDetails } =
+    useOrderDetailsContext();
 
   const [showTooltipMessage, setShowTooltipMessage] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [nextDay, setNextDay] = useState(dayjs());
+  const [openModal, setOpenModal] = useState(false);
 
-  const { control, handleSubmit, watch, setValue } = useForm<FormValues>({
+  const { control, handleSubmit, watch } = useForm<FormValues>({
     defaultValues: {
       deliveryDate: dayjs(userOrder.deliveryDate, "DD.MM.YYYY"),
       deliveryTime: userOrder.deliveryTime,
@@ -76,23 +76,8 @@ export const DateStep = ({
     isCurrentDayPrevious,
     isCurrentDayIsSunday,
     infoDay,
-  } = deliveryValidation(selectedDate as Dayjs);
-
-  if (isCurrentDayAfterTen) {
-    setValue("deliveryTime", "9-17");
-  }
-
-  const shouldDisableDate = (date: Dayjs) => {
-    const { isCurrentDayAfterNoon, isCurrentDayIsSunday, infoDay } =
-      deliveryValidation(date);
-
-    return (
-      infoDay ||
-      isCurrentDayIsSunday ||
-      disabledDates.includes(date.format("DD.MM.YYYY")) ||
-      isCurrentDayAfterNoon
-    );
-  };
+    isOrdersLimitReached,
+  } = deliveryValidation(selectedDate as Dayjs, allOrders);
 
   const onSubmit = (data: FormValues) => {
     if (showTooltipMessage) return;
@@ -105,42 +90,45 @@ export const DateStep = ({
   };
 
   useEffect(() => {
-    // Calculate the next delivery day.
-    // If today is Saturday and the current time is after noon, set the next delivery day to Monday.
-    let nextDay = dayjs().add(1, "day");
-    const isInfoDay = nextDay.format("DD/MM/YYYY") === "01/10/2024";
-
-    if (
-      dayjs().day() === 6 &&
-      dayjs().isAfter(dayjs().startOf("day").add(12, "hours"))
-    ) {
-      nextDay = dayjs().add(2, "day");
-    }
-
-    if (isInfoDay) {
-      nextDay = nextDay.add(1, "day");
-    }
-
+    const nextDay = getNextAvailableDate(allOrders);
     setNextDay(nextDay);
-
-    if (isCurrentDayIsSunday || isCurrentDayAfterNoon) {
-      setValue("deliveryDate", nextDay);
-    }
-  }, []);
+  }, [allOrders]);
 
   useEffect(() => {
     const disableNextConditions =
       isCurrentDayAfterNoon ||
       isCurrentDayPrevious ||
       isCurrentDayIsSunday ||
-      infoDay;
+      infoDay ||
+      isOrdersLimitReached;
 
     setShowTooltipMessage(disableNextConditions);
+
+    !isCurrentDayPrevious &&
+      !isCurrentDayAfterNoon &&
+      setOpenModal(isOrdersLimitReached);
   }, [
     isCurrentDayAfterNoon,
     isCurrentDayPrevious,
     isCurrentDayIsSunday,
     infoDay,
+    isOrdersLimitReached,
+  ]);
+
+  useEffect(() => {
+    const validationMessage = getValidationMessage(
+      t,
+      isOrdersLimitReached,
+      isCurrentDayIsSunday,
+      isCurrentDayPrevious,
+      isCurrentDayAfterNoon
+    );
+    setErrorMessage(validationMessage);
+  }, [
+    isOrdersLimitReached,
+    isCurrentDayIsSunday,
+    isCurrentDayPrevious,
+    isCurrentDayAfterNoon,
   ]);
 
   return (
@@ -177,19 +165,12 @@ export const DateStep = ({
                   shouldDisableDate={(date: Dayjs) => shouldDisableDate(date)}
                   sx={datePickerStyle(isSmallScreen, true)}
                 />
-                {
-                  <FormHelperText
-                    sx={{
-                      color: showTooltipMessage ? "#d32f2f" : "gray",
-                    }}
-                  >
-                    {!isCurrentDayPrevious && isCurrentDayIsSunday
-                      ? t("sunday")
-                      : isCurrentDayPrevious || isCurrentDayAfterNoon
-                      ? t("change_day")
-                      : `* ${t("delivery_date")}`}
-                  </FormHelperText>
-                }
+                <FormHelperText
+                  sx={{ color: errorMessage ? "#d32f2f" : "gray" }}
+                >
+                  {errorMessage || `* ${t("delivery_date")}`}
+                </FormHelperText>
+
                 <FormHelperText
                   sx={{
                     color: "#d32f2f",
@@ -236,6 +217,7 @@ export const DateStep = ({
           showTooltipMessage ? "Please select correct delivery date" : ""
         )}
       </Box>
+      <DataStepModal open={openModal} onClose={() => setOpenModal(false)} />
     </LocalizationProvider>
   );
 };
