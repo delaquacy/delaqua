@@ -5,6 +5,7 @@
     "completed": "Оплачений (онлайн)"
   },
   "orderStatus": {
+    "created": "Створено",
     "progress": "В процесі",
     "completed": "Завершений",
     "canceled": "Скасований"
@@ -50,13 +51,15 @@
   "table_no_orders_yet": "Поки що немає замовлень",
   "removeFilter": "Видалити фільтр",
   "paymentStatuses": {
-    "Unpaid": "Неоплачено",
-    "ReturnCash": "Повернення готівки",
-    "CASH": "Готівка",
-    "ORDER_COMPLETED": "Оплату завершено",
-    "ORDER_CANCELLED": "Оплату скасовано",
-    "ORDER_PAYMENT_DECLINED": "Оплату відхилено",
-    "ORDER_PAYMENT_FAILED": "Помилка оплати"
+    "unpaid": "Неоплачено",
+    "returncash": "Повернення готівки",
+    "cash": "Готівка",
+    "order_completed": "Оплачено (онлайн)",
+    "order_cancelled": "Оплату скасовано",
+    "order_payment_declined": "Оплату відхилено",
+    "order_payment_failed": "Помилка оплати",
+    "paid_other": "Оплачено (інше)", 
+    "paid_cash": "Oплачено (готівкою)"
   },
   "": ""
 }
