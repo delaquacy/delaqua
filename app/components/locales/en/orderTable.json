@@ -5,6 +5,7 @@
     "completed": "Completed (Online)"
   },
   "orderStatus": {
+    "created": "Created",
     "progress": "In progress",
     "completed": "Completed",
     "canceled": "Canceled"
@@ -49,13 +50,15 @@
 
   },
   "paymentStatuses": {
-    "Unpaid": "Unpaid",
-    "CASH": "Cash",
-    "ReturnCash": "Return cash",
-    "ORDER_COMPLETED": "Payment completed",
-    "ORDER_CANCELLED": "Payment cancelled",
-    "ORDER_PAYMENT_DECLINED": "Payment declined",
-    "ORDER_PAYMENT_FAILED": "Payment failed"
+    "unpaid": "Unpaid",
+    "cash": "Cash",
+    "returncash": "Return cash",
+    "order_completed": "Paid (online)",
+    "order_cancelled": "Payment cancelled",
+    "order_payment_declined": "Payment declined",
+    "order_payment_failed": "Payment failed",
+    "paid_other": "Paid (other)", 
+    "paid_cash": "Paid (cash)"
   },
   "removeFilter": "Remove filter",
   "table_no_orders_yet": "No orders yet"

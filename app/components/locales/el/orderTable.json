@@ -5,6 +5,7 @@
     "completed": "Ολοκληρώθηκε (Online)"
   },
   "orderStatus": {
+    "created": "δημιουργήθηκε",
     "progress": "Σε εξέλιξη",
     "completed": "Ολοκληρώθηκε",
     "canceled": "Ακυρώθηκε"
@@ -48,13 +49,15 @@
     "": ""
   },
   "paymentStatuses": {
-    "Unpaid": "Απλήρωτο",
-    "CASH": "Μετρητά",
-    "ReturnCash": "Επιστροφή μετρητών",
-    "ORDER_COMPLETED": "Η πληρωμή ολοκληρώθηκε",
-    "ORDER_CANCELLED": "Η πληρωμή ακυρώθηκε",
-    "ORDER_PAYMENT_DECLINED": "Η πληρωμή απορρίφθηκε",
-    "ORDER_PAYMENT_FAILED": "Η πληρωμή απέτυχε"
+    "unpaid": "Απλήρωτο",
+    "cash": "Μετρητά",
+    "returncash": "Επιστροφή μετρητών",
+    "order_completed": "Η πληρωμή ολοκληρώθηκε",
+    "order_cancelled": "Η πληρωμή ακυρώθηκε",
+    "order_payment_declined": "Η πληρωμή απορρίφθηκε",
+    "order_payment_failed": "Η πληρωμή απέτυχε",
+    "paid_other": "Πληρώθηκε (Άλλο)", 
+    "paid_cash": "Πληρώθηκε (μετρητά)"
   },
   "removeFilter": "Αφαίρεση φίλτρου",
   "table_no_orders_yet": "Καμία παραγγελία ακόμα"
