@@ -15,7 +15,9 @@ export const getFormattedDataForCVS = (orders: OrdersData[]) => {
       order?.items &&
       order?.items.reduce(
         (acc: string, item: UserOrderItem) =>
-          +item.itemCode < +POMP_CODES_MAX ? `${acc} ${item.itemCode}` : acc,
+          +item.itemCode <= +POMP_CODES_MAX
+            ? acc + ` ${item.itemCode}(${item.count})`
+            : acc,
         ""
       );
 
@@ -51,10 +53,10 @@ export const getFormattedDataForCVS = (orders: OrdersData[]) => {
       Date: deliveryDate,
       Index: postalIndex,
       Address: deliveryAddress,
-      "Address details": addressDetails,
+      "Address details": addressDetails || "-",
       Location: geolocation,
       Time: deliveryTime,
-      Notes: comments,
+      Notes: comments || "-",
       Money: totalPayments,
       Payment: `${paymentMethod} - ${paymentStatus}`,
     };

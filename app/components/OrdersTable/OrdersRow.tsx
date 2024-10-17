@@ -59,6 +59,8 @@ export const OrderRow = ({
 
   const fullAddress = addressParts.filter(Boolean).join(", ");
 
+  isItemSelected && console.log(row);
+
   return (
     <TableRow
       onClick={(event: any) => handleClick(event, row.id as string)}
