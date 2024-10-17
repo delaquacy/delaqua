@@ -240,13 +240,13 @@ export const OrdersTableProvider = ({ children }: OrdersTableProviderProps) => {
       setRows(sorted as any);
       filters.length ? setApplyFilters(true) : setFilteredRows(sorted as any);
       setLoading(false);
-
-      return () => {
-        if (unsubscribe) {
-          unsubscribe();
-        }
-      };
     });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   useEffect(() => {
