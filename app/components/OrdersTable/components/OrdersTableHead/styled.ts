@@ -24,9 +24,9 @@ export const StyledTableCell = styled(TableCell)<StyledTableCellProps>(
         head_cell_id === "index"
           ? "74px"
           : head_cell_id === "phoneNumber"
-          ? "154px"
+          ? "174px"
           : head_cell_id === "firstAndLast"
-          ? "290px"
+          ? "301px"
           : "",
       width:
         head_cell_id === "comments" ||
