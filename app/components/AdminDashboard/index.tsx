@@ -1,7 +1,12 @@
 "use client";
 import { useUserContext } from "@/app/contexts/UserContext";
 import { adminCheck } from "@/app/utils/adminCheck";
-import { Inventory2, ShoppingCart } from "@mui/icons-material";
+import {
+  Inventory2,
+  ReceiptLong,
+  ShoppingBasket,
+  ShoppingCart,
+} from "@mui/icons-material";
 import {
   Box,
   CircularProgress,
@@ -79,10 +84,19 @@ const AdminDashboard = () => {
 
         <MenuItem onClick={() => router.push("/admin_dashboard/user_invoices")}>
           <ListItemIcon>
-            <Inventory2 sx={{ color: "black" }} />
+            <ReceiptLong sx={{ color: "black" }} />
           </ListItemIcon>
           <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
             User Invoices
+          </Typography>
+        </MenuItem>
+
+        <MenuItem onClick={() => router.push("/admin_dashboard/create_order")}>
+          <ListItemIcon>
+            <ShoppingBasket sx={{ color: "black" }} />
+          </ListItemIcon>
+          <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
+            Create Order
           </Typography>
         </MenuItem>
       </Box>

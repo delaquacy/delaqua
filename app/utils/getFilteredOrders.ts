@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import { ORDER_STATUSES } from "../constants/OrderStatuses";
 import { FilterItem, OrdersData } from "../types";
 import { getFormattedDateString } from "./getFormattedDateString";
 
@@ -39,16 +40,48 @@ export const getFilteredOrders = (
         deliveryDate.isSameOrBefore(endDate, "day")
       );
     },
+
     "Phone Number": (order, filter) => order.phoneNumber === filter.value1,
+
     "Client ID": (order, filter) =>
       (order?.userId || order?.useId || "") === +filter.value1,
-    "Payment Status": (order, filter) => order.paymentStatus === filter.value1,
+
+    "Payment Status": (order, filter) =>
+      Array.isArray(order.paymentStatus)
+        ? !!order.paymentStatus.filter((status) =>
+            status.includes(filter.value1)
+          ).length
+        : order.paymentStatus === filter.value1,
+
     "Delivery Time": (order, filter) =>
       order.deliveryTime === filter.value1.split(" ").join(""),
-    "Order Status": (order, filter) =>
-      filter.value1 === "progress"
-        ? !order.canceled && !order.completed
-        : (order[filter.value1 as keyof OrdersData] as boolean),
+
+    "Order Status": (order, filter) => {
+      if (filter.value1 === "created") {
+        return order?.orderStatus
+          ? order?.orderStatus === ORDER_STATUSES.CREATED
+          : !order.canceled && !order.completed;
+      }
+      if (filter.value1 === "progress") {
+        return order?.orderStatus === ORDER_STATUSES.IN_DELIVERY;
+      }
+      if (filter.value1 === "progress") {
+        return order?.orderStatus === ORDER_STATUSES.IN_DELIVERY;
+      }
+      if (filter.value1 === "completed") {
+        return order?.orderStatus
+          ? order?.orderStatus === ORDER_STATUSES.DELIVERED
+          : !!order.completed;
+      }
+      if (filter.value1 === "canceled") {
+        return order?.orderStatus
+          ? order?.orderStatus ===
+              (ORDER_STATUSES.CANCELED || ORDER_STATUSES.CANCELED_BY_CLIENT)
+          : order.canceled;
+      }
+
+      return false;
+    },
   };
 
   filters.forEach((filter) => {
