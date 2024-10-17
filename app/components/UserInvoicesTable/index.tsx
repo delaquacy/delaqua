@@ -131,13 +131,13 @@ export const UserInvoicesTable = () => {
   useEffect(() => {
     const unsubscribe = getOrdersArray((data) => {
       setOrders(data as OrdersData[]);
-
-      return () => {
-        if (unsubscribe) {
-          unsubscribe();
-        }
-      };
     });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   useEffect(() => {

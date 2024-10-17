@@ -126,7 +126,6 @@ export const OrderRowEdit = ({
     });
 
     const total = afterReturnCalc.reduce((acc: number, item: any) => {
-      console.log(item, "IT");
       return acc + parseFloat(item.sum || 0);
     }, 0);
 
@@ -200,10 +199,10 @@ export const OrderRowEdit = ({
 
           <StickyTableCell left={74}>{row.userId || row.useId}</StickyTableCell>
 
-          <StickyTableCell left={154}>{row.phoneNumber}</StickyTableCell>
+          <StickyTableCell left={174}>{row.phoneNumber}</StickyTableCell>
 
           <StickyTableCell
-            left={289}
+            left={301}
             sx={{
               borderRight: "solid 1px rgba(38, 40, 82, 0.1)",
             }}

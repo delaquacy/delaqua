@@ -329,13 +329,13 @@ export const OrderDetailsProvider = ({
   useEffect(() => {
     const unsubscribe = getOrdersArray((data) => {
       setAllOrders(data as OrdersData[]);
-
-      return () => {
-        if (unsubscribe) {
-          unsubscribe();
-        }
-      };
     });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   return (

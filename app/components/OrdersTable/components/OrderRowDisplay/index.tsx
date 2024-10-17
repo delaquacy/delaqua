@@ -1,5 +1,4 @@
 import { useOrdersTableContext } from "@/app/contexts/OrdersTableContext";
-import { useScreenSize } from "@/app/hooks";
 import { CombinedItem, OrdersData } from "@/app/types";
 import { getPompsCount } from "@/app/utils";
 import { findBottlesByCode } from "@/app/utils/findBottlesByCode";
@@ -14,7 +13,6 @@ import {
 import { Button, Checkbox, TableRow, Tooltip } from "@mui/material";
 import Link from "next/link";
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { StandardTableCell, StickyTableCell } from "../../styled";
 
 interface OrderRowDisplayProps {
@@ -42,8 +40,6 @@ export const OrderRowDisplay = ({
 }: OrderRowDisplayProps) => {
   const { editOrderMode, handleClick, toggleEditMode } =
     useOrdersTableContext();
-  const { isSmallScreen } = useScreenSize();
-  const { t } = useTranslation(["orderTable", "form"]);
 
   const { bigBottle, middleBottle, smallBottle } = useMemo(() => {
     return findBottlesByCode(row.items) as Record<
@@ -55,8 +51,6 @@ export const OrderRowDisplay = ({
   const fullAddress = [row.postalIndex, row.deliveryAddress, row.addressDetails]
     .filter(Boolean)
     .join(", ");
-
-  isItemSelected && console.log(row);
 
   const getBackgroundColor = () => {
     if (completed) return "#EAF4EA";
@@ -100,10 +94,10 @@ export const OrderRowDisplay = ({
 
       <StickyTableCell left={74}>{row.userId || row.useId}</StickyTableCell>
 
-      <StickyTableCell left={154}>{row.phoneNumber}</StickyTableCell>
+      <StickyTableCell left={174}>{row.phoneNumber}</StickyTableCell>
 
       <StickyTableCell
-        left={289}
+        left={301}
         sx={{
           borderRight: "solid 1px rgba(38, 40, 82, 0.1)",
         }}
