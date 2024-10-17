@@ -20,12 +20,14 @@ export function HistoryTableRow(props: { order: OrdersData }) {
   });
 
   const addressParts = [
-    order.postalIndex,
-    order.deliveryAddress,
-    order.addressDetails,
+    order?.postalIndex,
+    order?.deliveryAddress,
+    order?.addressDetails,
   ];
 
   const fullAddress = addressParts.filter(Boolean).join(", ");
+
+  const typeOfAddress = order?.deliveryAddressObj?.addressType || "Home";
 
   return (
     <TableRow
@@ -39,18 +41,13 @@ export function HistoryTableRow(props: { order: OrdersData }) {
       <TableCell align="right">
         <Box display="flex" flexDirection="column" alignItems="flex-start">
           <Box display="flex" flexDirection="row" alignItems="flex-start">
-            {!order?.deliveryAddressObj ||
-            !order?.deliveryAddressObj?.addressType ||
-            order?.deliveryAddressObj?.addressType === "Home" ? (
+            {typeOfAddress === "Home" ? (
               <HouseOutlined />
             ) : (
               <ApartmentOutlined />
             )}
             <Typography fontSize="12px">
-              {t(
-                order?.deliveryAddressObj?.addressType?.toLowerCase() || "home",
-                { ns: "savedAddresses" }
-              )}
+              {t(typeOfAddress.toLowerCase(), { ns: "savedAddresses" })}
             </Typography>
           </Box>
           <Tooltip title={order.deliveryAddress}>
@@ -75,7 +72,9 @@ export function HistoryTableRow(props: { order: OrdersData }) {
       <HistoryTableCell>{order.totalPayments}</HistoryTableCell>
 
       <HistoryTableCell>
-        {t(`paymentStatuses.${order.paymentStatus}`)}
+        {order.paymentStatus
+          ? t(`paymentStatuses.${order.paymentStatus}`)
+          : "-"}
       </HistoryTableCell>
       <HistoryTableCell align="center">
         {order.paymentMethod === "Return cash" ? (

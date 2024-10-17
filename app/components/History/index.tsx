@@ -68,15 +68,15 @@ export const History = () => {
                 placement="bottom-start"
               >
                 <CardRow>
-                  {!order.deliveryAddressObj.addressType ||
-                  order.deliveryAddressObj.addressType === "Home" ? (
+                  {!order?.deliveryAddressObj?.addressType ||
+                  order?.deliveryAddressObj?.addressType === "Home" ? (
                     <HouseOutlined />
                   ) : (
                     <ApartmentOutlined />
                   )}
                   <Typography fontSize="14px">
                     {t(
-                      order.deliveryAddressObj.addressType?.toLowerCase() ||
+                      order?.deliveryAddressObj?.addressType?.toLowerCase() ||
                         "home",
                       { ns: "savedAddresses" }
                     )}
