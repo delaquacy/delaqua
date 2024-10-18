@@ -21,6 +21,7 @@ export * from "./getFilteredOrders";
 export * from "./getFormattedDataForCVS";
 export * from "./getFormattedDateString";
 export * from "./getInfoFromDb";
+export * from "./getOrderInfo";
 export * from "./getOrdersArray";
 export * from "./getOrdersfromDb";
 export * from "./getPompsCount";
