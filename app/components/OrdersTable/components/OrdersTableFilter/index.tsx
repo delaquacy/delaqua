@@ -9,18 +9,17 @@ import { useScreenSize } from "@/app/hooks";
 import { useToast } from "@/app/hooks/useToast";
 import { FilterItem } from "@/app/types";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  Box,
-  Button,
-  MenuItem,
-  SelectChangeEvent,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import { Box, SelectChangeEvent, TextField } from "@mui/material";
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
-import { DateRangePicker } from "./DateRangePicker";
-import SelectFilter from "./SelectFilter";
+import { DateRangePicker } from "../DateRangePicker";
+import SelectFilter from "../SelectFilter";
+import {
+  FlexCenterRow,
+  StyledButton,
+  StyledMenuItemBox,
+  StyledTooltip,
+} from "./styled";
 
 interface OrdersTableFilterProps {
   filters: FilterItem[];
@@ -89,20 +88,11 @@ export const OrdersTableFilter = ({
   return (
     <>
       {filters.map((filter) => (
-        <MenuItem key={filter.id} sx={menuItemStyle(isSmallScreen)}>
-          <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            key={filter.id}
-          >
-            <Tooltip
+        <StyledMenuItemBox key={filter.id}>
+          <FlexCenterRow key={filter.id}>
+            <StyledTooltip
               title={t("removeFilter")}
               onClick={() => handleRemoveFilter(filter.id, filter.column)}
-              sx={{
-                width: isSmallScreen ? "20px" : "50px",
-                height: isSmallScreen ? "20px" : "50px",
-              }}
             >
               <DeleteIcon
                 fontSize={isSmallScreen ? "small" : "medium"}
@@ -110,7 +100,7 @@ export const OrdersTableFilter = ({
                   color: filter.column === "" ? "gray" : "#990000",
                 }}
               />
-            </Tooltip>
+            </StyledTooltip>
 
             <SelectFilter
               filter={filter}
@@ -121,13 +111,12 @@ export const OrdersTableFilter = ({
             />
 
             {filter.column !== "Delivery Date" && (
-              <Button
+              <StyledButton
                 variant="contained"
                 size={isSmallScreen ? "small" : "medium"}
-                sx={buttonStyle(isSmallScreen)}
               >
                 {t("fieldsLabel.equal")}
-              </Button>
+              </StyledButton>
             )}
 
             <Box
@@ -194,50 +183,9 @@ export const OrdersTableFilter = ({
                 />
               )}
             </Box>
-          </Box>
-        </MenuItem>
+          </FlexCenterRow>
+        </StyledMenuItemBox>
       ))}
     </>
   );
 };
-
-const menuItemStyle = (isSmallScreen: boolean) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
-
-  "& .MuiSelect-select": {
-    paddingRight: isSmallScreen ? "17px !important" : "",
-    paddingLeft: isSmallScreen ? "10px !important" : "",
-    fontSize: isSmallScreen ? "10px" : "",
-  },
-
-  "& .MuiFormLabel-root": {
-    fontSize: isSmallScreen ? "10px" : "",
-  },
-
-  "& .MuiInputBase-root": {
-    height: isSmallScreen ? "31px" : "56px",
-    fontSize: isSmallScreen ? "10px" : "",
-  },
-});
-
-const buttonStyle = (isSmallScreen: boolean) => ({
-  boxShadow: "none",
-  padding: isSmallScreen ? 0 : 1,
-  background: "inherit",
-  color: "#777777",
-  height: isSmallScreen ? "31px" : "56px",
-  border: "1px solid rgba(118, 118, 118, 0.5)",
-  textTransform: "none",
-  fontSize: isSmallScreen ? "10px" : "",
-  marginInline: isSmallScreen ? 0 : "8px",
-  display: isSmallScreen ? "block" : "flex",
-  minWidth: isSmallScreen ? "35px" : "",
-  width: isSmallScreen ? 40 : 231,
-  ":hover": {
-    background: "inherit",
-    color: "inherit",
-    boxShadow: "none",
-  },
-});

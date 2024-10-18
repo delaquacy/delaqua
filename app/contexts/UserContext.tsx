@@ -10,7 +10,6 @@ import React, {
   useState,
 } from "react";
 import { adminCheck } from "../utils";
-import { getUnpaidOrders } from "../utils/getUnpaidOrders";
 
 import { OrdersData } from "../types";
 import { checkAndAddAllOrder } from "../utils/checkAndAddAllOrder";
@@ -18,6 +17,13 @@ import { fetchOrdersWithSpecificDate } from "../utils/fetchOrdersWithSpecificDat
 import { getAllUserOrders } from "../utils/getAllUserOrders";
 
 const auth = getAuth();
+
+const statusConditions = [
+  "Unpaid",
+  "ORDER_CANCELLED",
+  "ORDER_PAYMENT_DECLINED",
+  "ORDER_PAYMENT_FAILED",
+];
 
 interface UserContextType {
   user: User | null;
@@ -62,10 +68,15 @@ export const UserProvider = ({ children }: UserProviderProps) => {
           setIsAdmin(res as boolean)
         );
 
-        getUnpaidOrders(currentUser?.uid as string).then(setUnpaidOrders);
-        getAllUserOrders(currentUser?.uid as string).then(setOrders);
+        const unsubscribeOrders = getAllUserOrders(
+          currentUser?.uid as string,
+          setOrders
+        );
+
         setUser(currentUser);
         setLoading(false);
+
+        return unsubscribeOrders;
       }
     });
 
@@ -77,7 +88,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   //sync all data to allOrders collection
   useEffect(() => {
     const today = dayjs().format("D.M.YYYY");
-    // const today = "17.7.2024";
 
     fetchOrdersWithSpecificDate(today).then((orders: any[]) => {
       const current = orders.filter((order) => {
@@ -100,6 +110,30 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       });
     });
   }, []);
+
+  useEffect(() => {
+    const isStatusInConditions = (paymentStatus: string | string[]) => {
+      if (typeof paymentStatus === "string") {
+        return statusConditions.includes(paymentStatus);
+      }
+      if (Array.isArray(paymentStatus)) {
+        return paymentStatus.some((status) =>
+          statusConditions.includes(status)
+        );
+      }
+      return false;
+    };
+
+    const unpaidOrders = orders.filter(
+      (order) =>
+        order.paymentMethod === "Online" &&
+        !order.canceled &&
+        !order.completed &&
+        isStatusInConditions(order.paymentStatus)
+    );
+
+    setUnpaidOrders(unpaidOrders);
+  }, [orders]);
 
   return (
     <UserContext.Provider
