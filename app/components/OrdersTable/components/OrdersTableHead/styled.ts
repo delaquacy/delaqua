@@ -8,7 +8,6 @@ interface StyledTableCellProps {
 export const StyledTableCell = styled(TableCell)<StyledTableCellProps>(
   ({ head_cell_id }) => {
     return {
-      minWidth: head_cell_id === "paymentStatus" ? "130px" : "100px",
       zIndex:
         head_cell_id === "index" ||
         head_cell_id === "phoneNumber" ||
@@ -30,12 +29,21 @@ export const StyledTableCell = styled(TableCell)<StyledTableCellProps>(
           : "",
       width:
         head_cell_id === "comments" ||
-        head_cell_id === "addressDetails" ||
         head_cell_id === "deliveryAddress" ||
         head_cell_id === "firstAndLast"
           ? "180px"
           : head_cell_id === "phoneNumber"
           ? "136px"
+          : "80px",
+      minWidth:
+        head_cell_id === "comments" ||
+        head_cell_id === "deliveryAddress" ||
+        head_cell_id === "firstAndLast"
+          ? "180px"
+          : head_cell_id === "phoneNumber"
+          ? "136px"
+          : head_cell_id === "paymentStatus"
+          ? "130px"
           : "80px",
     };
   }
