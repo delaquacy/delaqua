@@ -2,8 +2,15 @@
 import { useUserContext } from "@/app/contexts/UserContext";
 import { useScreenSize } from "@/app/hooks";
 import { OrdersData } from "@/app/types";
-import { getDateFromTimestamp } from "@/app/utils";
-import { ApartmentOutlined, HouseOutlined } from "@mui/icons-material";
+import { getDateFromTimestamp, getOrderInfo } from "@/app/utils";
+import {
+  ApartmentOutlined,
+  CancelOutlined,
+  CheckCircle,
+  HourglassBottom,
+  HouseOutlined,
+  LocalShipping,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -102,50 +109,67 @@ export const History = () => {
                 ? order.orderStatus === "Created"
                 : hasUncompletedOrder && !order.canceled && !order.completed;
 
-              console.log(couldBeCanceled);
-
-              const paymentStatusText = Array.isArray(order.paymentStatus)
-                ? order.paymentStatus
-                    .map((status) =>
-                      t(
-                        `paymentStatuses.${status
-                          .toLowerCase()
-                          .replace(/\s+/g, "_")}`,
-                        { ns: "orderTable" }
-                      )
-                    )
-                    .join(", ")
-                : typeof order.paymentStatus === "string"
-                ? t(
-                    `paymentStatuses.${order.paymentStatus
-                      .toLowerCase()
-                      .replace(/\s+/g, "_")}`,
-                    { ns: "orderTable" }
-                  )
-                : t("paymentStatuses.unpaid", { ns: "orderTable" });
+              const {
+                inDelivery,
+                completed,
+                canceled,
+                tooltipTitle,
+                paymentStatusText,
+              } = getOrderInfo(order, t);
 
               return (
                 <HistoryCardWrapper key={order.id + index}>
-                  <Tooltip
-                    title={`${order.postalIndex}, ${order.deliveryAddress}`}
-                    placement="bottom-start"
+                  <CardRow
+                    sx={{
+                      justifyContent: "space-between",
+                    }}
                   >
-                    <CardRow>
-                      {!order?.deliveryAddressObj?.addressType ||
-                      order?.deliveryAddressObj?.addressType === "Home" ? (
-                        <HouseOutlined />
-                      ) : (
-                        <ApartmentOutlined />
-                      )}
-                      <Typography fontSize="14px">
-                        {t(
-                          order?.deliveryAddressObj?.addressType?.toLowerCase() ||
-                            "home",
-                          { ns: "savedAddresses" }
+                    <Tooltip
+                      title={`${order.postalIndex}, ${order.deliveryAddress}`}
+                      placement="bottom-start"
+                      enterTouchDelay={1}
+                    >
+                      <CardRow>
+                        {!order?.deliveryAddressObj?.addressType ||
+                        order?.deliveryAddressObj?.addressType === "Home" ? (
+                          <HouseOutlined />
+                        ) : (
+                          <ApartmentOutlined />
                         )}
-                      </Typography>
-                    </CardRow>
-                  </Tooltip>
+                        <Typography fontSize="14px">
+                          {t(
+                            order?.deliveryAddressObj?.addressType?.toLowerCase() ||
+                              "home",
+                            { ns: "savedAddresses" }
+                          )}
+                        </Typography>
+                      </CardRow>
+                    </Tooltip>
+
+                    <Tooltip title={tooltipTitle} enterTouchDelay={1}>
+                      <CardRow>
+                        <Typography fontSize="14px">Status:</Typography>
+                        {inDelivery ? (
+                          <LocalShipping
+                            sx={{
+                              color: "#453B4D",
+                              width: "18px",
+                            }}
+                          />
+                        ) : canceled ? (
+                          <CancelOutlined
+                            sx={{ color: "red", width: "18px" }}
+                          />
+                        ) : completed ? (
+                          <CheckCircle sx={{ color: "green", width: "18px" }} />
+                        ) : (
+                          <HourglassBottom
+                            sx={{ color: "#1976d2", width: "18px" }}
+                          />
+                        )}
+                      </CardRow>
+                    </Tooltip>
+                  </CardRow>
                   <CardRow>
                     <TitleTypo>{t("table_phone")}:</TitleTypo>
                     <TextTypo>{order.phoneNumber}</TextTypo>
@@ -268,9 +292,12 @@ export const History = () => {
                     {t("table_total")}
                   </HistoryTableHeadCell>
                   <HistoryTableHeadCell>
-                    {t("table_status")}
+                    {t("fieldsLabel.paymentStatus", { ns: "orderTable" })}
                   </HistoryTableHeadCell>
                   <HistoryTableHeadCell>{t("invoice")}</HistoryTableHeadCell>
+                  <HistoryTableHeadCell>
+                    {t("fieldsLabel.orderStatus", { ns: "orderTable" })}
+                  </HistoryTableHeadCell>
                 </TableRow>
               </TableHead>
 

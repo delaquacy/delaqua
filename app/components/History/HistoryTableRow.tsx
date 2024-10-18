@@ -1,11 +1,18 @@
 "use client";
 import dynamic from "next/dynamic";
 
-import { getDateFromTimestamp } from "@/app/utils";
+import { getDateFromTimestamp, getOrderInfo } from "@/app/utils";
 import TableRow from "@mui/material/TableRow";
 
 import { OrdersData } from "@/app/types";
-import { ApartmentOutlined, HouseOutlined } from "@mui/icons-material";
+import {
+  ApartmentOutlined,
+  CancelOutlined,
+  CheckCircle,
+  HourglassBottom,
+  HouseOutlined,
+  LocalShipping,
+} from "@mui/icons-material";
 import { Box, Button, Tooltip, Typography } from "@mui/material";
 import TableCell from "@mui/material/TableCell";
 import { useTranslation } from "react-i18next";
@@ -36,19 +43,8 @@ export function HistoryTableRow(props: {
     ? order.orderStatus === "Created"
     : hasUncompletedOrder && !order.canceled && !order.completed;
 
-  const paymentStatusText = Array.isArray(order.paymentStatus)
-    ? order.paymentStatus
-        .map((status) =>
-          t(`paymentStatuses.${status.toLowerCase().replace(/\s+/g, "_")}`)
-        )
-        .join(", ")
-    : typeof order.paymentStatus === "string"
-    ? t(
-        `paymentStatuses.${order.paymentStatus
-          .toLowerCase()
-          .replace(/\s+/g, "_")}`
-      )
-    : t("paymentStatuses.unpaid");
+  const { inDelivery, completed, canceled, tooltipTitle, paymentStatusText } =
+    getOrderInfo(order, t);
 
   return (
     <TableRow
@@ -101,7 +97,7 @@ export function HistoryTableRow(props: {
         )}
       </HistoryTableCell>
       <HistoryTableCell align="center">
-        {couldBeCanceled && hasUncompletedOrder && (
+        {couldBeCanceled && hasUncompletedOrder ? (
           <Button
             variant="contained"
             sx={{
@@ -113,6 +109,22 @@ export function HistoryTableRow(props: {
               ns: "form",
             })}
           </Button>
+        ) : (
+          <Tooltip title={tooltipTitle}>
+            {inDelivery ? (
+              <LocalShipping
+                sx={{
+                  color: "#453B4D",
+                }}
+              />
+            ) : canceled ? (
+              <CancelOutlined sx={{ color: "red" }} />
+            ) : completed ? (
+              <CheckCircle sx={{ color: "green" }} />
+            ) : (
+              <HourglassBottom sx={{ color: "#1976d2" }} />
+            )}
+          </Tooltip>
         )}
       </HistoryTableCell>
     </TableRow>
