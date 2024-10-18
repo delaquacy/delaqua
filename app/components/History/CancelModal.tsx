@@ -1,7 +1,10 @@
+import { useToast } from "@/app/hooks";
 import { OrdersData } from "@/app/types";
+import { updateOrderStatus } from "@/app/utils";
 import { Close, Report } from "@mui/icons-material";
-import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
+import { Box, IconButton, Modal, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { SharedButton } from "../shared";
 import {
   CancelTitle,
   CardRow,
@@ -23,6 +26,17 @@ export const CancelModal = ({
   orderToCancel,
 }: CancelModalProps) => {
   const { t } = useTranslation(["orderslist", "orderTable"]);
+  const { showSuccessToast } = useToast();
+
+  const handleChangeStatus = async () => {
+    await updateOrderStatus(
+      [orderToCancel?.idDb || ""],
+      "",
+      "Cancelled (client)"
+    );
+    showSuccessToast("The order successfully canceled");
+    handleClose();
+  };
 
   const paymentStatusText = Array.isArray(orderToCancel?.paymentStatus)
     ? orderToCancel.paymentStatus
@@ -137,37 +151,27 @@ export const CancelModal = ({
         </HistoryCardWrapper>
 
         <Box display="flex" flexDirection="row" width="100%" gap="20px">
-          <Button
-            variant="contained"
+          <SharedButton
             onClick={handleClose}
-            sx={{
-              textTransform: "none",
-              width: "100%",
-              background: "#478547",
-              ":hover": {
-                background: "#356435",
-              },
-            }}
-          >
-            {t("back", {
+            text={t("back", {
               ns: "main",
             })}
-          </Button>
+            variantType="success"
+            width="100%"
+            sx={{ textTransform: "none" }}
+            fontSize="14px"
+          />
 
-          <Button
-            variant="contained"
-            onClick={handleClose}
-            sx={{
-              textTransform: "none",
-              width: "100%",
-              background: "#B43636",
-              ":hover": { background: "#7D2525" },
-            }}
-          >
-            {t("confirm", {
+          <SharedButton
+            onClick={handleChangeStatus}
+            text={t("confirm", {
               ns: "main",
             })}
-          </Button>
+            variantType="error"
+            width="100%"
+            sx={{ textTransform: "none" }}
+            fontSize="14px"
+          />
         </Box>
       </ModalWrapper>
     </Modal>

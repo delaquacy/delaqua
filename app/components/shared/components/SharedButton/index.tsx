@@ -12,6 +12,7 @@ interface SharedButtonProps {
   loading?: boolean;
   disabled?: boolean;
   width?: string;
+  sx?: any;
 }
 
 export const SharedButton = ({
@@ -24,6 +25,7 @@ export const SharedButton = ({
   disabled = false,
   loading = false,
   width,
+  sx,
 }: SharedButtonProps) => {
   const { background, hoverBackground } = getButtonStyles(variantType);
   const { isSmallScreen } = useScreenSize();
@@ -44,6 +46,7 @@ export const SharedButton = ({
         display: "flex",
         alignItems: "center",
         width: width || "",
+        ...sx,
       }}
     >
       {loading ? (
