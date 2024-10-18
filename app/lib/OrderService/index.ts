@@ -15,10 +15,10 @@ export const OrderService = {
       `users/${userId}/orders`,
       orderData
     );
-    const allOrderRefId = await FirebaseService.addDocument(
-      `allOrders`,
-      orderData
-    );
+    const allOrderRefId = await FirebaseService.addDocument(`allOrders`, {
+      ...orderData,
+      orderId: orderRefId,
+    });
     return { orderRefId, allOrderRefId };
   },
 
@@ -144,5 +144,9 @@ export const OrderService = {
       userId,
       setPaymentUrl
     );
+  },
+
+  async updateEditedOrder(orderData: any) {
+    await FirebaseService.updateDocument(`allOrders`, orderData.id, orderData);
   },
 };

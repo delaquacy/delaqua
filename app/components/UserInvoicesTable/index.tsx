@@ -50,11 +50,10 @@ export const UserInvoicesTable = () => {
     try {
       setLoading(true);
       const data = await getUserInvoices();
-      const orders = await getOrdersArray();
+
       const sorted = stableSort(data as any, getComparator(order, orderBy));
 
       setRows(sorted as any);
-      setOrders(orders as OrdersData[]);
       setFilteredRows(sorted as any);
       setLoading(false);
     } catch (error) {
@@ -127,6 +126,18 @@ export const UserInvoicesTable = () => {
 
   useEffect(() => {
     getInvoicesRows();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = getOrdersArray((data) => {
+      setOrders(data as OrdersData[]);
+    });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -209,7 +220,7 @@ export const UserInvoicesTable = () => {
                     {visibleRows.map((row, index) => {
                       const isItemSelected = isSelected(row.id as string);
                       const labelId = `enhanced-table-checkbox-${index}`;
-                      const order = orders.find(
+                      const order = orders?.find(
                         (order) => order.invoiceNumber === row.id
                       );
 

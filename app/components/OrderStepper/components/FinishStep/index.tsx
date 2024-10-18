@@ -7,16 +7,14 @@ import { useTranslation } from "react-i18next";
 
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import { CheckBox } from "@mui/icons-material";
-import { useRouter } from "next/navigation";
 import "../../../../i18n";
 
 export const FinishStep = ({ returnBottles }: { returnBottles: boolean }) => {
   const { t } = useTranslation("finishModal");
-  const router = useRouter();
 
   const { trackAmplitudeEvent } = useAmplitudeContext();
 
-  const { userOrder, paymentUrl } = useOrderDetailsContext();
+  const { userOrder, paymentUrl, adminCreateMode } = useOrderDetailsContext();
 
   const count = +userOrder.bottlesNumberToReturn || 0;
   const countSum = +(userOrder.bottlesNumberToReturn || "0") * 7;
@@ -32,7 +30,9 @@ export const FinishStep = ({ returnBottles }: { returnBottles: boolean }) => {
       text: "Close payment",
     });
 
-    window.location.href = "/order_history";
+    window.location.href = adminCreateMode
+      ? "/admin_dashboard"
+      : "/order_history";
   };
 
   const paymentText =
