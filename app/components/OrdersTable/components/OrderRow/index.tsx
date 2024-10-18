@@ -1,5 +1,6 @@
 import { useOrdersTableContext } from "@/app/contexts/OrdersTableContext";
 import { OrdersData } from "@/app/types";
+import { getOrderInfo } from "@/app/utils";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import updateLocale from "dayjs/plugin/updateLocale";
@@ -31,41 +32,8 @@ export const OrderRow = ({
 
   const isEditing = editOrderMode && editRowId === row.id;
 
-  const inDelivery = row?.orderStatus === "In delivery";
-
-  const completed = row?.orderStatus
-    ? row?.orderStatus === "Delivered"
-    : row?.completed;
-
-  const canceled = row?.orderStatus
-    ? ["Cancelled (client)", "Cancelled (admin)", "Cancelled"].includes(
-        row?.orderStatus
-      )
-    : row?.canceled;
-
-  const tooltipTitle = row?.orderStatus
-    ? row.orderStatus
-    : completed
-    ? "Delivered"
-    : canceled
-    ? "Cancelled"
-    : inDelivery
-    ? "InDelivery"
-    : "InProgress";
-
-  const paymentStatusText = Array.isArray(row.paymentStatus)
-    ? row.paymentStatus
-        .map((status) =>
-          t(`paymentStatuses.${status.toLowerCase().replace(/\s+/g, "_")}`)
-        )
-        .join(", ")
-    : typeof row.paymentStatus === "string"
-    ? t(
-        `paymentStatuses.${row.paymentStatus
-          .toLowerCase()
-          .replace(/\s+/g, "_")}`
-      )
-    : t("paymentStatuses.unpaid");
+  const { inDelivery, completed, canceled, tooltipTitle, paymentStatusText } =
+    getOrderInfo(row, t);
 
   return (
     <>
