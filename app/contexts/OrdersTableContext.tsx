@@ -132,6 +132,7 @@ export const OrdersTableProvider = ({ children }: OrdersTableProviderProps) => {
 
   const handleApplyFilters = () => {
     setApplyFilters(true);
+    setPage(0);
   };
 
   const handleRequestSort = (
