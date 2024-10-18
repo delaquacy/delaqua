@@ -1,3 +1,4 @@
+import { ContentCopy, Edit } from "@mui/icons-material";
 import Image from "next/image";
 import TenL from "../../public/10l.svg";
 import FifteenL from "../../public/15L.svg";
@@ -18,7 +19,12 @@ import { OrdersData } from "../types";
 
 interface HeadCell {
   disablePadding: boolean;
-  id: keyof OrdersData | "15LbottlesNumberToBuy" | "10LbottlesNumberToBuy";
+  id:
+    | keyof OrdersData
+    | "15LbottlesNumberToBuy"
+    | "10LbottlesNumberToBuy"
+    | "copy"
+    | "edit";
   label: string;
   numeric: boolean;
   sortable: boolean;
@@ -165,10 +171,52 @@ export const TableHeadCells: readonly HeadCell[] = [
     image: <Image src={CompletedStatus} alt="CompletedStatus" width={30} />,
   },
   {
-    id: "paymentMethod",
+    id: "courierComment",
     numeric: false,
     disablePadding: true,
-    label: "",
+    label: "Courier Comment",
     sortable: false,
+    image: (
+      <ContentCopy
+        sx={{
+          color: "#4788C7",
+          width: "30px",
+          height: "30px",
+        }}
+      />
+    ),
+  },
+  {
+    id: "copy",
+    numeric: false,
+    disablePadding: true,
+    label: "copy",
+    sortable: false,
+    image: (
+      <ContentCopy
+        sx={{
+          color: "#4788C7",
+          width: "30px",
+          height: "30px",
+        }}
+      />
+    ),
+  },
+
+  {
+    id: "edit",
+    numeric: false,
+    disablePadding: true,
+    label: "edit",
+    sortable: false,
+    image: (
+      <Edit
+        sx={{
+          color: "#4788C7",
+          width: "30px",
+          height: "30px",
+        }}
+      />
+    ),
   },
 ];

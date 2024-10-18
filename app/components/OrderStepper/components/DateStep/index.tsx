@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { datePickerStyle } from "@/app/components/OrdersTableFilter/DateRangePicker";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { useScreenSize, useToast } from "@/app/hooks";
 import { deliveryValidation } from "@/app/utils";
@@ -18,7 +17,9 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import { Loader } from "@/app/components/Loader";
+
 import {
+  datePickerStyle,
   dayOfWeekFormatter,
   getValidationMessage,
   shouldDisableDate,

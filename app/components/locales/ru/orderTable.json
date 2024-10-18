@@ -5,6 +5,7 @@
     "completed": "Оплаченный (онлайн)"
   },
   "orderStatus": {
+    "created": "Cоздано",
     "progress": "В процессе",
     "completed": "Завершен",
     "canceled": "Отменен"
@@ -19,8 +20,9 @@
     "orderStatus": "Статус заказа",
     "value": "Значение"
   },
-  "tableTitle": "Неоплаченные заказы",
-
+  "tableTitle": "Неоплаченные заказы.",
+  "tableSubTitle": "Для продолжения, пожалуйста, оплатите заказ(ы).",
+  "tableHelperText": "Если вы уже оплатили, но статус не обновился в течение 5 минут, попробуйте обновить страницу. Если проблема не решена — напишите нам в Telegram.",
   "tableHeadCells": {
     "clientId": "ID клиента",
     "contact": "контакт",
@@ -50,12 +52,14 @@
   },
   "paymentStatuses": {
     "Unpaid": "Не оплачено",
-    "CASH": "Наличные",
+    "cash": "Наличные",
     "ReturnCash": "Возврат наличных",
-    "ORDER_COMPLETED": "Оплата завершена",
-    "ORDER_CANCELLED": "Оплата отменена",
-    "ORDER_PAYMENT_DECLINED": "Оплата отклонена",
-    "ORDER_PAYMENT_FAILED": "Ошибка оплаты"
+    "order_completed": "Оплачено (онлайн)",
+    "order_cancelled": "Оплата отменена",
+    "order_payment_declined": "Оплата отклонена",
+    "order_payment_failed": "Ошибка оплаты",
+    "paid_other": "Оплачено (другое)", 
+    "paid_cash": "Оплачено (наличными)"
   },
   "table_no_orders_yet": "Пока нет заказов",
   "removeFilter": "Удалить фильтр"

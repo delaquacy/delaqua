@@ -1,20 +1,32 @@
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../lib/config";
+import dayjs from "dayjs";
+import { FirebaseService } from "../lib/FirebaseServices";
+
+interface UpdateData {
+  paymentStatus?: string;
+  paymentStatusUpdatedAt?: string;
+  orderStatus?: string;
+  orderStatusUpdatedAt?: string;
+}
 
 export const updateOrderStatus = async (
   orderIds: string[],
-  status: "completed" | "canceled"
+  paymentStatus: string,
+  orderStatus: string
 ) => {
   const updatePromises = orderIds.map((orderId) => {
-    const allOrdersRef = doc(db, `allOrders/${orderId}`);
+    const updateData: UpdateData = {};
 
-    if (status === "completed") {
-      return updateDoc(allOrdersRef, { completed: true, canceled: false });
+    if (paymentStatus) {
+      updateData.paymentStatus = paymentStatus;
+      updateData.paymentStatusUpdatedAt = dayjs().format("DD.MM.YYYY HH:mm");
     }
 
-    if (status === "canceled") {
-      return updateDoc(allOrdersRef, { canceled: true, completed: false });
+    if (orderStatus) {
+      updateData.orderStatus = orderStatus;
+      updateData.orderStatusUpdatedAt = dayjs().format("DD.MM.YYYY HH:mm");
     }
+
+    return FirebaseService.updateDocument("allOrders", orderId, updateData);
   });
 
   await Promise.all(updatePromises);
