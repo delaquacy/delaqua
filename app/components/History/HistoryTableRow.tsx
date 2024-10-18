@@ -31,7 +31,10 @@ export function HistoryTableRow(props: {
   const fullAddress = addressParts.filter(Boolean).join(", ");
 
   const typeOfAddress = order?.deliveryAddressObj?.addressType || "Home";
-  const couldBeCanceled = !order.canceled && !order.completed;
+
+  const couldBeCanceled = order.orderStatus
+    ? order.orderStatus === "Created"
+    : hasUncompletedOrder && !order.canceled && !order.completed;
 
   const paymentStatusText = Array.isArray(order.paymentStatus)
     ? order.paymentStatus

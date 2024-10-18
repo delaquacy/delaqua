@@ -62,8 +62,10 @@ export const History = () => {
   };
 
   useEffect(() => {
-    const hasUncompletedOrder = orders.some(
-      (order) => !order.canceled && !order.completed
+    const hasUncompletedOrder = orders.some((order) =>
+      order.orderStatus
+        ? order.orderStatus === "Created"
+        : !order.canceled && !order.completed
     );
 
     setHasUncompletedOrder(hasUncompletedOrder);
@@ -96,8 +98,31 @@ export const History = () => {
         {isSmallScreen ? (
           <HistoryCardsWrapper>
             {orders.map((order, index) => {
-              const couldBeCanceled =
-                hasUncompletedOrder && !order.canceled && !order.completed;
+              const couldBeCanceled = order.orderStatus
+                ? order.orderStatus === "Created"
+                : hasUncompletedOrder && !order.canceled && !order.completed;
+
+              console.log(couldBeCanceled);
+
+              const paymentStatusText = Array.isArray(order.paymentStatus)
+                ? order.paymentStatus
+                    .map((status) =>
+                      t(
+                        `paymentStatuses.${status
+                          .toLowerCase()
+                          .replace(/\s+/g, "_")}`,
+                        { ns: "orderTable" }
+                      )
+                    )
+                    .join(", ")
+                : typeof order.paymentStatus === "string"
+                ? t(
+                    `paymentStatuses.${order.paymentStatus
+                      .toLowerCase()
+                      .replace(/\s+/g, "_")}`,
+                    { ns: "orderTable" }
+                  )
+                : t("paymentStatuses.unpaid", { ns: "orderTable" });
 
               return (
                 <HistoryCardWrapper key={order.id + index}>
@@ -158,11 +183,7 @@ export const History = () => {
                     }}
                   >
                     <TitleTypo>{t("table_status")}:</TitleTypo>
-                    <TextTypo>
-                      {t(`paymentStatuses.${order.paymentStatus}`, {
-                        ns: "orderTable",
-                      })}
-                    </TextTypo>
+                    <TextTypo>{paymentStatusText}</TextTypo>
                   </CardRow>
 
                   <CardRow
