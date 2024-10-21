@@ -32,6 +32,10 @@ interface TodayFilter {
   isToday: boolean;
   day: string;
 }
+interface TomorrowFilter {
+  isTomorrow: boolean;
+  day: string;
+}
 
 interface OrdersTableContextType {
   selected: string[];
@@ -45,6 +49,7 @@ interface OrdersTableContextType {
   page: number;
   filters: FilterItem[];
   todayFilter: TodayFilter;
+  tomorrowFilter: TomorrowFilter;
   orderBy: keyof OrdersData;
   order: Order;
   editOrderMode: boolean;
@@ -56,6 +61,7 @@ interface OrdersTableContextType {
   setSelected: Dispatch<SetStateAction<string[]>>;
   handleClearFilters: () => void;
   handleApplyTodayFilter: () => void;
+  handleApplyTomorrowFilter: () => void;
   handleApplyFilters: () => void;
   handleSelectAllClick: () => void;
   handleRequestSort: (
@@ -81,6 +87,10 @@ export const OrdersTableContext = createContext<OrdersTableContextType>({
     isToday: true,
     day: dayjs().format("dddd, DD.MM.YYYY"),
   },
+  tomorrowFilter: {
+    isTomorrow: false,
+    day: dayjs().add(1, "day").format("dddd, DD.MM.YYYY"),
+  },
   orderBy: "deliveryDate",
   order: "asc",
   editOrderMode: false,
@@ -92,6 +102,7 @@ export const OrdersTableContext = createContext<OrdersTableContextType>({
   setSelected: () => {},
   handleClearFilters: () => {},
   handleApplyTodayFilter: () => {},
+  handleApplyTomorrowFilter: () => {},
   handleApplyFilters: () => {},
   handleRequestSort: () => {},
   handleSelectAllClick: () => {},
@@ -126,6 +137,11 @@ export const OrdersTableProvider = ({ children }: OrdersTableProviderProps) => {
   const [todayFilter, setTodayFilter] = useState({
     isToday: true,
     day: dayjs().format("dddd, DD.MM.YYYY"),
+  });
+
+  const [tomorrowFilter, setTomorrowFilter] = useState({
+    isTomorrow: false,
+    day: dayjs().add(1, "day").format("dddd, DD.MM.YYYY"),
   });
 
   const tableRef = useRef<any | null>(null);
@@ -220,19 +236,37 @@ export const OrdersTableProvider = ({ children }: OrdersTableProviderProps) => {
     setTodayFilter((prev) => ({ ...prev, isToday: false }));
   };
 
-  const handleApplyTodayFilter = () => {
+  const handleApplyDateFilter = (
+    dayOffset: number,
+    isToday: boolean,
+    isTomorrow: boolean
+  ) => {
+    let selectedDay = dayjs().add(dayOffset, "day");
+
+    if (selectedDay.day() === 0) {
+      selectedDay = selectedDay.add(1, "day");
+    }
+
     setFilters([
       {
         id: "1",
         column: "Delivery Date",
         operator: "",
-        value1: dayjs() as any,
-        value2: dayjs() as any,
+        value1: selectedDay as any,
+        value2: selectedDay as any,
       },
     ]);
 
-    setTodayFilter((prev) => ({ ...prev, isToday: true }));
+    setTodayFilter((prev) => ({ ...prev, isToday }));
+    setTomorrowFilter((prev) => ({ ...prev, isTomorrow }));
     setApplyFilters(true);
+  };
+
+  const handleApplyTodayFilter = () => {
+    handleApplyDateFilter(0, true, false);
+  };
+  const handleApplyTomorrowFilter = () => {
+    handleApplyDateFilter(1, false, true);
   };
 
   useEffect(() => {
@@ -291,6 +325,7 @@ export const OrdersTableProvider = ({ children }: OrdersTableProviderProps) => {
         page,
         filters,
         todayFilter,
+        tomorrowFilter,
         orderBy,
         order,
         editOrderMode,
@@ -302,6 +337,7 @@ export const OrdersTableProvider = ({ children }: OrdersTableProviderProps) => {
         setSelected,
         handleClearFilters,
         handleApplyTodayFilter,
+        handleApplyTomorrowFilter,
         handleApplyFilters,
         handleRequestSort,
         handleSelectAllClick,

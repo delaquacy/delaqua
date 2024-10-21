@@ -38,10 +38,12 @@ export function OrdersTableToolbar() {
     filters,
     filteredRows,
     todayFilter,
+    tomorrowFilter,
     setFilters,
     setSelected,
     handleClearFilters,
     handleApplyTodayFilter,
+    handleApplyTomorrowFilter,
     handleApplyFilters,
   } = useOrdersTableContext();
 
@@ -118,7 +120,9 @@ export function OrdersTableToolbar() {
           </Typography>
         ) : (
           <Title variant="h6" id="tableTitle">
-            Orders {todayFilter.isToday && "for " + todayFilter.day}
+            Orders {todayFilter.isToday && `for today (${todayFilter.day})`}
+            {tomorrowFilter.isTomorrow &&
+              `for tomorrow (${tomorrowFilter.day})`}
           </Title>
         )}
         {numSelected > 0 ? (
@@ -179,6 +183,11 @@ export function OrdersTableToolbar() {
             <SharedButton
               onClick={handleApplyTodayFilter}
               text="Today"
+              width="140px"
+            />
+            <SharedButton
+              onClick={handleApplyTomorrowFilter}
+              text="Tomorrow"
               width="140px"
             />
 
