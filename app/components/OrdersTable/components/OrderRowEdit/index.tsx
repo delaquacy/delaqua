@@ -143,6 +143,14 @@ export const OrderRowEdit = ({
   const onSubmit = async (data: any) => {
     const { bigBottle } = findBottlesByCode(data.items);
 
+    const {
+      addressDetails,
+      comments,
+      deliveryAddress,
+      geolocation,
+      postalIndex,
+    } = data.deliveryAddressObj;
+
     const numberOfBottles =
       Math.max(data.numberOfBottles - +data.bottlesNumberToReturn, 0) +
       +((bigBottle as UserOrderItem)?.count || "0");
@@ -162,11 +170,16 @@ export const OrderRowEdit = ({
       ...data,
       editedAt: dayjs().format("DD.MM.YYYY HH:mm"),
       numberOfBottles,
+      addressDetails,
+      comments,
+      deliveryAddress,
+      geolocation,
+      postalIndex,
       deliveryAddressObj: { ...data.deliveryAddressObj, numberOfBottles },
     };
 
     await OrderService.updateEditedOrder(editedOrderData);
-    showSuccessToast("The order was successfully updated");
+    showSuccessToast("The order has been successfully updated");
     toggleEditMode(row.id);
     reset();
   };
