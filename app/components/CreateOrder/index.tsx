@@ -68,7 +68,7 @@ const CreateOrderComponent = () => {
               }}
               onKeyDown={handleApplyOnEnter}
               placeholder="357 77 123342"
-              containerStyle={{
+              style={{
                 marginLeft: !userPhone || (userPhone?.length < 3 && "40px"),
               }}
             />
