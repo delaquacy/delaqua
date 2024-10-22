@@ -22,12 +22,17 @@ export const deliveryValidation = (
 
   const ordersOnSelectedDate =
     allOrders &&
-    allOrders
-      .filter(
-        (order) => order.deliveryDate === watchedDate.format("DD.MM.YYYY")
-      )
-      .filter((order) => !order.canceled)
-      .filter((order) => order.userId !== 808);
+    allOrders.filter(({ deliveryDate, orderStatus, canceled, userId }) => {
+      const isCorrectDate = deliveryDate === watchedDate.format("DD.MM.YYYY");
+
+      const isNotCancelled = orderStatus
+        ? !orderStatus.includes("Cancelled")
+        : !canceled;
+
+      const isNotDevUser = userId !== 808; // 808 - dev userId
+
+      return isCorrectDate && isNotCancelled && isNotDevUser;
+    });
 
   const isOrdersLimitReached = ordersOnSelectedDate
     ? ordersOnSelectedDate.length >= ORDERS_MAX_NUM
