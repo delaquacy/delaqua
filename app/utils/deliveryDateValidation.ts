@@ -22,9 +22,12 @@ export const deliveryValidation = (
 
   const ordersOnSelectedDate =
     allOrders &&
-    allOrders.filter(
-      (order) => order.deliveryDate === watchedDate.format("DD.MM.YYYY")
-    );
+    allOrders
+      .filter(
+        (order) => order.deliveryDate === watchedDate.format("DD.MM.YYYY")
+      )
+      .filter((order) => !order.canceled)
+      .filter((order) => order.userId !== 808);
 
   const isOrdersLimitReached = ordersOnSelectedDate
     ? ordersOnSelectedDate.length >= ORDERS_MAX_NUM
