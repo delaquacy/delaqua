@@ -1,8 +1,6 @@
+import { useGoodsContext } from "@/app/contexts/GoodsContext";
 import { useScreenSize, useToast } from "@/app/hooks";
-import { db } from "@/app/lib/config";
-import { Goods } from "@/app/types";
-import { addItemsQuantityToInventoryTable } from "@/app/utils/addItemsToInventoryTable";
-import { getStaticGoodsArray } from "@/app/utils/getStaticGoodsArray";
+import { GoodService } from "@/app/lib/GoodService";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   AddCircleOutline,
@@ -13,8 +11,6 @@ import { Box, Button, Divider, FormHelperText, Tooltip } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { addDoc, collection } from "firebase/firestore";
-import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { ControllerInputField } from "../shared";
 import SelectItem from "./Select";
@@ -47,10 +43,9 @@ export interface FormValues {
 }
 
 export const GoodsIncomingForm = () => {
+  const { goods } = useGoodsContext();
   const { isSmallScreen } = useScreenSize();
   const { showSuccessToast, showErrorToast } = useToast();
-
-  const [goods, setGoods] = useState<Goods[]>([]);
 
   const {
     control,
@@ -80,20 +75,11 @@ export const GoodsIncomingForm = () => {
     name: "items",
   });
 
-  const getGoods = async () => {
-    try {
-      const data = await getStaticGoodsArray();
-      setGoods(data);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    }
-  };
-
   const onSubmit = async (data: FormValues) => {
     const formattedData = {
       ...data,
-      formFillDate: dayjs().format("DD-MM-YYYY"),
-      date: dayjs(data.date).format("DD-MM-YYYY"),
+      formFillDate: dayjs().format("DD.MM.YYYY"),
+      date: dayjs(data.date).format("DD.MM.YYYY"),
       items: data?.items?.map((item) => ({
         ...item,
         itemCode: goods.find(({ name }) => name === item.itemName)?.itemCode,
@@ -101,9 +87,11 @@ export const GoodsIncomingForm = () => {
     };
 
     try {
-      await addItemsQuantityToInventoryTable(formattedData as GoodsValues);
+      await GoodService.addItemsQuantityToInventoryTable(
+        formattedData as GoodsValues
+      );
 
-      await addDoc(collection(db, `goodsIncomingInvoices`), formattedData);
+      await GoodService.addIncomingGoodsItem(formattedData);
       reset();
       showSuccessToast("Form successfully submitted");
     } catch (error) {
@@ -111,10 +99,6 @@ export const GoodsIncomingForm = () => {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    getGoods();
-  }, []);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -296,7 +280,6 @@ export const GoodsIncomingForm = () => {
           <Button
             variant="contained"
             onClick={() => {
-              console.log("before append", `${fields.length + 1}`);
               append({
                 id: `${fields.length + 1}`,
                 itemName: "",

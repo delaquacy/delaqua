@@ -1,6 +1,5 @@
 import OrdersTable from "@/app/components/OrdersTable";
 import TranslationsProvider from "@/app/components/TranslationsProvider/TranslationsProvider";
-import { OrdersTableProvider } from "@/app/contexts/OrdersTableContext";
 import initTranslations from "@/app/i18n";
 
 const i18nNamespaces = [
@@ -26,9 +25,7 @@ export default async function Orders({
         locale={locale}
         resources={resources}
       >
-        <OrdersTableProvider>
-          <OrdersTable />
-        </OrdersTableProvider>
+        <OrdersTable />
       </TranslationsProvider>
     </>
   );

@@ -6,6 +6,7 @@ import { Box, Tabs } from "@mui/material";
 import { useState } from "react";
 import { AddNewGoodForm } from "../AddNewGoodForm";
 import { GoodsAvailableTable } from "../GoodsAvailableTable";
+import { GoodsCalculationTable } from "../GoodsCalculationTable";
 import { GoodsIncomingForm } from "../GoodsIncomingForm";
 import { GoodsInvoicesTable } from "../GoodsInvoicesTable";
 import { GoodTab } from "./styled";
@@ -56,7 +57,7 @@ export const GoodsTabs = () => {
 
         <GoodTab
           is_current_tab={(value === 2).toString()}
-          label="Goods Invoices List"
+          label="Goods Incoming Invoices List"
           {...a11yProps(2)}
         />
 
@@ -65,19 +66,30 @@ export const GoodsTabs = () => {
           label="Add New Good"
           {...a11yProps(3)}
         />
+        <GoodTab
+          is_current_tab={(value === 4).toString()}
+          label="Goods calculation"
+          {...a11yProps(4)}
+        />
       </Tabs>
 
       <CustomTabPanel value={value} index={0}>
         <GoodsAvailableTable />
       </CustomTabPanel>
+
       <CustomTabPanel value={value} index={1}>
         <GoodsIncomingForm />
       </CustomTabPanel>
+
       <CustomTabPanel value={value} index={2}>
         <GoodsInvoicesTable />
       </CustomTabPanel>
+
       <CustomTabPanel value={value} index={3}>
         <AddNewGoodForm />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={4}>
+        <GoodsCalculationTable />
       </CustomTabPanel>
     </Box>
   );

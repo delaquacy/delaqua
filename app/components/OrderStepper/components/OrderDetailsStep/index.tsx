@@ -9,6 +9,7 @@ import { OrderItemsTable } from "@/app/components/OrderItemsTable";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
 import { useUserContext } from "@/app/contexts/UserContext";
 import { useToast } from "@/app/hooks";
+import { GoodService } from "@/app/lib/GoodService";
 import sessionService from "@/app/lib/SessionService";
 import { processOrder } from "@/app/utils/processOrder";
 import {
@@ -127,6 +128,11 @@ export const OrderDetailsStep = ({
     );
 
     handleAddOrderDetails({ invoiceNumber });
+
+    await GoodService.addOrderItemsToInventoryTable({
+      ...orderData,
+      invoiceNumber,
+    } as any);
 
     setLoading(false);
     sessionService.clearAll();
