@@ -1,7 +1,7 @@
 "use client";
 import { GOODS_INVOICES_HEAD } from "@/app/constants/GoodsInvoicesHead";
+import { useGoodsContext } from "@/app/contexts/GoodsContext";
 import { useScreenSize } from "@/app/hooks";
-import { getGoodsIncomingInvoices } from "@/app/utils/getGoodsIncomingInvoices";
 import {
   Table,
   TableBody,
@@ -10,26 +10,11 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { GoodsValues } from "../GoodsIncomingForm";
 
 export const GoodsInvoicesTable = () => {
+  const { invoices } = useGoodsContext();
   const { isSmallScreen } = useScreenSize();
 
-  const [goods, setGoods] = useState<GoodsValues[]>([]);
-  const getGoodsRows = async () => {
-    try {
-      const data = await getGoodsIncomingInvoices();
-      console.log(data);
-      setGoods(data);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    }
-  };
-
-  useEffect(() => {
-    getGoodsRows();
-  }, []);
   return (
     <TableContainer
       sx={{
@@ -65,7 +50,7 @@ export const GoodsInvoicesTable = () => {
         </TableHead>
 
         <TableBody>
-          {goods.map((good, index) =>
+          {invoices.map((good) =>
             good.items.map((item) => (
               <TableRow key={`${good.id}-${item.id}`}>
                 <TableCell

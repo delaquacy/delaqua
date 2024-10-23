@@ -1,24 +1,28 @@
 "use client";
 import { GOODS_AVAILABLE_HEAD } from "@/app/constants/GoodsAvaliableHead";
-import { useScreenSize, useToast } from "@/app/hooks";
-import { getGoodsArray } from "@/app/utils/getGoodsArray";
+import { useGoodsContext } from "@/app/contexts/GoodsContext";
+import { useScreenSize } from "@/app/hooks";
 import { Delete } from "@mui/icons-material";
 import {
   Box,
-  Card,
-  Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Tooltip,
   Typography,
 } from "@mui/material";
-import { t } from "i18next";
-import { useEffect, useState } from "react";
-import RemoveItemModalWindow from "./RemoveItemModalWindow";
-import { deleteDoc, doc } from "firebase/firestore";
-import { db } from "@/app/lib/config";
+import { useState } from "react";
+import RemoveItemModalWindow from "../RemoveItemModalWindow";
+import {
+  CardBox,
+  CardTypoBold,
+  StyledCard,
+  StyledCell,
+  StyledHeadCell,
+  StyledTable,
+  StyledTooltip,
+  StyledWrapper,
+} from "./styled";
 
 export interface GoodsAvailable {
   id: string;
@@ -30,179 +34,89 @@ export interface GoodsAvailable {
 }
 
 export const GoodsAvailableTable = () => {
+  const {
+    inventoryGoods,
+    openDeleteWindow,
+    setOpenDeleteWindow,
+    handleRemoveGoodsInventoryItem,
+  } = useGoodsContext();
   const { isSmallScreen } = useScreenSize();
-  const { showSuccessToast, showErrorToast } = useToast();
-
-  const [goods, setGoods] = useState<GoodsAvailable[]>([]);
-  const [openDeleteWindow, setOpenDeleteWindow] = useState(false);
 
   const [itemDetails, setItemDetails] = useState({
     details: "",
     id: "",
   });
 
-  const getGoodsRows = async () => {
-    try {
-      const data = await getGoodsArray();
-      console.log(data);
-      setGoods(data);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    }
+  const handleRemoveClick = (good: GoodsAvailable) => {
+    setItemDetails({
+      details: `${good.id} - ${good.name}`,
+      id: good.id,
+    });
+    setOpenDeleteWindow(true);
   };
 
-  const handleRemoveItem = async (documentId: string) => {
-    await deleteDoc(doc(db, "goods", documentId));
-    await deleteDoc(doc(db, "goodsInventory", documentId));
-    setOpenDeleteWindow(false);
-    showSuccessToast("Item successfully removed");
-    getGoodsRows();
-  };
-
-  useEffect(() => {
-    getGoodsRows();
-  }, []);
   return (
     <Box>
       {isSmallScreen ? (
-        <Box display="flex" flexDirection="column" gap="15px">
-          {goods.map((good) => (
-            <Card
-              key={good.id}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                padding: "15px",
-                gap: "12px",
-                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-              }}
-            >
+        <StyledWrapper>
+          {inventoryGoods.map((good) => (
+            <StyledCard key={good.id}>
               {GOODS_AVAILABLE_HEAD.map((head, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {head.value}
-                  </Typography>
+                <CardBox key={index}>
+                  <CardTypoBold>{head.value}</CardTypoBold>
+
                   <Typography>
                     {good[head.key as keyof GoodsAvailable]}
                   </Typography>
-                </Box>
+                </CardBox>
               ))}
-            </Card>
+            </StyledCard>
           ))}
-        </Box>
+        </StyledWrapper>
       ) : (
-        <Table
-          size="small"
-          sx={{
-            padding: "20px",
-          }}
-        >
+        <StyledTable size="small">
           <TableHead>
             <TableRow>
               {GOODS_AVAILABLE_HEAD.map((good, index) => (
-                <TableCell
+                <StyledHeadCell
                   key={index}
                   scope="row"
-                  padding="none"
                   variant="head"
-                  align="center"
-                  sx={{
-                    fontWeight: "bold",
-                    borderRight:
-                      index < GOODS_AVAILABLE_HEAD.length - 1
-                        ? "1px solid #ddd"
-                        : "none",
-                  }}
+                  border={
+                    index < GOODS_AVAILABLE_HEAD.length - 1 ? "border" : ""
+                  }
                 >
                   {good.value}
-                </TableCell>
+                </StyledHeadCell>
               ))}
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {goods.map((good, index) => (
+            {inventoryGoods.map((good, index) => (
               <TableRow key={index}>
-                <TableCell
-                  component="th"
-                  scope="row"
-                  padding="none"
-                  align="center"
-                  sx={{
-                    borderRight: "1px solid #ddd",
-                  }}
-                >
-                  {good.id}
-                </TableCell>
-                <TableCell
-                  scope="row"
-                  sx={{
-                    borderRight: "1px solid #ddd",
-                  }}
-                >
-                  {good.name}
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    borderRight: "1px solid #ddd",
-                  }}
-                >
-                  {good.lastInvoiceDate}
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    borderRight: "1px solid #ddd",
-                  }}
-                >
-                  {good.lastInvoiceNumber}
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    borderRight: "1px solid #ddd",
-                  }}
-                >
-                  {good.quantity}
-                </TableCell>
-                <TableCell align="center" sx={{}}>
-                  <Tooltip
+                <StyledCell>{good.id}</StyledCell>
+
+                <StyledCell>{good.name}</StyledCell>
+
+                <StyledCell>{good.lastInvoiceDate}</StyledCell>
+
+                <StyledCell>{good.lastInvoiceNumber}</StyledCell>
+
+                <StyledCell>{good.quantity}</StyledCell>
+
+                <TableCell align="center">
+                  <StyledTooltip
                     title={"Remove Item"}
-                    onClick={() => {
-                      setItemDetails({
-                        details: `${good.id} - ${good.name}`,
-                        id: good.id,
-                      });
-                      setOpenDeleteWindow(true);
-                    }}
-                    sx={{
-                      transform: "translateY(5px)",
-                      width: isSmallScreen ? "20px" : "30px",
-                      height: isSmallScreen ? "20px" : "30px",
-                      cursor: "pointer",
-                      color: "gray",
-                    }}
+                    onClick={() => handleRemoveClick(good)}
                   >
                     <Delete fontSize={isSmallScreen ? "small" : "medium"} />
-                  </Tooltip>
+                  </StyledTooltip>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+        </StyledTable>
       )}
 
       <RemoveItemModalWindow
@@ -210,7 +124,7 @@ export const GoodsAvailableTable = () => {
         setOpen={setOpenDeleteWindow}
         itemDetails={itemDetails.details}
         itemId={itemDetails.id}
-        onRemove={handleRemoveItem}
+        onRemove={handleRemoveGoodsInventoryItem}
       />
     </Box>
   );
