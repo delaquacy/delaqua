@@ -18,7 +18,7 @@ export const deliveryValidation = (
 
   const afterTen = now.startOf("day").add(10, "hours");
   const noon = now.startOf("day").add(12, "hours");
-  const infoDay = dayjs(selectedDate).format("DD/MM/YYYY") === "01/10/2024";
+  const infoDay = dayjs(selectedDate).format("DD/MM/YYYY") === "28/10/2024";
 
   const ordersOnSelectedDate =
     allOrders &&

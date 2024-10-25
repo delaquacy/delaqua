@@ -41,7 +41,7 @@ import { MyAccountMenu } from "./MyAccountMenu";
 
 dayjs.extend(customParseFormat);
 
-const END_INFO_BANNER = "02.10.2024 00:00";
+const END_INFO_BANNER = "29.10.2024 00:00";
 
 export default function Headers({
   setShowWindow,

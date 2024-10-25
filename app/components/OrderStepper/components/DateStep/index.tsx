@@ -58,7 +58,7 @@ export const DateStep = ({
   handleNext: () => void;
   returnBottles?: boolean;
 }) => {
-  const { t } = useTranslation("form");
+  const { t } = useTranslation(["form", "main"]);
 
   const {
     userOrder,
@@ -257,6 +257,8 @@ export const DateStep = ({
                   >
                     {!isCurrentDayPrevious && isCurrentDayIsSunday
                       ? t("sunday")
+                      : infoDay
+                      ? t("info", { ns: "main" })
                       : isCurrentDayPrevious || isCurrentDayAfterNoon
                       ? t("change_day")
                       : `* ${t("delivery_date")}`}
