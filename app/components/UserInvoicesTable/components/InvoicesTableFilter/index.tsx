@@ -18,8 +18,8 @@ import {
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 
-import { DateRangePicker } from "@/app/components/OrdersTableFilter/DateRangePicker";
-import SelectFilter from "@/app/components/OrdersTableFilter/SelectFilter";
+import { DateRangePicker } from "@/app/components/OrdersTable/components/DateRangePicker";
+import SelectFilter from "@/app/components/OrdersTable/components/SelectFilter";
 import { InvoicesTableHeadCells } from "@/app/constants/UserInvoicesTable";
 
 interface InvoicesTableFilterProps {

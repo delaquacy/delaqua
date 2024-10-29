@@ -1,20 +1,22 @@
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../lib/config";
+import { FirebaseService } from "../lib/FirebaseServices";
 
 export const updateOrderStatus = async (
   orderIds: string[],
-  status: "completed" | "canceled"
+  paymentStatus: string,
+  orderStatus: string
 ) => {
   const updatePromises = orderIds.map((orderId) => {
-    const allOrdersRef = doc(db, `allOrders/${orderId}`);
+    const updateData: { paymentStatus?: string; orderStatus?: string } = {};
 
-    if (status === "completed") {
-      return updateDoc(allOrdersRef, { completed: true, canceled: false });
+    if (paymentStatus) {
+      updateData.paymentStatus = paymentStatus;
     }
 
-    if (status === "canceled") {
-      return updateDoc(allOrdersRef, { canceled: true, completed: false });
+    if (orderStatus) {
+      updateData.orderStatus = orderStatus;
     }
+
+    return FirebaseService.updateDocument("allOrders", orderId, updateData);
   });
 
   await Promise.all(updatePromises);

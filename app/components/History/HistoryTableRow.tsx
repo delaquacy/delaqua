@@ -29,6 +29,20 @@ export function HistoryTableRow(props: { order: OrdersData }) {
 
   const typeOfAddress = order?.deliveryAddressObj?.addressType || "Home";
 
+  const paymentStatusText = Array.isArray(order.paymentStatus)
+    ? order.paymentStatus
+        .map((status) =>
+          t(`paymentStatuses.${status.toLowerCase().replace(/\s+/g, "_")}`)
+        )
+        .join(", ")
+    : typeof order.paymentStatus === "string"
+    ? t(
+        `paymentStatuses.${order.paymentStatus
+          .toLowerCase()
+          .replace(/\s+/g, "_")}`
+      )
+    : t("paymentStatuses.unpaid");
+
   return (
     <TableRow
       sx={{
@@ -71,11 +85,7 @@ export function HistoryTableRow(props: { order: OrdersData }) {
       <HistoryTableCell>{order.paymentMethod}</HistoryTableCell>
       <HistoryTableCell>{order.totalPayments}</HistoryTableCell>
 
-      <HistoryTableCell>
-        {order.paymentStatus
-          ? t(`paymentStatuses.${order.paymentStatus}`)
-          : "-"}
-      </HistoryTableCell>
+      <HistoryTableCell>{paymentStatusText}</HistoryTableCell>
       <HistoryTableCell align="center">
         {order.paymentMethod === "Return cash" ? (
           "-"

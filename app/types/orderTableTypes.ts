@@ -22,6 +22,7 @@ export interface OrdersData {
   paymentMethod: string;
   paymentId: string;
   paymentStatus: string;
+  orderStatus?: string;
   paymentLink?: string;
   phoneNumber: string;
   postalIndex: string;
@@ -33,6 +34,7 @@ export interface OrdersData {
   useId?: number;
   expire: boolean;
   canceled: boolean;
+  courierComment?: string;
 }
 
 export interface UserOrderItem {

@@ -27,3 +27,21 @@ export const getValidationMessage = (
   if (isSunday) return t("sunday");
   return "";
 };
+
+export const datePickerStyle = (
+  isSmallScreen: boolean,
+  widthFull?: boolean
+) => ({
+  width: isSmallScreen ? (widthFull ? "100%" : "112px !important") : "231px",
+  minWidth: isSmallScreen ? "90px !important" : "231px",
+  "& .MuiFormLabel-root": {
+    fontSize: isSmallScreen ? "10px" : "",
+    transform: isSmallScreen ? "translate(14px, 9px) scale(1) !important" : "",
+  },
+  "& .MuiInputLabel-shrink": {
+    fontSize: isSmallScreen ? "10px" : "",
+    transform: isSmallScreen
+      ? "translate(14px, -6px) scale(0.75) !important"
+      : "",
+  },
+});

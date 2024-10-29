@@ -1,3 +1,4 @@
+import { useOrdersTableContext } from "@/app/contexts/OrdersTableContext";
 import { useScreenSize } from "@/app/hooks";
 import { OrdersData } from "@/app/types";
 import {
@@ -9,38 +10,29 @@ import {
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { useTranslation } from "react-i18next";
-import { TableHeadCells } from "../../constants/TableHeadCells";
+import { TableHeadCells } from "../../../../constants/TableHeadCells";
+import { StyledTableCell } from "./styled";
 
-interface OrdersTableHeadProps {
-  numSelected: number;
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof OrdersData
-  ) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: "asc" | "desc";
-  orderBy: string;
-  rowCount: number;
-}
-
-export function OrdersTableHead(props: OrdersTableHeadProps) {
+export function OrdersTableHead() {
   const {
-    onSelectAllClick,
-    order,
+    handleRequestSort,
+    handleSelectAllClick,
+    selected,
+    rows,
     orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
+    order,
+  } = useOrdersTableContext();
+
+  const { t } = useTranslation("orderTable");
+  const { isSmallScreen } = useScreenSize();
+
+  const numSelected = selected.length;
+  const rowCount = rows.length;
 
   const createSortHandler =
     (property: keyof OrdersData) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
+      handleRequestSort(event, property);
     };
-
-  const { t } = useTranslation("orderTable");
-
-  const { isSmallScreen } = useScreenSize();
 
   return (
     <TableRow
@@ -63,7 +55,7 @@ export function OrdersTableHead(props: OrdersTableHeadProps) {
           color="primary"
           indeterminate={numSelected > 0 && numSelected < rowCount}
           checked={rowCount > 0 && numSelected === rowCount}
-          onChange={onSelectAllClick}
+          onChange={handleSelectAllClick}
           inputProps={{
             "aria-label": "select all desserts",
           }}
@@ -104,10 +96,19 @@ export function OrdersTableHead(props: OrdersTableHeadProps) {
             </TableSortLabel>
           </TableCell>
         ) : (
-          <TableCell
+          <StyledTableCell
+            head_cell_id={headCell.id}
             key={headCell.id as string}
             variant="head"
-            sx={tableCellStyle(isSmallScreen, headCell)}
+            sx={{
+              position:
+                !isSmallScreen &&
+                (headCell.id === "index" ||
+                  headCell.id === "phoneNumber" ||
+                  headCell.id === "firstAndLast")
+                  ? "sticky"
+                  : "",
+            }}
           >
             <Box
               display={"flex"}
@@ -117,44 +118,9 @@ export function OrdersTableHead(props: OrdersTableHeadProps) {
               {headCell.image}
               <Box textAlign="center">{t(`${headCell.label}`)}</Box>
             </Box>
-          </TableCell>
+          </StyledTableCell>
         )
       )}
     </TableRow>
   );
 }
-
-const tableCellStyle = (isSmallScreen: boolean, headCell: any) => ({
-  borderRight:
-    headCell.id === "firstAndLast" ? "solid 1px rgba(38, 40, 82, 0.1)" : "",
-  position: isSmallScreen
-    ? ""
-    : headCell.id === "index" ||
-      headCell.id === "phoneNumber" ||
-      headCell.id === "firstAndLast"
-    ? "sticky"
-    : "",
-  left: isSmallScreen
-    ? ""
-    : headCell.id === "index"
-    ? "74px"
-    : headCell.id === "phoneNumber"
-    ? "155.45px"
-    : headCell.id === "firstAndLast"
-    ? "290.9px"
-    : "",
-  zIndex: isSmallScreen
-    ? ""
-    : headCell.id === "index" ||
-      headCell.id === "phoneNumber" ||
-      headCell.id === "firstAndLast"
-    ? 3
-    : 0,
-  minWidth:
-    headCell.id === "comments" ||
-    headCell.id === "addressDetails" ||
-    headCell.id === "deliveryAddress" ||
-    headCell.id === "firstAndLast"
-      ? "180px"
-      : "80px",
-});

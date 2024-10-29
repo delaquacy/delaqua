@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import dayjs, { Dayjs } from "dayjs";
 import { serverTimestamp } from "firebase/firestore";
+import { usePathname } from "next/navigation";
 import { Address, Goods, OrdersData } from "../types";
 import {
   fetchAddresses,
@@ -36,6 +37,11 @@ export interface UserOrderItem {
   vat?: string;
 }
 
+interface AdminAssignedUser {
+  uid: string;
+  phoneNumber: string;
+}
+
 export interface UserOrder {
   id: string;
   items: UserOrderItem[];
@@ -55,6 +61,7 @@ export interface UserOrder {
   numberOfBottlesAtThisAddress: string;
   completed: boolean;
   paymentStatus: string;
+  orderStatus?: string;
   paymentMethod: string;
   canceled: boolean;
 }
@@ -64,13 +71,19 @@ interface OrderDetailsContextType {
   userOrder: UserOrder;
   userData: UserData;
   isFirstOrder: boolean;
+  defaultItems: UserOrderItem[];
   paymentUrl: string;
   loading: boolean;
   error: string;
   allOrders: OrdersData[];
+  adminCreateMode: boolean;
   setPaymentUrl: (url: string) => void;
   setUserData: Dispatch<SetStateAction<UserData>>;
+  setAdminCreateMode: Dispatch<SetStateAction<boolean>>;
   handleAddOrderDetails: (newDetails: any) => void;
+  setAdminAssignedUser: Dispatch<
+    SetStateAction<AdminAssignedUser | null | undefined>
+  >;
 }
 interface UserData {
   formattedUserPhone: string | null;
@@ -89,8 +102,11 @@ export const OrderDetailsContext = createContext<OrderDetailsContextType>({
   loading: false,
   error: "",
   allOrders: [],
+  adminCreateMode: false,
+  defaultItems: [],
   setPaymentUrl: () => {},
   setUserData: () => {},
+  setAdminCreateMode: () => {},
   userData: {
     formattedUserPhone: "",
     userPhone: "",
@@ -133,6 +149,7 @@ export const OrderDetailsContext = createContext<OrderDetailsContextType>({
     canceled: false,
   },
   handleAddOrderDetails: () => {},
+  setAdminAssignedUser: () => {},
 });
 
 type OrderDetailsProviderProps = {
@@ -143,12 +160,18 @@ export const OrderDetailsProvider = ({
 }: OrderDetailsProviderProps) => {
   const { user } = useUserContext();
 
+  const pathname = usePathname();
+
   const [goods, setGoods] = useState<Goods[]>([]);
+  const [defaultItems, setDefaultItems] = useState<UserOrderItem[]>([]);
   const [isFirstOrder, setIsFirstOrder] = useState(true);
   const [paymentUrl, setPaymentUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [allOrders, setAllOrders] = useState<OrdersData[]>([]);
+  const [adminCreateMode, setAdminCreateMode] = useState(false);
+  const [adminAssignedUser, setAdminAssignedUser] =
+    useState<AdminAssignedUser | null>();
   const [userOrder, setUserOrder] = useState<UserOrder>({
     id: uuidv4(),
     items: [] as UserOrderItem[],
@@ -176,6 +199,7 @@ export const OrderDetailsProvider = ({
     totalPayments: "",
     numberOfBottlesAtThisAddress: "",
     paymentStatus: "Unpaid",
+    orderStatus: "Created",
     paymentMethod: "",
     completed: false,
     canceled: false,
@@ -231,32 +255,27 @@ export const OrderDetailsProvider = ({
     }
   };
 
-  const getOrdersRows = async () => {
-    try {
-      const data = await getOrdersArray();
-      setAllOrders(data as OrdersData[]);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    }
-  };
-
   const getGoods = async () => {
     try {
       const data = await getStaticGoodsArray();
       setGoods(data.map((item) => ({ ...item, picture: `${item.id}.webp` })));
+      const items = data.reverse().map((good) => ({
+        id: good.id,
+        itemCode: good.itemCode,
+        name: good.name,
+        sellPrice: good.sellPrice,
+        net: good.netSaleWorth,
+        vat: good.sellPriceVAT,
+        count: "0",
+        sum: "0",
+      }));
+
       setUserOrder((prev) => ({
         ...prev,
-        items: data.reverse().map((good) => ({
-          id: good.id,
-          itemCode: good.itemCode,
-          name: good.name,
-          sellPrice: good.sellPrice,
-          net: good.netSaleWorth,
-          vat: good.sellPriceVAT,
-          count: "0",
-          sum: "0",
-        })),
+        items,
       }));
+
+      setDefaultItems(items);
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
@@ -270,25 +289,54 @@ export const OrderDetailsProvider = ({
     }));
   };
 
+  const handleUpdateUserData = (user: AdminAssignedUser) => {
+    setUserData((prevData) => ({
+      ...prevData,
+      formattedUserPhone: formatPhoneNumber(user.phoneNumber!),
+      userPhone: user.phoneNumber,
+    }));
+
+    setUserOrder((prev) => ({
+      ...prev,
+      phoneNumber: user?.phoneNumber || "",
+    }));
+
+    user?.uid && fetchUserData(user?.uid);
+    getGoods();
+  };
+
   useEffect(() => {
-    if (user) {
-      setUserData((prevData) => ({
-        ...prevData,
-        formattedUserPhone: formatPhoneNumber(user.phoneNumber!),
-        userPhone: user.phoneNumber,
-      }));
-
-      setUserOrder((prev) => ({
-        ...prev,
-        phoneNumber: user?.phoneNumber || "",
-      }));
-
-      getOrdersRows();
-
-      user?.uid && fetchUserData(user?.uid);
-      getGoods();
+    if (user && !adminCreateMode) {
+      handleUpdateUserData(user as AdminAssignedUser);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (adminAssignedUser && adminCreateMode) {
+      handleUpdateUserData(adminAssignedUser as AdminAssignedUser);
+    }
+  }, [adminAssignedUser]);
+
+  useEffect(() => {
+    const isAdminPage = pathname.includes("admin_dashboard");
+
+    if (!isAdminPage) {
+      setAdminCreateMode(false);
+      setAdminAssignedUser(null);
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    const unsubscribe = getOrdersArray((data) => {
+      setAllOrders(data as OrdersData[]);
+    });
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, []);
 
   return (
     <OrderDetailsContext.Provider
@@ -301,9 +349,13 @@ export const OrderDetailsProvider = ({
         loading,
         error,
         allOrders,
+        adminCreateMode,
+        defaultItems,
         setPaymentUrl,
         setUserData,
         handleAddOrderDetails,
+        setAdminAssignedUser,
+        setAdminCreateMode,
       }}
     >
       {children}

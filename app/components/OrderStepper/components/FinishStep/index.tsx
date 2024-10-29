@@ -5,18 +5,18 @@ import styles from "../../../OrderCreated/OrderCreated.module.css";
 
 import { useTranslation } from "react-i18next";
 
+import { useToast } from "@/app/hooks";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import { CheckBox } from "@mui/icons-material";
-import { useRouter } from "next/navigation";
 import "../../../../i18n";
 
 export const FinishStep = ({ returnBottles }: { returnBottles: boolean }) => {
   const { t } = useTranslation("finishModal");
-  const router = useRouter();
 
   const { trackAmplitudeEvent } = useAmplitudeContext();
+  const { showSuccessToast } = useToast();
 
-  const { userOrder, paymentUrl } = useOrderDetailsContext();
+  const { userOrder, paymentUrl, adminCreateMode } = useOrderDetailsContext();
 
   const count = +userOrder.bottlesNumberToReturn || 0;
   const countSum = +(userOrder.bottlesNumberToReturn || "0") * 7;
@@ -32,14 +32,27 @@ export const FinishStep = ({ returnBottles }: { returnBottles: boolean }) => {
       text: "Close payment",
     });
 
-    window.location.href = "/order_history";
+    window.location.href = adminCreateMode
+      ? "/admin_dashboard"
+      : "/order_history";
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(paymentUrl)
+      .then(() => showSuccessToast("Copied!"));
   };
 
   const paymentText =
     userOrder.paymentMethod === "Online" ? (
       <>
         <div> {t("proceed_online_payment")}</div>
-        <div>
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+        >
           <Button
             onClick={clickToPay}
             style={{ marginTop: "10px" }}
@@ -49,7 +62,17 @@ export const FinishStep = ({ returnBottles }: { returnBottles: boolean }) => {
               {t("click_to_pay_online")}
             </a>
           </Button>
-        </div>
+
+          {adminCreateMode && (
+            <Button
+              onClick={handleCopy}
+              style={{ marginTop: "10px" }}
+              variant="contained"
+            >
+              Copy payment link
+            </Button>
+          )}
+        </Box>
       </>
     ) : returnBottles ? (
       <span style={{ fontWeight: "bold" }}>{t("returnBottle")}</span>

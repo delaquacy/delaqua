@@ -1,11 +1,11 @@
 import { FormWrapper } from "@/app/components/shared";
-import { BIG_BOTTLE_PRICE } from "@/app/constants/bigBottlePrise";
 import {
   UserOrderItem,
   useOrderDetailsContext,
 } from "@/app/contexts/OrderDetailsContext";
 import { useScreenSize } from "@/app/hooks";
 import { CombinedItem } from "@/app/types";
+import { calculateItemSumWithBigBottlePrice } from "@/app/utils/calculateItemSumWithBigBottlePrice";
 import { findBottlesByCode } from "@/app/utils/findBottlesByCode";
 import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -62,34 +62,12 @@ export const StoreStep = ({
   const { bigBottle, bigBottleRent, middleBottle, smallBottle } =
     findBottlesByCode(itemsDetails) as Record<string, CombinedItem | undefined>;
 
-  const getOrderItemSum = (orderCount: string, orderSellPrice: string) => {
-    return +orderCount * +orderSellPrice;
-  };
-
   const onSubmit = (data: FormValues) => {
     if (showTooltipMessage) return;
 
-    const formattedData = data.items.map((order) => {
-      const isBigBottle = +order.itemCode === 119;
-      const isMoreThanOneBigBottle = isBigBottle && +order.count > 1;
-      const isTenOrMoreBigBottle = isBigBottle && +order.count >= 10;
-
-      const newSellPrice =
-        isFirstOrder && !isMoreThanOneBigBottle
-          ? BIG_BOTTLE_PRICE.FIRST_AND_ONE
-          : isTenOrMoreBigBottle
-          ? BIG_BOTTLE_PRICE.TEN_OR_MORE
-          : BIG_BOTTLE_PRICE.DEFAULT;
-
-      return {
-        ...order,
-        sellPrice: isBigBottle ? newSellPrice : order.sellPrice,
-        sum: getOrderItemSum(
-          order.count,
-          isBigBottle ? newSellPrice : order.sellPrice
-        ),
-      };
-    });
+    const formattedData = data.items.map((order) =>
+      calculateItemSumWithBigBottlePrice(order, isFirstOrder)
+    );
 
     handleAddOrderDetails({
       items: formattedData,
@@ -154,8 +132,8 @@ export const StoreStep = ({
             priceBottle={bigBottle.sellPrice}
             codeBottle={bigBottle.itemCode}
             nameRent={`items[0].count`}
-            priceRent={goods.at(-1)!.sellPrice}
-            codeRent={goods.at(-1)!.itemCode}
+            priceRent={bigBottleRent?.sellPrice || "7"}
+            codeRent={bigBottleRent?.itemCode || "120"}
             nameReturn={"bottlesNumberToReturn"}
             watch={watch}
             control={control}
