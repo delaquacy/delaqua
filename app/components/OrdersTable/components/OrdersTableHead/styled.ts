@@ -21,11 +21,11 @@ export const StyledTableCell = styled(TableCell)<StyledTableCellProps>(
           : "",
       left:
         head_cell_id === "index"
-          ? "74px"
+          ? "73.5px"
           : head_cell_id === "phoneNumber"
-          ? "174px"
+          ? "154px"
           : head_cell_id === "firstAndLast"
-          ? "301px"
+          ? "290px"
           : "",
       width:
         head_cell_id === "comments" ||
