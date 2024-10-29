@@ -46,6 +46,7 @@ interface GoodsContextType {
     val?: string
   ) => void;
   setOpenDeleteWindow: Dispatch<SetStateAction<boolean>>;
+  setApplyGoodsCalculationFilter: Dispatch<SetStateAction<boolean>>;
   handleRemoveGoodsInventoryItem: (documentId: string) => void;
 }
 
@@ -67,6 +68,7 @@ export const GoodsContext = React.createContext<GoodsContextType>({
   openDeleteWindow: false,
   handleFilterFieldsChange: () => {},
   setOpenDeleteWindow: () => {},
+  setApplyGoodsCalculationFilter: () => {},
   handleRemoveGoodsInventoryItem: () => {},
 });
 
@@ -83,6 +85,8 @@ export const GoodsProvider = ({ children }: GoodsProviderProps) => {
   const [invoices, setInvoices] = useState<GoodsValues[]>([]);
   const [filteredInvoices, setFilteredInvoices] = useState<GoodsValues[]>([]);
   const [openDeleteWindow, setOpenDeleteWindow] = useState(false);
+  const [applyGoodsCalculationFilter, setApplyGoodsCalculationFilter] =
+    useState(true);
 
   const [filter, setFilter] = useState<FilterItem>({
     id: "1",
@@ -102,6 +106,7 @@ export const GoodsProvider = ({ children }: GoodsProviderProps) => {
     event: any,
     val?: string
   ) => {
+    setApplyGoodsCalculationFilter(false);
     setFilter((prev) => ({
       ...prev,
       [filterProp]: val,
@@ -131,7 +136,7 @@ export const GoodsProvider = ({ children }: GoodsProviderProps) => {
   }, []);
 
   useEffect(() => {
-    if (invoices && invoices.length > 0) {
+    if (invoices && invoices.length > 0 && applyGoodsCalculationFilter) {
       const parseFormat = "DD-MM-YYYY";
       const startDate = filter?.value1;
       const endDate = filter?.value2;
@@ -144,10 +149,17 @@ export const GoodsProvider = ({ children }: GoodsProviderProps) => {
 
       setFilteredInvoices(filtered);
     }
-  }, [filter, invoices]);
+  }, [filter, invoices, applyGoodsCalculationFilter]);
+
+  console.log(applyGoodsCalculationFilter, "app");
 
   useEffect(() => {
-    if (inventoryGoods.length && rows.length && invoices) {
+    if (
+      inventoryGoods.length &&
+      rows.length &&
+      invoices &&
+      applyGoodsCalculationFilter
+    ) {
       const orders = getFilteredOrders([filter], rows);
       const sold = getCalculatedGoods(orders, inventoryGoods);
       const received = getCalculatedGoods(filteredInvoices, inventoryGoods);
@@ -157,7 +169,13 @@ export const GoodsProvider = ({ children }: GoodsProviderProps) => {
         received: received as GoodsAvailable[],
       });
     }
-  }, [filter, rows, filteredInvoices, inventoryGoods]);
+  }, [
+    filter,
+    rows,
+    filteredInvoices,
+    inventoryGoods,
+    applyGoodsCalculationFilter,
+  ]);
 
   return (
     <GoodsContext.Provider
@@ -171,6 +189,7 @@ export const GoodsProvider = ({ children }: GoodsProviderProps) => {
         setOpenDeleteWindow,
         handleFilterFieldsChange,
         handleRemoveGoodsInventoryItem,
+        setApplyGoodsCalculationFilter,
       }}
     >
       {children}

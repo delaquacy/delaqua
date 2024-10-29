@@ -15,7 +15,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import { useGoodsContext } from "@/app/contexts/GoodsContext";
 import { LocalizationProvider } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { useState } from "react";
 import { DateRangePicker } from "../OrdersTable/components/DateRangePicker";
+import { SharedButton } from "../shared";
 import { DatePickWrapper } from "./styled";
 
 export interface GoodsAvailable {
@@ -28,10 +31,28 @@ export interface GoodsAvailable {
 }
 
 export const GoodsCalculationTable = () => {
-  const { inventoryGoods, filter, stats, handleFilterFieldsChange } =
-    useGoodsContext();
+  const {
+    inventoryGoods,
+    filter,
+    stats,
+    handleFilterFieldsChange,
+    setApplyGoodsCalculationFilter,
+  } = useGoodsContext();
 
   const { isSmallScreen } = useScreenSize();
+
+  const [appliedFilter, setAppliedFilter] = useState({
+    value1: dayjs(filter.value1).format("DD.MM.YYYY"),
+    value2: dayjs(filter.value2).format("DD.MM.YYYY") || "",
+  });
+
+  const handleApply = () => {
+    setApplyGoodsCalculationFilter(true);
+    setAppliedFilter({
+      value1: dayjs(filter.value1).format("DD.MM.YYYY"),
+      value2: dayjs(filter.value2).format("DD.MM.YYYY") || "",
+    });
+  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -44,7 +65,24 @@ export const GoodsCalculationTable = () => {
                 onChange={handleFilterFieldsChange}
                 notUseSmallScreen
               />
+              <SharedButton
+                text="Apply"
+                onClick={handleApply}
+                fontSize="14px"
+                width="90px"
+                sx={{
+                  alignSelf: "center",
+                }}
+              />
             </DatePickWrapper>
+
+            <Typography fontSize="24px" paddingBottom="30px">
+              Goods calculation for the period{" "}
+              <Box component="span" fontWeight="bold">
+                {`${appliedFilter.value1} - ${appliedFilter.value2}`}
+              </Box>
+            </Typography>
+
             {inventoryGoods.map((good, goodIndex) => {
               return (
                 <Card
@@ -99,7 +137,15 @@ export const GoodsCalculationTable = () => {
                 filter={filter}
                 onChange={handleFilterFieldsChange}
               />
+              <SharedButton text="Apply" size="small" onClick={handleApply} />
             </DatePickWrapper>
+
+            <Typography fontSize="24px" paddingBottom="30px">
+              Goods calculation for the period{" "}
+              <Box component="span" fontWeight="bold">
+                {`${appliedFilter.value1} - ${appliedFilter.value2}`}
+              </Box>
+            </Typography>
             <Table
               size="small"
               sx={{
