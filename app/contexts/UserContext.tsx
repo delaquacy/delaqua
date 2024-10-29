@@ -18,12 +18,23 @@ import { getAllUserOrders } from "../utils/getAllUserOrders";
 
 const auth = getAuth();
 
-const statusConditions = [
+const unpaidStatusConditions = [
   "Unpaid",
   "ORDER_CANCELLED",
   "ORDER_PAYMENT_DECLINED",
   "ORDER_PAYMENT_FAILED",
 ];
+
+const isUnpaidStatusInConditions = (paymentStatus: string | string[]) => {
+  const statuses = Array.isArray(paymentStatus)
+    ? paymentStatus
+    : [paymentStatus];
+
+  return (
+    statuses.some((status) => unpaidStatusConditions.includes(status)) &&
+    !statuses.includes("ORDER_COMPLETED")
+  );
+};
 
 interface UserContextType {
   user: User | null;
@@ -31,10 +42,12 @@ interface UserContextType {
   orders: OrdersData[];
   loading: boolean;
   showWindow: boolean;
+  showContinueText: boolean;
   unpaidOrders: OrdersData[];
   setUser: (user: User) => void;
   setOrders: Dispatch<SetStateAction<OrdersData[]>>;
   setShowWindow: (show: boolean) => void;
+  setShowContinueText: (show: boolean) => void;
 }
 
 export const UserContext = React.createContext<UserContextType>({
@@ -44,9 +57,11 @@ export const UserContext = React.createContext<UserContextType>({
   unpaidOrders: [],
   loading: true,
   showWindow: true,
+  showContinueText: true,
   setUser: () => {},
   setOrders: () => {},
   setShowWindow: () => {},
+  setShowContinueText: () => {},
 });
 
 type UserProviderProps = {
@@ -59,6 +74,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [orders, setOrders] = useState<OrdersData[]>([]);
   const [loading, setLoading] = useState(true);
   const [showWindow, setShowWindow] = useState<boolean>(false);
+  const [showContinueText, setShowContinueText] = useState<boolean>(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -112,24 +128,12 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   }, []);
 
   useEffect(() => {
-    const isStatusInConditions = (paymentStatus: string | string[]) => {
-      if (typeof paymentStatus === "string") {
-        return statusConditions.includes(paymentStatus);
-      }
-      if (Array.isArray(paymentStatus)) {
-        return paymentStatus.some((status) =>
-          statusConditions.includes(status)
-        );
-      }
-      return false;
-    };
-
     const unpaidOrders = orders.filter(
       (order) =>
         order.paymentMethod === "Online" &&
-        !order.canceled &&
+        isUnpaidStatusInConditions(order.paymentStatus) &&
         !order.completed &&
-        isStatusInConditions(order.paymentStatus)
+        !order.canceled
     );
 
     setUnpaidOrders(unpaidOrders);
@@ -144,7 +148,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         orders,
         loading,
         showWindow,
+        showContinueText,
         setShowWindow,
+        setShowContinueText,
         setUser,
         setOrders,
       }}

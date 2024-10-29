@@ -38,6 +38,12 @@
   "newOrder": "Place a new order",
   "admin": "Admin",
   "order": "Orders",
+
+  "cancelOrder": "Cancel order",
+  "sureCancel": "Are you sure you want to cancel this order?",
+  "back": "Go back",
+  "confirm": "Yes, cancel",
+
   "customers": "Dear customers!",
   "info": "Monday, October 28th is a day off due to the Ohi Day public holiday. Please proceed with order for the next available date.",
   "returnBottles": "Return bottles"
