@@ -3,8 +3,15 @@ import { FilterItem } from "@/app/types";
 import { datePickerStyle } from "@/app/utils";
 import { SelectChangeEvent } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import updateLocale from "dayjs/plugin/updateLocale";
 import { ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
+
+dayjs.extend(updateLocale);
+dayjs.updateLocale("en", {
+  weekStart: 1,
+});
 
 interface DateRangePickerProps {
   filter: FilterItem;
@@ -17,9 +24,14 @@ interface DateRangePickerProps {
       | null,
     val?: string
   ) => void;
+  notUseSmallScreen?: boolean;
 }
 
-export const DateRangePicker = ({ filter, onChange }: DateRangePickerProps) => {
+export const DateRangePicker = ({
+  filter,
+  onChange,
+  notUseSmallScreen,
+}: DateRangePickerProps) => {
   const { t } = useTranslation("orderTable");
   const { isSmallScreen } = useScreenSize();
 
@@ -29,7 +41,7 @@ export const DateRangePicker = ({ filter, onChange }: DateRangePickerProps) => {
         label={t("fieldsLabel.from")}
         format="DD-MM-YYYY"
         value={filter.value1 || null}
-        sx={datePickerStyle(isSmallScreen)}
+        sx={notUseSmallScreen ? null : datePickerStyle(isSmallScreen)}
         onChange={(newVal) =>
           onChange(filter.id, "value1", null, newVal as string)
         }
@@ -39,7 +51,7 @@ export const DateRangePicker = ({ filter, onChange }: DateRangePickerProps) => {
         label={t("fieldsLabel.to")}
         format="DD-MM-YYYY"
         value={filter.value2 || null}
-        sx={datePickerStyle(isSmallScreen)}
+        sx={notUseSmallScreen ? null : datePickerStyle(isSmallScreen)}
         onChange={(newVal) =>
           onChange(filter.id, "value2", null, newVal as string)
         }

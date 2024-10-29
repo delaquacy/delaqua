@@ -1,3 +1,4 @@
+import sessionService from "@/app/lib/SessionService";
 import { Box, Button, Tooltip } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { HelperText, Wrapper } from "./styled";
@@ -17,12 +18,17 @@ export const ButtonsGroup = ({
 }: ButtonsGroupProps) => {
   const { t } = useTranslation("form");
 
+  const handleBackClick = () => {
+    handleBack();
+    sessionService.clearAll();
+  };
+
   return (
     <Wrapper>
       <Button
         color="inherit"
         disabled={activeStep === 0}
-        onClick={handleBack}
+        onClick={handleBackClick}
         sx={{ mr: 1, border: "1px solid lightgray" }}
       >
         {t("back")}

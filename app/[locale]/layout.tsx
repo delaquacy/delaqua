@@ -6,7 +6,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LayoutContent from "../components/LayoutContent";
 import TranslationsProvider from "../components/TranslationsProvider/TranslationsProvider";
+import { GoodsProvider } from "../contexts/GoodsContext";
 import { OrderDetailsProvider } from "../contexts/OrderDetailsContext";
+import { OrdersTableProvider } from "../contexts/OrdersTableContext";
 import { UserProvider } from "../contexts/UserContext";
 import "../globals.css";
 import initTranslations from "../i18n";
@@ -72,10 +74,14 @@ export default async function RootLayout({
                 resources={resources}
               >
                 <UserProvider>
-                  <OrderDetailsProvider>
-                    <ToastContainer />
-                    <LayoutContent>{children}</LayoutContent>
-                  </OrderDetailsProvider>
+                  <OrdersTableProvider>
+                    <OrderDetailsProvider>
+                      <GoodsProvider>
+                        <ToastContainer />
+                        <LayoutContent>{children}</LayoutContent>
+                      </GoodsProvider>
+                    </OrderDetailsProvider>
+                  </OrdersTableProvider>
                 </UserProvider>
               </TranslationsProvider>
             </ToggleProvider>
