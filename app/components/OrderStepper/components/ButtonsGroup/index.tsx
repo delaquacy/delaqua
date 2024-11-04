@@ -8,6 +8,7 @@ interface ButtonsGroupProps {
   handleBack: () => void;
   steps: any[];
   errorMessage?: string;
+  disableNext?: boolean;
 }
 
 export const ButtonsGroup = ({
@@ -15,6 +16,7 @@ export const ButtonsGroup = ({
   handleBack,
   steps,
   errorMessage,
+  disableNext,
 }: ButtonsGroupProps) => {
   const { t } = useTranslation("form");
 
@@ -43,6 +45,7 @@ export const ButtonsGroup = ({
           type="submit"
           sx={{ border: "1px solid lightgray" }}
           color="primary"
+          disabled={!!disableNext}
         >
           {activeStep === steps.length - 1 ? t("finish") : t("next")}
         </Button>

@@ -109,12 +109,16 @@ export default function OrderStepper() {
           >
             {STEPS_COMPONENTS[activeStep]({
               handleNext,
-              renderButtonsGroup: (errorMessage: string) => (
+              renderButtonsGroup: (
+                errorMessage: string,
+                disableNext?: boolean
+              ) => (
                 <ButtonsGroup
                   activeStep={activeStep}
                   handleBack={handleBack}
                   steps={STEP_KEYS}
                   errorMessage={errorMessage}
+                  disableNext={disableNext}
                 />
               ),
               activeStep,

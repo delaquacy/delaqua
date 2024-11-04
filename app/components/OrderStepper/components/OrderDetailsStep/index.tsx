@@ -7,7 +7,6 @@ import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import { Loader } from "@/app/components/Loader";
 import { OrderItemsTable } from "@/app/components/OrderItemsTable";
 import { useOrderDetailsContext } from "@/app/contexts/OrderDetailsContext";
-import { useUserContext } from "@/app/contexts/UserContext";
 import { useToast } from "@/app/hooks";
 import { GoodService } from "@/app/lib/GoodService";
 import sessionService from "@/app/lib/SessionService";
@@ -41,14 +40,14 @@ interface FormValues {
   paymentMethod: string;
 }
 
-const RENT_CODE = 120;
-
 export const OrderDetailsStep = ({
   renderButtonsGroup,
   handleNext,
-  activeStep,
 }: {
-  renderButtonsGroup: (errorMessage?: string) => React.ReactNode;
+  renderButtonsGroup: (
+    errorMessage?: string,
+    disableNext?: boolean
+  ) => React.ReactNode;
   handleNext: () => void;
   activeStep: number;
 }) => {
@@ -56,8 +55,6 @@ export const OrderDetailsStep = ({
   const { trackAmplitudeEvent } = useAmplitudeContext();
   const { userOrder, userData, handleAddOrderDetails, setPaymentUrl } =
     useOrderDetailsContext();
-
-  const { unpaidOrders, setShowWindow, setShowContinueText } = useUserContext();
 
   const { showErrorToast } = useToast();
 
@@ -108,15 +105,15 @@ export const OrderDetailsStep = ({
       items: userOrder.items.filter(({ count }) => !!+count),
     };
 
-    if (data.paymentMethod === "Online" && unpaidOrders.length) {
-      setLoading(false);
-      setShowWindow(true);
-      setShowContinueText(true);
+    // if (data.paymentMethod === "Online" && unpaidOrders.length) {
+    //   setLoading(false);
+    //   setShowWindow(true);
+    //   setShowContinueText(true);
 
-      sessionService.saveStep(activeStep);
-      sessionService.saveFormData(orderData);
-      return;
-    }
+    //   sessionService.saveStep(activeStep);
+    //   sessionService.saveFormData(orderData);
+    //   return;
+    // }
 
     const invoiceNumber = await processOrder(
       userData,
@@ -319,7 +316,7 @@ export const OrderDetailsStep = ({
           />
         </Box>
       </FormInternalWrapper>
-      {renderButtonsGroup()}
+      {renderButtonsGroup("", loading)}
     </FormWrapper>
   );
 };

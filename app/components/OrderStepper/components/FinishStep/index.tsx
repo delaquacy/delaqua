@@ -16,7 +16,8 @@ export const FinishStep = ({ returnBottles }: { returnBottles: boolean }) => {
   const { trackAmplitudeEvent } = useAmplitudeContext();
   const { showSuccessToast } = useToast();
 
-  const { userOrder, paymentUrl, adminCreateMode } = useOrderDetailsContext();
+  const { userOrder, paymentUrl, adminCreateMode, handleResetData } =
+    useOrderDetailsContext();
 
   const count = +userOrder.bottlesNumberToReturn || 0;
   const countSum = +(userOrder.bottlesNumberToReturn || "0") * 7;
@@ -31,6 +32,8 @@ export const FinishStep = ({ returnBottles }: { returnBottles: boolean }) => {
     trackAmplitudeEvent("closePayment", {
       text: "Close payment",
     });
+
+    handleResetData();
 
     window.location.href = adminCreateMode
       ? "/admin_dashboard"

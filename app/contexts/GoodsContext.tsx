@@ -151,8 +151,6 @@ export const GoodsProvider = ({ children }: GoodsProviderProps) => {
     }
   }, [filter, invoices, applyGoodsCalculationFilter]);
 
-  console.log(applyGoodsCalculationFilter, "app");
-
   useEffect(() => {
     if (
       inventoryGoods.length &&

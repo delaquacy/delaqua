@@ -10,11 +10,9 @@ import {
   useState,
 } from "react";
 
-import { v4 as uuidv4 } from "uuid";
-
 import dayjs, { Dayjs } from "dayjs";
-import { serverTimestamp } from "firebase/firestore";
 import { usePathname } from "next/navigation";
+import { NEW_ORDER } from "../constants/NewOrder";
 import sessionService from "../lib/SessionService";
 import { Address, Goods, OrdersData } from "../types";
 import {
@@ -82,6 +80,7 @@ interface OrderDetailsContextType {
   setUserData: Dispatch<SetStateAction<UserData>>;
   setAdminCreateMode: Dispatch<SetStateAction<boolean>>;
   handleAddOrderDetails: (newDetails: any) => void;
+  handleResetData: () => void;
   setAdminAssignedUser: Dispatch<
     SetStateAction<AdminAssignedUser | null | undefined>
   >;
@@ -118,38 +117,9 @@ export const OrderDetailsContext = createContext<OrderDetailsContextType>({
     pomp: "",
     userId: "",
   },
-  userOrder: {
-    id: "",
-    items: [],
-    deliveryDate: dayjs(),
-    deliveryTime: "",
-    deliveryAddressObj: {
-      id: "",
-      firstAndLast: "",
-      postalIndex: "",
-      deliveryAddress: "",
-      geolocation: "",
-      addressDetails: "",
-      comments: "",
-      createdAt: serverTimestamp(),
-      archived: false,
-      numberOfBottles: "",
-    },
-    phoneNumber: "",
-    bottlesNumberToReturn: "",
-    pump: "",
-    createdAt: "",
-    userId: "",
-    priceOfWater: "",
-    depositForBottles: "",
-    totalPayments: "",
-    numberOfBottlesAtThisAddress: "",
-    completed: false,
-    paymentStatus: "",
-    paymentMethod: "",
-    canceled: false,
-  },
+  userOrder: NEW_ORDER,
   handleAddOrderDetails: () => {},
+  handleResetData: () => {},
   setAdminAssignedUser: () => {},
 });
 
@@ -175,37 +145,7 @@ export const OrderDetailsProvider = ({
     useState<AdminAssignedUser | null>();
 
   const [userOrder, setUserOrder] = useState<UserOrder>(
-    sessionService.getFormData() || {
-      id: uuidv4(),
-      items: [] as UserOrderItem[],
-      deliveryDate: dayjs(),
-      deliveryTime: "9-12",
-      deliveryAddressObj: {
-        id: "",
-        firstAndLast: "",
-        postalIndex: "",
-        deliveryAddress: "",
-        geolocation: "",
-        addressDetails: "",
-        comments: "",
-        createdAt: serverTimestamp(),
-        archived: false,
-        numberOfBottles: "",
-      },
-      phoneNumber: "",
-      bottlesNumberToReturn: "",
-      pump: "",
-      createdAt: "",
-      userId: "",
-      priceOfWater: "",
-      depositForBottles: "",
-      totalPayments: "",
-      numberOfBottlesAtThisAddress: "",
-      paymentStatus: "Unpaid",
-      paymentMethod: "",
-      completed: false,
-      canceled: false,
-    }
+    sessionService.getFormData() || NEW_ORDER
   );
 
   const [userData, setUserData] = useState<UserData>({
@@ -308,6 +248,25 @@ export const OrderDetailsProvider = ({
     getGoods();
   };
 
+  const handleResetData = () =>
+    setUserOrder((prev) => ({
+      ...prev,
+      items: [] as UserOrderItem[],
+      deliveryDate: dayjs(),
+      deliveryTime: "9-12",
+      bottlesNumberToReturn: "",
+      pump: "",
+      createdAt: "",
+      priceOfWater: "",
+      depositForBottles: "",
+      totalPayments: "",
+      numberOfBottlesAtThisAddress: "",
+      paymentStatus: "Unpaid",
+      paymentMethod: "",
+      completed: false,
+      canceled: false,
+    }));
+
   useEffect(() => {
     if (user && !adminCreateMode) {
       handleUpdateUserData(user as AdminAssignedUser);
@@ -358,6 +317,7 @@ export const OrderDetailsProvider = ({
         setUserData,
         handleAddOrderDetails,
         setAdminAssignedUser,
+        handleResetData,
         setAdminCreateMode,
       }}
     >

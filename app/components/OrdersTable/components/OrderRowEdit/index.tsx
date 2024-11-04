@@ -210,12 +210,14 @@ export const OrderRowEdit = ({
             <Checkbox color="primary" />
           </StickyTableCell>
 
-          <StickyTableCell left={74}>{row.userId || row.useId}</StickyTableCell>
+          <StickyTableCell left={73.5}>
+            {row.userId || row.useId}
+          </StickyTableCell>
 
-          <StickyTableCell left={174}>{row.phoneNumber}</StickyTableCell>
+          <StickyTableCell left={154}>{row.phoneNumber}</StickyTableCell>
 
           <StickyTableCell
-            left={301}
+            left={290}
             sx={{
               borderRight: "solid 1px rgba(38, 40, 82, 0.1)",
             }}

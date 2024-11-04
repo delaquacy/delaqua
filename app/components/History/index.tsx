@@ -12,9 +12,7 @@ import {
   LocalShipping,
 } from "@mui/icons-material";
 import {
-  Box,
   Button,
-  CircularProgress,
   Paper,
   Table,
   TableBody,
@@ -28,6 +26,7 @@ import {
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Loader } from "../Loader";
 import { MainContentWrapper } from "../shared/styled";
 import { CancelModal } from "./CancelModal";
 import { HistoryTableRow } from "./HistoryTableRow";
@@ -52,7 +51,7 @@ export const History = () => {
     "form",
     "savedAddresses",
   ]);
-  const { orders, loading } = useUserContext();
+  const { orders, loading, unpaidOrders } = useUserContext();
   const { isSmallScreen } = useScreenSize();
   const [hasUncompletedOrder, setHasUncompletedOrder] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -77,23 +76,6 @@ export const History = () => {
 
     setHasUncompletedOrder(hasUncompletedOrder);
   }, [orders]);
-
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          flex: 1,
-          display: "flex",
-          width: "100%",
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <CircularProgress size={100} thickness={2} />
-      </Box>
-    );
-  }
 
   return (
     <>
@@ -302,7 +284,13 @@ export const History = () => {
               </TableHead>
 
               <TableBody>
-                {orders.length ? (
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={12} align="center">
+                      <Loader />
+                    </TableCell>
+                  </TableRow>
+                ) : orders.length ? (
                   orders.map((order, index) => (
                     <HistoryTableRow
                       key={order.id + index}

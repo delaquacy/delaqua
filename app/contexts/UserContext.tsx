@@ -76,6 +76,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [showWindow, setShowWindow] = useState<boolean>(false);
   const [showContinueText, setShowContinueText] = useState<boolean>(false);
 
+  const handleSetOrders = (orders: OrdersData[]) => {
+    setOrders(orders);
+    setLoading(false);
+  };
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (currentUser) {
@@ -86,17 +91,14 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
         const unsubscribeOrders = getAllUserOrders(
           currentUser?.uid as string,
-          setOrders
+          handleSetOrders
         );
 
         setUser(currentUser);
-        setLoading(false);
 
         return unsubscribeOrders;
       }
     });
-
-    setLoading(false);
 
     return () => unsubscribe();
   }, []);
@@ -128,13 +130,18 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   }, []);
 
   useEffect(() => {
-    const unpaidOrders = orders.filter(
-      (order) =>
+    const unpaidOrders = orders.filter((order) => {
+      const isCanceled =
+        order.orderStatus && order.orderStatus.includes("Cancelled");
+
+      return (
         order.paymentMethod === "Online" &&
         isUnpaidStatusInConditions(order.paymentStatus) &&
+        !isCanceled &&
         !order.completed &&
         !order.canceled
-    );
+      );
+    });
 
     setUnpaidOrders(unpaidOrders);
   }, [orders]);
