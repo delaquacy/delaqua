@@ -13,6 +13,7 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import { usePathname } from "next/navigation";
 import { NEW_ORDER } from "../constants/NewOrder";
+import { InfoManagementService } from "../lib/InfoManagementService";
 import sessionService from "../lib/SessionService";
 import { Address, Goods, OrdersData } from "../types";
 import {
@@ -76,6 +77,7 @@ interface OrderDetailsContextType {
   error: string;
   allOrders: OrdersData[];
   adminCreateMode: boolean;
+  disabledDates: string[];
   setPaymentUrl: (url: string) => void;
   setUserData: Dispatch<SetStateAction<UserData>>;
   setAdminCreateMode: Dispatch<SetStateAction<boolean>>;
@@ -104,6 +106,7 @@ export const OrderDetailsContext = createContext<OrderDetailsContextType>({
   allOrders: [],
   adminCreateMode: false,
   defaultItems: [],
+  disabledDates: [],
   setPaymentUrl: () => {},
   setUserData: () => {},
   setAdminCreateMode: () => {},
@@ -141,6 +144,8 @@ export const OrderDetailsProvider = ({
   const [error, setError] = useState("");
   const [allOrders, setAllOrders] = useState<OrdersData[]>([]);
   const [adminCreateMode, setAdminCreateMode] = useState(false);
+  const [disabledDates, setDisabledDates] = useState<string[]>([]);
+
   const [adminAssignedUser, setAdminAssignedUser] =
     useState<AdminAssignedUser | null>();
 
@@ -300,6 +305,16 @@ export const OrderDetailsProvider = ({
     };
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = InfoManagementService.getAllDisabledDates((dates) => {
+      setDisabledDates(dates);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <OrderDetailsContext.Provider
       value={{
@@ -312,6 +327,7 @@ export const OrderDetailsProvider = ({
         error,
         allOrders,
         adminCreateMode,
+        disabledDates,
         defaultItems,
         setPaymentUrl,
         setUserData,

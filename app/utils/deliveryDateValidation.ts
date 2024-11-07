@@ -11,6 +11,7 @@ export const ORDERS_MAX_NUM = 45;
 
 export const deliveryValidation = (
   selectedDate: Date | Dayjs,
+  disabledDates: string[],
   allOrders?: OrdersData[]
 ) => {
   const now = dayjs().tz();
@@ -19,6 +20,10 @@ export const deliveryValidation = (
   const afterTen = now.startOf("day").add(10, "hours");
   const noon = now.startOf("day").add(12, "hours");
   const infoDay = dayjs(selectedDate).format("DD/MM/YYYY") === "28/10/2024";
+
+  const isDisabledDate = disabledDates.includes(
+    watchedDate.format("DD-MM-YYYY")
+  );
 
   const ordersOnSelectedDate =
     allOrders &&
@@ -46,5 +51,6 @@ export const deliveryValidation = (
     isCurrentDayIsSunday: watchedDate.day() === 0,
     infoDay,
     isOrdersLimitReached,
+    isDisabledDate,
   };
 };

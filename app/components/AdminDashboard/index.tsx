@@ -2,6 +2,7 @@
 import { useUserContext } from "@/app/contexts/UserContext";
 import { adminCheck } from "@/app/utils/adminCheck";
 import {
+  EventBusy,
   Inventory2,
   ReceiptLong,
   ShoppingBasket,
@@ -99,6 +100,30 @@ const AdminDashboard = () => {
             Create Order
           </Typography>
         </MenuItem>
+
+        <MenuItem
+          onClick={() => router.push("/admin_dashboard/turn_off_the_day")}
+        >
+          <ListItemIcon>
+            <EventBusy sx={{ color: "black" }} />
+          </ListItemIcon>
+          <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
+            Turn off the day
+          </Typography>
+        </MenuItem>
+
+        {/* <MenuItem
+          onClick={() =>
+            router.push("/admin_dashboard/announcement_management")
+          }
+        >
+          <ListItemIcon>
+            <Announcement sx={{ color: "black" }} />
+          </ListItemIcon>
+          <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
+            Announcement management
+          </Typography>
+        </MenuItem> */}
       </Box>
     </MainContentWrapper>
   );

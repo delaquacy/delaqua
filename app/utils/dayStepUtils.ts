@@ -7,11 +7,17 @@ export const dayOfWeekFormatter = (dayOfWeek: string, date: Dayjs) => {
   return formattedDay.toUpperCase();
 };
 
-export const shouldDisableDate = (date: Dayjs) => {
-  const { isCurrentDayAfterNoon, isCurrentDayIsSunday, infoDay } =
-    deliveryValidation(date);
+export const shouldDisableDate = (date: Dayjs, disabledDates: string[]) => {
+  const {
+    isCurrentDayAfterNoon,
+    isCurrentDayIsSunday,
+    infoDay,
+    isDisabledDate,
+  } = deliveryValidation(date, disabledDates);
 
-  return infoDay || isCurrentDayIsSunday || isCurrentDayAfterNoon;
+  return (
+    infoDay || isCurrentDayIsSunday || isCurrentDayAfterNoon || isDisabledDate
+  );
 };
 
 export const getValidationMessage = (
