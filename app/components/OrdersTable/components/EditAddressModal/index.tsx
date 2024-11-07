@@ -6,7 +6,11 @@ import { Box, Modal } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FieldWrapper } from "../../../OrderStepper/components/AddNewAddress/styled";
-import { ControllerInputField, SharedButton } from "../../../shared";
+import {
+  CloseModalButton,
+  ControllerInputField,
+  SharedButton,
+} from "../../../shared";
 import { FlexRow } from "../../styled";
 
 interface EditAddressModalProps {
@@ -43,6 +47,7 @@ export const EditAddressModal = ({
   return (
     <Modal open={open} onClose={onClose}>
       <ModalWrapper>
+        <CloseModalButton onClose={onClose} />
         Edit Address
         <Box width={"100%"}>
           <FieldWrapper is_small_screen={isSmallScreen.toString()}>

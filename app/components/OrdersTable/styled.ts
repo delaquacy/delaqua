@@ -65,3 +65,17 @@ export const StickyTableCell = styled(TableCell)<StickyTableCellProps>(
 export const StandardTableCell = styled(TableCell)({
   textAlign: "center",
 });
+
+export const EditBox = styled(Box)({
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  gap: "5px",
+  transition: "all 0.3s",
+  padding: "20px",
+  borderRadius: "12px",
+
+  ":hover": {
+    background: "lightgray",
+  },
+});
