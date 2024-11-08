@@ -49,6 +49,8 @@ export default function Logins({ params }: LogInProps) {
     useState<ConfirmationResult | null>(null);
   const [otpSent, setOtpSent] = useState<boolean>(false);
   const [phoneNumberEntered, setPhoneNumberEntered] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const { setToggle } = useToggle();
   const messages = {
     otpSent: `${t("OTP_messages_otpSent")}`,
@@ -86,6 +88,8 @@ export default function Logins({ params }: LogInProps) {
 
   const handleSentOtp = async () => {
     try {
+      setIsLoading(true);
+
       if (phoneNumber) {
         trackAmplitudeEvent("enterPhone", {
           text: "Enter phone",
@@ -113,11 +117,14 @@ export default function Logins({ params }: LogInProps) {
         enqueueSnackbar(messages.otpSentError, { variant: "error" });
       }
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleOtpSubmit = async () => {
     try {
+      setIsLoading(true);
       trackAmplitudeEvent("enterOTP", {
         text: "Enter OTP",
       });
@@ -185,8 +192,12 @@ export default function Logins({ params }: LogInProps) {
         enqueueSnackbar(messages.wrongOtp, { variant: "error" });
       }
       console.error(error);
+    } finally {
+      setIsLoading(false); // Re-enable button
     }
   };
+
+  console.log(isLoading, "lo");
 
   return (
     <>
@@ -228,6 +239,7 @@ export default function Logins({ params }: LogInProps) {
             <br></br>
             <Button
               variant="contained"
+              disabled={isLoading}
               onClick={
                 phoneNumberEntered
                   ? otpSent
