@@ -117,8 +117,8 @@ type OrdersTableProviderProps = {
 export const OrdersTableProvider = ({ children }: OrdersTableProviderProps) => {
   const currentPath = usePathname();
 
-  const [order, setOrder] = useState<Order>("desc");
-  const [orderBy, setOrderBy] = useState<keyof OrdersData>("createdAt");
+  const [order, setOrder] = useState<Order>("asc");
+  const [orderBy, setOrderBy] = useState<keyof OrdersData>("deliveryDate");
   const [selected, setSelected] = useState<string[]>([]);
   const [page, setPage] = useState(0);
   const [rows, setRows] = useState<OrdersData[]>([]);
