@@ -3,6 +3,7 @@ import { OrdersData } from "@/app/types";
 import { ContentCopy } from "@mui/icons-material";
 import { Box, Button, TableCell, TableRow } from "@mui/material";
 import dynamic from "next/dynamic";
+import { useTranslation } from "react-i18next";
 
 interface InvoiceTableRowProps {
   handleClick: (event: any, id: string) => void;
@@ -25,9 +26,24 @@ export const InvoiceTableRow = ({
     ssr: false,
   });
 
+  const { t } = useTranslation(["orderTable", "form"]);
+
+  const paymentStatusText = Array.isArray(order?.paymentStatus)
+    ? order?.paymentStatus
+        .map((status) =>
+          t(`paymentStatuses.${status.toLowerCase().replace(/\s+/g, "_")}`)
+        )
+        .join(", ")
+    : typeof row.paymentStatus === "string"
+    ? t(
+        `paymentStatuses.${row.paymentStatus
+          .toLowerCase()
+          .replace(/\s+/g, "_")}`
+      )
+    : t("paymentStatuses.unpaid");
+
   return (
     <TableRow
-      // onClick={(event: any) => handleClick(event, row.id as string)}
       role="checkbox"
       aria-checked={isItemSelected}
       selected={isItemSelected}
@@ -45,19 +61,6 @@ export const InvoiceTableRow = ({
         },
       }}
     >
-      {/* <TableCell
-        sx={{
-          background: "inherit",
-        }}
-      >
-        <Checkbox
-          color="primary"
-          checked={isItemSelected}
-          inputProps={{
-            "aria-labelledby": labelId,
-          }}
-        />
-      </TableCell> */}
       {USER_INVOICES_HEAD.map(({ key }, index) => (
         <TableCell
           key={index}
@@ -69,7 +72,11 @@ export const InvoiceTableRow = ({
                 : "",
           }}
         >
-          {key === "addressType" ? row[key] || "Home" : row[key]}
+          {key === "paymentStatus"
+            ? order && paymentStatusText
+            : key === "addressType"
+            ? row[key] || "Home"
+            : row[key]}
         </TableCell>
       ))}
       <TableCell align="center">

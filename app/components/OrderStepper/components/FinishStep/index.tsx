@@ -33,8 +33,6 @@ export const FinishStep = ({ returnBottles }: { returnBottles: boolean }) => {
       text: "Close payment",
     });
 
-    handleResetData();
-
     window.location.href = adminCreateMode
       ? "/admin_dashboard"
       : "/order_history";
