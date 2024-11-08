@@ -5,19 +5,24 @@ import styles from "../../../OrderCreated/OrderCreated.module.css";
 
 import { useTranslation } from "react-i18next";
 
+import { Loader } from "@/app/components/Loader";
 import { useToast } from "@/app/hooks";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
 import { CheckBox } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import "../../../../i18n";
 
 export const FinishStep = ({ returnBottles }: { returnBottles: boolean }) => {
   const { t } = useTranslation("finishModal");
+  const router = useRouter();
 
   const { trackAmplitudeEvent } = useAmplitudeContext();
   const { showSuccessToast } = useToast();
 
-  const { userOrder, paymentUrl, adminCreateMode, handleResetData } =
-    useOrderDetailsContext();
+  const { userOrder, paymentUrl, adminCreateMode } = useOrderDetailsContext();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const count = +userOrder.bottlesNumberToReturn || 0;
   const countSum = +(userOrder.bottlesNumberToReturn || "0") * 7;
@@ -33,9 +38,9 @@ export const FinishStep = ({ returnBottles }: { returnBottles: boolean }) => {
       text: "Close payment",
     });
 
-    window.location.href = adminCreateMode
-      ? "/admin_dashboard"
-      : "/order_history";
+    router.push(adminCreateMode ? "/admin_dashboard" : "/order_history");
+
+    setIsLoading(true);
   };
 
   const handleCopy = () => {
@@ -82,6 +87,10 @@ export const FinishStep = ({ returnBottles }: { returnBottles: boolean }) => {
         {t("prepare_for_payment", { amount: userOrder.totalPayments })}
       </span>
     );
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <Card

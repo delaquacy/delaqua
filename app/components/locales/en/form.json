@@ -87,7 +87,8 @@
   "115Min": "** Minimum order — 2 bottles",
   "110Min": "** Minimum order — 4 bottles",
   
-  "minimumOrder": "Please make the minimum order to proceed",
+  "minimumOrder": "Minimum order amount is €12",
+  "suppliesWithoutWater": "Water is a required item in every order. Please add some and stay hydrated",
   "deliveryAddress": "Select delivery address",
   "checkDetails": "Please check your order details and select payment method",
   "itemCode": "Item code",

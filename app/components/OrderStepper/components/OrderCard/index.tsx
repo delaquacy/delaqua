@@ -1,10 +1,9 @@
-import { useScreenSize } from "@/app/hooks";
 import { HelpOutlineOutlined } from "@mui/icons-material";
 import { Box, Tooltip, Typography } from "@mui/material";
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import { OrderCardCounter } from "../OrderCardCounter";
-import { CardWrapper, DescriptionBox, MinOrderBox } from "./styled";
+import { CardWrapper, DescriptionBox } from "./styled";
 
 interface OrderCardProps {
   imageSrc?: string;
@@ -38,7 +37,6 @@ export const OrderCard = ({
   sx,
 }: OrderCardProps) => {
   const { t } = useTranslation("form");
-  const { isSmallScreen } = useScreenSize();
 
   return (
     <Tooltip
@@ -118,7 +116,7 @@ export const OrderCard = ({
           </Tooltip>
         </DescriptionBox>
 
-        {minOrder && <MinOrderBox>{t(minOrder)}</MinOrderBox>}
+        {/* {minOrder && <MinOrderBox>{t(minOrder)}</MinOrderBox>} */}
       </CardWrapper>
     </Tooltip>
   );
