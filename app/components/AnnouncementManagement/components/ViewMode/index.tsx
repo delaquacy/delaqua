@@ -3,6 +3,7 @@ import { Box, Chip, Typography } from "@mui/material";
 
 import { Settings, Texts } from "../../index";
 import { LanguageTextList } from "../LanguageTextList";
+import { ListBox, ViewModeWrapper } from "./styled";
 
 interface ViewModeProps {
   settings: Settings;
@@ -13,8 +14,8 @@ interface ViewModeProps {
 export const ViewMode = ({ settings, onEdit, emptyTexts }: ViewModeProps) => {
   return (
     <Box>
-      <Box sx={{ padding: "20px", display: "flex", gap: "30px" }}>
-        <Box flex={1}>
+      <ViewModeWrapper>
+        <ListBox>
           <Chip
             label={settings.isPopupEnabled ? "Visible" : "Hidden"}
             color={settings.isPopupEnabled ? "success" : "error"}
@@ -25,9 +26,9 @@ export const ViewMode = ({ settings, onEdit, emptyTexts }: ViewModeProps) => {
             texts={settings.isPopupEnabled ? settings.popupTexts : emptyTexts}
             isEditing={false}
           />
-        </Box>
+        </ListBox>
 
-        <Box flex={1}>
+        <ListBox>
           <Chip
             label={settings.isWidgetEnabled ? "Visible" : "Hidden"}
             color={settings.isWidgetEnabled ? "success" : "error"}
@@ -38,8 +39,8 @@ export const ViewMode = ({ settings, onEdit, emptyTexts }: ViewModeProps) => {
             texts={settings.isWidgetEnabled ? settings.widgetTexts : emptyTexts}
             isEditing={false}
           />
-        </Box>
-      </Box>
+        </ListBox>
+      </ViewModeWrapper>
 
       <SharedButton
         text="Edit Settings"

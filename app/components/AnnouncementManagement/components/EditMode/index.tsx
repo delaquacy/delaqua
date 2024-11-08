@@ -3,6 +3,12 @@ import { Box, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import { Settings } from "../../index";
 import { LanguageTextList } from "../LanguageTextList";
+import {
+  ButtonBox,
+  LanguageTextWrapper,
+  ListBox,
+  ListsWrapper,
+} from "./styled";
 
 interface EditModeProps {
   settings: Settings;
@@ -39,8 +45,8 @@ export const EditMode = ({
 
   return (
     <Box>
-      <Box sx={{ padding: "20px", display: "flex", gap: "10px" }}>
-        <Box flex={1}>
+      <ListsWrapper>
+        <ListBox>
           <FormControlLabel
             control={
               <Checkbox
@@ -53,25 +59,17 @@ export const EditMode = ({
             label="Enable Popup"
           />
 
-          <Box
-            sx={{
-              marginTop: "10px",
-              marginBottom: "20px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-            }}
-          >
+          <LanguageTextWrapper>
             <Typography>Popup Texts</Typography>
             <LanguageTextList
               texts={settings.popupTexts}
               isEditing={true}
               onChange={handlePopupTextChange}
             />
-          </Box>
-        </Box>
+          </LanguageTextWrapper>
+        </ListBox>
 
-        <Box flex={1}>
+        <ListBox>
           <FormControlLabel
             control={
               <Checkbox
@@ -87,29 +85,21 @@ export const EditMode = ({
             label="Enable Widget"
           />
 
-          <Box
-            sx={{
-              marginTop: "10px",
-              marginBottom: "20px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-            }}
-          >
+          <LanguageTextWrapper>
             <Typography>Widget Texts</Typography>
             <LanguageTextList
               texts={settings.widgetTexts}
               isEditing={true}
               onChange={handleWidgetTextChange}
             />
-          </Box>
-        </Box>
-      </Box>
+          </LanguageTextWrapper>
+        </ListBox>
+      </ListsWrapper>
 
-      <Box sx={{ display: "flex", gap: "10px" }}>
+      <ButtonBox>
         <SharedButton text="Save" onClick={onSave} variantType="success" />
         <SharedButton text="Cancel" onClick={onCancel} variantType="error" />
-      </Box>
+      </ButtonBox>
     </Box>
   );
 };

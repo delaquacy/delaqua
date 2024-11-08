@@ -1,29 +1,13 @@
-import { List, ListItem, ListItemText, TextField } from "@mui/material";
-import { styled } from "@mui/system";
+import { StyledListItem } from "@/app/components/TurnOffTheDay/components/DateList/styled";
+import { ListItemText, TextField } from "@mui/material";
 import { Texts } from "../../index";
+import { StyledList } from "./styled";
 
 interface LanguageTextListProps {
   texts: Texts;
   isEditing: boolean;
   onChange?: (lang: string, value: string) => void;
 }
-
-const StyledList = styled(List)({
-  border: "1px solid #ccc",
-  borderRadius: "8px",
-  padding: "10px",
-  backgroundColor: "#f9f9f9",
-});
-
-const StyledListItem = styled(ListItem)({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  borderBottom: "1px solid #ddd",
-  "&:last-child": {
-    borderBottom: "none",
-  },
-});
 
 const languageOrder = ["en", "uk", "ru", "gr"]; // Фіксований порядок мов
 
