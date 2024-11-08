@@ -2,6 +2,7 @@
 import { useUserContext } from "@/app/contexts/UserContext";
 import { adminCheck } from "@/app/utils/adminCheck";
 import {
+  Announcement,
   EventBusy,
   Inventory2,
   ReceiptLong,
@@ -112,7 +113,7 @@ const AdminDashboard = () => {
           </Typography>
         </MenuItem>
 
-        {/* <MenuItem
+        <MenuItem
           onClick={() =>
             router.push("/admin_dashboard/announcement_management")
           }
@@ -123,7 +124,7 @@ const AdminDashboard = () => {
           <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
             Announcement management
           </Typography>
-        </MenuItem> */}
+        </MenuItem>
       </Box>
     </MainContentWrapper>
   );

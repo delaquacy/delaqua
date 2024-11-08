@@ -1,6 +1,7 @@
 "use client";
 
 import { useUserContext } from "@/app/contexts/UserContext";
+import { InfoManagementService } from "@/app/lib/InfoManagementService";
 import { useToggle } from "@/app/lib/ToggleContext";
 import { app } from "@/app/lib/config";
 import useAmplitudeContext from "@/app/utils/amplitudeHook";
@@ -34,6 +35,7 @@ import { SnackbarProvider } from "notistack";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "../../i18n";
+import { Settings, Texts, emptyTexts } from "../AnnouncementManagement/index";
 import { LogInProps } from "../Logins/Logins";
 import WrapperLogin from "../WrapperLogin/WrapperLogin";
 import styles from "./Header.module.css";
@@ -63,8 +65,16 @@ export default function Headers({
   const [loading, setLoading] = useState<boolean>(true);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [open, setOpen] = useState(false);
+  const [settings, setSettings] = useState<Settings>({
+    isPopupEnabled: false,
+    isWidgetEnabled: false,
+    popupTexts: emptyTexts,
+    widgetTexts: emptyTexts,
+  });
 
   const handleClose = () => setOpen(false);
+
+  // console.log(i18n.language, "lan");
 
   useEffect(() => {
     if (isToggled && !user) {
@@ -141,81 +151,84 @@ export default function Headers({
   };
 
   useLayoutEffect(() => {
-    setShowInfoModal(true);
-    setOpen(true);
-
-    const today = dayjs();
-    const endDate = dayjs(END_INFO_BANNER, "DD.MM.YYYY HH:mm");
-
-    if (today.isAfter(endDate)) {
-      setShowInfoModal(false);
-      setOpen(false);
-    }
+    const unsubscribe =
+      InfoManagementService.getAnnouncementManagementSettings(setSettings);
+    return () => {
+      unsubscribe();
+    };
   }, []);
+
+  useLayoutEffect(() => {
+    setShowInfoModal(settings.isPopupEnabled);
+    setOpen(settings.isPopupEnabled);
+  }, [settings]);
 
   return (
     <SnackbarProvider>
       <Box>
-        {!pathname.endsWith("/admin_dashboard") && showInfoModal && (
-          <>
-            <Box
-              sx={{
-                background: "#428bca",
-                color: "white",
-                padding: 2,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                fontSize: "22px",
-                fontWeight: "bold",
-              }}
+        {/* {!pathname.includes("/admin_dashboard") && settings.isWidgetEnabled && ( */}
+        {!pathname.endsWith("/admin_dashboard") && settings.isWidgetEnabled && (
+          <Box
+            sx={{
+              background: "#428bca",
+              color: "white",
+              padding: 2,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "22px",
+              fontWeight: "bold",
+            }}
+          >
+            <Typography
+              width="80%"
+              fontSize={18}
+              fontWeight={"bold"}
+              textAlign="center"
             >
-              <Typography
-                width="80%"
-                fontSize={18}
-                fontWeight={"bold"}
-                textAlign="center"
+              {settings.widgetTexts[i18n.language as keyof Texts]}
+            </Typography>
+          </Box>
+        )}
+
+        {/* {!pathname.includes("/admin_dashboard") && settings.isPopupEnabled && ( */}
+        {!pathname.endsWith("/admin_dashboard") && settings.isPopupEnabled && (
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <IconButton
+                onClick={handleClose}
+                sx={{
+                  position: "absolute",
+                  right: 5,
+                  top: 5,
+                }}
               >
-                {t("info")}
+                <Close />
+              </IconButton>
+              <Typography
+                variant="h6"
+                component="h2"
+                fontWeight="bold"
+                fontSize={30}
+              >
+                {t("customers")}
+              </Typography>
+              <Typography
+                id="modal-modal-description"
+                textAlign="center"
+                sx={{ mt: 2 }}
+              >
+                {settings.popupTexts[i18n.language as keyof Texts]}
               </Typography>
             </Box>
-
-            <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <Box sx={style}>
-                <IconButton
-                  onClick={handleClose}
-                  sx={{
-                    position: "absolute",
-                    right: 5,
-                    top: 5,
-                  }}
-                >
-                  <Close />
-                </IconButton>
-                <Typography
-                  variant="h6"
-                  component="h2"
-                  fontWeight="bold"
-                  fontSize={30}
-                >
-                  {t("customers")}
-                </Typography>
-                <Typography
-                  id="modal-modal-description"
-                  textAlign="center"
-                  sx={{ mt: 2 }}
-                >
-                  {t("info")}
-                </Typography>
-              </Box>
-            </Modal>
-          </>
+          </Modal>
         )}
+
         {user &&
           unpaidOrders.length !== 0 &&
           unpaidOrders[0].paymentId &&

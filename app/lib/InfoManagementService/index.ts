@@ -1,4 +1,4 @@
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, doc, onSnapshot } from "firebase/firestore";
 import { FirebaseService } from "../FirebaseServices";
 import { db } from "../config";
 
@@ -26,10 +26,39 @@ export const InfoManagementService = {
       callback(dates);
     });
 
-    return unsubscribe; // Повертаємо функцію для відписки
+    return unsubscribe;
   },
 
   async deleteDisabledDate(date: string) {
     await FirebaseService.deleteDocument(`disabledDeliveryDates`, date);
+  },
+
+  async saveSettings(settings: any) {
+    await FirebaseService.setDocument(
+      "announcementManagement",
+      "settings",
+      settings
+    );
+  },
+
+  getAnnouncementManagementSettings(
+    callback: (settings: any) => void
+  ): () => void {
+    const settingsRef = doc(db, "announcementManagement", "settings");
+
+    const unsubscribe = onSnapshot(settingsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        callback(snapshot.data());
+      } else {
+        callback({
+          isPopupEnabled: false,
+          isWidgetEnabled: false,
+          popupTexts: { en: "", ua: "", ru: "", gr: "" },
+          widgetTexts: { en: "", ua: "", ru: "", gr: "" },
+        });
+      }
+    });
+
+    return unsubscribe;
   },
 };
