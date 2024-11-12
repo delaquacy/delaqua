@@ -1,6 +1,6 @@
 import { BIG_BOTTLE_PRICE } from "@/app/constants/bigBottlePrise";
 import { HelpOutlineOutlined } from "@mui/icons-material";
-import { Box, FormHelperText, Tooltip, Typography } from "@mui/material";
+import { Box, Tooltip, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -86,10 +86,6 @@ export const BigOrderCard = ({
             aspectRatio: 7 / 11,
           }}
         />
-
-        <FormHelperText>
-          {isFirstOrder ? t("minimumOrderSmall") : t("minimumOrderBig")}
-        </FormHelperText>
       </Box>
 
       <ExternalCountWrapper>

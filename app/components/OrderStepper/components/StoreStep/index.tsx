@@ -1,15 +1,9 @@
 import { FormWrapper } from "@/app/components/shared";
-import {
-  UserOrderItem,
-  useOrderDetailsContext,
-} from "@/app/contexts/OrderDetailsContext";
+import { UserOrderItem } from "@/app/contexts/OrderDetailsContext";
 import { useScreenSize } from "@/app/hooks";
-import { CombinedItem } from "@/app/types";
-import { calculateItemSumWithBigBottlePrice } from "@/app/utils/calculateItemSumWithBigBottlePrice";
-import { findBottlesByCode } from "@/app/utils/findBottlesByCode";
+import { useStoreStepLogic } from "@/app/hooks/useStoreStepLogic";
 import { Box, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { BigOrderCard } from "../BigOrderCard";
 import { OrderCard } from "../OrderCard";
@@ -35,88 +29,22 @@ export const StoreStep = ({
   const { t } = useTranslation("form");
   const { isSmallScreen } = useScreenSize();
 
-  const { goods, userOrder, isFirstOrder, userData, handleAddOrderDetails } =
-    useOrderDetailsContext();
-
-  const [showTooltipMessage, setShowTooltipMessage] = useState(true);
-
-  const { control, handleSubmit, reset, watch, setValue } = useForm<FormValues>(
-    {
-      defaultValues: {
-        items: [],
-        bottlesNumberToReturn: "0",
-      },
-    }
-  );
-
-  const items = watch("items");
-
-  const itemsDetails = items.map((item) => {
-    const good = goods.find((good) => good.itemCode === item.itemCode);
-    return {
-      ...item,
-      ...good,
-    };
-  });
-
-  const { bigBottle, bigBottleRent, middleBottle, smallBottle } =
-    findBottlesByCode(itemsDetails) as Record<string, CombinedItem | undefined>;
-
-  const onSubmit = (data: FormValues) => {
-    if (showTooltipMessage) return;
-
-    const formattedData = data.items.map((order) =>
-      calculateItemSumWithBigBottlePrice(order, isFirstOrder)
-    );
-
-    handleAddOrderDetails({
-      items: formattedData,
-      bottlesNumberToReturn: data.bottlesNumberToReturn,
-      totalPayments: formattedData.reduce((acc, item) => acc + +item.sum, 0),
-    });
-
-    handleNext();
-  };
-
-  useEffect(() => {
-    if (userOrder.items.length > 0) {
-      const { bigBottle: bigBottleUser } = findBottlesByCode(
-        userOrder.items
-      ) as Record<string, CombinedItem | undefined>;
-
-      const bigBottleCount = !bigBottle?.available
-        ? "0"
-        : isFirstOrder
-        ? "1"
-        : userData.orders.length === 1
-        ? "2"
-        : (userData.orders[0].items as UserOrderItem[]).find(
-            (item) => `${item.id}` === "119"
-          )?.count || "0";
-
-      reset({
-        items: userOrder.items.map((item) =>
-          `${item.id}` === "119"
-            ? { ...bigBottleUser, count: bigBottleCount }
-            : item
-        ),
-        bottlesNumberToReturn: userOrder.bottlesNumberToReturn,
-      });
-    }
-  }, [userOrder.items]);
-
-  useEffect(() => {
-    const bigBottleCount = bigBottle?.count ? +bigBottle.count : 0;
-    const middleBottleCount = middleBottle?.count ? +middleBottle.count : 0;
-    const smallBottleCount = smallBottle?.count ? +smallBottle.count : 0;
-
-    const minOrder =
-      (isFirstOrder ? bigBottleCount >= 1 : bigBottleCount >= 2) ||
-      middleBottleCount >= 2 ||
-      smallBottleCount >= 4;
-
-    setShowTooltipMessage(!minOrder);
-  }, [bigBottle, middleBottle, smallBottle, isFirstOrder]);
+  const {
+    control,
+    handleSubmit,
+    onSubmit,
+    showTooltipMessage,
+    items,
+    setValue,
+    watch,
+    suppliesError,
+    bigBottle,
+    bigBottleRent,
+    middleBottle,
+    smallBottle,
+    isFirstOrder,
+    goods,
+  } = useStoreStepLogic(handleNext);
 
   return (
     <FormWrapper component={"form"} onSubmit={handleSubmit(onSubmit)}>
@@ -168,6 +96,9 @@ export const StoreStep = ({
                     onRemove={() => {
                       field.onChange(Math.max(+field.value - 1, 0));
                     }}
+                    sx={{
+                      paddingTop: "10px",
+                    }}
                   />
                 )}
               />
@@ -199,6 +130,9 @@ export const StoreStep = ({
                     }}
                     onRemove={() => {
                       field.onChange(Math.max(+field.value - 1, 0));
+                    }}
+                    sx={{
+                      paddingTop: "10px",
                     }}
                   />
                 )}
@@ -260,7 +194,13 @@ export const StoreStep = ({
             );
           })}
       </CustomGrid>
-      {renderButtonsGroup(showTooltipMessage ? t("minimumOrder") : "")}
+      {renderButtonsGroup(
+        suppliesError
+          ? t("suppliesWithoutWater")
+          : showTooltipMessage
+          ? t("minimumOrder")
+          : ""
+      )}
     </FormWrapper>
   );
 };
