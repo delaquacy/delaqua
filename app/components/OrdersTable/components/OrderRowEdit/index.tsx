@@ -22,6 +22,7 @@ import {
   CancelOutlined,
   CheckCircle,
   ContentCopy,
+  Edit,
   HourglassBottom,
   LocalShipping,
   Save,
@@ -35,8 +36,9 @@ import updateLocale from "dayjs/plugin/updateLocale";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { StandardTableCell, StickyTableCell } from "../../styled";
+import { EditBox, StandardTableCell, StickyTableCell } from "../../styled";
 import { EditAddressModal } from "../EditAddressModal";
+import { EditCommentModal } from "../EditCommentModal";
 import { EditPompsModal } from "../EditPompsModal";
 import EditableInput from "../EditableInput";
 
@@ -79,6 +81,7 @@ export const OrderRowEdit = ({
   const [addressFields, setAddressFields] = useState<Address>();
   const [openPompsModal, setOpenPompsModal] = useState(false);
   const [openAddressModal, setOpenAddressModal] = useState(false);
+  const [openCourierCommentModal, setOpenCourierCommentModal] = useState(false);
 
   const isEditing = editOrderMode && editRowId === row.id;
 
@@ -98,6 +101,7 @@ export const OrderRowEdit = ({
   const address = watch("deliveryAddressObj");
   const total = watch("totalPayments");
   const bottlesToReturn = watch("bottlesNumberToReturn");
+  const courierComment = watch("courierComment");
 
   const getItemIndex = (id?: string) =>
     rowItems.findIndex((item) => item.id === id);
@@ -276,8 +280,12 @@ export const OrderRowEdit = ({
               return;
             }}
           >
-            {(items && getPompsCount(items)?.trim().split(" ").join(", ")) ||
-              "no"}
+            <EditBox>
+              <Edit fontSize="small" />
+
+              {(items && getPompsCount(items)?.trim().split(" ").join(", ")) ||
+                "no"}
+            </EditBox>
           </StandardTableCell>
 
           <StandardTableCell
@@ -291,19 +299,10 @@ export const OrderRowEdit = ({
               return;
             }}
           >
-            <Box
-              paddingBlock={2}
-              sx={{
-                transition: "all 0.3s",
-                ":hover": {
-                  color: !isEditing ? "#4788C7" : "inherit",
-                  textDecoration: !isEditing ? "underline" : "none",
-                  textUnderlineOffset: !isEditing ? "2px" : "none",
-                },
-              }}
-            >
+            <EditBox>
+              <Edit fontSize="small" />
               {editFullAddress}
-            </Box>
+            </EditBox>
           </StandardTableCell>
 
           <StandardTableCell>
@@ -357,7 +356,16 @@ export const OrderRowEdit = ({
           </StandardTableCell>
 
           <StandardTableCell>
-            {row?.courierComment ? row?.courierComment : "-"}
+            <EditBox
+              onClick={(e) => {
+                console.log("here");
+                e.stopPropagation();
+                setOpenCourierCommentModal(true);
+              }}
+            >
+              <Edit fontSize="small" />
+              {courierComment || "-"}
+            </EditBox>
           </StandardTableCell>
 
           <StandardTableCell>
@@ -398,6 +406,7 @@ export const OrderRowEdit = ({
             onCountChange={handleCountChange}
           />
         )}
+
         {openAddressModal && (
           <EditAddressModal
             open={openAddressModal}
@@ -406,6 +415,15 @@ export const OrderRowEdit = ({
             control={control}
             reset={reset}
             onClose={() => setOpenAddressModal(false)}
+          />
+        )}
+        {openCourierCommentModal && (
+          <EditCommentModal
+            open={openCourierCommentModal}
+            // comment={addressFields}
+            control={control}
+            reset={reset}
+            onClose={() => setOpenCourierCommentModal(false)}
           />
         )}
       </LocalizationProvider>

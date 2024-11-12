@@ -2,6 +2,7 @@
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
+import { usePathname } from "next/navigation";
 import {
   ChangeEvent,
   Dispatch,
@@ -114,6 +115,8 @@ type OrdersTableProviderProps = {
   children: ReactNode;
 };
 export const OrdersTableProvider = ({ children }: OrdersTableProviderProps) => {
+  const currentPath = usePathname();
+
   const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<keyof OrdersData>("createdAt");
   const [selected, setSelected] = useState<string[]>([]);
@@ -310,6 +313,15 @@ export const OrdersTableProvider = ({ children }: OrdersTableProviderProps) => {
       setTodayFilter((prev) => ({ ...prev, isToday: false }));
     }
   }, [rows, filters, applyFilters]);
+
+  useEffect(() => {
+    const targetPath = "/admin_dashboard/orders";
+
+    if (!currentPath.includes(targetPath) && editOrderMode) {
+      setEditOrderMode(false);
+      setEditRowId("");
+    }
+  }, [currentPath, editOrderMode]);
 
   return (
     <OrdersTableContext.Provider
