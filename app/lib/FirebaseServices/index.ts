@@ -37,6 +37,8 @@ export const FirebaseService = {
   async updateDocument(collectionName: string, documentId: string, data: any) {
     const docRef = doc(db, collectionName, documentId);
 
+    console.log(docRef, "docRef");
+
     await updateDoc(docRef, data);
   },
 

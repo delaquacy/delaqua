@@ -68,6 +68,8 @@ export const OrderRowEdit = ({
   const { defaultItems } = useOrderDetailsContext();
   const { toggleEditMode, editOrderMode, editRowId } = useOrdersTableContext();
 
+  console.log(row);
+
   const { isSmallScreen } = useScreenSize();
   const { t } = useTranslation(["orderTable", "form"]);
 
@@ -169,6 +171,7 @@ export const OrderRowEdit = ({
     const editedOrderData = {
       ...data,
       editedAt: dayjs().format("DD.MM.YYYY HH:mm"),
+      deliveryDate: dayjs(data.deliveryDate).format("DD.MM.YYYY"),
       numberOfBottles,
       addressDetails,
       comments,

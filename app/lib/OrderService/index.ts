@@ -27,11 +27,15 @@ export const OrderService = {
     addressId: string,
     rentCount: number
   ) {
-    await FirebaseService.updateDocument(
-      `users/${userId}/addresses`,
-      addressId,
-      { numberOfBottles: rentCount || 0 }
-    );
+    try {
+      await FirebaseService.updateDocument(
+        `users/${userId}/addresses`,
+        addressId,
+        { numberOfBottles: rentCount || 0 }
+      );
+    } catch (error) {
+      console.error(`Failed to update address with ID: ${addressId}`, error);
+    }
   },
 
   async updateOrderWithInvoice(
