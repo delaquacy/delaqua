@@ -65,6 +65,7 @@ export const DateStep = ({
     userOrder,
     userData,
     allOrders,
+    disabledDates,
     handleAddOrderDetails,
     setPaymentUrl,
   } = useOrderDetailsContext();
@@ -99,7 +100,8 @@ export const DateStep = ({
     isCurrentDayIsSunday,
     infoDay,
     isOrdersLimitReached,
-  } = deliveryValidation(selectedDate as Dayjs, allOrders);
+    isDisabledDate,
+  } = deliveryValidation(selectedDate as Dayjs, disabledDates, allOrders);
 
   const onSubmit = async (data: FormValues) => {
     if (showTooltipMessage.date) {
@@ -140,6 +142,7 @@ export const DateStep = ({
         userData,
         userOrder,
         orderData,
+        disabledDates,
         setPaymentUrl,
         handleNext,
         showErrorToast,
@@ -151,7 +154,7 @@ export const DateStep = ({
   };
 
   useEffect(() => {
-    const nextDay = getNextAvailableDate(allOrders);
+    const nextDay = getNextAvailableDate(disabledDates, allOrders);
     setNextDay(nextDay);
   }, [allOrders]);
 
@@ -161,6 +164,7 @@ export const DateStep = ({
       isCurrentDayPrevious ||
       isCurrentDayIsSunday ||
       infoDay ||
+      isDisabledDate ||
       isOrdersLimitReached;
 
     !isCurrentDayPrevious &&
@@ -173,6 +177,7 @@ export const DateStep = ({
     isCurrentDayPrevious,
     isCurrentDayIsSunday,
     infoDay,
+    isDisabledDate,
     isOrdersLimitReached,
   ]);
 
@@ -247,7 +252,9 @@ export const DateStep = ({
                   onChange={(newVal) => field.onChange(newVal)}
                   disablePast
                   dayOfWeekFormatter={dayOfWeekFormatter}
-                  shouldDisableDate={(date: Dayjs) => shouldDisableDate(date)}
+                  shouldDisableDate={(date: Dayjs) =>
+                    shouldDisableDate(date, disabledDates)
+                  }
                   sx={datePickerStyle(isSmallScreen, true)}
                 />
                 {

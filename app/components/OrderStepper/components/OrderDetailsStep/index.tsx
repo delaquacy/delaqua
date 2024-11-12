@@ -53,8 +53,13 @@ export const OrderDetailsStep = ({
 }) => {
   const { t } = useTranslation(["form", "orderTable"]);
   const { trackAmplitudeEvent } = useAmplitudeContext();
-  const { userOrder, userData, handleAddOrderDetails, setPaymentUrl } =
-    useOrderDetailsContext();
+  const {
+    userOrder,
+    userData,
+    disabledDates,
+    handleAddOrderDetails,
+    setPaymentUrl,
+  } = useOrderDetailsContext();
 
   const { showErrorToast } = useToast();
 
@@ -119,6 +124,7 @@ export const OrderDetailsStep = ({
       userData,
       userOrder,
       orderData,
+      disabledDates,
       setPaymentUrl,
       handleNext,
       showErrorToast

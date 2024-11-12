@@ -105,3 +105,7 @@ export interface Goods {
 }
 
 export type CombinedItem = UserOrderItem & Goods;
+
+export interface DisabledDate {
+  id: string;
+}

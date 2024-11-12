@@ -8,13 +8,15 @@ export const processOrder = async (
   userData: any,
   userOrder: any,
   orderData: any,
+  disabledDates: string[],
   setPaymentUrl: (url: string) => void,
   handleNext: () => void,
   showErrorToast: (message: string) => void,
   returnBottles?: boolean
 ) => {
   const { isCurrentDayAfterTen, isCurrentDayAfterNoon } = deliveryValidation(
-    dayjs()
+    dayjs(),
+    disabledDates
   );
 
   if (
