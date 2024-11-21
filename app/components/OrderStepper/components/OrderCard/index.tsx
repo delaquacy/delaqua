@@ -59,10 +59,7 @@ export const OrderCard = ({
             justifyContent={"center"}
           >
             <Image
-              src={
-                `/${imageSrc}` ||
-                "https://storage.googleapis.com/image_del_aq/Remove-background-project.png"
-              }
+              src={`/${imageSrc}`}
               alt={imageAlt}
               priority
               width={+size}

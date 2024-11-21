@@ -11,12 +11,11 @@ export const getCalculatedGoods = (
       if ("canceled" in item || "orderStatus" in item) {
         const order = item as OrdersData;
 
-        const notCompletedOrder =
-          (order?.orderStatus && order.orderStatus !== "Delivered") ||
-          order.canceled ||
-          !order.completed;
+        const completedOrder =
+          (order?.orderStatus && !order.orderStatus.includes("Cancelled")) ||
+          order.completed;
 
-        if (notCompletedOrder) {
+        if (!completedOrder) {
           return acc;
         }
 
