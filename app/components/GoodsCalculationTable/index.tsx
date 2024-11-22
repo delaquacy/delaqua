@@ -146,6 +146,7 @@ export const GoodsCalculationTable = () => {
                 {`${appliedFilter.value1} - ${appliedFilter.value2}`}
               </Box>
             </Typography>
+
             <Table
               size="small"
               sx={{
