@@ -13,6 +13,7 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import { usePathname } from "next/navigation";
 import { NEW_ORDER } from "../constants/NewOrder";
+import { GoodService } from "../lib/GoodService";
 import { InfoManagementService } from "../lib/InfoManagementService";
 import sessionService from "../lib/SessionService";
 import { Address, Goods, OrdersData } from "../types";
@@ -23,7 +24,6 @@ import {
   formatPhoneNumber,
   getOrdersArray,
 } from "../utils";
-import { getStaticGoodsArray } from "../utils/getStaticGoodsArray";
 import { useUserContext } from "./UserContext";
 
 export interface UserOrderItem {
@@ -203,30 +203,25 @@ export const OrderDetailsProvider = ({
     }
   };
 
-  const getGoods = async () => {
-    try {
-      const data = await getStaticGoodsArray();
-      setGoods(data.map((item) => ({ ...item, picture: `${item.id}.webp` })));
-      const items = data.reverse().map((good) => ({
-        id: good.id,
-        itemCode: good.itemCode,
-        name: good.name,
-        sellPrice: good.sellPrice,
-        net: good.netSaleWorth,
-        vat: good.sellPriceVAT,
-        count: "0",
-        sum: "0",
-      }));
+  const handleSetFormattedGoods = (data: Goods[]) => {
+    setGoods(data.map((item) => ({ ...item, picture: `${item.id}.webp` })));
 
-      setUserOrder((prev) => ({
-        ...prev,
-        items,
-      }));
+    const items = data.reverse().map((good) => ({
+      id: good.id,
+      itemCode: good.itemCode,
+      name: good.name,
+      sellPrice: good.sellPrice,
+      net: good.netSaleWorth,
+      vat: good.sellPriceVAT,
+      count: "0",
+      sum: "0",
+    }));
+    setUserOrder((prev) => ({
+      ...prev,
+      items,
+    }));
 
-      setDefaultItems(items);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    }
+    setDefaultItems(items);
   };
 
   const handleAddOrderDetails = (newDetails: any) => {
@@ -250,7 +245,6 @@ export const OrderDetailsProvider = ({
     }));
 
     user?.uid && fetchUserData(user?.uid);
-    getGoods();
   };
 
   const handleResetData = () =>
@@ -294,14 +288,15 @@ export const OrderDetailsProvider = ({
   }, [pathname]);
 
   useEffect(() => {
-    const unsubscribe = getOrdersArray((data) => {
+    const unsubscribeOrdersArray = getOrdersArray((data) => {
       setAllOrders(data as OrdersData[]);
     });
 
+    const unsubscribeGoods = GoodService.getGoods(handleSetFormattedGoods);
+
     return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
+      unsubscribeOrdersArray();
+      unsubscribeGoods();
     };
   }, []);
 

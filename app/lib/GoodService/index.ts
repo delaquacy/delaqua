@@ -53,6 +53,16 @@ export const GoodService = {
     return await FirebaseService.addDocument("goodsIncomingInvoices", data);
   },
 
+  async updateGood(good: Goods) {
+    try {
+      await FirebaseService.updateDocument("goods", good.id, good);
+      console.log(`Good with ID ${good.id} has been updated successfully.`);
+    } catch (error) {
+      console.error(`Failed to update good with ID ${good.id}:`, error);
+      throw error;
+    }
+  },
+
   getGoodsInventoryArray(callback: (goods: GoodsAvailable[]) => void) {
     const goodsRef = collection(db, "goodsInventory");
 
