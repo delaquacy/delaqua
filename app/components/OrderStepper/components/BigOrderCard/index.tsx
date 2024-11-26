@@ -28,6 +28,7 @@ interface BigOrderCardProps {
   watch: any;
   setValue: any;
   available: boolean;
+  isWriteOff?: boolean;
 }
 
 export const BigOrderCard = ({
@@ -46,6 +47,7 @@ export const BigOrderCard = ({
   watch,
   setValue,
   available,
+  isWriteOff,
 }: BigOrderCardProps) => {
   const { t } = useTranslation("form");
 
@@ -93,7 +95,11 @@ export const BigOrderCard = ({
           control={control}
           name={nameBottle}
           render={({ field }) => (
-            <InternalCountWrapper>
+            <InternalCountWrapper
+              sx={{
+                alignSelf: "center",
+              }}
+            >
               <Tooltip title={available ? "" : t("outOfStock")}>
                 <Title>{t(`${codeBottle}`)}</Title>
               </Tooltip>
@@ -106,86 +112,93 @@ export const BigOrderCard = ({
                   field.onChange(Math.max(+field.value - 1, 0));
                 }}
               />
-              <Tooltip
-                title={
-                  available
-                    ? t(
-                        `${
-                          !isMoreThanOneBigBottle
-                            ? "119CostFirst"
-                            : isTenOrMoreBigBottle
-                            ? "119TenCost"
-                            : "119Cost"
-                        }`
-                      )
-                    : t("outOfStock")
-                }
-                enterTouchDelay={1}
-              >
-                <Typography textAlign="center" color="gray">
-                  {`${
-                    (!isMoreThanOneBigBottle
-                      ? +BIG_BOTTLE_PRICE.FIRST_AND_ONE
-                      : isTenOrMoreBigBottle
-                      ? +BIG_BOTTLE_PRICE.TEN_OR_MORE
-                      : +BIG_BOTTLE_PRICE.DEFAULT) * Number(currentBottlesNum)
-                  } €`}
-                </Typography>
-              </Tooltip>
+
+              {!isWriteOff && (
+                <Tooltip
+                  title={
+                    available
+                      ? t(
+                          `${
+                            !isMoreThanOneBigBottle
+                              ? "119CostFirst"
+                              : isTenOrMoreBigBottle
+                              ? "119TenCost"
+                              : "119Cost"
+                          }`
+                        )
+                      : t("outOfStock")
+                  }
+                  enterTouchDelay={1}
+                >
+                  <Typography textAlign="center" color="gray">
+                    {`${
+                      (!isMoreThanOneBigBottle
+                        ? +BIG_BOTTLE_PRICE.FIRST_AND_ONE
+                        : isTenOrMoreBigBottle
+                        ? +BIG_BOTTLE_PRICE.TEN_OR_MORE
+                        : +BIG_BOTTLE_PRICE.DEFAULT) * Number(currentBottlesNum)
+                    } €`}
+                  </Typography>
+                </Tooltip>
+              )}
             </InternalCountWrapper>
           )}
         />
 
-        <Controller
-          control={control}
-          name={nameReturn}
-          render={({ field }) => (
-            <InternalCountWrapper>
-              <Title>{t("number_of_bottles_to_return")}</Title>
+        {!isWriteOff && (
+          <>
+            <Controller
+              control={control}
+              name={nameReturn}
+              render={({ field }) => (
+                <InternalCountWrapper>
+                  <Title>{t("number_of_bottles_to_return")}</Title>
 
-              <OrderCardCounter
-                count={field.value}
-                onAdd={() => field.onChange(+field.value + 1)}
-                onRemove={() => {
-                  field.onChange(Math.max(+field.value - 1, 0));
-                }}
-              />
-            </InternalCountWrapper>
-          )}
-        />
-
-        <Controller
-          control={control}
-          name={nameRent}
-          render={({ field }) => (
-            <InternalCountWrapper>
-              <Box
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-                justifyContent={"center"}
-                gap="5px"
-              >
-                <Title>{t(`${codeRent}`)}</Title>
-                <Tooltip title={t("120Tooltip")} enterTouchDelay={1}>
-                  <HelpOutlineOutlined
-                    color="primary"
-                    sx={{
-                      width: "15px",
+                  <OrderCardCounter
+                    count={field.value}
+                    onAdd={() => field.onChange(+field.value + 1)}
+                    onRemove={() => {
+                      field.onChange(Math.max(+field.value - 1, 0));
                     }}
                   />
-                </Tooltip>
-              </Box>
+                </InternalCountWrapper>
+              )}
+            />
 
-              <Typography textAlign="center">{description}</Typography>
-              <Tooltip title={t("120Cost")} enterTouchDelay={1}>
-                <Typography textAlign="center" color="gray">
-                  {`${rentPrice} €`}
-                </Typography>
-              </Tooltip>
-            </InternalCountWrapper>
-          )}
-        />
+            <Controller
+              control={control}
+              name={nameRent}
+              render={({ field }) => (
+                <InternalCountWrapper>
+                  <Box
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                    justifyContent={"center"}
+                    gap="5px"
+                  >
+                    <Title>{t(`${codeRent}`)}</Title>
+                    <Tooltip title={t("120Tooltip")} enterTouchDelay={1}>
+                      <HelpOutlineOutlined
+                        color="primary"
+                        sx={{
+                          width: "15px",
+                        }}
+                      />
+                    </Tooltip>
+                  </Box>
+
+                  <Typography textAlign="center">{description}</Typography>
+                  <Tooltip title={t("120Cost")} enterTouchDelay={1}>
+                    <Typography textAlign="center" color="gray">
+                      {`${rentPrice} €`}
+                    </Typography>
+                  </Tooltip>
+                </InternalCountWrapper>
+              )}
+            />
+          </>
+        )}
       </ExternalCountWrapper>
     </Wrapper>
   );

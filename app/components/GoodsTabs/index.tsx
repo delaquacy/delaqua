@@ -3,12 +3,14 @@
 import { useScreenSize } from "@/app/hooks";
 import { Box, Tabs } from "@mui/material";
 
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { AddNewGoodForm } from "../AddNewGoodForm";
 import { GoodsAvailableTable } from "../GoodsAvailableTable";
 import { GoodsCalculationTable } from "../GoodsCalculationTable";
 import { GoodsIncomingForm } from "../GoodsIncomingForm";
 import { GoodsInvoicesTable } from "../GoodsInvoicesTable";
+import { WriteOffList } from "../WriteOffList";
 import { GoodTab } from "./styled";
 
 interface TabPanelProps {
@@ -20,10 +22,21 @@ interface TabPanelProps {
 export const GoodsTabs = () => {
   const [value, setValue] = useState(0);
   const { isSmallScreen } = useScreenSize();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+
+    router.push(`/admin_dashboard/goods?tab=${newValue}`);
   };
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab && !isNaN(Number(tab))) {
+      setValue(Number(tab));
+    }
+  }, [searchParams]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -60,16 +73,21 @@ export const GoodsTabs = () => {
           label="Goods Incoming Invoices List"
           {...a11yProps(2)}
         />
-
         <GoodTab
           is_current_tab={(value === 3).toString()}
-          label="Add New Good"
+          label="Write Off List"
           {...a11yProps(3)}
         />
+
         <GoodTab
           is_current_tab={(value === 4).toString()}
-          label="Goods calculation"
+          label="Add New Good"
           {...a11yProps(4)}
+        />
+        <GoodTab
+          is_current_tab={(value === 5).toString()}
+          label="Goods calculation"
+          {...a11yProps(5)}
         />
       </Tabs>
 
@@ -86,9 +104,13 @@ export const GoodsTabs = () => {
       </CustomTabPanel>
 
       <CustomTabPanel value={value} index={3}>
+        <WriteOffList />
+      </CustomTabPanel>
+
+      <CustomTabPanel value={value} index={4}>
         <AddNewGoodForm />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={4}>
+      <CustomTabPanel value={value} index={5}>
         <GoodsCalculationTable />
       </CustomTabPanel>
     </Box>
