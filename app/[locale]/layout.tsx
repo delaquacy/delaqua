@@ -10,6 +10,7 @@ import { GoodsProvider } from "../contexts/GoodsContext";
 import { OrderDetailsProvider } from "../contexts/OrderDetailsContext";
 import { OrdersTableProvider } from "../contexts/OrdersTableContext";
 import { UserProvider } from "../contexts/UserContext";
+import { WriteOffGoodsProvider } from "../contexts/WriteOffGoodContext";
 import "../globals.css";
 import initTranslations from "../i18n";
 import { ToggleProvider } from "../lib/ToggleContext";
@@ -77,8 +78,10 @@ export default async function RootLayout({
                   <OrdersTableProvider>
                     <OrderDetailsProvider>
                       <GoodsProvider>
-                        <ToastContainer />
-                        <LayoutContent>{children}</LayoutContent>
+                        <WriteOffGoodsProvider>
+                          <ToastContainer />
+                          <LayoutContent>{children}</LayoutContent>
+                        </WriteOffGoodsProvider>
                       </GoodsProvider>
                     </OrderDetailsProvider>
                   </OrdersTableProvider>

@@ -16,6 +16,7 @@ export const Wrapper = styled(Card)({
     width: "65%",
     flexDirection: "row",
   },
+
   ":hover": {
     [theme.breakpoints.up("sm")]: {
       transform: "scale(1.05)",
@@ -23,17 +24,19 @@ export const Wrapper = styled(Card)({
   },
 });
 
-export const ExternalCountWrapper = styled(Box)({
-  flex: 1,
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  gap: "10px",
+export const ExternalCountWrapper = styled(Box)(
+  ({ is_write_off }: { is_write_off?: boolean }) => ({
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    gap: "10px",
 
-  [theme.breakpoints.up("sm")]: {
-    justifyContent: "space-between",
-  },
-});
+    [theme.breakpoints.up("sm")]: {
+      justifyContent: is_write_off ? "center" : "space-between",
+    },
+  })
+);
 
 export const InternalCountWrapper = styled(Box)({
   display: "flex",

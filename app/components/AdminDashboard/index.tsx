@@ -8,6 +8,7 @@ import {
   ReceiptLong,
   ShoppingBasket,
   ShoppingCart,
+  ShoppingCartCheckout,
 } from "@mui/icons-material";
 import {
   Box,
@@ -99,6 +100,17 @@ const AdminDashboard = () => {
           </ListItemIcon>
           <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
             Create Order
+          </Typography>
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => router.push("/admin_dashboard/write_goods_off")}
+        >
+          <ListItemIcon>
+            <ShoppingCartCheckout sx={{ color: "black" }} />
+          </ListItemIcon>
+          <Typography sx={{ fontSize: "20px", fontWeight: 500 }}>
+            Write off
           </Typography>
         </MenuItem>
 

@@ -9,6 +9,7 @@ interface SharedButtonProps {
   icon?: ReactNode;
   variantType?: "primary" | "success" | "error" | "warning";
   fontSize?: string;
+  type?: "button" | "submit" | "reset";
   loading?: boolean;
   disabled?: boolean;
   width?: string;
@@ -24,6 +25,7 @@ export const SharedButton = ({
   fontSize = "12px",
   disabled = false,
   loading = false,
+  type = "button",
   width,
   sx,
 }: SharedButtonProps) => {
@@ -33,6 +35,7 @@ export const SharedButton = ({
   return (
     <Button
       variant="contained"
+      type={type}
       size={size}
       onClick={onClick}
       disabled={disabled}
