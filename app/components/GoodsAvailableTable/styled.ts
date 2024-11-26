@@ -63,3 +63,14 @@ export const StyledTooltip = styled(Tooltip)({
     height: "30px",
   },
 });
+
+export const EditBox = styled(Box)({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+});
+
+export const IconBox = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+});

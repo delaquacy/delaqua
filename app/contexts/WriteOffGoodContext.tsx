@@ -8,9 +8,9 @@ import {
   useEffect,
   useState,
 } from "react";
+import { GoodService } from "../lib/GoodService";
 import { WriteOffService } from "../lib/WriteOffService";
 import { Goods, UserOrderItem } from "../types";
-import { getStaticGoodsArray } from "../utils/getStaticGoodsArray";
 
 export interface WriteOffData {
   id: string;
@@ -53,10 +53,8 @@ export const WriteOffGoodsProvider = ({
     createdAt: dayjs().format("DD-MM-YYYY HH:mm:ss"),
   });
 
-  const getGoods = async () => {
+  const handleSetFormattedGoods = (data: Goods[]) => {
     setIsLoading(true);
-    const data = await getStaticGoodsArray();
-
     setGoods(data.map((item) => ({ ...item, picture: `${item.id}.webp` })));
 
     const items = data.reverse().map((good) => ({
@@ -79,15 +77,14 @@ export const WriteOffGoodsProvider = ({
   };
 
   useEffect(() => {
-    getGoods();
-  }, []);
-
-  useEffect(() => {
     const unsubscribeWriteOffItems =
       WriteOffService.getWriteOffDataArray(setWriteOffItems);
 
+    const unsubscribeGoods = GoodService.getGoods(handleSetFormattedGoods);
+
     return () => {
       unsubscribeWriteOffItems();
+      unsubscribeGoods();
     };
   }, []);
 

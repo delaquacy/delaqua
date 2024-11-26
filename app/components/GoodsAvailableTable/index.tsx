@@ -1,21 +1,25 @@
 "use client";
 import { GOODS_AVAILABLE_HEAD } from "@/app/constants/GoodsAvaliableHead";
-import { useGoodsContext } from "@/app/contexts/GoodsContext";
-import { useScreenSize } from "@/app/hooks";
-import { Delete } from "@mui/icons-material";
+import { useGoodsAvailableTable, useScreenSize } from "@/app/hooks";
+import { Goods } from "@/app/types";
+import { Cancel, Delete, Edit, Save } from "@mui/icons-material";
 import {
   Box,
+  IconButton,
+  Switch,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
 import RemoveItemModalWindow from "../RemoveItemModalWindow";
+import { SharedButton } from "../shared";
 import {
   CardBox,
   CardTypoBold,
+  EditBox,
+  IconBox,
   StyledCard,
   StyledCell,
   StyledHeadCell,
@@ -34,44 +38,90 @@ export interface GoodsAvailable {
 }
 
 export const GoodsAvailableTable = () => {
-  const {
-    inventoryGoods,
-    openDeleteWindow,
-    setOpenDeleteWindow,
-    handleRemoveGoodsInventoryItem,
-  } = useGoodsContext();
   const { isSmallScreen } = useScreenSize();
 
-  const [itemDetails, setItemDetails] = useState({
-    details: "",
-    id: "",
-  });
+  const {
+    inventoryGoods,
+    displayDelete,
+    editGoodItem,
+    itemDetails,
+    openDeleteWindow,
+    goods,
+    handleRemoveClick,
+    handleDeleteToggle,
+    handleToggleAvailableEditGood,
+    handleUpdateGood,
+    setEditGoodItem,
+    setOpenDeleteWindow,
+    handleRemoveGoodsInventoryItem,
+  } = useGoodsAvailableTable();
 
-  const handleRemoveClick = (good: GoodsAvailable) => {
-    setItemDetails({
-      details: `${good.id} - ${good.name}`,
-      id: good.id,
-    });
-    setOpenDeleteWindow(true);
+  const iconStyle = {
+    width: "15px",
+    height: "15px",
   };
 
   return (
     <Box>
       {isSmallScreen ? (
         <StyledWrapper>
-          {inventoryGoods.map((good) => (
-            <StyledCard key={good.id}>
-              {GOODS_AVAILABLE_HEAD.map((head, index) => (
-                <CardBox key={index}>
-                  <CardTypoBold>{head.value}</CardTypoBold>
+          {inventoryGoods.map((good) => {
+            const correspondingGood = goods.find(({ id }) => id === good.id);
+            const isEditGood = good.id === editGoodItem?.id;
 
-                  <Typography>
-                    {good[head.key as keyof GoodsAvailable]}
-                  </Typography>
-                </CardBox>
-              ))}
-            </StyledCard>
-          ))}
+            const toggleEditItem = () => {
+              setEditGoodItem(isEditGood ? null : (correspondingGood as Goods));
+            };
+            return (
+              <StyledCard key={good.id}>
+                {GOODS_AVAILABLE_HEAD.map(
+                  (head, index) =>
+                    head.key !== "available" && (
+                      <CardBox key={index}>
+                        <CardTypoBold>{head.value}</CardTypoBold>
+
+                        <Typography>
+                          {good[head.key as keyof GoodsAvailable]}
+                        </Typography>
+                      </CardBox>
+                    )
+                )}
+                <EditBox>
+                  {isEditGood ? (
+                    <>
+                      Not available
+                      <Switch
+                        checked={editGoodItem?.available}
+                        color="success"
+                        onChange={handleToggleAvailableEditGood}
+                        inputProps={{ "aria-label": "controlled" }}
+                      />
+                      Available
+                    </>
+                  ) : correspondingGood?.available ? (
+                    <CardTypoBold>Available</CardTypoBold>
+                  ) : (
+                    <CardTypoBold>Not available</CardTypoBold>
+                  )}
+
+                  <IconBox>
+                    {isEditGood && (
+                      <IconButton onClick={handleUpdateGood}>
+                        <Save sx={iconStyle} />
+                      </IconButton>
+                    )}
+                    <IconButton onClick={toggleEditItem}>
+                      {isEditGood ? (
+                        <Cancel sx={iconStyle} />
+                      ) : (
+                        <Edit sx={iconStyle} />
+                      )}
+                    </IconButton>
+                  </IconBox>
+                </EditBox>
+              </StyledCard>
+            );
+          })}
         </StyledWrapper>
       ) : (
         <StyledTable size="small">
@@ -82,39 +132,95 @@ export const GoodsAvailableTable = () => {
                   key={index}
                   scope="row"
                   variant="head"
-                  border={
-                    index < GOODS_AVAILABLE_HEAD.length - 1 ? "border" : ""
-                  }
+                  border={"border"}
                 >
                   {good.value}
                 </StyledHeadCell>
               ))}
+              <StyledHeadCell border="">
+                <SharedButton
+                  text="Delete mode"
+                  width="100%"
+                  onClick={handleDeleteToggle}
+                />
+              </StyledHeadCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {inventoryGoods.map((good, index) => (
-              <TableRow key={index}>
-                <StyledCell>{good.id}</StyledCell>
+            {inventoryGoods.map((good, index) => {
+              const correspondingGood = goods.find(({ id }) => id === good.id);
+              const isEditGood = good.id === editGoodItem?.id;
 
-                <StyledCell>{good.name}</StyledCell>
+              const toggleEditItem = () => {
+                setEditGoodItem(
+                  isEditGood ? null : (correspondingGood as Goods)
+                );
+              };
 
-                <StyledCell>{good.lastInvoiceDate}</StyledCell>
+              return (
+                <TableRow key={index}>
+                  <StyledCell>{good.id}</StyledCell>
 
-                <StyledCell>{good.lastInvoiceNumber}</StyledCell>
+                  <StyledCell>{good.name}</StyledCell>
 
-                <StyledCell>{good.quantity}</StyledCell>
+                  <StyledCell>{good.lastInvoiceDate}</StyledCell>
 
-                <TableCell align="center">
-                  <StyledTooltip
-                    title={"Remove Item"}
-                    onClick={() => handleRemoveClick(good)}
-                  >
-                    <Delete fontSize={isSmallScreen ? "small" : "medium"} />
-                  </StyledTooltip>
-                </TableCell>
-              </TableRow>
-            ))}
+                  <StyledCell>{good.lastInvoiceNumber}</StyledCell>
+
+                  <StyledCell>{good.quantity}</StyledCell>
+                  <StyledCell>
+                    <EditBox>
+                      {isEditGood ? (
+                        <>
+                          Not available
+                          <Switch
+                            checked={editGoodItem?.available}
+                            color="success"
+                            onChange={handleToggleAvailableEditGood}
+                            inputProps={{ "aria-label": "controlled" }}
+                          />
+                          Available
+                        </>
+                      ) : correspondingGood?.available ? (
+                        "Available"
+                      ) : (
+                        "Not available"
+                      )}
+
+                      <IconBox>
+                        {isEditGood && (
+                          <IconButton onClick={handleUpdateGood}>
+                            <Save sx={iconStyle} />
+                          </IconButton>
+                        )}
+                        <IconButton onClick={toggleEditItem}>
+                          {isEditGood ? (
+                            <Cancel sx={iconStyle} />
+                          ) : (
+                            <Edit sx={iconStyle} />
+                          )}
+                        </IconButton>
+                      </IconBox>
+                    </EditBox>
+                  </StyledCell>
+
+                  <TableCell align="center">
+                    {displayDelete && (
+                      <StyledTooltip
+                        title={"Remove Item"}
+                        onClick={() => handleRemoveClick(good)}
+                      >
+                        <Delete
+                          sx={iconStyle}
+                          fontSize={isSmallScreen ? "small" : "medium"}
+                        />
+                      </StyledTooltip>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </StyledTable>
       )}

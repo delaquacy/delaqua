@@ -33,7 +33,7 @@ export default function RemoveItemModalWindow({
               textAlign="center"
               fontWeight="bold"
             >
-              Are you sure you want to remove this item?
+              Are you sure you want to remove this item from firebase?
             </Typography>
             <Typography
               component="h3"
