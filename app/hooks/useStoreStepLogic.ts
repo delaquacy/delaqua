@@ -89,9 +89,7 @@ export const useStoreStepLogic = (handleNext: () => void) => {
       ({ category, count }) => category === "supplies" && !!+(count || "")
     ).length;
 
-    const minOrder = isFirstOrder
-      ? bigBottleCount >= 1
-      : hasBottles && currentPrice >= 12;
+    const minOrder = hasBottles && currentPrice >= 12;
 
     setSuppliesError(hasSupplies && !hasBottles);
     setShowTooltipMessage(!minOrder);
